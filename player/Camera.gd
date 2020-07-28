@@ -4,7 +4,11 @@ extends Camera
 To Do:
 	- release and repress ZL quickly to change target (maybe this is actually for the player code)
 	- perhaps some context-sensitive rotation limits (such as looking from very low while targeting)
+	
 	- might also have a togglable option to auto-rotate the camera naturally based on your movement dir.
+	- this option could also auto-rotate the camera to look from above when standing at an edge.
+	- one other idea is to add camera 'whiskers' to avoid sudden 'crashing' into walls or floors etc.
+	- perhaps all of those could be combined into the 'auto' mode, which could be turned off
 """
 
 # Collision
@@ -42,11 +46,6 @@ var zl_target_pos:Vector3 # might not need this as a "global" variable here.
 var resetting:bool = false
 const cam_reset_time:float = 16.0 # frames @ 60fps
 var cam_reset_frame:float = 0.0   # stored as float to avoid integer division
-
-# To do...
-# - nice curve to avoid crashing into floor
-# - maybe aim a bit in the dir player is lookin or moving?
-# - look down a bit when standing at edge
 
 func _ready() -> void:
 	# Processing order: Player code should run first.
