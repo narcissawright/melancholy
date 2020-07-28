@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://misc/BubbleShield.gd" type="Script" id=1]
+[ext_resource path="res://misc/shield.obj" type="ArrayMesh" id=2]
+[ext_resource path="res://misc/bubbleshield_resource.tres" type="Material" id=3]
+
+
+
+[node name="BubbleShield" type="MeshInstance"]
+mesh = ExtResource( 2 )
+material/0 = ExtResource( 3 )
+script = ExtResource( 1 )
+
+[node name="ShieldTween" type="Tween" parent="."]

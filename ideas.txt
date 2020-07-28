@@ -1,0 +1,80 @@
+Melanie (Sword Shield)
+Melancholy (Magic)
+
+Main Game
+Time Attack
+Options
+
+10 main stages per character (3 fully unique pairs, 4A, 4B, 6A, 6B, 7A, 7B) and some with altered bosses
+3 bonus stages?
+
+Forest
+Castle
+Villa
+Underground
+Main Castle
+Tower 1
+Tower 2
+Special Boss
+Final Level
+Final Bosses
+
+Melanie - walks, sprints, has the shield pushback mechanic
+Melancholy - coasts across the ground via magic, "jumping" like carrie is faster than running.
+
+melancholy - sine movement, 0f jumpsquat if already running (3f if grounded), tap A to airjump @ ledgegrab height
+
+
+field of falling stars is the "menu" world
+- unlock stuff here as you progress in the game
+
+unlockables:
+- time of day changer (for time trials)
+- various items or upgrades (etc)
+- is just a playground for moving around etc
+- peaceful music, a safe area
+- maybe as you approach the boundary (bottom of the hill far away from center) its like that guitar song lvl from mario odyssey with the semi transparent border going up
+
+you should spawn from a falling star andi t should happen rather quickly
+
+at first one of the only places should be the "full game" area
+
+eventually unlock wardrobe, eventually unlock melancholy
+separate time trials for each character
+
+for actual levels try to keep a bit of "arcade scenario" -- gameplay design focused levels, but not too arcadey.
+a good length too.
+
+melancholy-- magic meter is added. maybe vials that can fill up and if you run out of magic they break.
+5 levels of powerup for both characters instead of 3
+melanie should get bombs as a subweapon, ahve melanie use classic subweapon stuff while melancholy uses magic and is different
+melancholy should have low max hp
+
+
+
+Subweapons - Melanie:
+- Bomb (fast pull, can throw them far, large hitbox, can throw to targeted enemy too)
+- Holy Water (cannot throw far, massive damage with innermost hitbox...)
+- Bow & Arrow (1stish person aiming, 3rdish person with targetting on)
+- ?? (did I have an idea for this?)
+
+Melanie has to pick up the subwep ammo.
+
+Spells - Melancholy
+- Airwalker (hover boots but can use as long as you have magic. can jump from airwalk)
+- Beam (high damage draining laser, aimable)
+- Tree (indicator as to where it will spawn, like a slow holy water that does ridic damage and knockback)
+- Lightning (damage all nearby enemies. if none are around, you get struck instead.)
+
+Melancholy can absorb the subwep ammo from a distance (as mana) using her shield
+Melancholy has 1/4th HP, but a new magic meter as long as the original HP bar.
+
+Shop could sell items for subwep ammo?
+- Power Ups
+- Subweapon
+- Key
+- Time Change
+- Maybe status cure if that exists
+
+Gimmick! (NES) had a score system that accounted for all drops. I want to use a system like this to avoid RNG.
+Only issue is if it is hidden, then it becomes very difficult to "resync" yourself. so it would have to be shown somehow...

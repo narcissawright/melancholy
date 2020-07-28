@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://debug/Text.gd" type="Script" id=1]
+[ext_resource path="res://debug/Debug.gd" type="Script" id=2]
+[ext_resource path="res://debug/Draw.gd" type="Script" id=3]
+
+[node name="Debug" type="Node"]
+script = ExtResource( 2 )
+
+[node name="Text" type="RichTextLabel" parent="."]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 1270.0
+margin_bottom = 710.0
+bbcode_enabled = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Draw" type="ImmediateGeometry" parent="."]
+script = ExtResource( 3 )
