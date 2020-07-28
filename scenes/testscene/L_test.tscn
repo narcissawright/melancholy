@@ -23,46 +23,46 @@ material/0 = SubResource( 1 )
 [node name="CollisionShape" type="CollisionShape" parent="StaticBody"]
 shape = SubResource( 2 )
 
-[node name="Wall_Target" type="MeshInstance" parent="."]
+[node name="Target1" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.33291, -10.0096 )
 mesh = SubResource( 3 )
 material/0 = null
 
-[node name="targetable" parent="Wall_Target" instance=ExtResource( 2 )]
+[node name="targetable" parent="Target1" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.159719 )
 
-[node name="Wall_Target3" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.51049, 1.22583, -9.52007 )
-mesh = SubResource( 3 )
-material/0 = null
-
-[node name="targetable" parent="Wall_Target3" instance=ExtResource( 2 )]
-
-[node name="Wall_Target4" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.51049, 1.22583, 7.64376 )
-mesh = SubResource( 3 )
-material/0 = null
-
-[node name="targetable" parent="Wall_Target4" instance=ExtResource( 2 )]
-
-[node name="Wall_Target5" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.68581, 3.30045, 3.63198 )
-mesh = SubResource( 3 )
-material/0 = null
-
-[node name="targetable" parent="Wall_Target5" instance=ExtResource( 2 )]
-
-[node name="Wall_Target6" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.06235, 0.889817, 3.63198 )
-mesh = SubResource( 3 )
-material/0 = null
-
-[node name="targetable" parent="Wall_Target6" instance=ExtResource( 2 )]
-
-[node name="Wall_Target2" type="MeshInstance" parent="."]
+[node name="Target2" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3.28111, 0.986496, -10.0096 )
 mesh = SubResource( 3 )
 material/0 = null
 
-[node name="targetable" parent="Wall_Target2" instance=ExtResource( 2 )]
+[node name="targetable" parent="Target2" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.159719 )
+
+[node name="Target3" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.51049, 1.22583, -9.52007 )
+mesh = SubResource( 3 )
+material/0 = null
+
+[node name="targetable" parent="Target3" instance=ExtResource( 2 )]
+
+[node name="Target4" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.51049, 1.22583, 7.64376 )
+mesh = SubResource( 3 )
+material/0 = null
+
+[node name="targetable" parent="Target4" instance=ExtResource( 2 )]
+
+[node name="Target5" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.68581, 3.30045, 3.63198 )
+mesh = SubResource( 3 )
+material/0 = null
+
+[node name="targetable" parent="Target5" instance=ExtResource( 2 )]
+
+[node name="Target6" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.06235, 0.889817, 3.63198 )
+mesh = SubResource( 3 )
+material/0 = null
+
+[node name="targetable" parent="Target6" instance=ExtResource( 2 )]

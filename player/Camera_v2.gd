@@ -14,6 +14,7 @@ var pan_pos := Vector3.ZERO # while paused, allow camera pan via d-pad
 const move_speed:float = 0.04
 
 # ZL Targeting
+var multiple_targets:bool = false # True when ZL Target is an object
 var resetting:bool = false
 const cam_reset_time:float = 16.0 # frames @ 60fps
 var cam_reset_frame:float = 0.0   # stored as float to avoid integer division

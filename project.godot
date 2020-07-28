@@ -23,8 +23,8 @@ config/icon="res://img/icon.png"
 [autoload]
 
 Game="*res://global/Game.gd"
-Events="*res://global/Events.gd"
 Layers="*res://global/Layers.gd"
+TargetSystem="*res://global/TargetSystem.gd"
 
 [display]
 

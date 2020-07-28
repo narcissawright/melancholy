@@ -2,10 +2,10 @@ extends Node2D
 
 var cursor_tex = load("res://img/target.png")
 var list:Dictionary = {}
-var highest_rel:Dictionary = {"relevance": 0.0 } # holds the priority target
+var highest_rel:int = 0 # holds the priority target
 
 const size := Vector2(15, 15) # cursor corner size, in pixels 
-const half_size:int = 7 # rounded down
+const half_corner_size:int = 7 # rounded down
 const upper_left_slice   := Rect2(Vector2(0, 0),      size) # how to slice up the cursor texture
 const upper_right_slice  := Rect2(Vector2(size.x, 0), size)
 const bottom_left_slice  := Rect2(Vector2(0, size.y), size)
@@ -14,20 +14,18 @@ const bottom_right_slice := Rect2(size,               size)
 func _ready():
 	process_priority = 2 # Run after camera
 
-func get_most_relevant_target() -> Dictionary:
-	if highest_rel.relevance > 0.0: return highest_rel
-	else: return {}
+func get_most_relevant_target() -> int:
+	if highest_rel == 0: return 0
+	elif list[highest_rel].relevance > 0.0: return highest_rel
+	else: return 0
 	
-func target_is_valid(target:Dictionary) -> bool:
-	if target.empty():
+func target_is_valid(target:int) -> bool:
+	if target == 0:
 		return true # Targeting nothing is valid
 	
-	for area in list:
-		if list[area].hash() == target.hash():
-			# Sorta dislike that I compare hashes here instead of using .has.
-			# Unfortunately I am not passing the key but rather the value...
-			# May need to rework this
-			if not target.blocked and target.relevance > 0.0:
+	for id in list:
+		if id == target:
+			if list[target].relevance > 0.0:
 				return true
 	
 	# If the target passed does not exist in the target list, is it not valid.
@@ -36,8 +34,8 @@ func target_is_valid(target:Dictionary) -> bool:
 func _physics_process(_t):
 	
 	# Manage Target List
-	for area in list:
-		var target = list[area]
+	for id in list:
+		var target = list[id]
 		
 		# Assign properties
 		target.pos = target.parent.global_transform.origin
@@ -49,20 +47,19 @@ func _physics_process(_t):
 		var window_size := Rect2(Vector2.ZERO, OS.window_size)
 		
 		# Check if object is blocked (behind camera, behind wall, etc)
-		var ss:PhysicsDirectSpaceState = area.get_world().direct_space_state
-		var result:Dictionary = ss.intersect_ray(Game.player.translation, area.global_transform.origin, [], Layers.solid)
+		var ss:PhysicsDirectSpaceState = target.area.get_world().direct_space_state
+		var result:Dictionary = ss.intersect_ray(Game.player.translation, target.area.global_transform.origin, [], Layers.solid)
 		var blocked:bool = result.size() > 0 # If no line of sight, do not draw.
 		if Game.cam.is_position_behind(target.pos): blocked = true # If behind camera, do not draw
 		if not blocked:
 			# Check if on camera
-			window_size = window_size.grow(half_size) # always draw the partial graphic @ screen edge
+			window_size = window_size.grow(half_corner_size) # always draw the partial graphic @ screen edge
 			blocked = true # Assumed blocked unless any of the corners are on screen
 			if   window_size.has_point(Vector2(target.aabb2d.position.x, target.aabb2d.position.y)): blocked = false
 			elif window_size.has_point(Vector2(target.aabb2d.end.x,      target.aabb2d.position.y)): blocked = false
 			elif window_size.has_point(Vector2(target.aabb2d.position.x, target.aabb2d.end.y)):      blocked = false
 			elif window_size.has_point(Vector2(target.aabb2d.end.x,      target.aabb2d.end.y)):      blocked = false
-			
-		target.blocked = blocked # Assign blocked
+		
 		target.relevance = 0.0
 		
 		if not blocked: # Assign relevance (for targeting priority)
@@ -96,17 +93,20 @@ func _physics_process(_t):
 			# Combine all 3 factors
 			target.relevance = (rel_center_screen + rel_nearby_player + rel_player_facing) / 3.0
 	
-	highest_rel = {"relevance": 0.0}
+	highest_rel = 0
 	# find which target has highest relevance
-	for area in list:
-		if not list[area].blocked:
-			if list[area].relevance > highest_rel.relevance:
-				highest_rel = list[area]
+	for id in list:
+		if list[id].relevance > 0.0:
+			if highest_rel != 0:
+				if list[id].relevance > list[highest_rel].relevance:
+					highest_rel = id
+			else:
+				highest_rel = id
 	
 	Game.debug.text.write('Target list:')
-	for area in list:
-		var target = list[area]
-		Game.debug.text.write(target.name + ' | Rel: ' + str(target.relevance), 'red' if target.blocked else 'blue')
+	for id in list:
+		var target = list[id]
+		Game.debug.text.write('[id:' + str(id) + '] ' + target.name + ' | Rel: ' + str(target.relevance), 'red' if target.relevance <= 0 else 'blue')
 	Game.debug.text.newline()
 	
 	update()
@@ -150,10 +150,10 @@ func find_aabb_2d(target_pos:Vector3, aabb:AABB) -> Rect2:
 	return Rect2(x_min, y_min, x_max-x_min, y_max-y_min)
 
 func _draw(): # update called in player
-	for area in list:
-		var target = list[area]
+	for id in list:
+		var target = list[id]
 		
-		if target.blocked:
+		if target.relevance <= 0.0:
 			continue # if no direct line of sight to the target, do not draw crosshair
 			
 		var distance:float = (Game.cam.global_transform.origin - target.pos).length()
@@ -161,20 +161,17 @@ func _draw(): # update called in player
 		opacity = clamp(distance - 1.5, 0.0, 1.0)
 #		opacity = 1.0 - clamp((distance - 15.0) / 5.0, 0.0, 1.0)
 		
-		var color = Color(0.4, 0.4, 0.4, opacity) # grey
-		if highest_rel.hash() == target.hash():
-			color = Color(0.66, 0.75, 0.0, opacity) # yellow
-		if target.hash() == Game.player.zl_target.hash():
-			color = Color(1.0, 0.1, 0.1, opacity) # red
-			
-		#if target_list[i].seeking:
-		#	color = Color(1, 0.2, 0.15, opacity) # red
+		var color = Color(0.4, 0.4, 0.4, opacity * 0.5) # grey
+		if highest_rel == id:
+			color = Color(0.45, 0.45, 0.75, opacity * 0.75) # dull blue
+		if id == Game.player.zl_target:
+			color = Color(0.5, 0.5, 1.0, opacity) # bright blue
 		
 		# where to draw the cursor corners:
-		var upper_left_pos   = Rect2(Vector2(target.aabb2d.position.x - half_size, target.aabb2d.position.y - half_size), size)
-		var upper_right_pos  = Rect2(Vector2(target.aabb2d.end.x - half_size, target.aabb2d.position.y - half_size), size)
-		var bottom_left_pos  = Rect2(Vector2(target.aabb2d.position.x - half_size, target.aabb2d.end.y - half_size), size)
-		var bottom_right_pos = Rect2(Vector2(target.aabb2d.end.x - half_size, target.aabb2d.end.y - half_size), size)
+		var upper_left_pos   = Rect2(Vector2(target.aabb2d.position.x - half_corner_size, target.aabb2d.position.y - half_corner_size), size)
+		var upper_right_pos  = Rect2(Vector2(target.aabb2d.end.x - half_corner_size, target.aabb2d.position.y - half_corner_size), size)
+		var bottom_left_pos  = Rect2(Vector2(target.aabb2d.position.x - half_corner_size, target.aabb2d.end.y - half_corner_size), size)
+		var bottom_right_pos = Rect2(Vector2(target.aabb2d.end.x - half_corner_size, target.aabb2d.end.y - half_corner_size), size)
 		
 		# draw
 		draw_texture_rect_region(cursor_tex, upper_left_pos,   upper_left_slice,   color)
@@ -182,14 +179,17 @@ func _draw(): # update called in player
 		draw_texture_rect_region(cursor_tex, bottom_left_pos,  bottom_left_slice,  color)
 		draw_texture_rect_region(cursor_tex, bottom_right_pos, bottom_right_slice, color)
 
-# Signals
-func _target_acquired(area: Area) -> void:
-	var parent = area.get_parent()
-	# More properties assigned and updated when managing the target list elsewhere
+# Called from Area node in player scene
+func target_acquired(area: Area) -> void:
+	# More properties assigned and updated when managing the target list in _physics_process
 	# These ones are static so I can assign them here and never again.
-	list[area] = {
+	var id = area.get_instance_id()
+	var parent = area.get_parent()
+	list[id] = {
+		"area": area,
 		"parent": parent,
 		"name": parent.name
 	}
-func _target_lost(area: Area) -> void:
-	list.erase(area)
+func target_lost(area: Area) -> void:
+	var id = area.get_instance_id()
+	list.erase(id)

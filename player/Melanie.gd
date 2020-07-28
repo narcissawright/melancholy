@@ -4,7 +4,7 @@ var framecount:int = 0
 var velocity := Vector3.ZERO
 
 # Target
-var zl_target:Dictionary = {}
+var zl_target:int = 0
 
 # Flags
 var grounded:bool = true
@@ -23,7 +23,6 @@ var aerial_framecount:int = 0 # Amount of frames the player has been in the air.
 # Child Nodes
 onready var raycast = $RayCast
 onready var shield = $Shield
-onready var target_system = $TargetSystem
 
 func _ready() -> void:
 	process_priority = 0 # Run this before camera
@@ -31,7 +30,7 @@ func _ready() -> void:
 func set_target(state:bool) -> void:
 	targeting = state
 	if state == false:
-		zl_target = {}
+		zl_target = 0
 
 func set_shield(state:bool) -> void:
 		shielding = state
@@ -61,13 +60,13 @@ func _physics_process(t) -> void:
 		# Begin ZL Targeting:
 		if Input.is_action_just_pressed("target"):
 			# If you just began targeting, find most relevant target and assign it
-			zl_target = target_system.get_most_relevant_target()
-			if zl_target.empty(): Game.cam.resetting = true
+			zl_target = TargetSystem.get_most_relevant_target()
+			if zl_target == 0: Game.cam.resetting = true
 			set_target(true)
 		
 		# Check if no longer targeting:
 		if Input.is_action_pressed("target"):
-			if not target_system.target_is_valid(zl_target):
+			if not TargetSystem.target_is_valid(zl_target):
 				# Target broken from distance or lost line of sight
 				set_target(false)
 		elif Game.cam.resetting == false:
@@ -164,8 +163,9 @@ func _physics_process(t) -> void:
 		if not look_target_2d.is_equal_approx(Vector2.ZERO): # If the horizontal velocity is zero, don't rotate
 			rotate_player(look_target_2d)
 	# While targeting -- look towards target
-	elif targeting and (grounded or slippery) and not zl_target.empty():
-		var look_target_2d := Vector2(translation.x, translation.z) - Vector2(zl_target.pos.x, zl_target.pos.z)
+	elif targeting and (grounded or slippery) and zl_target != 0:
+		var look_target_2d := Vector2(translation.x, translation.z)
+		look_target_2d -= Vector2(TargetSystem.list[zl_target].pos.x, TargetSystem.list[zl_target].pos.z)
 		look_target_2d = -look_target_2d.normalized()
 		rotate_player(look_target_2d)
 	
@@ -189,10 +189,10 @@ func _physics_process(t) -> void:
 	Game.debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
 	Game.debug.text.write('Air Time: ' + str(aerial_framecount))
 	Game.debug.text.newline()
-	if zl_target.empty():
-		Game.debug.text.write("ZL Target: null", 'red')
+	if zl_target == 0:
+		Game.debug.text.write("ZL Target: ", 'red')
 	else:
-		Game.debug.text.write("ZL Target: " + zl_target.name, 'green')
+		Game.debug.text.write("ZL Target: " + TargetSystem.list[zl_target].name, 'green')
 	Game.debug.text.newline()
 	
 	# Debug Draw
