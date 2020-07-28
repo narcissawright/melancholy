@@ -18,9 +18,9 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action("ui_cancel"):
 		get_tree().quit()
-	if event.is_action_released("fullscreen"):
+	if Input.is_action_just_pressed("fullscreen"):
 		OS.window_fullscreen = !OS.window_fullscreen
-	if event.is_action_released("pause"):
+	if Input.is_action_just_pressed("pause"):
 		get_tree().paused = not get_tree().paused
 
 static func get_stick_input(which:String) -> Vector2:

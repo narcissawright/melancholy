@@ -1,11 +1,10 @@
 extends KinematicBody
 
 var framecount:int = 0
-var frame_time:float = 1.0 / 60.0
 var velocity := Vector3.ZERO
 
-# Target List
-var target_list:Dictionary = {}
+# Target
+var zl_target:Dictionary = {}
 
 # Flags
 var grounded:bool = true
@@ -22,11 +21,17 @@ var lock_framecount:int = 10 # Amount of frames the player has no control. Used 
 var aerial_framecount:int = 0 # Amount of frames the player has been in the air.
 
 # Child Nodes
-onready var raycast = $"RayCast"
-onready var shield = $"Shield"
+onready var raycast = $RayCast
+onready var shield = $Shield
+onready var target_system = $TargetSystem
 
 func _ready() -> void:
 	process_priority = 0 # Run this before camera
+
+func set_target(state:bool) -> void:
+	targeting = state
+	if state == false:
+		zl_target = {}
 
 func set_shield(state:bool) -> void:
 		shielding = state
@@ -43,44 +48,32 @@ func _physics_process(t) -> void:
 		velocity = Vector3.ZERO
 		lock_framecount = 10
 		set_shield(false)
-	
-	# Manage Target List
-	for area in target_list:
-		var target = target_list[area]
 		
-		# Get target position
-		var target_pos = area.global_transform.origin
-		
-		# Check if there is line of sight
-		var space_state = get_world().direct_space_state
-		var result = space_state.intersect_ray(translation, target_pos, [], Layers.solid | Layers.slippery)
-		var blocked = false
-		if result.size() > 0:
-			blocked = true
-		
-		# Assign properties
-		target.aabb = target.parent.get_aabb()
-		target.pos = target_pos
-		target.length = (target_pos - translation).length()
-		target.blocked = blocked
-		target.move_vector = -(translation - target_pos).normalized()
-		
-		# find primary target
-		# and do stuff w/ that
-	
 	# Add Gravity
 	var gravity:float = -20.0 # I will never understand why -9.8 feels super floaty when using 1.7m tall character
-	velocity.y += gravity * frame_time
+	velocity.y += gravity * t
 	
 	# Prevent player movement if locked
 	if lock_framecount > 0:
 		lock_framecount -= 1
 	else:
-		# Check if targeting
+		
+		# Begin ZL Targeting:
+		if Input.is_action_just_pressed("target"):
+			# If you just began targeting, find most relevant target and assign it
+			zl_target = target_system.get_most_relevant_target()
+			if zl_target.empty(): Game.cam.resetting = true
+			set_target(true)
+		
+		# Check if no longer targeting:
 		if Input.is_action_pressed("target"):
-			targeting = true
+			if not target_system.target_is_valid(zl_target):
+				# Target broken from distance or lost line of sight
+				set_target(false)
 		elif Game.cam.resetting == false:
-			targeting = false
+			# If you are not holding the button, and the cam reset has finished, 
+			# you are no longer targeting anything
+			set_target(false)
 		
 		# Check if shielding
 		set_shield(Input.is_action_pressed("shield"))
@@ -95,8 +88,7 @@ func _physics_process(t) -> void:
 		# Targeted movement
 		if targeting and not shielding:
 			maxspeed_framecount = 0
-			var face_dir = Vector3.FORWARD.rotated(Vector3.UP, rotation.y)
-			var diff = direction.angle_to(face_dir)
+			var diff = direction.angle_to(forwards())
 			if diff > PI * 0.5:
 				diff = PI * 0.5
 			speed -= (speed / 2.0) * (diff / (PI * 0.5))
@@ -165,18 +157,18 @@ func _physics_process(t) -> void:
 	if velocity.length_squared() < 0.0001:
 		velocity = Vector3.ZERO
 	
-	# Player rotation: look towards movement dir
+	# Player Rotation:
+	# While not targeting -- look towards movement direction
 	if not targeting and (grounded or slippery):
-		var h_velocity := Vector2(velocity.x, velocity.z).normalized() # Get horizontal velocity as a normalized vec2
-		if h_velocity != Vector2.ZERO: # If the horizontal velocity is zero, don't rotate the player
-			var forward:Vector3 = forwards() # Get current facing direction
-			var angle = -Vector2(forward.x, forward.z).angle_to(h_velocity) # Find angle from face dir to velocity dir
-			if shielding: angle = clamp(angle, -PI/80.0, PI/80.0) # clamp it
-			else:         angle = clamp(angle, -PI/8.0, PI/8.0)
-			angle *= clamp(Vector3(velocity.x, 0, velocity.z).length_squared(), 0.0, 1.0) # very slow walk speed means slow rotation
-			var look_target:Vector3 = forward.rotated(Vector3.UP, angle) # use clamped angle to find new facing direction
-			look_at(look_target + translation, Vector3.UP) # rotate
-				
+		var look_target_2d := Vector2(velocity.x, velocity.z).normalized() # horizontal velocity as a normalized vec2
+		if not look_target_2d.is_equal_approx(Vector2.ZERO): # If the horizontal velocity is zero, don't rotate
+			rotate_player(look_target_2d)
+	# While targeting -- look towards target
+	elif targeting and (grounded or slippery) and not zl_target.empty():
+		var look_target_2d := Vector2(translation.x, translation.z) - Vector2(zl_target.pos.x, zl_target.pos.z)
+		look_target_2d = -look_target_2d.normalized()
+		rotate_player(look_target_2d)
+	
 	# Debug Text
 	Game.debug.text.write('Frame: ' + str(framecount))
 	Game.debug.text.write('Frame Time: ' + str(t))
@@ -184,6 +176,7 @@ func _physics_process(t) -> void:
 	Game.debug.text.write('Position: ' + str(translation))
 	Game.debug.text.write('Velocity: ' + str(velocity))
 	Game.debug.text.write('Horizontal Velocity: ' + str(Vector3(velocity.x, 0, velocity.z).length()))
+	Game.debug.text.write('Forward Direction: ' + str(forwards()))
 	Game.debug.text.newline()
 	Game.debug.text.write('Targeting: ' + str(targeting), 'green' if targeting else 'red')
 	Game.debug.text.write('Grounded: ' + str(grounded), 'green' if grounded else 'red')
@@ -196,10 +189,10 @@ func _physics_process(t) -> void:
 	Game.debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
 	Game.debug.text.write('Air Time: ' + str(aerial_framecount))
 	Game.debug.text.newline()
-	Game.debug.text.write('Target list:')
-	for area in target_list:
-		var target = target_list[area]
-		Game.debug.text.write(target.name + ' @ ' + str(target.pos), 'blue')
+	if zl_target.empty():
+		Game.debug.text.write("ZL Target: null", 'red')
+	else:
+		Game.debug.text.write("ZL Target: " + zl_target.name, 'green')
 	Game.debug.text.newline()
 	
 	# Debug Draw
@@ -210,8 +203,24 @@ func _physics_process(t) -> void:
 	Game.debug.draw.add_vertex(translation + Vector3(velocity.x, 0, velocity.z).normalized() + Vector3.UP)
 	Game.debug.draw.end()
 
+func rotate_player(look_target_2d:Vector2) -> void: 
+	# find the amount of radians needed to face target direction
+	var angle = -Vector2(forwards().x, forwards().z).angle_to(look_target_2d)
+	
+	# Takes in a rotation amount in radians, and clamps it to the maximum allowed rotation amount
+	if shielding: angle = clamp(angle, -PI/80.0, PI/80.0)  # Slow rotation while shielding
+	else:         angle = clamp(angle, -PI/8.0,  PI/8.0)   # Fast rotation while not shielding
+	
+	# If you are not targeting, have the rotation amount be very small when moving slowly
+	if not targeting: angle *= clamp(Vector3(velocity.x, 0, velocity.z).length_squared(), 0.0, 1.0)
+	
+	# If angle is close to 0, don't bother
+	if not is_equal_approx(angle, 0.0):
+		var look_target:Vector3 = forwards().rotated(Vector3.UP, angle)
+		look_at(look_target + translation, Vector3.UP) # rotate
+
 func forwards() -> Vector3:
-	return -transform.basis.z.normalized()
+	return -transform.basis.z
 
 func find_movement_direction() -> Vector3:
 	var pushdir:Vector2 = Game.get_stick_input("left")
@@ -220,14 +229,3 @@ func find_movement_direction() -> Vector3:
 	camdir = camdir.normalized()
 	return (camdir * pushdir.y) + (camdir.rotated(Vector3.UP, PI/2) * pushdir.x)
 	
-func _target_acquired(area: Area) -> void:
-	var parent = area.get_parent()	
-	# More properties assigned and updated when managing the target list elsewhere
-	# These ones are static so I can assign them here and never again.
-	target_list[area] = {
-		"parent": parent,
-		"name": parent.name
-	}
-
-func _target_lost(area: Area) -> void:
-	target_list.erase(area)

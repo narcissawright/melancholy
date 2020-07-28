@@ -47,13 +47,15 @@ func _ready() -> void:
 	update_position(default_pos) # Move into position
 
 func update_cam_target() -> void:
+	# I may need to rewrite this to include multiple targets.
+	# I don't think I ever need to focus on more than two targets
+	# Those being the player and the ZL target.
+	# It's plausible I could include other ones though
+	
 	var player_height_offset := Vector3(0, 1.25, 0)
 	cam_target_pos = Game.player.global_transform.origin + player_height_offset + pan_pos
-
-func similar_vectors(v1:Vector3, v2:Vector3) -> bool:
-	if ((v1 - v2).length_squared()) > 0.00001:
-		return false
-	return true
+	if not Game.player.zl_target.empty():
+		pass
 
 func _physics_process(_t:float) -> void:
 	update_cam_target()
@@ -90,7 +92,7 @@ func _physics_process(_t:float) -> void:
 	
 	if resetting:
 		var goal_pos = default_pos.rotated(Vector3.UP, Game.player.rotation.y)
-		if similar_vectors(goal_pos, current_pos) or cam_reset_frame >= cam_reset_time:
+		if current_pos.is_equal_approx(goal_pos) or cam_reset_frame >= cam_reset_time:
 			resetting = false
 			cam_reset_frame = 0.0
 			update_position(current_pos)

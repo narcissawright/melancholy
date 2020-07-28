@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://player/Melanie_v2.gd" type="Script" id=1]
-[ext_resource path="res://player/Target.gd" type="Script" id=2]
+[ext_resource path="res://player/TargetSystem.gd" type="Script" id=2]
 
 [sub_resource type="CapsuleMesh" id=1]
 radius = 0.2
@@ -26,9 +26,8 @@ size = Vector3( 0.75, 1.5, 0.1 )
 [sub_resource type="SpatialMaterial" id=7]
 albedo_color = Color( 0.713726, 0.658824, 0.623529, 1 )
 
-[sub_resource type="CapsuleShape" id=8]
-radius = 7.5
-height = 7.5
+[sub_resource type="SphereShape" id=8]
+radius = 20.0
 
 [node name="Melanie" type="KinematicBody"]
 pause_mode = 1
@@ -66,10 +65,10 @@ collision_layer = 0
 collision_mask = 8
 
 [node name="CollisionShape" type="CollisionShape" parent="Area"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -7.5 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
 shape = SubResource( 8 )
 
-[node name="Target" type="Node2D" parent="."]
+[node name="TargetSystem" type="Node2D" parent="."]
 script = ExtResource( 2 )
-[connection signal="area_entered" from="Area" to="." method="_target_acquired"]
-[connection signal="area_exited" from="Area" to="." method="_target_lost"]
+[connection signal="area_entered" from="Area" to="TargetSystem" method="_target_acquired"]
+[connection signal="area_exited" from="Area" to="TargetSystem" method="_target_lost"]
