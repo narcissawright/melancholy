@@ -118,13 +118,12 @@ func _physics_process(_t:float) -> void:
 		var X:Vector3 = global_transform.origin + -current_pos * d
 		var goal_pan:Vector3 = (goal_target - X)
 		pan_pos = pan_pos.linear_interpolate(goal_pan, pan_lerp_amt)
-		if (pan_pos - goal_pan).length() < 0.0001: pan_pos = goal_pan
 		
 	# Not Multiple Targets
 	else:
 		if pan_pos != Vector3.ZERO:
 			pan_pos = pan_pos.linear_interpolate(Vector3.ZERO, pan_lerp_amt)
-			if pan_pos.length() < 0.0001: pan_pos = Vector3.ZERO
+			if pan_pos.length_squared() < 0.00001: pan_pos = Vector3.ZERO
 		
 	if Input.is_action_just_pressed('R3'):
 		match zoom_mode:

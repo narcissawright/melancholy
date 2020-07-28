@@ -29,20 +29,21 @@ func _ready() -> void:
 
 func set_target(state:bool) -> void:
 	targeting = state
-	if state == false:
+	if targeting:
+		zl_target = TargetSystem.get_most_relevant_target()
+		if zl_target == 0: Game.cam.resetting = true
+	else:
 		zl_target = 0
 
 func set_shield(state:bool) -> void:
-		shielding = state
-		shield.visible = state
-		if shielding:
-			maxspeed_framecount = 0
+	shielding = state
+	shield.visible = state
 
 func _physics_process(t) -> void:
 	framecount += 1
 		
 	# If player fell off the map, respawn
-	if translation.y < -50: 
+	if translation.y < -50:
 		translation = Vector3.ZERO
 		velocity = Vector3.ZERO
 		lock_framecount = 10
@@ -58,10 +59,7 @@ func _physics_process(t) -> void:
 	else:
 		
 		# Begin ZL Targeting:
-		if Input.is_action_just_pressed("target"):
-			# If you just began targeting, find most relevant target and assign it
-			zl_target = TargetSystem.get_most_relevant_target()
-			if zl_target == 0: Game.cam.resetting = true
+		if not targeting and Input.is_action_just_pressed("target"):
 			set_target(true)
 		
 		# Check if no longer targeting:
@@ -81,34 +79,28 @@ func _physics_process(t) -> void:
 		var direction:Vector3 = find_movement_direction()
 		var velocity_xz = Vector3(velocity.x, 0, velocity.z)
 		var speed:float = 8.0 if not shielding else 3.0
-		var interpolate_amt:float = 0.15 # per frame
+		var interpolate_amt:float = 0.15 if grounded else 0.015
 		if slippery: speed *= 0.05
 		
 		# Targeted movement
 		if targeting and not shielding:
-			maxspeed_framecount = 0
 			var diff = direction.angle_to(forwards())
 			if diff > PI * 0.5:
 				diff = PI * 0.5
 			speed -= (speed / 2.0) * (diff / (PI * 0.5))
 		
-		# Grounded movement
-		if grounded:
-			# Sprinting
-			if direction.is_normalized(): 
+		# Sprinting
+		if grounded and not shielding and not targeting:
+			if direction.is_normalized(): # If joystick fully pressed
 				if maxspeed_framecount < 180: maxspeed_framecount += 1
-				speed += 2.0 * (float(maxspeed_framecount) / 180.0)
-			else:
-				maxspeed_framecount = 0
+				speed += 2.0 * (float(maxspeed_framecount) / 180.0) # Bonus speed
+			else: maxspeed_framecount = 0
+		else: maxspeed_framecount = 0
 		
 		# Aerial movement
-		else:
-			maxspeed_framecount = 0
-			# Remove Jump if too much time has passed
-			if aerial_framecount == 4:
-				has_jump = false
+		if not grounded:
+			if aerial_framecount == 5: has_jump = false # Remove Jump if too much time has passed
 			aerial_framecount += 1
-			interpolate_amt *= 0.1 # Much smaller interpolation value for air movement
 			velocity_xz *= 0.999 # Aerial horizontal speed decay
 		
 		# Interpolate horizontal movement
@@ -139,6 +131,7 @@ func _physics_process(t) -> void:
 				slippery = true
 				grounded = false
 				has_jump = false
+				break
 	
 	# Check for ground<->air transition
 	if not slippery and grounded != is_on_floor():
@@ -153,8 +146,7 @@ func _physics_process(t) -> void:
 			pass
 	
 	# If velocity is very small, make it 0
-	if velocity.length_squared() < 0.0001:
-		velocity = Vector3.ZERO
+	if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO
 	
 	# Player Rotation:
 	# While not targeting -- look towards movement direction
@@ -203,7 +195,7 @@ func _physics_process(t) -> void:
 	Game.debug.draw.add_vertex(translation + Vector3(velocity.x, 0, velocity.z).normalized() + Vector3.UP)
 	Game.debug.draw.end()
 
-func rotate_player(look_target_2d:Vector2) -> void: 
+func rotate_player(look_target_2d:Vector2) -> void:
 	# find the amount of radians needed to face target direction
 	var angle = -Vector2(forwards().x, forwards().z).angle_to(look_target_2d)
 	
