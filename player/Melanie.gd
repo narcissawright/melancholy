@@ -18,18 +18,17 @@ var has_jump:bool = true
 var jumping:bool = false
 var targeting:bool = false
 var slippery:bool = false
-var shielding:bool = false
 
 # Timers
 var maxspeed_framecount:int = 0 # Track the # of consecutive frames the left joystick is fully pressed (for acceleration)
 var jumphold_framecount:int = 0 # Track the # of consecutive frames jump is held for (variable jump height)
 var lock_framecount:int = 0 # Amount of frames the player has no control. Used post respawn.
 var aerial_framecount:int = 0 # Amount of frames the player has been in the air.
+var shieldbash_framecount:int = 0 # The player has a certain amount of frames to initate a shield bash
 
 # Child Nodes
 onready var raycast = $RayCast
-onready var shield = $Shield
-onready var shieldcollision = $ShieldCollision
+onready var shield = $Shield  # contains shield.active, a bool saying if shield is up or not
 onready var material = $Body.get_surface_material(0)
 
 func _ready() -> void:
@@ -51,6 +50,15 @@ func set_locked(framecount:int) -> void:
 		material.set_shader_param("color_lit", body_color_lit)
 		material.set_shader_param("color_dim", body_color_dim)
 
+func set_grounded(state:bool) -> void:
+	if grounded != state:
+		# Transition to grounded:
+		if state == true:
+			jumphold_framecount = 0
+			aerial_framecount = 0
+			has_jump = true
+	grounded = state
+
 func set_target(state:bool) -> void:
 	targeting = state
 	if targeting:
@@ -59,11 +67,10 @@ func set_target(state:bool) -> void:
 	else:
 		zl_target = 0
 
-func set_shield(state:bool) -> void:
-	if shielding != state:
-		shielding = state
-		shield.visible = state
-		shieldcollision.set_state(state)
+func _process(t) -> void:
+	Game.debug.text.write('Frame: ' + str(framecount))
+	Game.debug.text.write('Frame Time: ' + str(t))
+	Game.debug.text.newline()
 
 func _physics_process(t) -> void:
 	framecount += 1
@@ -93,25 +100,22 @@ func _physics_process(t) -> void:
 			# you are no longer targeting anything
 			set_target(false)
 		
-		# Check if shielding
-		set_shield(Input.is_action_pressed("shield"))
-		
 		# Movement
 		var direction:Vector3 = find_movement_direction()
 		var velocity_xz = Vector3(velocity.x, 0, velocity.z)
-		var speed:float = 8.0 if not shielding else 3.0
+		var speed:float = 8.0 if not shield.active else 2.0
 		var interpolate_amt:float = 0.15 if grounded else 0.015
 		if slippery: speed *= 0.05
 		
 		# Targeted movement
-		if targeting and not shielding:
+		if targeting and not shield.active:
 			var diff = direction.angle_to(forwards())
 			if diff > PI * 0.5:
 				diff = PI * 0.5
 			speed -= (speed / 2.0) * (diff / (PI * 0.5))
 		
 		# Sprinting
-		if grounded and not shielding and not targeting:
+		if grounded and not shield.active and not targeting:
 			if direction.is_normalized(): # If joystick fully pressed
 				if maxspeed_framecount < 180: maxspeed_framecount += 1
 				speed += 2.0 * (float(maxspeed_framecount) / 180.0) # Bonus speed
@@ -132,7 +136,7 @@ func _physics_process(t) -> void:
 		# Jumping
 		if jumping:
 			velocity.y = 7.0 - (float(jumphold_framecount) * 0.1)
-			if shielding: velocity.y /= 2.0
+			if shield.active: velocity.y /= 2.0
 			if jumphold_framecount >= 10 or not Input.is_action_pressed("jump"):
 				jumping = false
 			else:
@@ -145,39 +149,27 @@ func _physics_process(t) -> void:
 	var impact:float = velocity.length()
 	velocity = move_and_slide(velocity, Vector3.UP)
 	impact -= velocity.length()
+	if impact > 10.0:
+		set_locked(int(impact))
+	
 	var on_wall = is_on_wall()
-	var raycast_grounded = raycast.is_colliding()
+	set_grounded(raycast.is_colliding())
 	
 	# Check for slippery surface
 	slippery = false
-	if not raycast_grounded:
+	if not grounded:
 		for i in range (get_slide_count()):
 			if get_slide_collision(i).collider.collision_layer & Layers.slippery > 0:
 				slippery = true
-				grounded = false
 				has_jump = false
 				break
-	
-	# Check for ground<->air transition
-	if not slippery and grounded != raycast_grounded:
-		grounded = raycast_grounded # Set grounded flag
-		if grounded:
-			# Landing transition
-			jumphold_framecount = 0
-			aerial_framecount = 0
-			has_jump = true
-			if impact > 10.0:
-				set_locked(int(impact))
-		else:
-			# Air transition
-			pass
 	
 	# If velocity is very small, make it 0
 	if not slippery:
 		if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO
 
-	if lock_framecount == 0:
-		# Player Rotation:
+	# Player Rotation:
+	if lock_framecount == 0: # Do not rotate while locked.
 		# While not targeting -- look towards movement direction
 		if not targeting and (grounded or slippery):
 			var look_target_2d := Vector2(velocity.x, velocity.z).normalized() # horizontal velocity as a normalized vec2
@@ -196,26 +188,22 @@ func _physics_process(t) -> void:
 		velocity = Vector3.ZERO
 		rotation = Vector3.ZERO
 		set_locked(20)
-		set_shield(false)
 		Game.cam.resetting = true
 	
 	# Debug Text
-	Game.debug.text.write('Frame: ' + str(framecount))
-	Game.debug.text.write('Frame Time: ' + str(t))
-	Game.debug.text.newline()
 	Game.debug.text.write('Position: ' + str(translation))
 	Game.debug.text.write('Velocity: ' + str(velocity))
 	Game.debug.text.write('Horizontal Velocity: ' + str(Vector3(velocity.x, 0, velocity.z).length()))
 	Game.debug.text.write('Forward Direction: ' + str(forwards()))
 	Game.debug.text.newline()
+	Game.debug.text.write('Locked: ' + str(lock_framecount), 'green' if lock_framecount > 0 else 'red')
 	Game.debug.text.write('Targeting: ' + str(targeting), 'green' if targeting else 'red')
 	Game.debug.text.write('Grounded: ' + str(grounded), 'green' if grounded else 'red')
-	Game.debug.text.write('GroundRaycast: ' + str(raycast_grounded), 'green' if raycast_grounded else 'red')
 	Game.debug.text.write('On Wall: ' + str(on_wall), 'green' if on_wall else 'red')
 	Game.debug.text.write('Has Jump: ' + str(has_jump), 'green' if has_jump else 'red')
 	Game.debug.text.write('Jumping: ' + str(jumping), 'green' if jumping else 'red')
 	Game.debug.text.write('Slippery: ' + str(slippery), 'green' if slippery else 'red')
-	Game.debug.text.write('Shielding: ' + str(shielding), 'green' if shielding else 'red')
+	Game.debug.text.write('Shielding: ' + str(shield.active), 'green' if shield.active else 'red')
 	Game.debug.text.newline()
 	Game.debug.text.write('Holding Maxspeed: ' + str(maxspeed_framecount) + '/180')
 	Game.debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
@@ -241,8 +229,8 @@ func rotate_player(look_target_2d:Vector2) -> void:
 	var angle = -Vector2(forwards().x, forwards().z).angle_to(look_target_2d)
 	
 	# Takes in a rotation amount in radians, and clamps it to the maximum allowed rotation amount
-	if shielding: angle = clamp(angle, -PI/80.0, PI/80.0)  # Slow rotation while shielding
-	else:         angle = clamp(angle, -PI/8.0,  PI/8.0)   # Fast rotation while not shielding
+	if shield.active: angle = clamp(angle, -PI/80.0, PI/80.0)  # Slow rotation while shielding
+	else:             angle = clamp(angle, -PI/8.0,  PI/8.0)   # Fast rotation while not shielding
 	
 	# If you are not targeting, have the rotation amount be very small when moving slowly
 	if not targeting: angle *= clamp(Vector3(velocity.x, 0, velocity.z).length_squared(), 0.0, 1.0)

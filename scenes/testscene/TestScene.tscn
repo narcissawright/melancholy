@@ -41,6 +41,7 @@ render_mode shadows_disabled, ambient_light_disabled;
 
 uniform vec4 color_lit : hint_color = vec4(0.5, 0.5, 0.6, 1.0);
 uniform vec4 color_dim : hint_color = vec4(0.1, 0.1, 0.12, 1.0);
+uniform bool enable_rim = false;
 
 void fragment() {
 	// Opacity Dithering...
@@ -82,7 +83,14 @@ void light() {
 	// Cel Shading
 	float NdotL = dot(LIGHT, NORMAL);
 	float lit = smoothstep(0.0, 1.0, NdotL);
-	if (lit > 0.5) {
+	
+	float rim = 1.0;
+	if (enable_rim) {
+		float NdotV = dot(VIEW, NORMAL);
+		rim = smoothstep(0.0, 1.0, NdotV);
+	}
+	
+	if (lit > 0.5 || rim < 0.2) {
 		DIFFUSE_LIGHT = color_lit.rgb;
 	} else {
 		DIFFUSE_LIGHT = color_dim.rgb;
@@ -93,6 +101,7 @@ void light() {
 shader = SubResource( 14 )
 shader_param/color_lit = Color( 0.388235, 0.780392, 0.431373, 1 )
 shader_param/color_dim = Color( 0.160784, 0.447059, 0.247059, 1 )
+shader_param/enable_rim = true
 
 [sub_resource type="CubeMesh" id=11]
 size = Vector3( 8, 0.2, 8 )
