@@ -18,7 +18,7 @@ func get_most_relevant_target() -> int:
 	if highest_rel == 0: return 0
 	elif list[highest_rel].relevance > 0.0: return highest_rel
 	else: return 0
-	
+
 func target_is_valid(target:int) -> bool:
 	if target == 0:
 		return true # Targeting nothing is valid
@@ -38,6 +38,9 @@ func _physics_process(_t):
 		var target = list[id]
 		
 		# Assign properties
+		
+		# unfortunately, the .get_aabb() being called on the parent means the
+		# parent must inherit VisualInstance.. the aabb also doesn't account for object transform (such as 90deg rotation)
 		target.pos = target.parent.global_transform.origin
 		target.aabb = target.parent.get_aabb()
 		target.aabb2d = find_aabb_2d(target.pos, target.aabb)

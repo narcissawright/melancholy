@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scenes/testscene/test_area.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://scenes/targetable.tscn" type="PackedScene" id=2]
+[ext_resource path="res://materials/actor_material.tres" type="Material" id=3]
 
 [sub_resource type="SpatialMaterial" id=1]
 params_cull_mode = 2
@@ -49,7 +50,7 @@ material/0 = null
 [node name="Target4" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.51049, 1.22583, 7.64376 )
 mesh = SubResource( 3 )
-material/0 = null
+material/0 = ExtResource( 3 )
 
 [node name="targetable" parent="Target4" instance=ExtResource( 2 )]
 

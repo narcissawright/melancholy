@@ -4,6 +4,8 @@ onready var player = preload("res://player/Melanie.tscn")
 onready var cam = preload("res://player/Camera.tscn")
 onready var debug = preload("res://debug/Debug.tscn")
 
+const GRAVITY:float = -20.0
+
 func _ready() -> void:
 	pause_mode = Node.PAUSE_MODE_PROCESS # Run this script while paused
 	

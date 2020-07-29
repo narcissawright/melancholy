@@ -144,6 +144,7 @@ d-right={
 3d_physics/layer_2="player"
 3d_physics/layer_3="slippery"
 3d_physics/layer_4="target"
+3d_physics/layer_5="actor"
 
 [rendering]
 

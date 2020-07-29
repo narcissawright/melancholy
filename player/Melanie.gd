@@ -3,6 +3,12 @@ extends KinematicBody
 var framecount:int = 0
 var velocity := Vector3.ZERO
 
+# Colors
+var body_color_lit:Color
+var body_color_dim:Color
+var locked_color_lit := Color(1.0, 0.25, 0.25)
+var locked_color_dim := Color(0.5, 0.125, 0.125)
+
 # Target
 var zl_target:int = 0
 
@@ -17,15 +23,32 @@ var shielding:bool = false
 # Timers
 var maxspeed_framecount:int = 0 # Track the # of consecutive frames the left joystick is fully pressed (for acceleration)
 var jumphold_framecount:int = 0 # Track the # of consecutive frames jump is held for (variable jump height)
-var lock_framecount:int = 10 # Amount of frames the player has no control. Used post respawn.
+var lock_framecount:int = 0 # Amount of frames the player has no control. Used post respawn.
 var aerial_framecount:int = 0 # Amount of frames the player has been in the air.
 
 # Child Nodes
 onready var raycast = $RayCast
 onready var shield = $Shield
+onready var material = $Body.get_surface_material(0)
 
 func _ready() -> void:
 	process_priority = 0 # Run this before camera
+	
+	# Save the initial color of the character
+	body_color_lit = material.get_shader_param("color_lit")
+	body_color_dim = material.get_shader_param("color_dim")
+	
+	# Set locked state
+	set_locked(20)
+
+func set_locked(framecount:int) -> void:
+	lock_framecount = framecount
+	if framecount > 0:
+		material.set_shader_param("color_lit", locked_color_lit)
+		material.set_shader_param("color_dim", locked_color_dim)
+	else:
+		material.set_shader_param("color_lit", body_color_lit)
+		material.set_shader_param("color_dim", body_color_dim)
 
 func set_target(state:bool) -> void:
 	targeting = state
@@ -42,22 +65,17 @@ func set_shield(state:bool) -> void:
 func _physics_process(t) -> void:
 	framecount += 1
 		
-	# If player fell off the map, respawn
-	if translation.y < -50:
-		translation = Vector3.ZERO
-		velocity = Vector3.ZERO
-		lock_framecount = 10
-		set_shield(false)
-		
 	# Add Gravity
-	var gravity:float = -20.0 # I will never understand why -9.8 feels super floaty when using 1.7m tall character
-	velocity.y += gravity * t
+	velocity.y += Game.GRAVITY * t
 	
 	# Prevent player movement if locked
 	if lock_framecount > 0:
 		lock_framecount -= 1
+		velocity.x = lerp(velocity.x, 0.0, 0.15)
+		velocity.z = lerp(velocity.z, 0.0, 0.15)
+		if lock_framecount == 0:
+			set_locked(0)
 	else:
-		
 		# Begin ZL Targeting:
 		if not targeting and Input.is_action_just_pressed("target"):
 			set_target(true)
@@ -121,13 +139,17 @@ func _physics_process(t) -> void:
 			jumping = true
 	
 	# Apply physics
+	var impact:float = velocity.length()
 	velocity = move_and_slide(velocity, Vector3.UP)
+	impact -= velocity.length()
+	var on_wall = is_on_wall()
+	var raycast_grounded = raycast.is_colliding()
 	
 	# Check for slippery surface
 	slippery = false
-	if not raycast.is_colliding():
+	if not raycast_grounded:
 		for i in range (get_slide_count()):
-			if get_slide_collision(i).collider.collision_layer == Layers.slippery:
+			if get_slide_collision(i).collider.collision_layer & Layers.slippery > 0:
 				slippery = true
 				grounded = false
 				has_jump = false
@@ -135,31 +157,44 @@ func _physics_process(t) -> void:
 	
 	# Check for ground<->air transition
 	if not slippery and grounded != is_on_floor():
-		grounded = raycast.is_colliding() or is_on_floor() # Set grounded flag
+		grounded = raycast_grounded or is_on_floor() # Set grounded flag
 		if grounded:
 			# Landing transition
 			jumphold_framecount = 0
 			aerial_framecount = 0
 			has_jump = true
+			if impact > 10.0:
+				set_locked(int(impact))
 		else:
 			# Air transition
 			pass
 	
 	# If velocity is very small, make it 0
-	if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO
-	
-	# Player Rotation:
-	# While not targeting -- look towards movement direction
-	if not targeting and (grounded or slippery):
-		var look_target_2d := Vector2(velocity.x, velocity.z).normalized() # horizontal velocity as a normalized vec2
-		if not look_target_2d.is_equal_approx(Vector2.ZERO): # If the horizontal velocity is zero, don't rotate
+	if not slippery:
+		if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO
+
+	if lock_framecount == 0:
+		# Player Rotation:
+		# While not targeting -- look towards movement direction
+		if not targeting and (grounded or slippery):
+			var look_target_2d := Vector2(velocity.x, velocity.z).normalized() # horizontal velocity as a normalized vec2
+			if not look_target_2d.is_equal_approx(Vector2.ZERO): # If the horizontal velocity is zero, don't rotate
+				rotate_player(look_target_2d)
+		# While targeting -- look towards target
+		elif targeting and (grounded or slippery) and zl_target != 0:
+			var look_target_2d := Vector2(translation.x, translation.z)
+			look_target_2d -= Vector2(TargetSystem.list[zl_target].pos.x, TargetSystem.list[zl_target].pos.z)
+			look_target_2d = -look_target_2d.normalized()
 			rotate_player(look_target_2d)
-	# While targeting -- look towards target
-	elif targeting and (grounded or slippery) and zl_target != 0:
-		var look_target_2d := Vector2(translation.x, translation.z)
-		look_target_2d -= Vector2(TargetSystem.list[zl_target].pos.x, TargetSystem.list[zl_target].pos.z)
-		look_target_2d = -look_target_2d.normalized()
-		rotate_player(look_target_2d)
+	
+	# If player fell off the map, respawn
+	if translation.y < -50:
+		translation = Vector3.ZERO
+		velocity = Vector3.ZERO
+		rotation = Vector3.ZERO
+		set_locked(20)
+		set_shield(false)
+		Game.cam.resetting = true
 	
 	# Debug Text
 	Game.debug.text.write('Frame: ' + str(framecount))
@@ -172,6 +207,8 @@ func _physics_process(t) -> void:
 	Game.debug.text.newline()
 	Game.debug.text.write('Targeting: ' + str(targeting), 'green' if targeting else 'red')
 	Game.debug.text.write('Grounded: ' + str(grounded), 'green' if grounded else 'red')
+	Game.debug.text.write('GroundRaycast: ' + str(raycast_grounded), 'green' if raycast_grounded else 'red')
+	Game.debug.text.write('On Wall: ' + str(on_wall), 'green' if on_wall else 'red')
 	Game.debug.text.write('Has Jump: ' + str(has_jump), 'green' if has_jump else 'red')
 	Game.debug.text.write('Jumping: ' + str(jumping), 'green' if jumping else 'red')
 	Game.debug.text.write('Slippery: ' + str(slippery), 'green' if slippery else 'red')
@@ -180,6 +217,7 @@ func _physics_process(t) -> void:
 	Game.debug.text.write('Holding Maxspeed: ' + str(maxspeed_framecount) + '/180')
 	Game.debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
 	Game.debug.text.write('Air Time: ' + str(aerial_framecount))
+	Game.debug.text.write("Impact: " + str(impact))
 	Game.debug.text.newline()
 	if zl_target == 0:
 		Game.debug.text.write("ZL Target: ", 'red')
