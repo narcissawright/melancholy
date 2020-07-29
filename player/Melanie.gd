@@ -29,6 +29,7 @@ var aerial_framecount:int = 0 # Amount of frames the player has been in the air.
 # Child Nodes
 onready var raycast = $RayCast
 onready var shield = $Shield
+onready var shieldcollision = $ShieldCollision
 onready var material = $Body.get_surface_material(0)
 
 func _ready() -> void:
@@ -59,12 +60,14 @@ func set_target(state:bool) -> void:
 		zl_target = 0
 
 func set_shield(state:bool) -> void:
-	shielding = state
-	shield.visible = state
+	if shielding != state:
+		shielding = state
+		shield.visible = state
+		shieldcollision.set_state(state)
 
 func _physics_process(t) -> void:
 	framecount += 1
-		
+	
 	# Add Gravity
 	velocity.y += Game.GRAVITY * t
 	
@@ -156,8 +159,8 @@ func _physics_process(t) -> void:
 				break
 	
 	# Check for ground<->air transition
-	if not slippery and grounded != is_on_floor():
-		grounded = raycast_grounded or is_on_floor() # Set grounded flag
+	if not slippery and grounded != raycast_grounded:
+		grounded = raycast_grounded # Set grounded flag
 		if grounded:
 			# Landing transition
 			jumphold_framecount = 0
