@@ -1,4 +1,4 @@
-# Melancholy
+# Melancholy (not final title)
 3D game project (Godot Engine)
 
 ## Two Characters
@@ -39,13 +39,16 @@ Kind of like Castlevania N64. Aiming for ~10 main stages per character. Some ful
 1. Lightning - Attacks all enemies nearby. If no enemies nearby, attacks you instead.
 2. Beam - big laser projectile, aimable in any direction. Some kind of teleport mechanic to travel along the beam.
 3. Airwalker - stand in mid air as if it is solid ground. Each step costs mana. Can jump from the air.
-4. Tree - summon a tree from the earth. Massive damage and knockback. Can be cut down via lightning.
+4. Tree - summon a tree from the earth. Massive damage and knockback. Can be cut down via lightning. May spawn health apples.
 - Repeatedly jumping can gain more speed. Sort of like traveling on a sine-wave, she can re-jump close to the ground w/o touching it directly and curve back upwards. Has a unique mechanic that allows her to airjump when tapping Jump at ledgegrab height.
 - Maybe the same landing mechanics as Melanie but with the ability to curb your fall dmg with a landing "jump"
 - Ledgegrab same as Melanie
 - Crawl same as Melanie. Use belly slide attack instead of slide kick. No divekick from air, rather fall straight down very rapidly?
 - First person view same as Melanie.
 - Same damaged states, swimming states, interacting states, respawning state.
+
+## Targeting system:
+- basically like Zelda, hold ZL to target stuff. Aligns with wall, resets camera, etc.
 
 ## First Area: Field of Falling Stars
 - Sort of a Menu World / playground. Has all the geometry needed for testing mechanics.
@@ -75,6 +78,7 @@ Kind of like Castlevania N64. Aiming for ~10 main stages per character. Some ful
 - Keys
 - Time Change
 - Maybe status cure if that exists
+- Health
 
 ## "Score" / XP / RNG system
 - Gimmick! (NES) had a score system that accounted for all drops. I want to use a system like this to avoid RNG.
