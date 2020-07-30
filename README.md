@@ -1,15 +1,16 @@
 # Melancholy (not final title)
+
 3D game project (Godot Engine)
+Kind of like Castlevania N64 with some Zelda-ish mechanics (Z-Targeting) sprinkled in?
 
 ## Two Characters
 - Melanie
 - Melancholy
 
-Kind of like Castlevania N64 with some Zelda-ish mechanics (Z-Targeting) sprinkled in?
 
-### `Note: graphics and visual design are currently taking a backseat to working on core mechanics w/ placeholder art.`
+## Melanie - Sword & Shield - in-progress
 
-## Melanie - Sword & Shield  `in-progress`
+#### `Note: graphics and visual design are currently taking a backseat to working on core mechanics w/ placeholder art.`
 
 #### `Completed:`
 - Naturally sprints when holding joystick fully (3s to build to full speed, subtle increase).
@@ -21,6 +22,7 @@ Kind of like Castlevania N64 with some Zelda-ish mechanics (Z-Targeting) sprinkl
 - Impact landing. Landing from a height will result damage or being unable to move for a time.
 
 #### `To Do`
+- Proper movement & physics on slopes.
 - Sword (Primary Attack). Sword draw, sword slash, heavy sword slash, air slash, put away.
 - Subweapons. All require the same ammo type (jewels or whatever)
 1. Bombs: Bomb Pull (happens quickly), Bomb Throw (also fast). Throw distance may vary if you are targeting or moving. Big-ish hitbox.
@@ -35,13 +37,11 @@ Kind of like Castlevania N64 with some Zelda-ish mechanics (Z-Targeting) sprinkl
 - Drowning.
 - Interacting. Opening door. Item pickup (on floor or in front as two diff animations?)
 - Respawn animation.
+- Power up system.
 
 #### `Maybe`
 - Sword clank mechanic.
 - Secondary Attack. (Does Melanie need this? Melancholy does...)
-- Swimming. 
-- Ladder climb
-- Stairs
 
 
 ## Melancholy - Magic & Sorcery
@@ -63,14 +63,19 @@ Kind of like Castlevania N64 with some Zelda-ish mechanics (Z-Targeting) sprinkl
 - First person view same as Melanie.
 - Same damaged states, swimming states, interacting states, respawning state.
 
+
 ## Camera & Targeting system:
+
 #### `Completed:`
+
 - Right stick for free movement.
 - R3 to change zoom level.
 - Hold ZL to target stuff. While targeting, the player faces the target. The camera pans to show both yourself and the target. Sprinting is not possible while targeting, and all directions of movement other than forward become slower.
 - When there is nothing to target, pressing ZL will move the camera to the default position. If you're hugging the wall during this, your character becomes aligned with the wall normal. 
 - Press + to pause the game, D-Pad then allows for free camera panning. 
+
 #### `To do:`
+
 - Target swapping: Release and repress to change target.
 - Better features when paused (better control over zoom, less glitchy behavior while panning through walls etc.)
 - Autocamera... I envision this as a togglable option.
@@ -78,6 +83,39 @@ Kind of like Castlevania N64 with some Zelda-ish mechanics (Z-Targeting) sprinkl
 2. It look down from a higher angle when approaching ledges.
 3. Better avoidance of walls (avoid abruptly crashing into them.
 4. Perhaps incorporate a custom zoom amount when targeting things that end up on the screen edge.
+
+
+## Other Mechanics and Features:
+
+#### `To Do`
+
+##### Power Ups
+- Five Levels of Primary weapon power. Obtaining a powerup item will level you up.
+- Color scheme should be dull red -> yellow -> green -> cyan -> piercing blue
+- Lose 1 stage of power upon death.
+- Melancholy will lose 1 stage of power upon Magic Meter being fully used. (Will refill immediately if not at powerup lvl 1)
+
+##### Time of day system
+- Melanie is strongest at noon, Melancholy strongest at midnight.
+- Certain events or enemies may only exist at certain times.
+- Item or method to change time of day rapidly. (Sun Card / Moon Card)
+
+##### "Score / XP / RNG" system.
+- Gimmick! (NES) had a score system that accounted for all drops. I want to use a system like this to avoid RNG. Essentially it is a predictable generator of numbers that are used for all "random" events. A good player could utilize this to their advantage. It must be visible or "readable" somehow while playing so you can re-sync yourself if you end up with the wrong value.
+
+##### Items
+- Healing items... and other stuff.
+
+#### `Maybe?`
+- Swimming. 
+- Ladder climb
+- Stairs
+- Shop
+- Keys
+- Status (Poisoned etc)
+- Double Jump
+- Wall Jump
+
 
 ## First Area: Field of Falling Stars
 - Sort of a Menu World / playground. Has all the geometry needed for testing mechanics.
@@ -95,29 +133,6 @@ Kind of like Castlevania N64 with some Zelda-ish mechanics (Z-Targeting) sprinkl
 - Try to keep a bit of "arcade scenario" -- gameplay design focused levels, but not too arcadey. Ideally each stage is minutes (3-15) long if you know what you're doing.
 - Checkpoints exist.
 - One stage should have slippery ice in it. lol.
-
-## Power Ups
-- Five Levels of Primary weapon power. Obtaining a powerup item will level you up.
-- Color scheme should be dull red -> yellow -> green -> cyan -> piercing blue
-- Lose 1 stage of power upon death.
-- Melancholy will lose 1 stage of power upon Magic Meter being fully used. (Will refill immediately if not at powerup lvl 1)
-
-## Shop
-- Should this exist?
-- Power Ups
-- Subweapons
-- Keys
-- Time Change
-- Maybe status cure if that exists
-- Health
-
-## "Score" / XP / RNG system
-- Gimmick! (NES) had a score system that accounted for all drops. I want to use a system like this to avoid RNG.
-Only issue is if it is hidden, then it becomes very difficult to "resync" yourself. so it would have to be shown somehow...
-
-## Time of Day
-- Melanie is strongest at noon, Melancholy strongest at midnight.
-- Different events may happen depending on the time of day.
 
 ## Story Stuff
 - Melanie becomes Melancholy at end of full game. A trascendent moment. A pensive sadness, and a new purpose.
