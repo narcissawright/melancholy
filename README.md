@@ -23,7 +23,7 @@
 - Impact landing. Landing from a height will result damage or being unable to move for a time.
 
 #### `To Do`
-- Proper movement & physics on slopes.
+- Proper movement & physics on slopes and small ledges
 - Sword (Primary Attack). Sword draw, sword slash, heavy sword slash, air slash, put away.
 - Subweapons. All require the same ammo type (jewels or whatever)
 1. Bombs: Bomb Pull (happens quickly), Bomb Throw (also fast). Throw distance may vary if you are targeting or moving. Big-ish hitbox.
@@ -68,7 +68,6 @@
 ## Camera & Targeting system:
 
 #### `Completed:`
-
 - Right stick for free movement.
 - R3 to change zoom level.
 - Hold ZL to target stuff. While targeting, the player faces the target. The camera pans to show both yourself and the target. Sprinting is not possible while targeting, and all directions of movement other than forward become slower.
@@ -76,7 +75,6 @@
 - Press + to pause the game, D-Pad then allows for free camera panning. 
 
 #### `To do:`
-
 - Target swapping: Release and repress to change target.
 - Better features when paused (better control over zoom, less glitchy behavior while panning through walls etc.)
 - Autocamera... I envision this as a togglable option.
@@ -90,7 +88,7 @@
 
 #### `To Do`
 
-**Power Ups**
+##### Power Ups
 - Five Levels of Primary weapon power. Obtaining a powerup item will level you up.
 - Color scheme should be dull red -> yellow -> green -> cyan -> piercing blue
 - Lose 1 stage of power upon death.
@@ -105,10 +103,14 @@
 - Gimmick! (NES) had a score system that accounted for all drops. I want to use a system like this to avoid RNG. Essentially it is a predictable generator of numbers that are used for all "random" events. A good player could utilize this to their advantage. It must be visible or "readable" somehow while playing so you can re-sync yourself if you end up with the wrong value.
 
 ##### Items
-- Healing items... and other stuff.
+- Healing items. Green apples, other stuff.
+
+#### `Would like to add`
+
+- Dynamic grass, grass trampling, desire paths saved to a file on hard drive.
 
 #### `Maybe?`
-- Swimming. 
+- Swimming
 - Ladder climb
 - Stairs
 - Shop
