@@ -7,10 +7,10 @@
 
 Kind of like Castlevania N64. Aiming for ~10 main stages per character. Some fully unique, some shared, some altered.
 
-## Melanie - Sword & Shield
+## Melanie - Sword & Shield `in progress`
 
-- Naturally Sprints when holding joystick fully (3s to build to full speed, subtle). 8-10 speed.
-- Has a big shield. Shield put-away takes time. flicking the button results in shield bash.
+- `done`  Naturally sprints when holding joystick fully (3s to build to full speed, subtle). 8-10 speed.
+- `mostly done`  Has a big shield. Moves slower with shield up. Bounces projectiles off. Quickly releasing and re-pressing results in a shield bash.
 - Primary Attack - Sword (this could end up complex, maybe just 2 of these for now, and an air version)
 - Secondary Attack (maybe I don't need this but I might have this too), can be used in air
 - Subweapons. All require the same ammo type (jewels or whatever)
@@ -18,8 +18,8 @@ Kind of like Castlevania N64. Aiming for ~10 main stages per character. Some ful
 2. HolyWater ripoff item: Big damage for innermost (smallest) hitbox. 
 3. Bow & Arrow: Manual aiming (1st person?), targeted aiming (3rd person)
 4. Unknown 4th subweapon. TBD
-- Jumping. Variable Jump Height. Leniency when falling off a ledge.
-- Landing. Fall dmg. Impact landing etc.
+- `done`  Jumping. Variable Jump Height. Leniency when falling off a ledge.
+- `mostly done`  Landing. Fall dmg. Impact landing etc.
 - Ledgegrab. Ledgecrawl (left or right), Ledgeclimb. Ledge release.
 - Crawl (crouch while not moving). Slide attack (crouch while running). Divekick (crouch while in air)
 - First person view
@@ -28,7 +28,7 @@ Kind of like Castlevania N64. Aiming for ~10 main stages per character. Some ful
 - Interacting. Opening door. Pickup item (on ground, or in front)
 - Respawning.
 
-## Melancholy - Magic & Sorcery
+## Melancholy - Magic & Sorcery `not started`
 
 - Only has 1/4th the Max HP that Melanie has. Uses a magic meter instead of jewels.
 - Immediately at 9 speed while holding joystick fully. Glides across the ground instead of runs.
@@ -47,8 +47,21 @@ Kind of like Castlevania N64. Aiming for ~10 main stages per character. Some ful
 - First person view same as Melanie.
 - Same damaged states, swimming states, interacting states, respawning state.
 
-## Targeting system:
-- basically like Zelda, hold ZL to target stuff. Aligns with wall, resets camera, etc.
+## Camera & Targeting system:
+##### Completed:
+- Right stick for free movement.
+- R3 to change zoom level.
+- Hold ZL to target stuff. While targeting, the player faces the target. The camera pans to show both yourself and the target. Sprinting is not possible while targeting, and all directions of movement other than forward become slower.
+- When there is nothing to target, the camera moves to default position. If you're hugging the wall during this, your character becomes aligned with the wall normal. 
+- Press + to pause the game, D-Pad then allows for free camera panning. 
+##### To do:
+- Target swapping: Release and repress to change target.
+- Better features when paused (better control over zoom, less glitchy behavior while panning through walls etc.)
+- Autocamera... I envision this as a togglable option.
+1. It should naturally look in the same direction that you're going. 
+2. It look down from a higher angle when approaching ledges.
+3. Better avoidance of walls (avoid abruptly crashing into them.
+4. Perhaps incorporate a custom zoom amount when targeting things that end up on the screen edge.
 
 ## First Area: Field of Falling Stars
 - Sort of a Menu World / playground. Has all the geometry needed for testing mechanics.

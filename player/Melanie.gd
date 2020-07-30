@@ -85,9 +85,9 @@ func set_target(state:bool) -> void:
 		zl_target = 0
 
 func _process(t) -> void:
-	Game.debug.text.write('Frame: ' + str(framecount))
-	Game.debug.text.write('Frame Time: ' + str(t))
-	Game.debug.text.newline()
+	Debug.text.write('Frame: ' + str(framecount))
+	Debug.text.write('Frame Time: ' + str(t))
+	Debug.text.newline()
 
 func _physics_process(t) -> void:
 	framecount += 1
@@ -206,41 +206,41 @@ func _physics_process(t) -> void:
 		Game.cam.resetting = true
 	
 	# Debug Text
-#	Game.debug.text.write('Position: ' + str(translation))
-#	Game.debug.text.write('Velocity: ' + str(velocity))
-	Game.debug.text.write('Vertical Velocity: ' + str(velocity.y))
-	Game.debug.text.write('Horizontal Velocity: ' + str(Vector3(velocity.x, 0, velocity.z).length()))
-#	Game.debug.text.write('Forward Direction: ' + str(forwards()))
-	Game.debug.text.newline()
-	Game.debug.text.write('Locked: ' + str(lock_framecount), 'green' if lock_framecount > 0 else 'red')
-	Game.debug.text.write('Targeting: ' + str(targeting), 'green' if targeting else 'red')
-	Game.debug.text.write('Grounded: ' + str(grounded), 'green' if grounded else 'red')
-#	Game.debug.text.write('On Wall: ' + str(on_wall), 'green' if on_wall else 'red')
-	Game.debug.text.write('Has Jump: ' + str(has_jump), 'green' if has_jump else 'red')
-	Game.debug.text.write('Jumping: ' + str(jumping), 'green' if jumping else 'red')
-	Game.debug.text.write('Slippery: ' + str(slippery), 'green' if slippery else 'red')
-	Game.debug.text.newline()
-	Game.debug.text.write('Shielding: ' + str(shield.active), 'green' if shield.active else 'red')
-	Game.debug.text.write('Bashing: ' + str(shield.bash_str), 'green' if shield.bash_str > 0.0 else 'red')
-	Game.debug.text.newline()
-	Game.debug.text.write('Sprinting: ' + str(maxspeed_framecount) + '/180')
-#	Game.debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
-	Game.debug.text.write('Air Time: ' + str(aerial_framecount))
-#	Game.debug.text.write("Impact: " + str(impact))
-	Game.debug.text.newline()
+#	Debug.text.write('Position: ' + str(translation))
+#	Debug.text.write('Velocity: ' + str(velocity))
+	Debug.text.write('Vertical Velocity: ' + str(velocity.y))
+	Debug.text.write('Horizontal Velocity: ' + str(Vector3(velocity.x, 0, velocity.z).length()))
+#	Debug.text.write('Forward Direction: ' + str(forwards()))
+	Debug.text.newline()
+	Debug.text.write('Locked: ' + str(lock_framecount), 'green' if lock_framecount > 0 else 'red')
+	Debug.text.write('Targeting: ' + str(targeting), 'green' if targeting else 'red')
+	Debug.text.write('Grounded: ' + str(grounded), 'green' if grounded else 'red')
+#	Debug.text.write('On Wall: ' + str(on_wall), 'green' if on_wall else 'red')
+	Debug.text.write('Has Jump: ' + str(has_jump), 'green' if has_jump else 'red')
+	Debug.text.write('Jumping: ' + str(jumping), 'green' if jumping else 'red')
+	Debug.text.write('Slippery: ' + str(slippery), 'green' if slippery else 'red')
+	Debug.text.newline()
+	Debug.text.write('Shielding: ' + str(shield.active), 'green' if shield.active else 'red')
+	Debug.text.write('Bashing: ' + str(shield.bash_str), 'green' if shield.bash_str > 0.0 else 'red')
+	Debug.text.newline()
+	Debug.text.write('Sprinting: ' + str(maxspeed_framecount) + '/180')
+#	Debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
+	Debug.text.write('Air Time: ' + str(aerial_framecount))
+#	Debug.text.write("Impact: " + str(impact))
+	Debug.text.newline()
 	if zl_target == 0:
-		Game.debug.text.write("ZL Target: ", 'red')
+		Debug.text.write("ZL Target: ", 'red')
 	else:
-		Game.debug.text.write("ZL Target: " + TargetSystem.list[zl_target].name, 'green')
-	Game.debug.text.newline()
+		Debug.text.write("ZL Target: " + TargetSystem.list[zl_target].name, 'green')
+	Debug.text.newline()
 	
 	# Debug Draw
-	Game.debug.draw.begin(Mesh.PRIMITIVE_LINES)
-	Game.debug.draw.add_vertex(Game.player.position)
-	Game.debug.draw.add_vertex(Game.player.position + forwards())
-	Game.debug.draw.add_vertex(Game.player.position)
-	Game.debug.draw.add_vertex(Game.player.position + Vector3(velocity.x, 0, velocity.z).normalized())
-	Game.debug.draw.end()
+	Debug.draw.begin(Mesh.PRIMITIVE_LINES)
+	Debug.draw.add_vertex(Game.player.position)
+	Debug.draw.add_vertex(Game.player.position + forwards())
+	Debug.draw.add_vertex(Game.player.position)
+	Debug.draw.add_vertex(Game.player.position + Vector3(velocity.x, 0, velocity.z).normalized())
+	Debug.draw.end()
 
 func forwards() -> Vector3:
 	return -transform.basis.z

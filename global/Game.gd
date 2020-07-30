@@ -2,9 +2,11 @@ extends Node
 
 onready var player = preload("res://player/Melanie.tscn")
 onready var cam = preload("res://player/Camera.tscn")
-onready var debug = preload("res://debug/Debug.tscn")
 
 const GRAVITY:float = -20.0
+
+func _init() -> void:
+	OS.window_position = Vector2(172, 160) # so it shows up on my monitor in a comfy spot
 
 func _ready() -> void:
 	pause_mode = Node.PAUSE_MODE_PROCESS # Run this script while paused
@@ -12,10 +14,8 @@ func _ready() -> void:
 	# Instance and add nodes.
 	player = player.instance()
 	cam = cam.instance()
-	debug = debug.instance()
 	add_child(player)
 	add_child(cam)
-	add_child(debug)
 
 func _input(event: InputEvent) -> void:
 	if event.is_action("ui_cancel"):

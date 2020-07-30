@@ -106,11 +106,11 @@ func _physics_process(_t):
 			else:
 				highest_rel = id
 	
-	Game.debug.text.write('Target list:')
+	Debug.text.write('Target list:')
 	for id in list:
 		var target = list[id]
-		Game.debug.text.write('[id:' + str(id) + '] ' + target.name + ' | Rel: ' + str(target.relevance), 'red' if target.relevance <= 0 else 'blue')
-	Game.debug.text.newline()
+		Debug.text.write('[id:' + str(id) + '] ' + target.name + ' | Rel: ' + str(target.relevance), 'red' if target.relevance <= 0 else 'blue')
+	Debug.text.newline()
 	
 	update()
 

@@ -25,6 +25,7 @@ config/icon="res://img/icon.png"
 Game="*res://global/Game.gd"
 Layers="*res://global/Layers.gd"
 TargetSystem="*res://global/TargetSystem.gd"
+Debug="*res://debug/Debug.tscn"
 
 [display]
 

@@ -162,13 +162,13 @@ func _physics_process(_t:float) -> void:
 		update_position(current_pos)
 	
 	# Write debug info
-	Game.debug.text.write("Cam Position: " + str(self.global_transform.origin))
-	Game.debug.text.write("Cam Relative Y-Pos: " + str(current_pos.y))
-	Game.debug.text.write("Cam Zoom: " + str(zoom_amt) + " (" + zoom_mode + ")")
-	Game.debug.text.write("Cam Pan: " + str(pan_pos + pause_pan))
-	Game.debug.text.write("Cam Resetting: " + str(resetting), 'green' if resetting else 'red')
-	Game.debug.text.write("Multiple Cam Targets: " + str(multiple_targets), 'green' if multiple_targets else 'red')
-	Game.debug.text.newline()
+	Debug.text.write("Cam Position: " + str(self.global_transform.origin))
+	Debug.text.write("Cam Relative Y-Pos: " + str(current_pos.y))
+	Debug.text.write("Cam Zoom: " + str(zoom_amt) + " (" + zoom_mode + ")")
+	Debug.text.write("Cam Pan: " + str(pan_pos + pause_pan))
+	Debug.text.write("Cam Resetting: " + str(resetting), 'green' if resetting else 'red')
+	Debug.text.write("Multiple Cam Targets: " + str(multiple_targets), 'green' if multiple_targets else 'red')
+	Debug.text.newline()
 
 func update_position(new_pos:Vector3) -> void:
 	var cam_target = Game.player.position + pan_pos + pause_pan
