@@ -1,16 +1,17 @@
 # Melancholy (not final title)
 
-3D game project (Godot Engine)
-Kind of like Castlevania N64 with some Zelda-ish mechanics (Z-Targeting) sprinkled in?
+- 3D game project (Godot Engine)
+- Kind of like Castlevania N64 (structured levels) with some Zelda-ish mechanics (Z-Targeting) sprinkled in?
+
 
 ## Two Characters
-- Melanie
-- Melancholy
+
+- Melanie (sword & shield)
+- Melancholy (magic & sorcery)
 
 
 ## Melanie - Sword & Shield - in-progress
-
-#### `Note: graphics and visual design are currently taking a backseat to working on core mechanics w/ placeholder art.`
+- Graphics and visual design are currently taking a backseat to working on core mechanics w/ placeholder art.
 
 #### `Completed:`
 - Naturally sprints when holding joystick fully (3s to build to full speed, subtle increase).
