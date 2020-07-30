@@ -7,7 +7,7 @@
 
 Kind of like Castlevania N64. Aiming for ~10 main stages per character. Some fully unique, some shared, some altered.
 
-## Melanie - Sword & Shield `in progress`
+## `in progress` Melanie - Sword & Shield
 
 - `done`  Naturally sprints when holding joystick fully (3s to build to full speed, subtle). 8-10 speed.
 - `mostly done`  Has a big shield. Moves slower with shield up. Bounces projectiles off. Quickly releasing and re-pressing results in a shield bash.
@@ -28,7 +28,7 @@ Kind of like Castlevania N64. Aiming for ~10 main stages per character. Some ful
 - Interacting. Opening door. Pickup item (on ground, or in front)
 - Respawning.
 
-## Melancholy - Magic & Sorcery `not started`
+## Melancholy - Magic & Sorcery
 
 - Only has 1/4th the Max HP that Melanie has. Uses a magic meter instead of jewels.
 - Immediately at 9 speed while holding joystick fully. Glides across the ground instead of runs.
@@ -48,13 +48,13 @@ Kind of like Castlevania N64. Aiming for ~10 main stages per character. Some ful
 - Same damaged states, swimming states, interacting states, respawning state.
 
 ## Camera & Targeting system:
-##### Completed:
+####`Completed:`
 - Right stick for free movement.
 - R3 to change zoom level.
 - Hold ZL to target stuff. While targeting, the player faces the target. The camera pans to show both yourself and the target. Sprinting is not possible while targeting, and all directions of movement other than forward become slower.
-- When there is nothing to target, the camera moves to default position. If you're hugging the wall during this, your character becomes aligned with the wall normal. 
+- When there is nothing to target, pressing ZL will move the camera to the default position. If you're hugging the wall during this, your character becomes aligned with the wall normal. 
 - Press + to pause the game, D-Pad then allows for free camera panning. 
-##### To do:
+####`To do:`
 - Target swapping: Release and repress to change target.
 - Better features when paused (better control over zoom, less glitchy behavior while panning through walls etc.)
 - Autocamera... I envision this as a togglable option.
