@@ -1,0 +1,80 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://scenes/projectile.gd" type="Script" id=1]
+
+[sub_resource type="SphereMesh" id=1]
+radius = 0.1
+height = 0.2
+
+[sub_resource type="Shader" id=2]
+code = "shader_type spatial;
+render_mode shadows_disabled, ambient_light_disabled;
+
+uniform vec4 color_lit : hint_color = vec4(0.5, 0.5, 0.6, 1.0);
+uniform vec4 color_dim : hint_color = vec4(0.1, 0.1, 0.12, 1.0);
+uniform bool enable_rim = false;
+
+void fragment() {
+	// Opacity Dithering...
+	int x = int(FRAGCOORD.x / 2.0) % 4;
+	int y = int(FRAGCOORD.y / 2.0) % 4;
+	int index = x + y * 4;
+	float limit = 0.0;
+	
+	// Dither pattern
+	switch (index) {
+		case 0:  limit = 0.0625; break;
+		case 1:  limit = 0.5625; break;
+		case 2:  limit = 0.1875; break;
+		case 3:  limit = 0.6875; break;
+		case 4:  limit = 0.8125; break;
+		case 5:  limit = 0.3125; break;
+		case 6:  limit = 0.9375; break;
+		case 7:  limit = 0.4375; break;
+		case 8:  limit = 0.25;   break;
+		case 9:  limit = 0.75;   break;
+		case 10: limit = 0.125;  break;
+		case 11: limit = 0.625;  break;
+		case 12: limit = 1.0;    break;
+		case 13: limit = 0.5;    break;
+		case 14: limit = 0.875;  break;
+		case 15: limit = 0.375;  break;
+	}
+	
+	// Depth Test
+	float depth = FRAGCOORD.z;
+	vec3 ndc = vec3(SCREEN_UV, depth) * 2.0 - 1.0;
+	vec4 view = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
+	view.xyz /= view.w;
+	float linear_depth = -view.z;
+	if (linear_depth < limit) { discard; }
+}
+
+void light() {
+	// Cel Shading
+	float NdotL = dot(LIGHT, NORMAL);
+	float lit = smoothstep(0.0, 1.0, NdotL);
+	
+	float rim = 1.0;
+	if (enable_rim) {
+		float NdotV = dot(VIEW, NORMAL);
+		rim = smoothstep(0.0, 1.0, NdotV);
+	}
+	
+	if (lit > 0.5 || rim < 0.2) {
+		DIFFUSE_LIGHT = color_lit.rgb;
+	} else {
+		DIFFUSE_LIGHT = color_dim.rgb;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = SubResource( 2 )
+shader_param/color_lit = Color( 0.580392, 0.901961, 0.85098, 1 )
+shader_param/color_dim = Color( 0.2, 0.545098, 0.588235, 1 )
+shader_param/enable_rim = true
+
+[node name="Projectile" type="MeshInstance"]
+mesh = SubResource( 1 )
+material/0 = SubResource( 3 )
+script = ExtResource( 1 )

@@ -6,7 +6,7 @@ onready var anim = $AnimationPlayer
 var active = false
 var shieldbash_timer:int = 0
 
-func _physics_process(t:float) -> void:
+func _physics_process(_t:float) -> void:
 	if shieldbash_timer > 0:
 		shieldbash_timer -= 1
 	

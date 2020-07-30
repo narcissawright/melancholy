@@ -12,13 +12,12 @@ To Do:
 """
 
 # Collision
-var shape := PhysicsShapeQueryParameters.new()
-var cam_collider := SphereShape.new()
+var query := PhysicsShapeQueryParameters.new()
+var shape := SphereShape.new()
 
 # Position
 var default_pos := Vector3(0, 0.316228, 0.948683) # default camera position, normalized
 var current_pos:Vector3 # current camera position, normalized
-var player_pos:Vector3 # player position (includes artificial height), world space
 
 # Zoom
 var zoom_mode:String = 'medium'
@@ -52,20 +51,16 @@ func _ready() -> void:
 	process_priority = 1
 	
 	# Set up collision
-	shape.collide_with_areas = false
-	shape.collision_mask = Layers.solid
-	cam_collider.radius = 0.2
-	shape.set_shape(cam_collider)
+	query.collide_with_areas = false
+	query.collision_mask = Layers.solid
+	shape.radius = 0.2
+	query.set_shape(shape)
 	
 	# initialize the camera position
 	update_cam_targets()
 	update_position(default_pos) # Move into position
 
 func update_cam_targets() -> void:
-	# Player Position
-	var player_height_offset := Vector3(0, 1.25, 0)
-	player_pos = Game.player.translation + player_height_offset
-	
 	# ZL Target Position
 	if Game.player.zl_target == 0:
 		multiple_targets = false
@@ -102,14 +97,14 @@ func _physics_process(_t:float) -> void:
 	
 	# If ZL Targeting an object:
 	if multiple_targets:
-		var player_amt:float = screen_edge_detector(player_pos)
+		var player_amt:float = screen_edge_detector(Game.player.position)
 		var target_amt:float = screen_edge_detector(zl_target_pos)
 		
 		player_amt = min(player_amt, 1.0)
 		target_amt = min(target_amt, 1.0)
 		
 		var interpolate_amt:float = 0.5 - (player_amt / 2.0) + (target_amt / 2.0)
-		var goal_target:Vector3 = player_pos.linear_interpolate(zl_target_pos, interpolate_amt)
+		var goal_target:Vector3 = Game.player.position.linear_interpolate(zl_target_pos, interpolate_amt)
 		
 		# Find goal_target distance from cam direction:
 		# d is how far to move across the cam vector to reach the nearest position to goal_target
@@ -176,11 +171,11 @@ func _physics_process(_t:float) -> void:
 	Game.debug.text.newline()
 
 func update_position(new_pos:Vector3) -> void:
-	var cam_target = player_pos + pan_pos + pause_pan
+	var cam_target = Game.player.position + pan_pos + pause_pan
 	var space_state = get_world().direct_space_state # get the space.
-	shape.transform = Transform(Basis(), cam_target) # start at the cam_target
+	query.transform = Transform(Basis(), cam_target) # start at the cam_target
 	new_pos *= zoom_amt # multiply by the current zoom value
-	var result = space_state.cast_motion(shape, new_pos) # until a collision happens
+	var result = space_state.cast_motion(query, new_pos) # until a collision happens
 	if result[0] > 0: # result[0] is how much to lerp
 		new_pos = cam_target.linear_interpolate(new_pos + cam_target, result[0]) # now we have final position
 		look_at_from_position(new_pos, cam_target, Vector3.UP) # look at player from final position

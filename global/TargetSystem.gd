@@ -195,4 +195,5 @@ func target_acquired(area: Area) -> void:
 	}
 func target_lost(area: Area) -> void:
 	var id = area.get_instance_id()
+# warning-ignore:return_value_discarded
 	list.erase(id)

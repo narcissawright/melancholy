@@ -3,6 +3,7 @@ extends KinematicBody
 var framecount:int = 0
 var frame_time:float = 1.0 / 60.0
 var velocity := Vector3.ZERO
+var position setget , _get_position
 
 # Colors
 var body_color_lit:Color
@@ -31,6 +32,7 @@ var shieldbash_framecount:int = 0 # The player has a certain amount of frames to
 var look_target:Vector3
 
 # Child Nodes
+onready var position3d = $Position3D
 onready var raycast = $RayCast
 onready var shield = $Shield  # contains shield.active, a bool saying if shield is up or not
 onready var material = $Body.get_surface_material(0)
@@ -45,9 +47,13 @@ func _ready() -> void:
 	# Set locked state
 	set_locked(20)
 
-func set_locked(framecount:int) -> void:
-	lock_framecount = framecount
-	if framecount > 0:
+# For external nodes targeting the player.
+func _get_position() -> Vector3:
+	return position3d.global_transform.origin
+
+func set_locked(count:int) -> void:
+	lock_framecount = count
+	if count > 0:
 		material.set_shader_param("color_lit", locked_color_lit)
 		material.set_shader_param("color_dim", locked_color_dim)
 	else:
@@ -70,8 +76,8 @@ func set_target(state:bool) -> void:
 		if zl_target == 0: 
 			Game.cam.resetting = true
 			# align with wall if relevant
-			var from = translation + Vector3.UP
-			var to =   translation + Vector3.UP + forwards() * 0.25
+			var from = Game.player.position
+			var to =   Game.player.position + forwards() * 0.25
 			var result = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
 			if result.size() > 0:
 				look_at(translation - result.normal, Vector3.UP)
@@ -228,10 +234,10 @@ func _physics_process(t) -> void:
 	
 	# Debug Draw
 	Game.debug.draw.begin(Mesh.PRIMITIVE_LINES)
-	Game.debug.draw.add_vertex(translation + Vector3.UP)
-	Game.debug.draw.add_vertex(translation + Vector3.UP + forwards())
-	Game.debug.draw.add_vertex(translation + Vector3.UP)
-	Game.debug.draw.add_vertex(translation + Vector3(velocity.x, 0, velocity.z).normalized() + Vector3.UP)
+	Game.debug.draw.add_vertex(Game.player.position)
+	Game.debug.draw.add_vertex(Game.player.position + forwards())
+	Game.debug.draw.add_vertex(Game.player.position)
+	Game.debug.draw.add_vertex(Game.player.position + Vector3(velocity.x, 0, velocity.z).normalized())
 	Game.debug.draw.end()
 
 func forwards() -> Vector3:
