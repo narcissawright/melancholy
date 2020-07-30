@@ -9,7 +9,7 @@ Kind of like Castlevania N64 with some Zelda-ish mechanics (Z-Targeting) sprinkl
 
 ### `Note: graphics and visual design are currently taking a backseat to working on core mechanics w/ placeholder art.`
 
-## Melanie
+## Melanie - Sword & Shield  `in-progress`
 
 #### `Completed:`
 - Naturally sprints when holding joystick fully (3s to build to full speed, subtle increase).
