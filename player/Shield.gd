@@ -1,4 +1,7 @@
 extends StaticBody
+
+# I need the Shield Collision to be a child of the player's Kinematicbody
+
 onready var anim = $AnimationPlayer
 var active = false
 var shieldbash_timer:int = 0
