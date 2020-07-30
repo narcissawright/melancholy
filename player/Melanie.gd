@@ -34,7 +34,7 @@ var look_target:Vector3
 # Child Nodes
 onready var position3d = $Position3D
 onready var raycast = $RayCast
-onready var shield = $Shield  # contains shield.active, a bool saying if shield is up or not
+onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shield is up or not
 onready var material = $Body.get_surface_material(0)
 
 func _ready() -> void:
@@ -219,7 +219,9 @@ func _physics_process(t) -> void:
 	Game.debug.text.write('Has Jump: ' + str(has_jump), 'green' if has_jump else 'red')
 	Game.debug.text.write('Jumping: ' + str(jumping), 'green' if jumping else 'red')
 	Game.debug.text.write('Slippery: ' + str(slippery), 'green' if slippery else 'red')
+	Game.debug.text.newline()
 	Game.debug.text.write('Shielding: ' + str(shield.active), 'green' if shield.active else 'red')
+	Game.debug.text.write('Bashing: ' + str(shield.bash_str), 'green' if shield.bash_str > 0.0 else 'red')
 	Game.debug.text.newline()
 	Game.debug.text.write('Sprinting: ' + str(maxspeed_framecount) + '/180')
 #	Game.debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')

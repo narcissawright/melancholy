@@ -1,10 +1,10 @@
-extends StaticBody
-
+extends AnimationPlayer
 # I need the Shield Collision to be a child of the player's Kinematicbody
 
-onready var anim = $AnimationPlayer
+onready var anim = self #$AnimationPlayer
 var active = false
 var shieldbash_timer:int = 0
+var bash_str:float setget , _get_bash_strength
 
 func _physics_process(_t:float) -> void:
 	if shieldbash_timer > 0:
@@ -41,3 +41,9 @@ func can_shield_bash() -> bool:
 				if anim.current_animation_position < anim.current_animation_length * 0.5: 
 					return false
 	return true
+
+func _get_bash_strength() -> float:
+	if current_animation == "shield_bash":
+		return 1.0 - (current_animation_position / current_animation_length)
+	return 0.0
+	

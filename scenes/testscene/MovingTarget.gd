@@ -20,10 +20,10 @@ func _physics_process(t: float) -> void:
 		fire()
 	
 func fire() -> void:
-	fire_cooldown = 20
+	fire_cooldown = 60
 	var p = projectile.instance()
 	p.translation = translation
-	p.velocity = (Game.player.position - translation).normalized() * 5.0
+	p.velocity = (Game.player.position - translation).normalized() * 14.0 + Vector3.UP * 2.0
 	Game.add_child(p)
 
 func _on_detector_body_entered(body: Node) -> void:
