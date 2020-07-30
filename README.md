@@ -90,7 +90,7 @@
 
 #### `To Do`
 
-##### Power Ups
+**Power Ups**
 - Five Levels of Primary weapon power. Obtaining a powerup item will level you up.
 - Color scheme should be dull red -> yellow -> green -> cyan -> piercing blue
 - Lose 1 stage of power upon death.
