@@ -5,33 +5,49 @@
 - Melanie
 - Melancholy
 
-Kind of like Castlevania N64. Aiming for ~10 main stages per character. Some fully unique, some shared, some altered.
+Kind of like Castlevania N64 with some Zelda-ish mechanics (Z-Targeting) sprinkled in?
 
-## Melanie - Sword & Shield  `in progress` 
+### `Note: graphics and visual design are currently taking a backseat to working on core mechanics w/ placeholder art.`
 
-- `done`  Naturally sprints when holding joystick fully (3s to build to full speed, subtle). 8-10 speed.
-- `mostly done`  Has a big shield. Moves slower with shield up. Bounces projectiles off. Quickly releasing and re-pressing results in a shield bash.
-- Primary Attack - Sword (this could end up complex, maybe just 2 of these for now, and an air version)
-- Secondary Attack (maybe I don't need this but I might have this too), can be used in air
+## Melanie
+
+#### `Completed:`
+- Naturally sprints when holding joystick fully (3s to build to full speed, subtle increase).
+- Jumping. Variable Jump Height. Leniency when falling off a ledge.
+- Shielding. Melanie has a big shield. She moves slower with the shield up. The shield bounces projectiles off. 
+
+#### `Mostly Done`
+- Shield bash. Quickly releasing and re-pressing results in a shield bash.
+- Impact landing. Landing from a height will result damage or being unable to move for a time.
+
+#### `To Do`
+- Sword (Primary Attack). Sword draw, sword slash, heavy sword slash, air slash, put away.
 - Subweapons. All require the same ammo type (jewels or whatever)
-1. Bombs: Bomb Pull (happens quickly), Bomb Throw (also fast). Throw distance may vary if you are targeting something. Big hitbox
+1. Bombs: Bomb Pull (happens quickly), Bomb Throw (also fast). Throw distance may vary if you are targeting or moving. Big-ish hitbox.
 2. HolyWater ripoff item: Big damage for innermost (smallest) hitbox. 
-3. Bow & Arrow: Manual aiming (1st person?), targeted aiming (3rd person)
+3. Bow & Arrow: Manual aiming (1st person?), targeted aiming (3rd person). Think Link from OoT
 4. Unknown 4th subweapon. TBD
-- `done`  Jumping. Variable Jump Height. Leniency when falling off a ledge.
-- `mostly done`  Landing. Fall dmg. Impact landing etc.
-- Ledgegrab. Ledgecrawl (left or right), Ledgeclimb. Ledge release.
+
+- Ledge grab. Ledge movement (left or right), Ledge climb. Ledge release.
 - Crawl (crouch while not moving). Slide attack (crouch while running). Divekick (crouch while in air)
-- First person view
+- First person view. This should interact with Bow & Arrow similarly to Zelda I guess.
 - Damaged (mobile, immobile, knockdown). Dying.
-- Swimming. Drowning.
-- Interacting. Opening door. Pickup item (on ground, or in front)
-- Respawning.
+- Drowning.
+- Interacting. Opening door. Item pickup (on floor or in front as two diff animations?)
+- Respawn animation.
+
+#### `Maybe`
+- Sword clank mechanic.
+- Secondary Attack. (Does Melanie need this? Melancholy does...)
+- Swimming. 
+- Ladder climb
+- Stairs
+
 
 ## Melancholy - Magic & Sorcery
 
 - Only has 1/4th the Max HP that Melanie has. Uses a magic meter instead of jewels.
-- Immediately at 9 speed while holding joystick fully. Glides across the ground instead of runs.
+- Immediately at her top grounded speed (slightly slower than Melanie's top grounded speed) while holding joystick fully. Glides across the ground instead of sprinting.
 - Has a bubble shield. Can absorb jewels (subweapon ammo) from afar.
 - Primary Attack - Orb (charge attack, can charge while doing any action. Lose charge upon damage). Only 1 Orb may be present at a time. Orb is a seeking projectile when charged.
 - Secondary Attack - (not fleshed out, but definitely some very weak close range attack).
@@ -75,8 +91,10 @@ Kind of like Castlevania N64. Aiming for ~10 main stages per character. Some ful
 - Separate time trials for each character, to be expanded upon later.
 
 ## Thoughts on the actual stages:
+- Aiming for ~10 main stages per character. Some fully unique, some shared, some altered.
 - Try to keep a bit of "arcade scenario" -- gameplay design focused levels, but not too arcadey. Ideally each stage is minutes (3-15) long if you know what you're doing.
 - Checkpoints exist.
+- One stage should have slippery ice in it. lol.
 
 ## Power Ups
 - Five Levels of Primary weapon power. Obtaining a powerup item will level you up.
