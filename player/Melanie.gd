@@ -4,9 +4,7 @@ var framecount:int = 0
 var frame_time:float = 1.0 / 60.0
 var velocity := Vector3.ZERO
 var position setget , _get_position # Uses the Position3D node. Camera points at this, enemies attack this point.
-
-var current_subweapon:String = "bomb"
-var jewels:int = 99
+var look_target:Vector3 # used for Rotation
 
 # Target
 var zl_target:int = 0
@@ -24,8 +22,10 @@ var lock_framecount:int = 0 # Amount of frames the player has no control. Used p
 var aerial_framecount:int = 0 # Amount of frames the player has been in the air.
 var shieldbash_framecount:int = 0 # The player has a certain amount of frames to initate a shield bash
 
-# Rotation
-var look_target:Vector3
+# Subweapons
+var current_subweapon:String = "bomb"
+var jewels:int = 99
+var holding_bomb:bool = false
 
 # Child Nodes
 onready var position3d = $Position3D
@@ -159,7 +159,14 @@ func update_player_state() -> void:
 		# Subweapons
 		if not shield.active:
 			if Input.is_action_just_pressed("subweapon"):
-				print(bombspawner.can_spawn_bomb())
+				match(current_subweapon):
+					"bomb":
+						if holding_bomb: # If you are already holding the bomb, throw it.
+							bombspawner.throw_bomb(forwards() * 10.0 + Vector3.UP * 5.0)
+							holding_bomb = false
+						elif bombspawner.can_spawn_bomb(): # If a bomb can be spawned, do so.
+							bombspawner.spawn_bomb()
+							holding_bomb = true
 			
 		movement_direction = direction * speed
 	

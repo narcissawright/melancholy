@@ -1,32 +1,25 @@
 extends Position3D
-onready var bomb = $'Bomb'
+onready var bomb = preload("res://player/Bomb.tscn")
+var current_bomb:Node
 
-# Collision
-var query := PhysicsShapeQueryParameters.new()
-var shape := SphereShape.new()
-var move_vec:Vector3
-
-func _ready() -> void:
-	bomb.hide()
-	query.exclude = [Game.player]
-	query.collision_mask = Layers.solid | Layers.actor
-	shape.radius = 0.3
-	query.set_shape(shape)
+# Animation
+onready var anim = $AnimationPlayer
+onready var spawn_area = $SpawnArea
 
 func can_spawn_bomb() -> bool:
-	query.transform = global_transform.translated(Vector3.DOWN)
-	var space_state = get_world().direct_space_state
-	var result = space_state.cast_motion(query, Vector3.UP)
-	if result[1] == 1:
+	if spawn_area.get_overlapping_bodies().size() == 0:
 		return true
 	return false
-
+	
+func throw_bomb(velocity) -> void:
+	# Reparent and launch
+	remove_child(current_bomb)
+	Game.add_child(current_bomb)
+	current_bomb.global_transform.origin = global_transform.origin
+	current_bomb.throw(velocity)
+	
 func spawn_bomb() -> void:
-	# Check if there is a ceiling or something in the way
-	
-	
-	
-	
-	bomb.scale = 0.01 # maybe animationplayer again?
-	# should I use multiple animationplayers?
-	bomb.show()
+	current_bomb = bomb.instance()
+	add_child(current_bomb)
+	Game.player.jewels -= 5
+#	current_bomb.anim.play("bomb_pull")

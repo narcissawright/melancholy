@@ -18,16 +18,14 @@ func _ready() -> void:
 
 func _physics_process(t: float) -> void:
 	var move_vec:Vector3 = velocity * t
-	query.transform = global_transform
-	var space_state = get_world().direct_space_state
-	var result = space_state.cast_motion(query, move_vec)
-	if result[1] == 1:
-		# projectile did not hit anything
-		translation += move_vec
-	else:
+	
+	if not move_vec.is_equal_approx(Vector3.ZERO): # Avoid calling cast_motion with empty vec3
+		query.transform = global_transform
+		var space_state = get_world().direct_space_state
+		var result = space_state.cast_motion(query, move_vec)
 		translation += move_vec * result[1]
-		query.transform = transform
-		hit(space_state, t)
+		if result[1] != 1: # if cannot move the full distance
+			hit(space_state, t)
 	
 	lifespan -= t
 	if lifespan <= 0: die()
@@ -38,7 +36,7 @@ func die() -> void:
 	queue_free()
 	
 func hit(space_state, t):
-	
+	query.transform = global_transform
 	var collision:Dictionary = space_state.intersect_shape(query, 1)[0]
 	var collision_response = "die"
 	

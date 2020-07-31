@@ -150,6 +150,10 @@ subweapon={
 3d_physics/layer_2="actor"
 3d_physics/layer_3="target"
 
+[physics]
+
+3d/physics_engine="Bullet"
+
 [rendering]
 
 quality/filters/msaa=2

@@ -1,0 +1,52 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://materials/actor.shader" type="Shader" id=1]
+[ext_resource path="res://player/Bomb.gd" type="Script" id=2]
+
+[sub_resource type="SphereMesh" id=2]
+radius = 0.2
+height = 0.4
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = ExtResource( 1 )
+shader_param/color_lit = Color( 0.266667, 0.211765, 0.211765, 1 )
+shader_param/color_dim = Color( 0.121569, 0.101961, 0.101961, 1 )
+shader_param/enable_rim = true
+shader_param/damaged = false
+
+[sub_resource type="Animation" id=4]
+resource_name = "bomb_pull"
+length = 0.166667
+step = 0.0166667
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.166667 ),
+"transitions": PoolRealArray( 0.5, 1 ),
+"update": 0,
+"values": [ Vector3( 0.01, 0.01, 0.01 ), Vector3( 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[node name="Bomb" type="MeshInstance"]
+mesh = SubResource( 2 )
+material/0 = SubResource( 3 )
+script = ExtResource( 2 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/bomb_pull = SubResource( 4 )
