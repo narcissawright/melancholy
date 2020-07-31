@@ -12,7 +12,6 @@ var shape := SphereShape.new()
 func _ready() -> void:
 	query.exclude = [projectile_owner]
 	query.transform = global_transform
-	query.collide_with_areas = false
 	query.collision_mask = Layers.solid | Layers.actor
 	shape.radius = 0.1
 	query.set_shape(shape)

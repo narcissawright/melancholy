@@ -5,6 +5,9 @@ var frame_time:float = 1.0 / 60.0
 var velocity := Vector3.ZERO
 var position setget , _get_position # Uses the Position3D node. Camera points at this, enemies attack this point.
 
+var current_subweapon:String = "bomb"
+var jewels:int = 99
+
 # Target
 var zl_target:int = 0
 
@@ -152,10 +155,11 @@ func update_player_state() -> void:
 		elif has_jump and Input.is_action_just_pressed('jump'):
 			has_jump = false
 			jumping = true
-			
+		
+		# Subweapons
 		if not shield.active:
 			if Input.is_action_just_pressed("subweapon"):
-				bombspawner.spawn_bomb()
+				print(bombspawner.can_spawn_bomb())
 			
 		movement_direction = direction * speed
 	
@@ -233,8 +237,11 @@ func hit(collision:Dictionary) -> String:
 
 func debug() -> void:
 	# Debug Text
-#	Debug.text.write('Position: ' + str(translation))
-#	Debug.text.write('Velocity: ' + str(velocity))
+
+	Debug.text.write('Subweapon: ' + str(current_subweapon))
+	Debug.text.write('Jewels: ' + str(jewels))
+	Debug.text.write('can_spawn_bomb()', 'green' if bombspawner.can_spawn_bomb() else 'red')
+	Debug.text.newline()
 	Debug.text.write('Vertical Velocity: ' + str(velocity.y))
 	Debug.text.write('Horizontal Velocity: ' + str(Vector3(velocity.x, 0, velocity.z).length()))
 #	Debug.text.write('Forward Direction: ' + str(forwards()))
@@ -251,12 +258,11 @@ func debug() -> void:
 	Debug.text.write('Sprinting: ' + str(maxspeed_framecount) + '/180')
 #	Debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
 	Debug.text.write('Air Time: ' + str(aerial_framecount))
-#	Debug.text.write("Impact: " + str(impact))
 	Debug.text.newline()
 	if zl_target == 0:
-		Debug.text.write("ZL Target: ", 'red')
+		Debug.text.write("ZL Target: ")
 	else:
-		Debug.text.write("ZL Target: " + TargetSystem.list[zl_target].name, 'green')
+		Debug.text.write("ZL Target: " + TargetSystem.list[zl_target].name, 'blue')
 	Debug.text.newline()
 	
 	# Debug Draw
