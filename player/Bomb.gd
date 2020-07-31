@@ -7,12 +7,19 @@ var shape := SphereShape.new()
 # Animation
 onready var anim = $AnimationPlayer
 
+# Material
+var material:Material
+
 # Properties
 var velocity:Vector3
 
+# Flags
+var is_ready:bool = false
+
 func _ready() -> void:
 	# Duplicate material per bomb
-	set_surface_material(0, get_surface_material(0).duplicate())
+	material = get_surface_material(0).duplicate()
+	set_surface_material(0, material)
 	
 	# Set up physics query
 	query.collision_mask = Layers.solid | Layers.actor
@@ -39,10 +46,12 @@ func _physics_process(t:float) -> void:
 			explode()
 
 func explode() -> void:
-	scale = Vector3(10, 10, 10)
-	get_surface_material(0).set_shader_param("damaged", true)
+	anim.play("explode")
 	set_physics_process(false)
 	
-	# need to make some kind of animation here, and when its done, queue free.
-	
-	#queue_free()
+func _animation_finished(anim_name:String) -> void:
+	match(anim_name):
+		"bomb_pull":
+			is_ready = true
+		"explode":
+			queue_free()

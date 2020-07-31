@@ -56,6 +56,9 @@ void light() {
 		rim = smoothstep(0.0, 1.0, NdotV);
 	}
 	
+	// god I would love a way to use MULTIPLE LIGHTS with cel shading.
+	//vec3 extra_light = LIGHT_COLOR * ATTENUATION;
+	
 	if (lit > 0.5 || rim < 0.2) {
 		if (damaged) { DIFFUSE_LIGHT = damaged_lit; } 
 		else { DIFFUSE_LIGHT = color_lit.rgb; }

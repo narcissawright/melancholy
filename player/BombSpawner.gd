@@ -1,15 +1,17 @@
 extends Position3D
-onready var bomb = preload("res://player/Bomb.tscn")
-var current_bomb:Node
 
-# Animation
-onready var anim = $AnimationPlayer
 onready var spawn_area = $SpawnArea
+onready var bomb = preload("res://player/Bomb.tscn")
+
+var current_bomb:Node
 
 func can_spawn_bomb() -> bool:
 	if spawn_area.get_overlapping_bodies().size() == 0:
 		return true
 	return false
+
+func can_throw_bomb() -> bool:
+	return current_bomb.is_ready
 	
 func throw_bomb(velocity) -> void:
 	# Reparent and launch
@@ -22,4 +24,3 @@ func spawn_bomb() -> void:
 	current_bomb = bomb.instance()
 	add_child(current_bomb)
 	Game.player.jewels -= 5
-#	current_bomb.anim.play("bomb_pull")

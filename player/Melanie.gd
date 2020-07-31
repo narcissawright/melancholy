@@ -162,8 +162,13 @@ func update_player_state() -> void:
 				match(current_subweapon):
 					"bomb":
 						if holding_bomb: # If you are already holding the bomb, throw it.
-							bombspawner.throw_bomb(forwards() * 10.0 + Vector3.UP * 5.0)
-							holding_bomb = false
+							if bombspawner.can_throw_bomb():
+								# I want to add a buffer system here so that if you double tap it will throw asap.
+								# even if the pull anim is not finished.
+								
+								
+								bombspawner.throw_bomb(forwards() * 10.0 + Vector3.UP * 5.0)
+								holding_bomb = false
 						elif bombspawner.can_spawn_bomb(): # If a bomb can be spawned, do so.
 							bombspawner.spawn_bomb()
 							holding_bomb = true

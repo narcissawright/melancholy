@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://materials/actor.shader" type="Shader" id=1]
 [ext_resource path="res://player/Bomb.gd" type="Script" id=2]
@@ -43,6 +43,46 @@ tracks/1/keys = {
 "values": [ true ]
 }
 
+[sub_resource type="Animation" id=5]
+resource_name = "explode"
+step = 0.0166667
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.333333 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 1, 1, 1 ), Vector3( 10, 10, 10 ), Vector3( 9.5, 9.5, 9.5 ), Vector3( 10, 10, 10 ), Vector3( 9.5, 9.5, 9.5 ), Vector3( 10, 10, 10 ), Vector3( 9.5, 9.5, 9.5 ), Vector3( 0.01, 0.01, 0.01 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:material/0:shader_param/color_lit")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.0333333, 0.0666667, 0.233333, 0.333333 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 0.266667, 0.211765, 0.211765, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 0.831373, 0.0705882, 1 ), Color( 0.741176, 0.160784, 0.160784, 1 ), Color( 0.266667, 0.211765, 0.211765, 1 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:material/0:shader_param/color_dim")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.0333333, 0.0666667, 0.233333, 0.333333 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 1, 0.796078, 0.0980392, 1 ), Color( 0.827451, 0.564706, 0.156863, 1 ), Color( 0.313726, 0.156863, 0.156863, 1 ), Color( 0.121569, 0.101961, 0.101961, 1 ) ]
+}
+
 [node name="Bomb" type="MeshInstance"]
 mesh = SubResource( 2 )
 material/0 = SubResource( 3 )
@@ -50,3 +90,5 @@ script = ExtResource( 2 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/bomb_pull = SubResource( 4 )
+anims/explode = SubResource( 5 )
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_animation_finished"]
