@@ -19,18 +19,18 @@
 - Shielding. Melanie has a big shield. She moves slower with the shield up. The shield bounces projectiles off. 
 
 #### `Mostly Done`
-- Shield bash. Quickly releasing and re-pressing results in a shield bash.
+- Shield bash. Quickly releasing and re-pressing results in a shield bash. Reflects projectiles w/ higher velocity.
 - Impact landing. Landing from a height will result damage or being unable to move for a time.
+
+#### `In progress`
+- Subweapon: Bombs. Pull bomb (hold overhead). Cannot pull while area above head is blocked. Can throw bombs (set velocity right now). Still need to finish bomb explosion animation, apply damage, and cause the player to drop their bomb if they are hit or they try to shield or pull a weapon.
 
 #### `To Do`
 - Proper movement & physics on slopes and small ledges
 - Sword (Primary Attack). Sword draw, sword slash, heavy sword slash, air slash, put away.
-- Subweapons. All require the same ammo type (jewels or whatever)
-1. Bombs: Bomb Pull (happens quickly), Bomb Throw (also fast). Throw distance may vary if you are targeting or moving. Big-ish hitbox.
-2. Vitriol: Similar to holy water in CV64. Big damage for innermost (smallest) hitbox. 
-3. Bow & Arrow: Manual aiming (1st person?), targeted aiming (3rd person). Think Link from OoT
-4. Unknown 4th subweapon. TBD
-
+- Subweapon: Vitriol. Vitriol: Similar to holy water in CV64. Big damage for innermost (smallest) hitbox. 
+- Subweapon: Bow & Arrow. Manual aiming (1st person?), targeted aiming (3rd person). Think Link from OoT
+- Subweapon: TBD
 - Ledge grab. Ledge movement (left or right), Ledge climb. Ledge release.
 - Crawl (crouch while not moving). Slide attack (crouch while running). Divekick (crouch while in air)
 - First person view. This should interact with Bow & Arrow similarly to Zelda I guess.
