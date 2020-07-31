@@ -1,7 +1,8 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://player/Melanie.gd" type="Script" id=1]
 [ext_resource path="res://player/TargetAcquired.gd" type="Script" id=2]
+[ext_resource path="res://player/BombSpawner.gd" type="Script" id=3]
 [ext_resource path="res://player/Shield.gd" type="Script" id=4]
 [ext_resource path="res://materials/actor.shader" type="Shader" id=5]
 
@@ -229,6 +230,17 @@ tracks/5/keys = {
 [sub_resource type="SphereShape" id=13]
 radius = 20.0
 
+[sub_resource type="SphereMesh" id=16]
+radius = 0.2
+height = 0.4
+
+[sub_resource type="ShaderMaterial" id=17]
+shader = ExtResource( 5 )
+shader_param/color_lit = Color( 0.266667, 0.211765, 0.211765, 1 )
+shader_param/color_dim = Color( 0.121569, 0.101961, 0.101961, 1 )
+shader_param/enable_rim = true
+shader_param/damaged = false
+
 [node name="Melanie" type="KinematicBody"]
 pause_mode = 1
 collision_layer = 2
@@ -284,5 +296,13 @@ editor_only = true
 
 [node name="Position3D" type="Position3D" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0 )
+
+[node name="BombSpawner" type="Position3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0 )
+script = ExtResource( 3 )
+
+[node name="Bomb" type="MeshInstance" parent="BombSpawner"]
+mesh = SubResource( 16 )
+material/0 = SubResource( 17 )
 [connection signal="area_entered" from="TargetDetector" to="TargetDetector" method="_target_acquired"]
 [connection signal="area_exited" from="TargetDetector" to="TargetDetector" method="_target_lost"]

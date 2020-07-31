@@ -3,7 +3,7 @@ extends KinematicBody
 var framecount:int = 0
 var frame_time:float = 1.0 / 60.0
 var velocity := Vector3.ZERO
-var position setget , _get_position
+var position setget , _get_position # Uses the Position3D node. Camera points at this, enemies attack this point.
 
 # Target
 var zl_target:int = 0
@@ -13,7 +13,6 @@ var grounded:bool = true
 var has_jump:bool = true
 var jumping:bool = false
 var targeting:bool = false
-var slippery:bool = false
 
 # Timers
 var maxspeed_framecount:int = 0 # Track the # of consecutive frames the left joystick is fully pressed (for acceleration)
@@ -30,12 +29,29 @@ onready var position3d = $Position3D
 onready var raycast = $RayCast
 onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shield is up or not
 onready var material = $Body.get_surface_material(0)
+onready var bombspawner = $BombSpawner
 
 func _ready() -> void:
 	process_priority = 0 # Run this before camera
 	
 	# Set locked state
 	set_locked(20)
+
+func _process(t) -> void:
+	Debug.text.write('Frame: ' + str(framecount))
+	Debug.text.write('Frame Time: ' + str(t))
+	Debug.text.newline()
+
+func _physics_process(t) -> void:
+	framecount += 1
+	update_player_state()
+	var collision:KinematicCollision = move_and_collide(velocity * frame_time) # Apply Physics
+	set_grounded(raycast.is_colliding()) # Check if grounded
+	handle_collision(collision) # Redirect velocity, check landing impact, etc
+	if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO # If velocity is very small, make it 0
+	handle_player_rotation() # Make player face the correct direction
+	respawn_check() # Check if player fell below the map
+	debug() # Write debug info onscreen
 
 # For external nodes targeting the player.
 func _get_position() -> Vector3:
@@ -72,29 +88,21 @@ func set_target(state:bool) -> void:
 	else:
 		zl_target = 0
 
-func _process(t) -> void:
-	Debug.text.write('Frame: ' + str(framecount))
-	Debug.text.write('Frame Time: ' + str(t))
-	Debug.text.newline()
-
-func _physics_process(t) -> void:
-	framecount += 1
+func update_player_state() -> void:
 	
-	# apply gravity
-	velocity.y += Game.GRAVITY * t
+	var movement_direction = Vector3.ZERO # includes magnitude.
+	var horizontal_velocity = Vector3(velocity.x, 0, velocity.z)
+	var interpolate_amt:float = 0.15 if grounded else 0.015
 	
-	# Prevent player movement if locked
 	if lock_framecount > 0:
 		lock_framecount -= 1
-		velocity.x = lerp(velocity.x, 0.0, 0.15)
-		velocity.z = lerp(velocity.z, 0.0, 0.15)
 		if lock_framecount == 0:
 			set_locked(0)
 	else:
 		# Begin ZL Targeting:
 		if not targeting and Input.is_action_just_pressed("target"):
 			set_target(true)
-		
+			
 		# Check if no longer targeting:
 		if Input.is_action_pressed("target"):
 			if not TargetSystem.target_is_valid(zl_target):
@@ -104,18 +112,12 @@ func _physics_process(t) -> void:
 			# If you are not holding the button, and the cam reset has finished, 
 			# you are no longer targeting anything
 			set_target(false)
-
-		# Movement
+	
+		# Left Stick Movement
 		var direction:Vector3 = find_movement_direction()
 		look_target = look_target.linear_interpolate(direction, 0.15) # Used for player rotation later
-		var velocity_xz = Vector3(velocity.x, 0, velocity.z)
-		
 		var speed:float = 8.0
-		#if wallpress_timer > 0: speed = 3.0
 		if shield.active: speed = 2.0
-		if slippery: speed = 0.0
-		
-		var interpolate_amt:float = 0.15 if grounded else 0.015
 		
 		# Targeted movement
 		if targeting and not shield.active:
@@ -137,12 +139,7 @@ func _physics_process(t) -> void:
 		if not grounded:
 			if aerial_framecount == 5: has_jump = false # Remove Jump if too much time has passed
 			aerial_framecount += 1
-			velocity_xz *= 0.999 # Aerial horizontal speed decay
-		
-		# Interpolate horizontal movement
-		velocity_xz = velocity_xz.linear_interpolate(direction * speed, interpolate_amt)
-		velocity.x = velocity_xz.x
-		velocity.z = velocity_xz.z
+			horizontal_velocity *= 0.999 # Aerial horizontal speed decay
 		
 		# Jumping
 		if jumping:
@@ -155,82 +152,17 @@ func _physics_process(t) -> void:
 		elif has_jump and Input.is_action_just_pressed('jump'):
 			has_jump = false
 			jumping = true
+			
+		if not shield.active:
+			if Input.is_action_just_pressed("subweapon"):
+				bombspawner.spawn_bomb()
+			
+		movement_direction = direction * speed
 	
-	
-	
-	# Prep variables
-	var impact:float = velocity.length()
-	slippery = false
-	
-	# Apply Physics
-	var collision:KinematicCollision = move_and_collide(velocity * frame_time)
-
-	# If a collision has occured:
-	if collision:
-		velocity = velocity.slide(collision.normal)
-		if collision.normal.y < 0.25:
-			slippery = true
-		# Check for Slippery
-		#if collision.collider.collision_layer & Layers.slippery > 0:
-		#	slippery = true
-	
-	# Check if grounded
-	set_grounded(raycast.is_colliding())
-	
-	# Check for strong impact
-	impact -= velocity.length()
-	if impact > 10.0:
-		set_locked(int(impact))
-	
-	# If velocity is very small, make it 0
-	if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO
-
-	player_rotation()
-	
-	# If player fell off the map, respawn
-	if translation.y < -50:
-		translation = Vector3.ZERO
-		velocity = Vector3.ZERO
-		rotation = Vector3.ZERO
-		set_locked(20)
-		Game.cam.resetting = true
-	
-	# Debug Text
-#	Debug.text.write('Position: ' + str(translation))
-#	Debug.text.write('Velocity: ' + str(velocity))
-	Debug.text.write('Vertical Velocity: ' + str(velocity.y))
-	Debug.text.write('Horizontal Velocity: ' + str(Vector3(velocity.x, 0, velocity.z).length()))
-#	Debug.text.write('Forward Direction: ' + str(forwards()))
-	Debug.text.newline()
-	Debug.text.write('Locked: ' + str(lock_framecount), 'green' if lock_framecount > 0 else 'red')
-	Debug.text.write('Targeting: ' + str(targeting), 'green' if targeting else 'red')
-	Debug.text.write('Grounded: ' + str(grounded), 'green' if grounded else 'red')
-#	Debug.text.write('On Wall: ' + str(on_wall), 'green' if on_wall else 'red')
-	Debug.text.write('Has Jump: ' + str(has_jump), 'green' if has_jump else 'red')
-	Debug.text.write('Jumping: ' + str(jumping), 'green' if jumping else 'red')
-	Debug.text.write('Slippery: ' + str(slippery), 'green' if slippery else 'red')
-	Debug.text.newline()
-	Debug.text.write('Shielding: ' + str(shield.active), 'green' if shield.active else 'red')
-	Debug.text.write('Bashing: ' + str(shield.bash_str), 'green' if shield.bash_str > 0.0 else 'red')
-	Debug.text.newline()
-	Debug.text.write('Sprinting: ' + str(maxspeed_framecount) + '/180')
-#	Debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
-	Debug.text.write('Air Time: ' + str(aerial_framecount))
-#	Debug.text.write("Impact: " + str(impact))
-	Debug.text.newline()
-	if zl_target == 0:
-		Debug.text.write("ZL Target: ", 'red')
-	else:
-		Debug.text.write("ZL Target: " + TargetSystem.list[zl_target].name, 'green')
-	Debug.text.newline()
-	
-	# Debug Draw
-	Debug.draw.begin(Mesh.PRIMITIVE_LINES)
-	Debug.draw.add_vertex(Game.player.position)
-	Debug.draw.add_vertex(Game.player.position + forwards())
-	Debug.draw.add_vertex(Game.player.position)
-	Debug.draw.add_vertex(Game.player.position + Vector3(velocity.x, 0, velocity.z).normalized())
-	Debug.draw.end()
+	# Interpolate horizontal movement
+	horizontal_velocity = horizontal_velocity.linear_interpolate(movement_direction, interpolate_amt)
+	velocity = Vector3(horizontal_velocity.x, velocity.y, horizontal_velocity.z)
+	velocity.y += Game.GRAVITY * frame_time
 
 func forwards() -> Vector3:
 	return -transform.basis.z
@@ -242,7 +174,16 @@ func find_movement_direction() -> Vector3:
 	camdir = camdir.normalized()
 	return (camdir * pushdir.y) + (camdir.rotated(Vector3.UP, PI/2) * pushdir.x)
 
-func player_rotation() -> void:
+func handle_collision(collision:KinematicCollision) -> void:
+	# If a collision has occured:
+	if collision:
+		var impact:float = velocity.length()
+		velocity = velocity.slide(collision.normal)
+		impact -= velocity.length()
+		if impact > 10.0:
+			set_locked(int(impact))
+
+func handle_player_rotation() -> void:
 	if lock_framecount == 0:
 		
 		# While grounded -- look towards movement direction
@@ -274,6 +215,15 @@ func rotate_towards(look_target_2d:Vector2) -> void:
 		var lookdir:Vector3 = forwards().rotated(Vector3.UP, angle)
 		look_at(lookdir + translation, Vector3.UP) # rotate
 
+func respawn_check() -> void:
+	# If player fell off the map, respawn
+	if translation.y < -50:
+		translation = Vector3.ZERO
+		velocity = Vector3.ZERO
+		rotation = Vector3.ZERO
+		set_locked(20)
+		Game.cam.resetting = true
+
 func hit(collision:Dictionary) -> String:
 	if collision.shape > 0: # hit shield
 		return "bounce"
@@ -281,4 +231,39 @@ func hit(collision:Dictionary) -> String:
 		set_locked(10)
 		return "die"
 
+func debug() -> void:
+	# Debug Text
+#	Debug.text.write('Position: ' + str(translation))
+#	Debug.text.write('Velocity: ' + str(velocity))
+	Debug.text.write('Vertical Velocity: ' + str(velocity.y))
+	Debug.text.write('Horizontal Velocity: ' + str(Vector3(velocity.x, 0, velocity.z).length()))
+#	Debug.text.write('Forward Direction: ' + str(forwards()))
+	Debug.text.newline()
+	Debug.text.write('Locked: ' + str(lock_framecount), 'green' if lock_framecount > 0 else 'red')
+	Debug.text.write('Targeting: ' + str(targeting), 'green' if targeting else 'red')
+	Debug.text.write('Grounded: ' + str(grounded), 'green' if grounded else 'red')
+	Debug.text.write('Has Jump: ' + str(has_jump), 'green' if has_jump else 'red')
+	Debug.text.write('Jumping: ' + str(jumping), 'green' if jumping else 'red')
+	Debug.text.newline()
+	Debug.text.write('Shielding: ' + str(shield.active), 'green' if shield.active else 'red')
+	Debug.text.write('Bashing: ' + str(shield.bash_str), 'green' if shield.bash_str > 0.0 else 'red')
+	Debug.text.newline()
+	Debug.text.write('Sprinting: ' + str(maxspeed_framecount) + '/180')
+#	Debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
+	Debug.text.write('Air Time: ' + str(aerial_framecount))
+#	Debug.text.write("Impact: " + str(impact))
+	Debug.text.newline()
+	if zl_target == 0:
+		Debug.text.write("ZL Target: ", 'red')
+	else:
+		Debug.text.write("ZL Target: " + TargetSystem.list[zl_target].name, 'green')
+	Debug.text.newline()
+	
+	# Debug Draw
+	Debug.draw.begin(Mesh.PRIMITIVE_LINES)
+	Debug.draw.add_vertex(Game.player.position)
+	Debug.draw.add_vertex(Game.player.position + forwards())
+	Debug.draw.add_vertex(Game.player.position)
+	Debug.draw.add_vertex(Game.player.position + Vector3(velocity.x, 0, velocity.z).normalized())
+	Debug.draw.end()
 
