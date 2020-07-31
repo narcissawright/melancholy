@@ -22,6 +22,7 @@ func _ready() -> void:
 	set_surface_material(0, material)
 	
 	# Set up physics query
+	query.exclude = [Game.player]
 	query.collision_mask = Layers.solid | Layers.actor
 	shape.radius = 0.3
 	query.set_shape(shape)
@@ -46,6 +47,7 @@ func _physics_process(t:float) -> void:
 			explode()
 
 func explode() -> void:
+	query.exclude = []
 	anim.play("explode")
 	set_physics_process(false)
 	

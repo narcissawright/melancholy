@@ -35,7 +35,7 @@ func fire() -> void:
 	p.projectile_owner = self
 	Game.add_child(p)
 
-func hit(collision: Dictionary) -> String:
+func hit(_collision: Dictionary) -> String:
 	material.set_shader_param("damaged", true)
 	locked = 10
 	return "die"

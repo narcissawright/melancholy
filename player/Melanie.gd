@@ -45,7 +45,7 @@ func _process(t) -> void:
 	Debug.text.write('Frame Time: ' + str(t))
 	Debug.text.newline()
 
-func _physics_process(t) -> void:
+func _physics_process(_t) -> void:
 	framecount += 1
 	update_player_state()
 	var collision:KinematicCollision = move_and_collide(velocity * frame_time) # Apply Physics
@@ -63,6 +63,8 @@ func _get_position() -> Vector3:
 func set_locked(count:int) -> void:
 	lock_framecount = count
 	if count > 0: 
+		maxspeed_framecount = 0
+		jumping = false
 		material.set_shader_param("damaged", true)
 	else:
 		material.set_shader_param("damaged", false)
@@ -97,24 +99,25 @@ func update_player_state() -> void:
 	var horizontal_velocity = Vector3(velocity.x, 0, velocity.z)
 	var interpolate_amt:float = 0.15 if grounded else 0.015
 	
+	# Begin ZL Targeting:
+	if not targeting and Input.is_action_just_pressed("target"):
+		set_target(true)
+		
+	# Check if no longer targeting:
+	if Input.is_action_pressed("target"):
+		if not TargetSystem.target_is_valid(zl_target):
+			# Target broken from distance or lost line of sight
+			set_target(false)
+	elif Game.cam.resetting == false:
+		# If you are not holding the button, and the cam reset has finished, 
+		# you are no longer targeting anything
+		set_target(false)
+	
 	if lock_framecount > 0:
 		lock_framecount -= 1
 		if lock_framecount == 0:
 			set_locked(0)
 	else:
-		# Begin ZL Targeting:
-		if not targeting and Input.is_action_just_pressed("target"):
-			set_target(true)
-			
-		# Check if no longer targeting:
-		if Input.is_action_pressed("target"):
-			if not TargetSystem.target_is_valid(zl_target):
-				# Target broken from distance or lost line of sight
-				set_target(false)
-		elif Game.cam.resetting == false:
-			# If you are not holding the button, and the cam reset has finished, 
-			# you are no longer targeting anything
-			set_target(false)
 	
 		# Left Stick Movement
 		var direction:Vector3 = find_movement_direction()
@@ -161,13 +164,26 @@ func update_player_state() -> void:
 			if Input.is_action_just_pressed("subweapon"):
 				match(current_subweapon):
 					"bomb":
+						
+						"""
+						Current problems with bombs:
+						- bomb spawns 1 frame behind because its position is set before move_and_collide happens
+						- bomb pull and bomb throw should affect your velocity and possible actions more directly
+						- no explosion hitbox, no damage
+						- no custom shader logic, particles, lighting, etc.
+						- no buffer system (tap twice to pull->throw)
+						- awkward scene organization
+						- no drop when hit, drop when damaged, drop when hold collider hits something.
+						"""
+						
 						if holding_bomb: # If you are already holding the bomb, throw it.
 							if bombspawner.can_throw_bomb():
 								# I want to add a buffer system here so that if you double tap it will throw asap.
 								# even if the pull anim is not finished.
 								
 								
-								bombspawner.throw_bomb(forwards() * 10.0 + Vector3.UP * 5.0)
+								bombspawner.throw_bomb(velocity + forwards()*10.0 + Vector3.UP*5.0)
+								set_locked(10)
 								holding_bomb = false
 						elif bombspawner.can_spawn_bomb(): # If a bomb can be spawned, do so.
 							bombspawner.spawn_bomb()
@@ -278,10 +294,10 @@ func debug() -> void:
 	Debug.text.newline()
 	
 	# Debug Draw
-	Debug.draw.begin(Mesh.PRIMITIVE_LINES)
-	Debug.draw.add_vertex(Game.player.position)
-	Debug.draw.add_vertex(Game.player.position + forwards())
-	Debug.draw.add_vertex(Game.player.position)
-	Debug.draw.add_vertex(Game.player.position + Vector3(velocity.x, 0, velocity.z).normalized())
-	Debug.draw.end()
+#	Debug.draw.begin(Mesh.PRIMITIVE_LINES)
+#	Debug.draw.add_vertex(Game.player.position)
+#	Debug.draw.add_vertex(Game.player.position + forwards())
+#	Debug.draw.add_vertex(Game.player.position)
+#	Debug.draw.add_vertex(Game.player.position + Vector3(velocity.x, 0, velocity.z).normalized())
+#	Debug.draw.end()
 
