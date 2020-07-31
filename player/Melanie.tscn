@@ -1,90 +1,32 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://player/Melanie.gd" type="Script" id=1]
 [ext_resource path="res://player/TargetAcquired.gd" type="Script" id=2]
-[ext_resource path="res://materials/actor_material.tres" type="Material" id=3]
 [ext_resource path="res://player/Shield.gd" type="Script" id=4]
+[ext_resource path="res://materials/actor.shader" type="Shader" id=5]
 
 [sub_resource type="CapsuleMesh" id=1]
 radius = 0.2
 mid_height = 1.37
 
-[sub_resource type="Shader" id=2]
-code = "shader_type spatial;
-render_mode shadows_disabled, ambient_light_disabled;
-
-uniform vec4 color_lit : hint_color = vec4(0.5, 0.5, 0.6, 1.0);
-uniform vec4 color_dim : hint_color = vec4(0.1, 0.1, 0.12, 1.0);
-uniform bool enable_rim = false;
-
-void fragment() {
-	// Opacity Dithering...
-	int x = int(FRAGCOORD.x / 2.0) % 4;
-	int y = int(FRAGCOORD.y / 2.0) % 4;
-	int index = x + y * 4;
-	float limit = 0.0;
-	
-	// Dither pattern
-	switch (index) {
-		case 0:  limit = 0.0625; break;
-		case 1:  limit = 0.5625; break;
-		case 2:  limit = 0.1875; break;
-		case 3:  limit = 0.6875; break;
-		case 4:  limit = 0.8125; break;
-		case 5:  limit = 0.3125; break;
-		case 6:  limit = 0.9375; break;
-		case 7:  limit = 0.4375; break;
-		case 8:  limit = 0.25;   break;
-		case 9:  limit = 0.75;   break;
-		case 10: limit = 0.125;  break;
-		case 11: limit = 0.625;  break;
-		case 12: limit = 1.0;    break;
-		case 13: limit = 0.5;    break;
-		case 14: limit = 0.875;  break;
-		case 15: limit = 0.375;  break;
-	}
-	
-	// Depth Test
-	float depth = FRAGCOORD.z;
-	vec3 ndc = vec3(SCREEN_UV, depth) * 2.0 - 1.0;
-	vec4 view = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
-	view.xyz /= view.w;
-	float linear_depth = -view.z;
-	if (linear_depth < limit) { discard; }
-}
-
-void light() {
-	// Cel Shading
-	float NdotL = dot(LIGHT, NORMAL);
-	float lit = smoothstep(0.0, 1.0, NdotL);
-	
-	float rim = 1.0;
-	if (enable_rim) {
-		float NdotV = dot(VIEW, NORMAL);
-		rim = smoothstep(0.0, 1.0, NdotV);
-	}
-	
-	if (lit > 0.5 || rim < 0.2) {
-		DIFFUSE_LIGHT = color_lit.rgb;
-	} else {
-		DIFFUSE_LIGHT = color_dim.rgb;
-	}
-}"
-
 [sub_resource type="ShaderMaterial" id=3]
-shader = SubResource( 2 )
+shader = ExtResource( 5 )
 shader_param/color_lit = Color( 0.380392, 0.380392, 1, 1 )
 shader_param/color_dim = Color( 0.168627, 0.129412, 0.396078, 1 )
 shader_param/enable_rim = true
+shader_param/damaged = false
 
 [sub_resource type="PrismMesh" id=4]
 size = Vector3( 0.2, 0.2, 0.2 )
 
-[sub_resource type="CapsuleShape" id=5]
-radius = 0.2
-height = 1.37
+[sub_resource type="ShaderMaterial" id=14]
+shader = ExtResource( 5 )
+shader_param/color_lit = Color( 0.678431, 0.678431, 0.843137, 1 )
+shader_param/color_dim = Color( 0.290196, 0.25098, 0.501961, 1 )
+shader_param/enable_rim = false
+shader_param/damaged = false
 
-[sub_resource type="CylinderShape" id=6]
+[sub_resource type="CapsuleShape" id=5]
 radius = 0.2
 height = 1.37
 
@@ -94,8 +36,12 @@ extents = Vector3( 0.1, 0.2, 0.05 )
 [sub_resource type="CubeMesh" id=7]
 size = Vector3( 0.75, 1.5, 0.1 )
 
-[sub_resource type="SpatialMaterial" id=8]
-albedo_color = Color( 0.713726, 0.658824, 0.623529, 1 )
+[sub_resource type="ShaderMaterial" id=15]
+shader = ExtResource( 5 )
+shader_param/color_lit = Color( 0.780392, 0.807843, 0.811765, 1 )
+shader_param/color_dim = Color( 0.407843, 0.45098, 0.501961, 1 )
+shader_param/enable_rim = false
+shader_param/damaged = false
 
 [sub_resource type="Animation" id=10]
 resource_name = "put_away"
@@ -297,17 +243,11 @@ material/0 = SubResource( 3 )
 [node name="Face" type="MeshInstance" parent="Body"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.140823, -0.656113 )
 mesh = SubResource( 4 )
-material/0 = ExtResource( 3 )
+material/0 = SubResource( 14 )
 
 [node name="BodyCollision" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0.885, 0 )
 shape = SubResource( 5 )
-
-[node name="unused" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.885, 0 )
-visible = false
-shape = SubResource( 6 )
-disabled = true
 
 [node name="RayCast" type="RayCast" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0 )
@@ -321,7 +261,7 @@ shape = SubResource( 9 )
 [node name="ShieldMesh" type="MeshInstance" parent="."]
 transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 1, 0.2 )
 mesh = SubResource( 7 )
-material/0 = SubResource( 8 )
+material/0 = SubResource( 15 )
 
 [node name="ShieldAnim" type="AnimationPlayer" parent="."]
 anims/put_away = SubResource( 10 )
@@ -331,7 +271,7 @@ script = ExtResource( 4 )
 
 [node name="TargetDetector" type="Area" parent="."]
 collision_layer = 0
-collision_mask = 8
+collision_mask = 4
 script = ExtResource( 2 )
 
 [node name="BigSphere" type="CollisionShape" parent="TargetDetector"]

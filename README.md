@@ -27,7 +27,7 @@
 - Sword (Primary Attack). Sword draw, sword slash, heavy sword slash, air slash, put away.
 - Subweapons. All require the same ammo type (jewels or whatever)
 1. Bombs: Bomb Pull (happens quickly), Bomb Throw (also fast). Throw distance may vary if you are targeting or moving. Big-ish hitbox.
-2. HolyWater ripoff item: Big damage for innermost (smallest) hitbox. 
+2. Vitriol: Similar to holy water in CV64. Big damage for innermost (smallest) hitbox. 
 3. Bow & Arrow: Manual aiming (1st person?), targeted aiming (3rd person). Think Link from OoT
 4. Unknown 4th subweapon. TBD
 

@@ -5,12 +5,6 @@ var frame_time:float = 1.0 / 60.0
 var velocity := Vector3.ZERO
 var position setget , _get_position
 
-# Colors
-var body_color_lit:Color
-var body_color_dim:Color
-var locked_color_lit := Color(1.0, 0.25, 0.25)
-var locked_color_dim := Color(0.5, 0.125, 0.125)
-
 # Target
 var zl_target:int = 0
 
@@ -40,10 +34,6 @@ onready var material = $Body.get_surface_material(0)
 func _ready() -> void:
 	process_priority = 0 # Run this before camera
 	
-	# Save the initial color of the character
-	body_color_lit = material.get_shader_param("color_lit")
-	body_color_dim = material.get_shader_param("color_dim")
-	
 	# Set locked state
 	set_locked(20)
 
@@ -53,12 +43,10 @@ func _get_position() -> Vector3:
 
 func set_locked(count:int) -> void:
 	lock_framecount = count
-	if count > 0:
-		material.set_shader_param("color_lit", locked_color_lit)
-		material.set_shader_param("color_dim", locked_color_dim)
+	if count > 0: 
+		material.set_shader_param("damaged", true)
 	else:
-		material.set_shader_param("color_lit", body_color_lit)
-		material.set_shader_param("color_dim", body_color_dim)
+		material.set_shader_param("damaged", false)
 
 func set_grounded(state:bool) -> void:
 	if grounded != state:
@@ -180,9 +168,11 @@ func _physics_process(t) -> void:
 	# If a collision has occured:
 	if collision:
 		velocity = velocity.slide(collision.normal)
-		# Check for Slippery
-		if collision.collider.collision_layer & Layers.slippery > 0:
+		if collision.normal.y < 0.25:
 			slippery = true
+		# Check for Slippery
+		#if collision.collider.collision_layer & Layers.slippery > 0:
+		#	slippery = true
 	
 	# Check if grounded
 	set_grounded(raycast.is_colliding())
@@ -283,3 +273,12 @@ func rotate_towards(look_target_2d:Vector2) -> void:
 	if not is_equal_approx(angle, 0.0):
 		var lookdir:Vector3 = forwards().rotated(Vector3.UP, angle)
 		look_at(lookdir + translation, Vector3.UP) # rotate
+
+func hit(collision:Dictionary) -> String:
+	if collision.shape > 0: # hit shield
+		return "bounce"
+	else:
+		set_locked(10)
+		return "die"
+
+

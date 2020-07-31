@@ -25,7 +25,7 @@ config/icon="res://img/icon.png"
 Game="*res://global/Game.gd"
 Layers="*res://global/Layers.gd"
 TargetSystem="*res://global/TargetSystem.gd"
-Debug="*res://debug/Debug.tscn"
+Debug="*res://global/debug/Debug.tscn"
 
 [display]
 
@@ -142,11 +142,8 @@ d-right={
 [layer_names]
 
 3d_physics/layer_1="solid"
-3d_physics/layer_2="player"
-3d_physics/layer_3="slippery"
-3d_physics/layer_4="target"
-3d_physics/layer_5="actor"
-3d_physics/layer_6="projectile"
+3d_physics/layer_2="actor"
+3d_physics/layer_3="target"
 
 [rendering]
 

@@ -42,7 +42,6 @@ func _physics_process(_t):
 		# unfortunately, the .get_aabb() being called on the parent means the
 		# parent must inherit VisualInstance.. the aabb also doesn't account for object transform (such as 90deg rotation)
 		target.pos = target.parent.global_transform.origin
-		target.aabb = target.parent.get_aabb()
 		target.aabb2d = find_aabb_2d(target.pos, target.aabb)
 		target.length = (target.pos - Game.player.translation).length()
 		target.move_vector = -(Game.player.translation - target.pos).normalized()
@@ -191,7 +190,8 @@ func target_acquired(area: Area) -> void:
 	list[id] = {
 		"area": area,
 		"parent": parent,
-		"name": parent.name
+		"name": parent.name,
+		"aabb": parent.get_aabb()
 	}
 func target_lost(area: Area) -> void:
 	var id = area.get_instance_id()

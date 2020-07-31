@@ -1,8 +1,8 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://scenes/testscene/test_area.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://scenes/targetable.tscn" type="PackedScene" id=2]
-[ext_resource path="res://materials/actor_material.tres" type="Material" id=3]
+[ext_resource path="res://materials/actor.shader" type="Shader" id=3]
 
 [sub_resource type="SpatialMaterial" id=1]
 params_cull_mode = 2
@@ -11,9 +11,20 @@ albedo_color = Color( 0.180392, 0.219608, 0.247059, 1 )
 [sub_resource type="ConcavePolygonShape" id=2]
 data = PoolVector3Array( -10, 0, -10, 10, 0, 10, -10, 0, 10, -10, 5, -10, 10, 0, -10, -10, 0, -10, -10, 5, 10, -10, 0, -10, -10, 0, 10, 10, 0, -10, 10, 0, 10, -10, 0, -10, 10, 5, -10, 10, 0, -10, -10, 5, -10, -10, 5, -10, -10, 0, -10, -10, 5, 10 )
 
-[sub_resource type="SphereMesh" id=3]
+[sub_resource type="ShaderMaterial" id=3]
+shader = ExtResource( 3 )
+shader_param/color_lit = Color( 0.501961, 0.501961, 0.6, 1 )
+shader_param/color_dim = Color( 0.1, 0.1, 0.12, 1 )
+shader_param/enable_rim = true
+shader_param/damaged = false
+
+[sub_resource type="SphereMesh" id=4]
+material = SubResource( 3 )
 radius = 0.3
 height = 0.6
+
+[sub_resource type="SphereShape" id=5]
+radius = 0.3
 
 [node name="L_test" type="MeshInstance"]
 mesh = ExtResource( 1 )
@@ -24,46 +35,30 @@ material/0 = SubResource( 1 )
 [node name="CollisionShape" type="CollisionShape" parent="StaticBody"]
 shape = SubResource( 2 )
 
-[node name="Target1" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.33291, -10.0096 )
-mesh = SubResource( 3 )
+[node name="Target" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.06235, 0.889817, 3.63198 )
+mesh = SubResource( 4 )
 material/0 = null
 
-[node name="targetable" parent="Target1" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.159719 )
+[node name="targetable" parent="Target" instance=ExtResource( 2 )]
+
+[node name="StaticBody" type="StaticBody" parent="Target"]
+collision_layer = 2
+collision_mask = 3
+
+[node name="CollisionShape" type="CollisionShape" parent="Target/StaticBody"]
+shape = SubResource( 5 )
 
 [node name="Target2" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3.28111, 0.986496, -10.0096 )
-mesh = SubResource( 3 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.33346, 0.889817, 3.63198 )
+mesh = SubResource( 4 )
 material/0 = null
 
 [node name="targetable" parent="Target2" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.159719 )
 
-[node name="Target3" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.51049, 1.22583, -9.52007 )
-mesh = SubResource( 3 )
-material/0 = null
+[node name="StaticBody" type="StaticBody" parent="Target2"]
+collision_layer = 2
+collision_mask = 3
 
-[node name="targetable" parent="Target3" instance=ExtResource( 2 )]
-
-[node name="Target4" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.51049, 1.22583, 7.64376 )
-mesh = SubResource( 3 )
-material/0 = ExtResource( 3 )
-
-[node name="targetable" parent="Target4" instance=ExtResource( 2 )]
-
-[node name="Target5" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.68581, 3.30045, 3.63198 )
-mesh = SubResource( 3 )
-material/0 = null
-
-[node name="targetable" parent="Target5" instance=ExtResource( 2 )]
-
-[node name="Target6" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.06235, 0.889817, 3.63198 )
-mesh = SubResource( 3 )
-material/0 = null
-
-[node name="targetable" parent="Target6" instance=ExtResource( 2 )]
+[node name="CollisionShape" type="CollisionShape" parent="Target2/StaticBody"]
+shape = SubResource( 5 )

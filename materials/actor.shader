@@ -1,12 +1,13 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=2]
-
-[sub_resource type="Shader" id=1]
-code = "shader_type spatial;
+shader_type spatial;
 render_mode shadows_disabled, ambient_light_disabled;
 
 uniform vec4 color_lit : hint_color = vec4(0.5, 0.5, 0.6, 1.0);
 uniform vec4 color_dim : hint_color = vec4(0.1, 0.1, 0.12, 1.0);
 uniform bool enable_rim = false;
+uniform bool damaged = false;
+
+const vec3 damaged_lit = vec3(1.0, 0.03, 0.03);
+const vec3 damaged_dim = vec3(0.5, 0.0, 0.0);
 
 void fragment() {
 	// Opacity Dithering...
@@ -56,14 +57,10 @@ void light() {
 	}
 	
 	if (lit > 0.5 || rim < 0.2) {
-		DIFFUSE_LIGHT = color_lit.rgb;
+		if (damaged) { DIFFUSE_LIGHT = damaged_lit; } 
+		else { DIFFUSE_LIGHT = color_lit.rgb; }
 	} else {
-		DIFFUSE_LIGHT = color_dim.rgb;
+		if (damaged) { DIFFUSE_LIGHT = damaged_dim; } 
+		else { DIFFUSE_LIGHT = color_dim.rgb; }
 	}
-}"
-
-[resource]
-shader = SubResource( 1 )
-shader_param/color_lit = Color( 0.5, 0.5, 0.6, 1 )
-shader_param/color_dim = Color( 0.1, 0.1, 0.12, 1 )
-shader_param/enable_rim = false
+}
