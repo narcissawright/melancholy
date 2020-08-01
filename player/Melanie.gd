@@ -10,17 +10,19 @@ var look_target:Vector3 # used for Rotation
 var zl_target:int = 0
 
 # Flags
+var locked:bool = true
 var grounded:bool = true
 var has_jump:bool = true
 var jumping:bool = false
 var targeting:bool = false
 
 # Timers
-var maxspeed_framecount:int = 0 # Track the # of consecutive frames the left joystick is fully pressed (for acceleration)
+var sprint_count:int = 0 # Track the # of consecutive frames the left joystick is fully pressed (for acceleration)
 var jumphold_framecount:int = 0 # Track the # of consecutive frames jump is held for (variable jump height)
-var lock_framecount:int = 0 # Amount of frames the player has no control. Used post respawn.
-var aerial_framecount:int = 0 # Amount of frames the player has been in the air.
 var shieldbash_framecount:int = 0 # The player has a certain amount of frames to initate a shield bash
+onready var lock_timer = $Timers/Locked
+onready var air_transition_timer = $Timers/AirTransition
+
 
 # Subweapons
 var current_subweapon:String = "bomb"
@@ -36,51 +38,31 @@ onready var bombspawner = $BombSpawner
 
 func _ready() -> void:
 	process_priority = 0 # Run this before camera
-	
-	# Set locked state
-	set_locked(20)
+	set_locked(20) # Set locked state
 
-func _process(t) -> void:
-	Debug.text.write('Frame: ' + str(framecount))
-	Debug.text.write('Frame Time: ' + str(t))
-	Debug.text.newline()
+func forwards() -> Vector3:
+	return -transform.basis.z
 
 func _physics_process(_t) -> void:
 	framecount += 1
-	update_player_state()
+	update_target_state() # ZL Targeting
+	update_horizontal_velocity() # General movement
+	update_vertical_velocity() # Jumping and gravity
+	
 	var collision:KinematicCollision = move_and_collide(velocity * frame_time) # Apply Physics
+	
 	set_grounded(raycast.is_colliding()) # Check if grounded
 	handle_collision(collision) # Redirect velocity, check landing impact, etc
 	if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO # If velocity is very small, make it 0
 	handle_player_rotation() # Make player face the correct direction
+	if not locked: update_subweapon_state() # performed AFTER move_and_collide to correctly place projectiles.
 	respawn_check() # Check if player fell below the map
 	debug() # Write debug info onscreen
 
-# For external nodes targeting the player.
-func _get_position() -> Vector3:
-	return position3d.global_transform.origin
-
-func set_locked(count:int) -> void:
-	lock_framecount = count
-	if count > 0: 
-		maxspeed_framecount = 0
-		jumping = false
-		material.set_shader_param("damaged", true)
-	else:
-		material.set_shader_param("damaged", false)
-
-func set_grounded(state:bool) -> void:
-	if grounded != state:
-		# Transition to grounded:
-		if state == true:
-			jumphold_framecount = 0
-			aerial_framecount = 0
-			has_jump = true
-	grounded = state
-
-func set_target(state:bool) -> void:
-	targeting = state
-	if targeting:
+func update_target_state() -> void:
+	# Begin ZL Targeting:
+	if not targeting and Input.is_action_just_pressed("target"):
+		targeting = true
 		zl_target = TargetSystem.get_most_relevant_target()
 		if zl_target == 0: 
 			Game.cam.resetting = true
@@ -90,38 +72,34 @@ func set_target(state:bool) -> void:
 			var result = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
 			if result.size() > 0:
 				look_at(translation - result.normal, Vector3.UP)
-	else:
-		zl_target = 0
-
-func update_player_state() -> void:
 	
-	var movement_direction = Vector3.ZERO # includes magnitude.
-	var horizontal_velocity = Vector3(velocity.x, 0, velocity.z)
-	var interpolate_amt:float = 0.15 if grounded else 0.015
-	
-	# Begin ZL Targeting:
-	if not targeting and Input.is_action_just_pressed("target"):
-		set_target(true)
-		
 	# Check if no longer targeting:
 	if Input.is_action_pressed("target"):
 		if not TargetSystem.target_is_valid(zl_target):
 			# Target broken from distance or lost line of sight
-			set_target(false)
+			targeting = false
+			zl_target = 0
 	elif Game.cam.resetting == false:
-		# If you are not holding the button, and the cam reset has finished, 
-		# you are no longer targeting anything
-		set_target(false)
+		targeting = false
+		zl_target = 0
+
+
+func update_horizontal_velocity() -> void:
+	var move_vec = Vector3.ZERO # includes magnitude.
+	var horizontal_velocity = Vector3(velocity.x, 0, velocity.z)
+	var interpolate_amt:float = 0.15
 	
-	if lock_framecount > 0:
-		lock_framecount -= 1
-		if lock_framecount == 0:
-			set_locked(0)
-	else:
+	# Aerial movement
+	if not grounded:
+		interpolate_amt = 0.015
+		horizontal_velocity *= 0.999
 	
+	if not locked:
+		
 		# Left Stick Movement
 		var direction:Vector3 = find_movement_direction()
 		look_target = look_target.linear_interpolate(direction, 0.15) # Used for player rotation later
+		
 		var speed:float = 8.0
 		if shield.active: speed = 2.0
 		
@@ -136,18 +114,28 @@ func update_player_state() -> void:
 		# Sprinting
 		if grounded and not shield.active and not targeting:
 			if direction.is_normalized(): # If joystick fully pressed
-				if maxspeed_framecount < 180: maxspeed_framecount += 1 # Build speed over three seconds
-				speed += 2.0 * (float(maxspeed_framecount) / 180.0)
-			else: maxspeed_framecount = 0
-		else: maxspeed_framecount = 0
+				if sprint_count < 180: sprint_count += 1 # Build speed over three seconds
+				speed += 2.0 * (float(sprint_count) / 180.0)
+			else: sprint_count = 0
+		else: sprint_count = 0
 		
-		# Aerial movement
-		if not grounded:
-			if aerial_framecount == 5: has_jump = false # Remove Jump if too much time has passed
-			aerial_framecount += 1
-			horizontal_velocity *= 0.999 # Aerial horizontal speed decay
-		
-		# Jumping
+		move_vec = direction * speed
+	
+	# Interpolate horizontal movement
+	horizontal_velocity = horizontal_velocity.linear_interpolate(move_vec, interpolate_amt)
+	velocity = Vector3(horizontal_velocity.x, velocity.y, horizontal_velocity.z)
+	
+
+func update_vertical_velocity() -> void:
+	# Apply Gravity
+	velocity.y += Game.GRAVITY * frame_time
+	
+	"""
+	I feel like my jump code is very jank and I wish to change it at some point.
+	"""
+	
+	# Check for jumping
+	if not locked:
 		if jumping:
 			velocity.y = 7.0 - (float(jumphold_framecount) * 0.1)
 			if shield.active: velocity.y /= 2.0
@@ -158,46 +146,7 @@ func update_player_state() -> void:
 		elif has_jump and Input.is_action_just_pressed('jump'):
 			has_jump = false
 			jumping = true
-		
-		# Subweapons
-		if not shield.active:
-			if Input.is_action_just_pressed("subweapon"):
-				match(current_subweapon):
-					"bomb":
-						
-						"""
-						Current problems with bombs:
-						- bomb spawns 1 frame behind because its position is set before move_and_collide happens
-						- bomb pull and bomb throw should affect your velocity and possible actions more directly
-						- no explosion hitbox, no damage
-						- no custom shader logic, particles, lighting, etc.
-						- no buffer system (tap twice to pull->throw)
-						- awkward scene organization
-						- no drop when hit, drop when damaged, drop when hold collider hits something.
-						"""
-						
-						if holding_bomb: # If you are already holding the bomb, throw it.
-							if bombspawner.can_throw_bomb():
-								# I want to add a buffer system here so that if you double tap it will throw asap.
-								# even if the pull anim is not finished.
-								
-								
-								bombspawner.throw_bomb(velocity + forwards()*10.0 + Vector3.UP*5.0)
-								set_locked(10)
-								holding_bomb = false
-						elif bombspawner.can_spawn_bomb(): # If a bomb can be spawned, do so.
-							bombspawner.spawn_bomb()
-							holding_bomb = true
-			
-		movement_direction = direction * speed
-	
-	# Interpolate horizontal movement
-	horizontal_velocity = horizontal_velocity.linear_interpolate(movement_direction, interpolate_amt)
-	velocity = Vector3(horizontal_velocity.x, velocity.y, horizontal_velocity.z)
-	velocity.y += Game.GRAVITY * frame_time
 
-func forwards() -> Vector3:
-	return -transform.basis.z
 
 func find_movement_direction() -> Vector3:
 	var pushdir:Vector2 = Game.get_stick_input("left")
@@ -205,6 +154,85 @@ func find_movement_direction() -> Vector3:
 	camdir.y = 0.0
 	camdir = camdir.normalized()
 	return (camdir * pushdir.y) + (camdir.rotated(Vector3.UP, PI/2) * pushdir.x)
+	
+
+# For external nodes targeting the player.
+func _get_position() -> Vector3:
+	return position3d.global_transform.origin
+
+
+# Locked State:
+func set_locked(count:int) -> void:
+	if count > 0: 
+		# Set Flags
+		locked = true
+		jumping = false
+		# Set Material
+		material.set_shader_param("damaged", true)
+		# Set Timer
+		lock_timer.wait_time = count * frame_time
+		lock_timer.start()
+	else:
+		unlock()
+
+# Unlock
+func _on_Locked_timeout() -> void:
+	unlock()
+func unlock() -> void:
+	locked = false
+	material.set_shader_param("damaged", false)
+
+
+# Grounded State:
+func set_grounded(state:bool) -> void:
+	if grounded != state:
+		if state == true:
+			# Transition to ground:
+			air_transition_timer.stop()
+			jumphold_framecount = 0
+			has_jump = true
+		else:
+			# Transition to air:
+			air_transition_timer.wait_time = 5.0 * frame_time
+			air_transition_timer.start()
+	grounded = state
+
+# Jump leniency when falling off ledges
+func _on_AirTransition_timeout() -> void:
+	has_jump = false
+	
+
+# Subweapons
+func update_subweapon_state() -> void:
+	if not shield.active:
+		if Input.is_action_just_pressed("subweapon"):
+			match(current_subweapon):
+				"bomb":
+					
+					"""
+					Current problems with bombs:
+					- bomb spawns 1 frame behind because its position is set before move_and_collide happens
+					- bomb pull and bomb throw should affect your velocity and possible actions more directly
+					- no explosion hitbox, no damage
+					- no custom shader logic, particles, lighting, etc.
+					- no buffer system (tap twice to pull->throw)
+					- awkward scene organization
+					- no drop when hit, drop when damaged, drop when hold collider hits something.
+					"""
+					
+					if holding_bomb: # If you are already holding the bomb, throw it.
+						if bombspawner.can_throw_bomb():
+							# I want to add a buffer system here so that if you double tap it will throw asap.
+							# even if the pull anim is not finished.
+							
+							
+							bombspawner.throw_bomb(velocity + forwards()*10.0 + Vector3.UP*5.0)
+							set_locked(10)
+							holding_bomb = false
+					elif bombspawner.can_spawn_bomb(): # If a bomb can be spawned, do so.
+						bombspawner.spawn_bomb()
+						holding_bomb = true
+
 
 func handle_collision(collision:KinematicCollision) -> void:
 	# If a collision has occured:
@@ -216,7 +244,7 @@ func handle_collision(collision:KinematicCollision) -> void:
 			set_locked(int(impact))
 
 func handle_player_rotation() -> void:
-	if lock_framecount == 0:
+	if not locked:
 		
 		# While grounded -- look towards movement direction
 		if not targeting and grounded:
@@ -265,7 +293,8 @@ func hit(collision:Dictionary) -> String:
 
 func debug() -> void:
 	# Debug Text
-
+	Debug.text.write('Frame: ' + str(framecount))
+	Debug.text.newline()
 	Debug.text.write('Subweapon: ' + str(current_subweapon))
 	Debug.text.write('Jewels: ' + str(jewels))
 	Debug.text.write('can_spawn_bomb()', 'green' if bombspawner.can_spawn_bomb() else 'red')
@@ -274,7 +303,7 @@ func debug() -> void:
 	Debug.text.write('Horizontal Velocity: ' + str(Vector3(velocity.x, 0, velocity.z).length()))
 #	Debug.text.write('Forward Direction: ' + str(forwards()))
 	Debug.text.newline()
-	Debug.text.write('Locked: ' + str(lock_framecount), 'green' if lock_framecount > 0 else 'red')
+	Debug.text.write('Locked: ' + str(locked), 'green' if locked else 'red')
 	Debug.text.write('Targeting: ' + str(targeting), 'green' if targeting else 'red')
 	Debug.text.write('Grounded: ' + str(grounded), 'green' if grounded else 'red')
 	Debug.text.write('Has Jump: ' + str(has_jump), 'green' if has_jump else 'red')
@@ -283,9 +312,8 @@ func debug() -> void:
 	Debug.text.write('Shielding: ' + str(shield.active), 'green' if shield.active else 'red')
 	Debug.text.write('Bashing: ' + str(shield.bash_str), 'green' if shield.bash_str > 0.0 else 'red')
 	Debug.text.newline()
-	Debug.text.write('Sprinting: ' + str(maxspeed_framecount) + '/180')
+	Debug.text.write('Sprinting: ' + str(sprint_count) + '/180')
 #	Debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
-	Debug.text.write('Air Time: ' + str(aerial_framecount))
 	Debug.text.newline()
 	if zl_target == 0:
 		Debug.text.write("ZL Target: ")
@@ -300,4 +328,5 @@ func debug() -> void:
 #	Debug.draw.add_vertex(Game.player.position)
 #	Debug.draw.add_vertex(Game.player.position + Vector3(velocity.x, 0, velocity.z).normalized())
 #	Debug.draw.end()
+
 
