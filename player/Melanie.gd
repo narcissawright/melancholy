@@ -1,5 +1,11 @@
 extends KinematicBody
 
+ ######   ######  ##       ####   ##  ##  ##  ######
+## ## ##  ##      ##      ##  ##  ### ##  ##  ##
+## ## ##  #####   ##      ######  ######  ##  #####
+##    ##  ##      ##      ##  ##  ## ###  ##  ##
+##    ##  ######  ######  ##  ##  ##  ##  ##  ######
+
 # Time
 var framecount:int = 0
 var frame_time:float = 1.0 / 60.0
@@ -46,17 +52,22 @@ onready var material = $Body.get_surface_material(0)
 # Position3D
 onready var position3d = $Position3D # Camera points at this, enemies attack this point.
 var position:Vector3 setget , _get_position  # Gets Position3D global_transform.origin
+func _get_position() -> Vector3:
+	return position3d.global_transform.origin
+
 
 func _ready() -> void:
 	process_priority = 0 # Run this before camera
 	set_locked(20) # Set locked state
 
-# For external nodes targeting the player.
-func _get_position() -> Vector3:
-	return position3d.global_transform.origin
-
 func forwards() -> Vector3:
 	return -transform.basis.z
+
+#####   #####    ####    #####  #####   #####   #####
+##  ##  ##  ##  ##  ##  ##      ##     ##      ##
+#####   #####   ##  ##  ##      ####    ####    #### 
+##      ##  ##  ##  ##  ##      ##         ##      ##
+##      ##  ##   ####    #####  #####  #####   ##### 
 
 func _physics_process(_t) -> void:
 	framecount += 1
@@ -237,11 +248,11 @@ func set_grounded(state:bool) -> void:
 func _on_AirTransition_timeout() -> void:
 	has_jump = false
 
- #####  ##  ##  #####   ##    ##  #####   ####   #####    ####   ##  ##
-##      ##  ##  ##  ##  ##    ##  ##     ##  ##  ##  ##  ##  ##  ### ##
- ####   ##  ##  #####   ## ## ##  ####   ######  #####   ##  ##  ######
-	##  ##  ##  ##  ##  ## ## ##  ##     ##  ##  ##      ##  ##  ## ###
-#####    ####   #####    ######   #####  ##  ##  ##       ####   ##  ##
+ #####  ##  ##  #####   ##    ##  #####   ####   #####    ####   ##  ## 
+##      ##  ##  ##  ##  ##    ##  ##     ##  ##  ##  ##  ##  ##  ### ## 
+ ####   ##  ##  #####   ## ## ##  ####   ######  #####   ##  ##  ###### 
+    ##  ##  ##  ##  ##  ## ## ##  ##     ##  ##  ##      ##  ##  ## ### 
+#####    ####   #####    ######   #####  ##  ##  ##       ####   ##  ## 
 
 # Subweapons
 func update_subweapon_state() -> void:
@@ -368,6 +379,7 @@ func hit(collision:Dictionary) -> String:
 
 func apply_damage(value:float) -> void:
 	set_locked(int(value))
+	if shield.active: shield.put_away()
 	material.set_shader_param("damaged", true)
 	if bombspawner.holding:
 		bombspawner.drop_bomb()

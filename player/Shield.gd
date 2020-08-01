@@ -23,10 +23,13 @@ func _physics_process(_t:float) -> void:
 	# If you're NOT pressing shield...
 	elif not Input.is_action_pressed("shield"):
 		if active and not is_playing():
-			play("put_away")
-			active = false
+			put_away()
 			shieldbash_timer = 10 # frames
-	
+
+func put_away() -> void:
+	play("put_away")
+	active = false
+
 func can_shield_bash() -> bool:
 	if shieldbash_timer == 0: 
 		return false
