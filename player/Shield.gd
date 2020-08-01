@@ -1,17 +1,35 @@
 extends AnimationPlayer
 
+"""
+I could really see using animationplayer for more properties,
+such as animating the shield slide interpolation value
+
+Currently, when the shield is initiated, your speed drops to 2.0.
+This means if you try to shield drop a bomb and move backwards to block it
+you can barely get there. I would prefer if you retained more speed until the animation
+is further along. Maybe something for the future.
+"""
+
 var active = false
-var shieldbash_timer:int = 0
+var shieldbash_timer:int = 0 # I should try to remove this and maybe set a bool in animationplayer
 var bash_str:float setget , _get_bash_strength
+var sliding = false
+
+func _ready() -> void:
+	Events.connect("player_damaged", self, "on_player_damaged")
 
 func _physics_process(_t:float) -> void:
+	if sliding:
+		if Game.player.horizontal_velocity().length() < 5.0:
+			sliding = false
+			Game.player.unlock()
+	
 	if shieldbash_timer > 0:
 		shieldbash_timer -= 1
 	
 	if not Game.player.locked:
-		
 		# If you just pressed shield
-		if Input.is_action_just_pressed("shield"):
+		if not active and Input.is_action_pressed("shield"):
 			if can_shield_bash():
 				# Perform shield bash
 				play("shield_bash")
@@ -49,4 +67,7 @@ func _get_bash_strength() -> float:
 	if current_animation == "shield_bash":
 		return 1.0 - (current_animation_position / current_animation_length)
 	return 0.0
-	
+
+func on_player_damaged() -> void:
+	if active:
+		put_away()

@@ -123,6 +123,18 @@ tracks/5/keys = {
 "update": 0,
 "values": [ Vector3( 1, 1, 1 ), Vector3( 1, 1, 1 ), Vector3( 0.75, 0.75, 0.75 ), Vector3( 0.5, 0.5, 0.5 ) ]
 }
+tracks/6/type = "value"
+tracks/6/path = NodePath("ShieldCollision:disabled")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0, 0.15 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
 
 [sub_resource type="Animation" id=10]
 resource_name = "shield_bash"
@@ -151,6 +163,18 @@ tracks/1/keys = {
 "transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
 "update": 0,
 "values": [ Vector3( 0, 0.75, -0.3 ), Vector3( 0, 0.75, -0.38 ), Vector3( 0, 0.75, -0.4 ), Vector3( 0, 0.75, -0.4 ), Vector3( 0, 0.75, -0.3 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("ShieldCollision:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
 }
 
 [sub_resource type="Animation" id=11]
@@ -229,12 +253,24 @@ tracks/5/keys = {
 "update": 0,
 "values": [ Vector3( 0.5, 0.5, 0.5 ), Vector3( 1, 1, 1 ) ]
 }
+tracks/6/type = "value"
+tracks/6/path = NodePath("ShieldCollision:disabled")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0, 0.0500001 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
 
 [sub_resource type="SphereShape" id=12]
 radius = 20.0
 
 [sub_resource type="CapsuleShape" id=16]
-radius = 0.2
+radius = 0.18
 
 [node name="Melanie" type="KinematicBody"]
 pause_mode = 1
@@ -268,6 +304,7 @@ cast_to = Vector3( 0, -0.11, 0 )
 [node name="ShieldCollision" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0 )
 shape = SubResource( 6 )
+disabled = true
 
 [node name="ShieldMesh" type="MeshInstance" parent="."]
 transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 1, 0.2 )

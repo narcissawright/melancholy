@@ -10,10 +10,6 @@ extends KinematicBody
 var framecount:int = 0
 var frame_time:float = 1.0 / 60.0
 
-# Locked state - player movement will not happen if locked.
-var locked:bool = true
-onready var lock_timer = $Timers/Locked
-
 # Health
 var hp:float = 200.0
 
@@ -27,10 +23,6 @@ var sprint_count:int = 0 # Track the # of consecutive frames the left joystick i
 
 # Rotation
 var look_target:Vector3 # used for Rotation
-
-# Targeting
-var targeting:bool = false
-var zl_target:int = 0
 
 # Jumping
 var has_jump:bool = true
@@ -58,7 +50,7 @@ func _get_position() -> Vector3:
 
 func _ready() -> void:
 	process_priority = 0 # Run this before camera
-	set_locked(20) # Set locked state
+	lockplayer_for_frames(20) # Set locked state
 
 func forwards() -> Vector3:
 	return -transform.basis.z
@@ -81,7 +73,7 @@ func _physics_process(_t) -> void:
 	handle_collision(collision) # Redirect velocity, check landing impact, etc
 	if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO # If velocity is very small, make it 0
 	handle_player_rotation() # Make player face the correct direction
-	if not locked: update_subweapon_state() # performed AFTER move_and_collide to correctly place projectiles.
+	update_subweapon_state() # performed AFTER move_and_collide to correctly place projectiles.
 	respawn_check() # Check if player fell below the map
 	debug() # Write debug info onscreen
 
@@ -90,6 +82,10 @@ func _physics_process(_t) -> void:
   ##   ######  #####   ## ###  #####     ##
   ##   ##  ##  ##  ##  ##  ##  ##        ##
   ##   ##  ##  ##  ##   ####   ######    ##
+
+# Targeting
+var targeting:bool = false
+var zl_target:int = 0
 
 func update_target_state() -> void:
 	# Begin ZL Targeting:
@@ -127,9 +123,12 @@ Issues:
 		it ends up decaying much too quickly when grounded.
 """
 
+func horizontal_velocity() -> Vector3:
+	return Vector3(velocity.x, 0, velocity.z)
+
 func update_horizontal_velocity() -> void:
 	var move_vec = Vector3.ZERO # includes magnitude.
-	var horizontal_velocity = Vector3(velocity.x, 0, velocity.z)
+	var horizontal_velocity = horizontal_velocity()
 	var interpolate_amt:float = 0.15
 	
 	# Aerial movement
@@ -137,8 +136,8 @@ func update_horizontal_velocity() -> void:
 		interpolate_amt = 0.015
 		horizontal_velocity *= 0.999
 	
-	if locked and shield.active:
-		interpolate_amt = 0.015
+	if shield.sliding:
+		interpolate_amt = 0.025
 	
 	if not locked:
 		# Left Stick Movement
@@ -146,7 +145,7 @@ func update_horizontal_velocity() -> void:
 		look_target = look_target.linear_interpolate(direction, 0.15) # Used for player rotation later
 		
 		var speed:float = 8.0
-		if shield.active: speed = 4.0
+		if shield.active: speed = 2.0
 		
 		# Targeted movement
 		if targeting and not shield.active:
@@ -157,7 +156,7 @@ func update_horizontal_velocity() -> void:
 			speed -= (speed / 2.0) * (diff / (PI * 0.5))
 		
 		# Sprinting
-		if grounded and not shield.active and not targeting:
+		if can_sprint():
 			if direction.is_normalized(): # If joystick fully pressed
 				if sprint_count < 180: sprint_count += 1 # Build speed over three seconds
 				speed += 2.0 * (float(sprint_count) / 180.0)
@@ -176,6 +175,11 @@ func find_movement_direction() -> Vector3:
 	camdir.y = 0.0
 	camdir = camdir.normalized()
 	return (camdir * pushdir.y) + (camdir.rotated(Vector3.UP, PI/2) * pushdir.x)
+
+func can_sprint() -> bool:
+	if grounded and not shield.active and not targeting and not bombspawner.holding:
+		return true
+	return false
 
 ##  ##        ##  ##  #####  ##     ####    ####  ##  ######  ##  ##
 ##  ##        ##  ##  ##     ##    ##  ##  ##     ##    ##    ##  ##
@@ -210,20 +214,21 @@ func update_vertical_velocity() -> void:
 ##    ##  ##  ##     ## ##   ##      ##  ##
 #####  ####    ####  ##  ##  ######  #####
 
+var locked:bool = true
+onready var lock_timer = $Timers/Locked
+
 # Locked State:
-func set_locked(count:int) -> void:
-	if count > 0: 
-		# Set Flags
-		locked = true
-		jumping = false
-		sprint_count = 0
-		# Set Material
-		material.set_shader_param("locked", true)
-		# Set Timer
-		lock_timer.wait_time = count * frame_time
-		lock_timer.start()
-	else:
-		unlock()
+func lockplayer_for_frames(frames:int) -> void:
+	# Set Timer
+	lock_timer.wait_time = frames * frame_time
+	lock_timer.start()
+	lockplayer()
+
+func lockplayer() -> void:
+	locked = true
+	jumping = false
+	sprint_count = 0
+	material.set_shader_param("locked", true)
 
 func _on_Locked_timeout() -> void:
 	unlock()
@@ -271,30 +276,9 @@ all of the processing of the subweapon state, similar to how shield works.
 
 # Subweapons
 func update_subweapon_state() -> void:
-	if not shield.active:
-		if Input.is_action_just_pressed("subweapon"):
-			match(current_subweapon):
-				"bomb":
-					
-					"""
-					Current problems with bombs:
-					- no custom shader logic, particles, lighting, etc.
-					- no buffer system (tap twice to pull->throw)
-					"""
-					
-					if bombspawner.holding: # If you are already holding the bomb, throw it.
-						if bombspawner.can_throw_bomb():
-							# I want to add a buffer system here so that if you double tap it will throw asap.
-							# even if the pull anim is not finished.
-							bombspawner.throw_bomb(forwards()*10.0 + Vector3.UP*5.0)
-							set_locked(10)
-					elif bombspawner.can_spawn_bomb(): # If a bomb can be spawned, do so.
-						bombspawner.spawn_bomb()
-						set_locked(10)
-						
-	if shield.active:
-		if bombspawner.holding:
-			bombspawner.drop_bomb()
+	match(current_subweapon):
+		"bomb":
+			bombspawner.process_state()
  
  ####   ####   ##     ##     ##   #####  ##   ####   ##  ##
 ##     ##  ##  ##     ##     ##  ##      ##  ##  ##  ### ##
@@ -365,7 +349,7 @@ func respawn() -> void:
 	translation = Vector3.ZERO
 	velocity = Vector3.ZERO
 	rotation = Vector3.ZERO
-	set_locked(20)
+	lockplayer_for_frames(20)
 	Game.cam.resetting = true
 
 #####    ####    ######    ####    #####  #####
@@ -373,12 +357,6 @@ func respawn() -> void:
 ##  ##  ######  ## ## ##  ######  ## ###  ####
 ##  ##  ##  ##  ##    ##  ##  ##  ##  ##  ##
 #####   ##  ##  ##    ##  ##  ##   ####   #####
-
-"""
-Issues:
-	may need to turn shield pushback into its own state...
-	the velocity from explosions needs to be somewhat reworked as well probably.
-"""
 
 func hit_by_explosion(explosion_center:Vector3) -> void:
 	# Check if bomb hit your shield
@@ -388,12 +366,13 @@ func hit_by_explosion(explosion_center:Vector3) -> void:
 	if result.size() > 0:
 		if result.shape > 0:
 			# hit shield
-			velocity += forwards() * -50.0 + travel_vector # not finished.
-			#set_shield_locked()
+			velocity = forwards() * -14.0
+			shield.sliding = true
+			lockplayer()
 			return
 	# Bomb did not hit your shield; apply damage.
-	velocity += travel_vector * 5.0
-	apply_damage(20)
+	velocity += travel_vector * 7.0
+	apply_damage(30)
 	
 func hit(collision:Dictionary) -> String:
 		
@@ -404,11 +383,9 @@ func hit(collision:Dictionary) -> String:
 		return "die"
 
 func apply_damage(value:float) -> void:
-	set_locked(int(value))
-	if shield.active: shield.put_away()
+	lockplayer_for_frames(int(value))
+	Events.emit_signal('player_damaged')
 	material.set_shader_param("damaged", true)
-	if bombspawner.holding:
-		bombspawner.drop_bomb()
 	hp -= value
 	if hp <= 0:
 		die()

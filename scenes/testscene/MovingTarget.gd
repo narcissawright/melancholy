@@ -40,7 +40,7 @@ func hit(_collision: Dictionary) -> String:
 	locked = 10
 	return "die"
 
-func hit_by_explosion(explosion_center:Vector3) -> void:
+func hit_by_explosion(_explosion_center:Vector3) -> void:
 	queue_free()
 
 func _on_detector_body_entered(body: Node) -> void:
