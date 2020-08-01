@@ -1,4 +1,4 @@
-extends MeshInstance
+extends Position3D
 
 # Collision
 var query := PhysicsShapeQueryParameters.new()
@@ -8,7 +8,12 @@ var shape := SphereShape.new()
 onready var anim = $AnimationPlayer
 
 # Material
+onready var meshinstance = $MeshInstance
 var material:Material
+
+# Explosion
+onready var explosion = $ExplosionArea
+var explosion_list:Array # Keep track of what has been hit already.
 
 # Properties
 var velocity:Vector3
@@ -18,13 +23,13 @@ var is_ready:bool = false
 
 func _ready() -> void:
 	# Duplicate material per bomb
-	material = get_surface_material(0).duplicate()
-	set_surface_material(0, material)
+	material = meshinstance.get_surface_material(0).duplicate()
+	meshinstance.set_surface_material(0, material)
 	
 	# Set up physics query
 	query.exclude = [Game.player]
 	query.collision_mask = Layers.solid | Layers.actor
-	shape.radius = 0.3
+	shape.radius = 0.2
 	query.set_shape(shape)
 	set_physics_process(false)
 	
@@ -47,9 +52,20 @@ func _physics_process(t:float) -> void:
 			explode()
 
 func explode() -> void:
-	query.exclude = []
 	anim.play("explode")
 	set_physics_process(false)
+	
+#	query.exclude = [] # Player not immune to explosion
+#	query.transform = global_transform # Update position
+#	query.collision_mask = Layers.actor # Only check for actors
+#	shape.radius = 2.0 # 10x scale, matches visual
+#
+#	var space_state = get_world().direct_space_state
+#	var results = space_state.intersect_shape(query)
+#	for i in range(results.size()):
+#		var actor = results[i].collider
+#		if actor.has_method("hit"):
+#			actor.hit(results[i])
 	
 func _animation_finished(anim_name:String) -> void:
 	match(anim_name):
@@ -57,3 +73,10 @@ func _animation_finished(anim_name:String) -> void:
 			is_ready = true
 		"explode":
 			queue_free()
+
+func _on_ExplosionHit(body: Node) -> void:
+	if not explosion_list.has(body):
+		explosion_list.append(body) # Prevent calling this twice
+		if body.has_method("hit_by_explosion"):
+			body.hit_by_explosion(global_transform.origin)
+		

@@ -32,7 +32,7 @@ radius = 0.2
 height = 1.37
 
 [sub_resource type="BoxShape" id=6]
-extents = Vector3( 0.375, 0.75, 0.05 )
+extents = Vector3( 0.1, 0.2, 0.05 )
 
 [sub_resource type="CubeMesh" id=7]
 size = Vector3( 0.75, 1.5, 0.1 )
@@ -263,11 +263,11 @@ enabled = true
 cast_to = Vector3( 0, -0.11, 0 )
 
 [node name="ShieldCollision" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, -0.3 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0 )
 shape = SubResource( 6 )
 
 [node name="ShieldMesh" type="MeshInstance" parent="."]
-transform = Transform( -1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0.75, -0.3 )
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 1, 0.2 )
 mesh = SubResource( 7 )
 material/0 = SubResource( 8 )
 
@@ -312,5 +312,6 @@ process_mode = 0
 one_shot = true
 [connection signal="area_entered" from="TargetDetector" to="TargetDetector" method="_target_acquired"]
 [connection signal="area_exited" from="TargetDetector" to="TargetDetector" method="_target_lost"]
+[connection signal="body_entered" from="BombSpawner/SpawnArea" to="BombSpawner" method="_on_SpawnArea_body_entered"]
 [connection signal="timeout" from="Timers/Locked" to="." method="_on_Locked_timeout"]
 [connection signal="timeout" from="Timers/AirTransition" to="." method="_on_AirTransition_timeout"]

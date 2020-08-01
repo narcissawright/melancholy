@@ -12,14 +12,14 @@ height = 0.89
 radius = 0.2
 mid_height = 0.885
 
-[sub_resource type="ShaderMaterial" id=6]
+[sub_resource type="ShaderMaterial" id=3]
 shader = ExtResource( 3 )
 shader_param/color_lit = Color( 0.329412, 0.862745, 0.352941, 1 )
 shader_param/color_dim = Color( 0.0941176, 0.458824, 0.270588, 1 )
 shader_param/enable_rim = true
 shader_param/damaged = false
 
-[sub_resource type="SphereShape" id=5]
+[sub_resource type="SphereShape" id=4]
 radius = 10.0
 
 [node name="Enemy_Test" type="KinematicBody"]
@@ -33,7 +33,7 @@ shape = SubResource( 1 )
 
 [node name="Mesh" type="MeshInstance" parent="."]
 mesh = SubResource( 2 )
-material/0 = SubResource( 6 )
+material/0 = SubResource( 3 )
 
 [node name="targetable" parent="Mesh" instance=ExtResource( 1 )]
 
@@ -44,6 +44,6 @@ editor_only = true
 [node name="detector" type="Area" parent="."]
 
 [node name="CollisionShape" type="CollisionShape" parent="detector"]
-shape = SubResource( 5 )
+shape = SubResource( 4 )
 [connection signal="body_entered" from="detector" to="." method="_on_detector_body_entered"]
 [connection signal="body_exited" from="detector" to="." method="_on_detector_body_exited"]

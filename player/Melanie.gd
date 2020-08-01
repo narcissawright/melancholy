@@ -1,40 +1,52 @@
 extends KinematicBody
 
+# Time
 var framecount:int = 0
 var frame_time:float = 1.0 / 60.0
+
+# Locked state - player movement will not happen if locked.
+var locked:bool = true
+onready var lock_timer = $Timers/Locked
+
+# Health
+var hp:float = 200.0
+
+# Grounded State
+var grounded:bool = true
+onready var raycast = $RayCast # Determines if the player is grounded or not
+
+# Movement
 var velocity := Vector3.ZERO
-var position setget , _get_position # Uses the Position3D node. Camera points at this, enemies attack this point.
+var sprint_count:int = 0 # Track the # of consecutive frames the left joystick is fully pressed (for acceleration)
+
+# Rotation
 var look_target:Vector3 # used for Rotation
 
-# Target
+# Targeting
+var targeting:bool = false
 var zl_target:int = 0
 
-# Flags
-var locked:bool = true
-var grounded:bool = true
+# Jumping
 var has_jump:bool = true
 var jumping:bool = false
-var targeting:bool = false
-
-# Timers
-var sprint_count:int = 0 # Track the # of consecutive frames the left joystick is fully pressed (for acceleration)
 var jumphold_framecount:int = 0 # Track the # of consecutive frames jump is held for (variable jump height)
-var shieldbash_framecount:int = 0 # The player has a certain amount of frames to initate a shield bash
-onready var lock_timer = $Timers/Locked
-onready var air_transition_timer = $Timers/AirTransition
+onready var air_transition_timer = $Timers/AirTransition # Used to give jumps leniency when falling off of a ledge
 
+# Shield
+onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shield is up or not
 
 # Subweapons
 var current_subweapon:String = "bomb"
-var jewels:int = 99
-var holding_bomb:bool = false
-
-# Child Nodes
-onready var position3d = $Position3D
-onready var raycast = $RayCast
-onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shield is up or not
-onready var material = $Body.get_surface_material(0)
+var jewels:int = 99 # Subweapon ammo
 onready var bombspawner = $BombSpawner
+
+# Material
+onready var material = $Body.get_surface_material(0)
+
+# Position3D
+onready var position3d = $Position3D # Camera points at this, enemies attack this point.
+var position:Vector3 setget , _get_position  # Gets Position3D global_transform.origin
+
 
 func _ready() -> void:
 	process_priority = 0 # Run this before camera
@@ -167,6 +179,7 @@ func set_locked(count:int) -> void:
 		# Set Flags
 		locked = true
 		jumping = false
+		sprint_count = 0
 		# Set Material
 		material.set_shader_param("damaged", true)
 		# Set Timer
@@ -211,27 +224,24 @@ func update_subweapon_state() -> void:
 					
 					"""
 					Current problems with bombs:
-					- bomb spawns 1 frame behind because its position is set before move_and_collide happens
-					- bomb pull and bomb throw should affect your velocity and possible actions more directly
-					- no explosion hitbox, no damage
 					- no custom shader logic, particles, lighting, etc.
 					- no buffer system (tap twice to pull->throw)
 					- awkward scene organization
-					- no drop when hit, drop when damaged, drop when hold collider hits something.
 					"""
 					
-					if holding_bomb: # If you are already holding the bomb, throw it.
+					if bombspawner.holding: # If you are already holding the bomb, throw it.
 						if bombspawner.can_throw_bomb():
 							# I want to add a buffer system here so that if you double tap it will throw asap.
 							# even if the pull anim is not finished.
-							
-							
-							bombspawner.throw_bomb(velocity + forwards()*10.0 + Vector3.UP*5.0)
+							bombspawner.throw_bomb(forwards()*10.0 + Vector3.UP*5.0)
 							set_locked(10)
-							holding_bomb = false
 					elif bombspawner.can_spawn_bomb(): # If a bomb can be spawned, do so.
 						bombspawner.spawn_bomb()
-						holding_bomb = true
+						set_locked(10)
+						
+	if shield.active:
+		if bombspawner.holding:
+			bombspawner.drop_bomb()
 
 
 func handle_collision(collision:KinematicCollision) -> void:
@@ -241,7 +251,7 @@ func handle_collision(collision:KinematicCollision) -> void:
 		velocity = velocity.slide(collision.normal)
 		impact -= velocity.length()
 		if impact > 10.0:
-			set_locked(int(impact))
+			apply_damage(impact)
 
 func handle_player_rotation() -> void:
 	if not locked:
@@ -278,23 +288,43 @@ func rotate_towards(look_target_2d:Vector2) -> void:
 func respawn_check() -> void:
 	# If player fell off the map, respawn
 	if translation.y < -50:
-		translation = Vector3.ZERO
-		velocity = Vector3.ZERO
-		rotation = Vector3.ZERO
-		set_locked(20)
-		Game.cam.resetting = true
+		respawn()
 
+func respawn() -> void:
+	hp = 200.0
+	translation = Vector3.ZERO
+	velocity = Vector3.ZERO
+	rotation = Vector3.ZERO
+	set_locked(20)
+	Game.cam.resetting = true
+
+func hit_by_explosion(explosion_center:Vector3) -> void:
+	apply_damage(20)
+	
 func hit(collision:Dictionary) -> String:
+		
 	if collision.shape > 0: # hit shield
 		return "bounce"
 	else:
-		set_locked(10)
+		apply_damage(10.0)
 		return "die"
+
+func apply_damage(value:float) -> void:
+	set_locked(int(value))
+	if bombspawner.holding:
+		bombspawner.drop_bomb()
+	hp -= value
+	if hp <= 0:
+		die()
+		
+func die() -> void:
+	respawn()
 
 func debug() -> void:
 	# Debug Text
 	Debug.text.write('Frame: ' + str(framecount))
 	Debug.text.newline()
+	Debug.text.write('HP: ' + str(hp))
 	Debug.text.write('Subweapon: ' + str(current_subweapon))
 	Debug.text.write('Jewels: ' + str(jewels))
 	Debug.text.write('can_spawn_bomb()', 'green' if bombspawner.can_spawn_bomb() else 'red')
