@@ -93,10 +93,11 @@ height = 0.4
 
 [sub_resource type="ShaderMaterial" id=3]
 shader = ExtResource( 1 )
+shader_param/enable_rim = true
 shader_param/color_lit = Color( 0.266667, 0.211765, 0.211765, 1 )
 shader_param/color_dim = Color( 0.121569, 0.101961, 0.101961, 1 )
-shader_param/enable_rim = true
 shader_param/damaged = false
+shader_param/locked = false
 
 [node name="Bomb" type="Position3D"]
 script = ExtResource( 2 )

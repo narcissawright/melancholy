@@ -47,10 +47,13 @@ onready var material = $Body.get_surface_material(0)
 onready var position3d = $Position3D # Camera points at this, enemies attack this point.
 var position:Vector3 setget , _get_position  # Gets Position3D global_transform.origin
 
-
 func _ready() -> void:
 	process_priority = 0 # Run this before camera
 	set_locked(20) # Set locked state
+
+# For external nodes targeting the player.
+func _get_position() -> Vector3:
+	return position3d.global_transform.origin
 
 func forwards() -> Vector3:
 	return -transform.basis.z
@@ -70,6 +73,12 @@ func _physics_process(_t) -> void:
 	if not locked: update_subweapon_state() # performed AFTER move_and_collide to correctly place projectiles.
 	respawn_check() # Check if player fell below the map
 	debug() # Write debug info onscreen
+
+######  ####   #####    #####  ######  ######
+  ##   ##  ##  ##  ##  ##      ##        ##
+  ##   ######  #####   ## ###  #####     ##
+  ##   ##  ##  ##  ##  ##  ##  ##        ##
+  ##   ##  ##  ##  ##   ####   ######    ##
 
 func update_target_state() -> void:
 	# Begin ZL Targeting:
@@ -95,6 +104,11 @@ func update_target_state() -> void:
 		targeting = false
 		zl_target = 0
 
+##  ##        ##  ##  #####  ##     ####    ####  ##  ######  ##  ##
+##  ##        ##  ##  ##     ##    ##  ##  ##     ##    ##    ##  ##
+######  ####  ##  ##  ####   ##    ##  ##  ##     ##    ##     ####
+##  ##         ####   ##     ##    ##  ##  ##     ##    ##      ##
+##  ##          ##    #####  #####  ####    ####  ##    ##      ##
 
 func update_horizontal_velocity() -> void:
 	var move_vec = Vector3.ZERO # includes magnitude.
@@ -107,13 +121,12 @@ func update_horizontal_velocity() -> void:
 		horizontal_velocity *= 0.999
 	
 	if not locked:
-		
 		# Left Stick Movement
 		var direction:Vector3 = find_movement_direction()
 		look_target = look_target.linear_interpolate(direction, 0.15) # Used for player rotation later
 		
 		var speed:float = 8.0
-		if shield.active: speed = 2.0
+		if shield.active: speed = 4.0
 		
 		# Targeted movement
 		if targeting and not shield.active:
@@ -136,7 +149,19 @@ func update_horizontal_velocity() -> void:
 	# Interpolate horizontal movement
 	horizontal_velocity = horizontal_velocity.linear_interpolate(move_vec, interpolate_amt)
 	velocity = Vector3(horizontal_velocity.x, velocity.y, horizontal_velocity.z)
-	
+
+func find_movement_direction() -> Vector3:
+	var pushdir:Vector2 = Game.get_stick_input("left")
+	var camdir:Vector3 = Game.cam.get_global_transform().basis.z
+	camdir.y = 0.0
+	camdir = camdir.normalized()
+	return (camdir * pushdir.y) + (camdir.rotated(Vector3.UP, PI/2) * pushdir.x)
+
+##  ##        ##  ##  #####  ##     ####    ####  ##  ######  ##  ##
+##  ##        ##  ##  ##     ##    ##  ##  ##     ##    ##    ##  ##
+##  ##  ####  ##  ##  ####   ##    ##  ##  ##     ##    ##     ####
+ ####          ####   ##     ##    ##  ##  ##     ##    ##      ##
+  ##            ##    #####  #####  ####    ####  ##    ##      ##
 
 func update_vertical_velocity() -> void:
 	# Apply Gravity
@@ -159,19 +184,11 @@ func update_vertical_velocity() -> void:
 			has_jump = false
 			jumping = true
 
-
-func find_movement_direction() -> Vector3:
-	var pushdir:Vector2 = Game.get_stick_input("left")
-	var camdir:Vector3 = Game.cam.get_global_transform().basis.z
-	camdir.y = 0.0
-	camdir = camdir.normalized()
-	return (camdir * pushdir.y) + (camdir.rotated(Vector3.UP, PI/2) * pushdir.x)
-	
-
-# For external nodes targeting the player.
-func _get_position() -> Vector3:
-	return position3d.global_transform.origin
-
+##     ####    ####  ##  ##  ######  #####
+##    ##  ##  ##     ## ##   ##      ##  ##
+##    ##  ##  ##     ####    #####   ##  ##
+##    ##  ##  ##     ## ##   ##      ##  ##
+#####  ####    ####  ##  ##  ######  #####
 
 # Locked State:
 func set_locked(count:int) -> void:
@@ -181,7 +198,7 @@ func set_locked(count:int) -> void:
 		jumping = false
 		sprint_count = 0
 		# Set Material
-		material.set_shader_param("damaged", true)
+		material.set_shader_param("locked", true)
 		# Set Timer
 		lock_timer.wait_time = count * frame_time
 		lock_timer.start()
@@ -193,8 +210,14 @@ func _on_Locked_timeout() -> void:
 	unlock()
 func unlock() -> void:
 	locked = false
+	material.set_shader_param("locked", false)
 	material.set_shader_param("damaged", false)
 
+ #####  #####    ####   ##  ##  ##  ##  #####   ######  #####
+##      ##  ##  ##  ##  ##  ##  ### ##  ##  ##  ##      ##  ##
+## ###  #####   ##  ##  ##  ##  ######  ##  ##  #####   ##  ##
+##  ##  ##  ##  ##  ##  ##  ##  ## ###  ##  ##  ##      ##  ##
+ ####   ##  ##   ####    ####   ##  ##  #####   ######  #####
 
 # Grounded State:
 func set_grounded(state:bool) -> void:
@@ -213,7 +236,12 @@ func set_grounded(state:bool) -> void:
 # Jump leniency when falling off ledges
 func _on_AirTransition_timeout() -> void:
 	has_jump = false
-	
+
+ #####  ##  ##  #####   ##    ##  #####   ####   #####    ####   ##  ##
+##      ##  ##  ##  ##  ##    ##  ##     ##  ##  ##  ##  ##  ##  ### ##
+ ####   ##  ##  #####   ## ## ##  ####   ######  #####   ##  ##  ######
+	##  ##  ##  ##  ##  ## ## ##  ##     ##  ##  ##      ##  ##  ## ###
+#####    ####   #####    ######   #####  ##  ##  ##       ####   ##  ##
 
 # Subweapons
 func update_subweapon_state() -> void:
@@ -253,6 +281,12 @@ func handle_collision(collision:KinematicCollision) -> void:
 		if impact > 10.0:
 			apply_damage(impact)
 
+#####    ####   ######   ####   ######  ##   ####   ##  ##
+##  ##  ##  ##    ##    ##  ##    ##    ##  ##  ##  ### ##
+#####   ##  ##    ##    ######    ##    ##  ##  ##  ######
+##  ##  ##  ##    ##    ##  ##    ##    ##  ##  ##  ## ###
+##  ##   ####     ##    ##  ##    ##    ##   ####   ##  ##
+
 func handle_player_rotation() -> void:
 	if not locked:
 		
@@ -285,6 +319,12 @@ func rotate_towards(look_target_2d:Vector2) -> void:
 		var lookdir:Vector3 = forwards().rotated(Vector3.UP, angle)
 		look_at(lookdir + translation, Vector3.UP) # rotate
 
+#####   #####   ####  #####    ####   ##    ##  ##  ##
+##  ##  ##     ##     ##  ##  ##  ##  ##    ##  ### ##
+#####   ####    ###   #####   ######  ## ## ##  ######
+##  ##  ##        ##  ##      ##  ##  ## ## ##  ## ###
+##  ##  #####  ####   ##      ##  ##   ######   ##  ##
+
 func respawn_check() -> void:
 	# If player fell off the map, respawn
 	if translation.y < -50:
@@ -298,7 +338,24 @@ func respawn() -> void:
 	set_locked(20)
 	Game.cam.resetting = true
 
+#####    ####    ######    ####    #####  #####
+##  ##  ##  ##  ## ## ##  ##  ##  ##      ##
+##  ##  ######  ## ## ##  ######  ## ###  ####
+##  ##  ##  ##  ##    ##  ##  ##  ##  ##  ##
+#####   ##  ##  ##    ##  ##  ##   ####   #####
+
 func hit_by_explosion(explosion_center:Vector3) -> void:
+	# Check if bomb hit your shield
+	var space_state = get_world().direct_space_state
+	var result = space_state.intersect_ray(explosion_center, self.position, [], Layers.actor)
+	if result.size() > 0:
+		if result.shape > 0:
+			# hit shield
+			var travel_vector = (self.position - explosion_center).normalized()
+			velocity += forwards() * -10.0
+			set_locked(10)
+			return
+	# Bomb did not hit your shield; apply damage.
 	apply_damage(20)
 	
 func hit(collision:Dictionary) -> String:
@@ -311,6 +368,7 @@ func hit(collision:Dictionary) -> String:
 
 func apply_damage(value:float) -> void:
 	set_locked(int(value))
+	material.set_shader_param("damaged", true)
 	if bombspawner.holding:
 		bombspawner.drop_bomb()
 	hp -= value
@@ -319,6 +377,12 @@ func apply_damage(value:float) -> void:
 		
 func die() -> void:
 	respawn()
+
+#####   #####  #####   ##  ##   #####
+##  ##  ##     ##  ##  ##  ##  ## 
+##  ##  ####   #####   ##  ##  ## ###
+##  ##  ##     ##  ##  ##  ##  ##  ##
+#####   #####  #####    ####    ####
 
 func debug() -> void:
 	# Debug Text
