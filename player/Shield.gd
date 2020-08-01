@@ -8,23 +8,25 @@ func _physics_process(_t:float) -> void:
 	if shieldbash_timer > 0:
 		shieldbash_timer -= 1
 	
-	# If you just pressed shield
-	if Input.is_action_just_pressed("shield"):
-		if can_shield_bash():
-			# Perform shield bash
-			play("shield_bash")
-			seek(0)
-			active = true
-		elif not active:
-			# Take shield out
-			play("take_out")
-			active = true
-	
-	# If you're NOT pressing shield...
-	elif not Input.is_action_pressed("shield"):
-		if active and not is_playing():
-			put_away()
-			shieldbash_timer = 10 # frames
+	if not Game.player.locked:
+		
+		# If you just pressed shield
+		if Input.is_action_just_pressed("shield"):
+			if can_shield_bash():
+				# Perform shield bash
+				play("shield_bash")
+				seek(0)
+				active = true
+			elif not active:
+				# Take shield out
+				play("take_out")
+				active = true
+		
+		# If you're NOT pressing shield...
+		elif not Input.is_action_pressed("shield"):
+			if active and not is_playing():
+				put_away()
+				shieldbash_timer = 10 # frames
 
 func put_away() -> void:
 	play("put_away")

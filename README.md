@@ -21,6 +21,7 @@
 #### `Mostly Done`
 - Shield bash. Quickly releasing and re-pressing results in a shield bash. Reflects projectiles w/ higher velocity.
 - Impact landing. Landing from a height will result damage or being unable to move for a time.
+- Subweapon: Bombs. Pull bomb (hold overhead). Cannot pull while area above head is blocked. Can throw bombs (set velocity right now). Bombs explode on impact. Bomb will drop if damaged or if you shield. Shielding a bomb will give you shield knockback but no damage. Getting hit by a bomb directly can boost you, but does damage.
 
 #### `In progress`
 - Subweapon: Bombs. Pull bomb (hold overhead). Cannot pull while area above head is blocked. Can throw bombs (set velocity right now). Still need to finish bomb explosion animation, apply damage, and cause the player to drop their bomb if they are hit or they try to shield or pull a weapon.
@@ -46,6 +47,8 @@
 
 
 ## Melancholy - Magic & Sorcery
+
+#### `Progress: 0%`
 
 - Only has 1/4th the Max HP that Melanie has. Uses a magic meter instead of jewels.
 - Immediately at her top grounded speed (slightly slower than Melanie's top grounded speed) while holding joystick fully. Glides across the ground instead of sprinting.
@@ -121,6 +124,7 @@
 
 
 ## First Area: Field of Falling Stars
+#### `Progress: 0%`
 - Sort of a Menu World / playground. Has all the geometry needed for testing mechanics.
 - Unlock stuff here as you progress in the game
 - Peaceful music, a safe area
@@ -131,11 +135,9 @@
 - Unlock Melancholy by completing Full Game w/ Melanie.
 - Separate time trials for each character, to be expanded upon later.
 
-## Thoughts on the actual stages:
+## Stages:
+#### `Progress: 0%`
 - Aiming for ~10 main stages per character. Some fully unique, some shared, some altered.
 - Try to keep a bit of "arcade scenario" -- gameplay design focused levels, but not too arcadey. Ideally each stage is minutes (3-15) long if you know what you're doing.
-- Checkpoints exist.
-- One stage should have slippery ice in it. lol.
-
-## Story Stuff
-- Melanie becomes Melancholy at end of full game. A trascendent moment. A pensive sadness, and a new purpose.
+- Checkpoints exist. 
+- I want an ice level. (slippery physics)

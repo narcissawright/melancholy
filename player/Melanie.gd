@@ -137,6 +137,9 @@ func update_horizontal_velocity() -> void:
 		interpolate_amt = 0.015
 		horizontal_velocity *= 0.999
 	
+	if locked and shield.active:
+		interpolate_amt = 0.015
+	
 	if not locked:
 		# Left Stick Movement
 		var direction:Vector3 = find_movement_direction()
@@ -222,13 +225,14 @@ func set_locked(count:int) -> void:
 	else:
 		unlock()
 
-# Unlock
 func _on_Locked_timeout() -> void:
 	unlock()
+	
 func unlock() -> void:
 	locked = false
 	material.set_shader_param("locked", false)
 	material.set_shader_param("damaged", false)
+	
 
  #####  #####    ####   ##  ##  ##  ##  #####   ######  #####
 ##      ##  ##  ##  ##  ##  ##  ### ##  ##  ##  ##      ##  ##
@@ -384,8 +388,8 @@ func hit_by_explosion(explosion_center:Vector3) -> void:
 	if result.size() > 0:
 		if result.shape > 0:
 			# hit shield
-			velocity += forwards() * -10.0 + travel_vector # not finished.
-			set_locked(10)
+			velocity += forwards() * -50.0 + travel_vector # not finished.
+			#set_shield_locked()
 			return
 	# Bomb did not hit your shield; apply damage.
 	velocity += travel_vector * 5.0
