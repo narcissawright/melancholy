@@ -121,6 +121,12 @@ func update_target_state() -> void:
 ##  ##         ####   ##     ##    ##  ##  ##     ##    ##      ##
 ##  ##          ##    #####  #####  ####    ####  ##    ##      ##
 
+"""
+Issues:
+	when attaining a sudden high horizontal velocity from shield pushback (explosions),
+		it ends up decaying much too quickly when grounded.
+"""
+
 func update_horizontal_velocity() -> void:
 	var move_vec = Vector3.ZERO # includes magnitude.
 	var horizontal_velocity = Vector3(velocity.x, 0, velocity.z)
@@ -254,6 +260,11 @@ func _on_AirTransition_timeout() -> void:
     ##  ##  ##  ##  ##  ## ## ##  ##     ##  ##  ##      ##  ##  ## ### 
 #####    ####   #####    ######   #####  ##  ##  ##       ####   ##  ## 
 
+"""
+I think it's plausible that there could be a Subweapon node that performs
+all of the processing of the subweapon state, similar to how shield works.
+"""
+
 # Subweapons
 func update_subweapon_state() -> void:
 	if not shield.active:
@@ -265,7 +276,6 @@ func update_subweapon_state() -> void:
 					Current problems with bombs:
 					- no custom shader logic, particles, lighting, etc.
 					- no buffer system (tap twice to pull->throw)
-					- awkward scene organization
 					"""
 					
 					if bombspawner.holding: # If you are already holding the bomb, throw it.
@@ -281,7 +291,12 @@ func update_subweapon_state() -> void:
 	if shield.active:
 		if bombspawner.holding:
 			bombspawner.drop_bomb()
-
+ 
+ ####   ####   ##     ##     ##   #####  ##   ####   ##  ##
+##     ##  ##  ##     ##     ##  ##      ##  ##  ##  ### ##
+##     ##  ##  ##     ##     ##   ####   ##  ##  ##  ######
+##     ##  ##  ##     ##     ##      ##  ##  ##  ##  ## ###
+ ####   ####   #####  #####  ##  #####   ##   ####   ##  ##
 
 func handle_collision(collision:KinematicCollision) -> void:
 	# If a collision has occured:
@@ -355,18 +370,25 @@ func respawn() -> void:
 ##  ##  ##  ##  ##    ##  ##  ##  ##  ##  ##
 #####   ##  ##  ##    ##  ##  ##   ####   #####
 
+"""
+Issues:
+	may need to turn shield pushback into its own state...
+	the velocity from explosions needs to be somewhat reworked as well probably.
+"""
+
 func hit_by_explosion(explosion_center:Vector3) -> void:
 	# Check if bomb hit your shield
+	var travel_vector = (self.position - explosion_center).normalized()
 	var space_state = get_world().direct_space_state
 	var result = space_state.intersect_ray(explosion_center, self.position, [], Layers.actor)
 	if result.size() > 0:
 		if result.shape > 0:
 			# hit shield
-			var travel_vector = (self.position - explosion_center).normalized()
-			velocity += forwards() * -10.0
+			velocity += forwards() * -10.0 + travel_vector # not finished.
 			set_locked(10)
 			return
 	# Bomb did not hit your shield; apply damage.
+	velocity += travel_vector * 5.0
 	apply_damage(20)
 	
 func hit(collision:Dictionary) -> String:
