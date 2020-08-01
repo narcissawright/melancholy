@@ -21,10 +21,7 @@
 #### `Mostly Done`
 - Shield bash. Quickly releasing and re-pressing results in a shield bash. Reflects projectiles w/ higher velocity.
 - Impact landing. Landing from a height will result damage or being unable to move for a time.
-- Subweapon: Bombs. Pull bomb (hold overhead). Cannot pull while area above head is blocked. Can throw bombs (set velocity right now). Bombs explode on impact. Bomb will drop if damaged or if you shield. Shielding a bomb will give you shield knockback but no damage. Getting hit by a bomb directly can boost you, but does damage.
-
-#### `In progress`
-- Subweapon: Bombs. Pull bomb (hold overhead). Cannot pull while area above head is blocked. Can throw bombs (set velocity right now). Still need to finish bomb explosion animation, apply damage, and cause the player to drop their bomb if they are hit or they try to shield or pull a weapon.
+- Subweapon: Bombs. Pull bomb (hold overhead). Cannot pull while area above head is blocked. Can throw bombs. Bombs explode on impact. Bomb will drop if damaged or if you shield. Shielding a bomb will give you shield knockback but no damage. Getting hit by a bomb directly can boost you, but does damage.
 
 #### `To Do`
 - Proper movement & physics on slopes and small ledges

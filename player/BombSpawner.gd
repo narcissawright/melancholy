@@ -5,6 +5,7 @@ Current problems with bombs:
 - no custom shader logic, particles, lighting, etc.
 - doesnt check for jewel requirement
 - bombs should explode from other explosions but they don't right now
+- bombs don't get reparented if exploding while held (following player weirdly)
 """
 
 onready var spawn_area = $SpawnArea
@@ -68,7 +69,9 @@ func throw_bomb(velocity) -> void:
 	Game.add_child(current_bomb)
 	current_bomb.global_transform.origin = global_transform.origin
 	current_bomb.throw(velocity)
-	Game.player.lockplayer_for_frames(10)
+	if velocity != Vector3.ZERO:
+		# don't slow player when dropping, only throwing.
+		Game.player.lockplayer_for_frames(10)
 
 # Drop
 func drop_bomb() -> void:
