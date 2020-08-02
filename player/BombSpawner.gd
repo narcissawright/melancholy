@@ -1,11 +1,10 @@
 extends Position3D
 
 """
-Current problems with bombs:
+Issues:
 - no custom shader logic, particles, lighting, etc.
 - doesnt check for jewel requirement
-- bombs should explode from other explosions but they don't right now
-- bombs don't get reparented if exploding while held (following player weirdly)
+- no sfx
 """
 
 onready var spawn_area = $SpawnArea
@@ -48,26 +47,18 @@ func spawn_bomb() -> void:
 func throw_bomb_asap(velocity) -> void:
 	if not current_bomb.anim.is_connected("animation_finished", self, "buffered_bomb_throw_ready"):
 		if current_bomb.is_ready:
-			call_deferred('throw_bomb', velocity)
+			throw_bomb(velocity)
 		else:
 			current_bomb.anim.connect("animation_finished", self, "buffered_bomb_throw_ready", [velocity], CONNECT_ONESHOT)
 
 func buffered_bomb_throw_ready(anim_name:String, velocity:Vector3) -> void:
 	if anim_name == "bomb_pull":
-		call_deferred('throw_bomb', velocity)
+		throw_bomb(velocity)
 
 # Throw
-"""
-This function should be called deferred so that the scenetree manipulation 
-(reparenting) happens safely. There is an issue with the Area node of the bomb
-being in a locked state and unable to be reparented.
-"""
 func throw_bomb(velocity) -> void:
 	# Reparent and launch
-	holding = false
-	remove_child(current_bomb)
-	Game.add_child(current_bomb)
-	current_bomb.global_transform.origin = global_transform.origin
+	current_bomb.reparent_to_game_world()
 	current_bomb.throw(velocity)
 	if velocity != Vector3.ZERO:
 		# don't slow player when dropping, only throwing.

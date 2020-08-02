@@ -36,11 +36,12 @@ func _ready() -> void:
 	
 	# Play pull animation
 	anim.play("bomb_pull")
-	
+
 func throw(v:Vector3) -> void:
 	velocity = v
 	set_physics_process(true)
 
+# Apply gravity, use shapecasting to determine collisions.
 func _physics_process(t:float) -> void:
 	velocity.y += Game.GRAVITY * t
 	var step = velocity * t
@@ -52,13 +53,27 @@ func _physics_process(t:float) -> void:
 		if result[1] != 1:
 			explode()
 
+# Kaboom!
 func explode() -> void:
 	if Game.player.bombspawner.current_bomb == self:
-		Game.player.bombspawner.holding = false
+		reparent_to_game_world()
 	exploding = true
 	anim.play("explode")
 	set_physics_process(false)
-	
+
+# Detach bomb from player.
+func reparent_to_game_world() -> void:
+	Game.player.bombspawner.holding = false
+	call_deferred('reparent_deferred')
+
+# Don't call this directly, use reparent_to_game_world() instead.
+func reparent_deferred() -> void:
+	var current_position = global_transform.origin
+	get_parent().remove_child(self)
+	Game.add_child(self)
+	global_transform.origin = current_position
+
+# Signal from AnimationPlayer
 func _animation_finished(anim_name:String) -> void:
 	match(anim_name):
 		"bomb_pull":
@@ -69,8 +84,13 @@ func _animation_finished(anim_name:String) -> void:
 		"explode":
 			queue_free()
 
+# Called when this bomb's explosion hits an actor
 func _on_ExplosionHit(body: Node) -> void:
 	if not explosion_list.has(body):
 		explosion_list.append(body) # Prevent calling this twice
 		if body.has_method("hit_by_explosion"):
 			body.hit_by_explosion(global_transform.origin)
+
+# Called when this bomb touches an external explosion
+func _on_ExplosionDetected(_area: Area) -> void:
+	explode()
