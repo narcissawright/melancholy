@@ -63,6 +63,7 @@ func forwards() -> Vector3:
 
 func _physics_process(_t) -> void:
 	framecount += 1
+	
 	update_target_state() # ZL Targeting
 	update_horizontal_velocity() # General movement
 	update_vertical_velocity() # Jumping and gravity

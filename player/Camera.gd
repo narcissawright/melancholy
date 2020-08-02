@@ -30,6 +30,7 @@ const zoom_levels:Dictionary = {
 	}
 
 # Pan
+var pan_velocity := Vector3.ZERO # used for linear interpolation.. ??
 var pause_pan := Vector3.ZERO # while paused, allow camera pan via d-pad
 var pan_pos := Vector3.ZERO # camera may pan during ZL Targeting
 const pan_lerp_amt:float = 0.08
@@ -81,17 +82,43 @@ func _physics_process(_t:float) -> void:
 	var pushdir:Vector2 = Game.get_stick_input("right")
 	
 	# Pause Mode / Panning
-	var h_axis = current_pos.cross(Vector3.DOWN)
-	var v_axis = h_axis.rotated(current_pos, PI/2.0)
 	if get_tree().paused:
-		if Input.is_action_pressed('d-up'):
-			pause_pan += v_axis * move_speed
-		if Input.is_action_pressed('d-down'):
-			pause_pan -= v_axis * move_speed
-		if Input.is_action_pressed('d-left'):
-			pause_pan -= h_axis * move_speed
-		if Input.is_action_pressed('d-right'):
-			pause_pan += h_axis * move_speed
+		var h_axis = current_pos.cross(Vector3.DOWN)
+		var v_axis = -h_axis.rotated(current_pos, PI/2.0)
+		var pan_dir = Game.get_stick_input("left")
+		
+		if pan_dir != Vector2.ZERO:
+		
+			var new_pan_velocity = (pan_dir.x * h_axis) + (pan_dir.y * v_axis)
+			new_pan_velocity *= 0.08
+			
+			pan_velocity = pan_velocity.linear_interpolate(new_pan_velocity, 0.15)
+			
+			var cam_target = Game.player.position + pan_pos + pause_pan
+			
+			var space_state = get_world().direct_space_state # get the space.
+			query.transform = Transform(Basis(), cam_target) # start at the cam_target
+			var result = space_state.cast_motion(query, pan_velocity) # until a collision happens
+			if result[0] > 0:
+				pause_pan += pan_velocity * result[0] # final position
+			if pause_pan.length() > 10.0:
+				pause_pan = pause_pan.normalized() * 10.0
+		
+		
+#			print (new_pan_velocity)
+#			print (pan_velocity)
+#			print (cam_target)
+#			print (pause_pan)
+#			print ("---")
+		
+#		if Input.is_action_pressed('d-up'):
+#			pause_pan += v_axis * move_speed
+#		if Input.is_action_pressed('d-down'):
+#			pause_pan -= v_axis * move_speed
+#		if Input.is_action_pressed('d-left'):
+#			pause_pan -= h_axis * move_speed
+#		if Input.is_action_pressed('d-right'):
+#			pause_pan += h_axis * move_speed
 	else:
 		pause_pan = Vector3.ZERO
 	
@@ -157,12 +184,20 @@ func _physics_process(_t:float) -> void:
 	elif pushdir.length_squared() > 0.0:
 		var new_pos = current_pos
 		var cross:Vector3 = new_pos.cross(Vector3.UP).normalized()
-		new_pos = new_pos.rotated(Vector3.UP, -pushdir.x * move_speed)
-		if (pushdir.y > 0.0 and new_pos.y > 0.0) or (pushdir.y < 0.0 and new_pos.y < 0.0):
-			pushdir.y *= 1.0 - abs(new_pos.y)
-		new_pos = new_pos.rotated(cross, pushdir.y * move_speed)
-		new_pos.y = clamp(new_pos.y, -0.85, 0.85)
-		update_position(new_pos)
+		
+		# I want to prevent this from happening:
+		if cross == Vector3.ZERO:
+			print (current_pos) # (0, -1, 0)... so current position became totally vertical somehow.
+			# need to check for it to prevent a crash.
+			resetting = true
+			
+		if cross != Vector3.ZERO:
+			new_pos = new_pos.rotated(Vector3.UP, -pushdir.x * move_speed)
+			if (pushdir.y > 0.0 and new_pos.y > 0.0) or (pushdir.y < 0.0 and new_pos.y < 0.0):
+				pushdir.y *= 1.0 - abs(new_pos.y)
+			new_pos = new_pos.rotated(cross, pushdir.y * move_speed)
+			new_pos.y = clamp(new_pos.y, -0.85, 0.85)
+			update_position(new_pos)
 	
 	else:
 		update_position(current_pos)

@@ -17,8 +17,9 @@ func _ready() -> void:
 	add_child(player)
 	add_child(cam)
 
-func _input(event: InputEvent) -> void:
-	if event.is_action("ui_cancel"):
+
+func _physics_process(_t) -> void:
+	if Input.is_action_just_pressed("ui_cancel"):
 		get_tree().quit()
 	if Input.is_action_just_pressed("fullscreen"):
 		OS.window_fullscreen = !OS.window_fullscreen
