@@ -13,6 +13,7 @@ const bottom_right_slice := Rect2(size,               size)
 
 func _ready():
 	process_priority = 2 # Run after camera
+	pause_mode = PAUSE_MODE_PROCESS
 
 func get_most_relevant_target() -> int:
 	if highest_rel == 0: return 0
@@ -31,16 +32,23 @@ func target_is_valid(target:int) -> bool:
 	# If the target passed does not exist in the target list, is it not valid.
 	return false
 
-func _physics_process(_t):
-	
-	# Manage Target List
+func _physics_process(_t) -> void:
+	manage_target_list()
+	debug()
+	update()
+
+func debug() -> void:
+	Debug.text.write('Target list:')
+	for id in list:
+		var target = list[id]
+		Debug.text.write('[id:' + str(id) + '] ' + target.name + ' | Rel: ' + str(target.relevance), 'red' if target.relevance <= 0 else 'blue')
+	Debug.text.newline()
+
+func manage_target_list() -> void:
 	for id in list:
 		var target = list[id]
 		
 		# Assign properties
-		
-		# unfortunately, the .get_aabb() being called on the parent means the
-		# parent must inherit VisualInstance.. the aabb also doesn't account for object transform (such as 90deg rotation)
 		target.pos = target.parent.global_transform.origin
 		target.aabb2d = find_aabb_2d(target.pos, target.aabb)
 		target.length = (target.pos - Game.player.translation).length()
@@ -104,14 +112,6 @@ func _physics_process(_t):
 					highest_rel = id
 			else:
 				highest_rel = id
-	
-	Debug.text.write('Target list:')
-	for id in list:
-		var target = list[id]
-		Debug.text.write('[id:' + str(id) + '] ' + target.name + ' | Rel: ' + str(target.relevance), 'red' if target.relevance <= 0 else 'blue')
-	Debug.text.newline()
-	
-	update()
 
 func find_aabb_2d(target_pos:Vector3, aabb:AABB) -> Rect2:
 	# a list of the 8 vertices that make up the axis aligned bounding box assigned to this target

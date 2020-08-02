@@ -25,6 +25,7 @@ func _physics_process(_t) -> void:
 		OS.window_fullscreen = !OS.window_fullscreen
 	if Input.is_action_just_pressed("pause"):
 		get_tree().paused = not get_tree().paused
+		Events.emit_signal("pause", get_tree().paused)
 
 static func get_stick_input(which:String) -> Vector2:
 	"""
