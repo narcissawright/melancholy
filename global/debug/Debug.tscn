@@ -5,6 +5,7 @@
 [ext_resource path="res://global/debug/Draw.gd" type="Script" id=3]
 
 [node name="Debug" type="Node"]
+pause_mode = 2
 script = ExtResource( 2 )
 
 [node name="Text" type="RichTextLabel" parent="."]

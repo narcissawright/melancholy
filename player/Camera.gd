@@ -129,6 +129,12 @@ func _physics_process(_t:float) -> void:
 		zoom_amt = lerp(zoom_amt, zoom_levels[zoom_mode], zoom_lerp_amt)
 		if abs(zoom_amt - zoom_levels[zoom_mode]) < 0.05:
 			zoom_amt = zoom_levels[zoom_mode]
+			
+#	if Input.is_action_just_pressed('R3'):
+#		zoom_amt = 0.0
+#	if zoom_amt == 0.0: # 1st person
+#		look_at_from_position(Game.player.position, Game.player.position + Game.player.forwards(), Vector3.UP)
+#	else: # 3rd person
 	
 	if resetting:
 		var goal_pos = default_pos.rotated(Vector3.UP, Game.player.rotation.y)

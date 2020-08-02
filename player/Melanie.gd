@@ -366,7 +366,7 @@ func hit_by_explosion(explosion_center:Vector3) -> void:
 	if result.size() > 0:
 		if result.shape > 0:
 			# hit shield
-			velocity = forwards() * -14.0
+			velocity += forwards() * -14.0
 			shield.sliding = true
 			lockplayer()
 			return
