@@ -2,3 +2,6 @@
 
 [node name="Projectiles" type="Spatial"]
 pause_mode = 1
+__meta__ = {
+"_editor_description_": "This is simply a place to put projectiles when they need to travel independently of the actor that threw them."
+}

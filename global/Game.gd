@@ -6,7 +6,7 @@ onready var cam = preload("res://player/Camera.tscn")
 const GRAVITY:float = -20.0
 
 func _init() -> void:
-	OS.window_position = Vector2(172, 160) # so it shows up on my monitor in a comfy spot
+	OS.window_position = Vector2(172, 30) # so it shows up on my monitor in a comfy spot
 
 func _ready() -> void:
 	pause_mode = Node.PAUSE_MODE_PROCESS # Run this script while paused

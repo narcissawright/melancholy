@@ -84,7 +84,11 @@ func _physics_process(_t) -> void:
   ##   ##  ##  ##  ##  ##  ##  ##        ##
   ##   ##  ##  ##  ##   ####   ######    ##
 
-# Targeting
+"""
+To Do:
+	- Retargeting. Quick release -> repress to switch target.
+"""
+
 var targeting:bool = false
 var zl_target:int = 0
 
@@ -407,7 +411,7 @@ func debug() -> void:
 	Debug.text.write('HP: ' + str(hp))
 	Debug.text.write('Subweapon: ' + str(current_subweapon))
 	Debug.text.write('Jewels: ' + str(jewels))
-	Debug.text.write('can_spawn_bomb()', 'green' if bombspawner.can_spawn_bomb() else 'red')
+#	Debug.text.write('can_spawn_bomb()', 'green' if bombspawner.can_spawn_bomb() else 'red')
 	Debug.text.newline()
 	Debug.text.write('Vertical Velocity: ' + str(velocity.y))
 	Debug.text.write('Horizontal Velocity: ' + str(Vector3(velocity.x, 0, velocity.z).length()))

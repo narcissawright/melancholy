@@ -7,7 +7,7 @@ var paused # is the game paused
 
 const size := Vector2(15, 15) # cursor corner size, in pixels 
 const half_corner_size:int = 7 # rounded down
-const upper_left_slice   := Rect2(Vector2(0, 0),      size) # how to slice up the cursor texture
+const upper_left_slice   := Rect2(Vector2.ZERO,       size) # how to slice up the cursor texture
 const upper_right_slice  := Rect2(Vector2(size.x, 0), size)
 const bottom_left_slice  := Rect2(Vector2(0, size.y), size)
 const bottom_right_slice := Rect2(size,               size)
@@ -43,7 +43,7 @@ func _physics_process(_t) -> void:
 	else:
 		manage_target_list()
 		
-	debug()
+	#debug()
 	update()
 
 func manage_target_list_paused() -> void:
@@ -170,7 +170,7 @@ func _draw(): # update called in player
 			
 		var distance:float = (Game.cam.global_transform.origin - target.pos).length()
 		var opacity:float = 1.0
-		opacity = clamp(distance - 1.5, 0.0, 1.0)
+		opacity = clamp(distance - 0.5, 0.0, 1.0)
 #		opacity = 1.0 - clamp((distance - 15.0) / 5.0, 0.0, 1.0)
 		
 		var color = Color(0.4, 0.4, 0.4, opacity * 0.5) # grey

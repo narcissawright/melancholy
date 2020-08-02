@@ -15,7 +15,9 @@ To Do:
 		- zooming in pause mode should be smoother
 		- reaching the pan boundary should be smoother
 		- panning into walls should be less glitchy
-		
+	
+	- first person view
+	
 	- code organization
 	
 Maybe:
@@ -33,6 +35,7 @@ var current_pos:Vector3 # current camera position, normalized
 
 # Zoom
 var zoom_amt:float = 3.0
+var default_zoom:float = 3.0
 
 #const zoom_lerp_amt:float = 0.2
 #var zoom_mode:String = 'medium'
@@ -62,13 +65,14 @@ const cam_reset_time:float = 16.0 # frames @ 60fps
 var cam_reset_frame:float = 0.0   # stored as float to avoid integer division
 
 # Child nodes
-onready var crosshair = $Crosshair
+#onready var crosshair = $Crosshair
+onready var crosshair = $Crosshair_IG
 
 func _ready() -> void:
 	
 	Events.connect("pause", self, "_on_pause_state_change")
-	
 	crosshair.visible = false
+	
 	# Processing order: Player code should run first.
 	process_priority = 1
 	
@@ -107,7 +111,7 @@ func _on_pause_state_change(paused:bool) -> void:
 		is_paused = false
 		pause_pan = Vector3.ZERO
 		pause_pan_velocity = Vector3.ZERO
-		zoom_amt = 3.0
+		zoom_amt = default_zoom
 
 func pause_controls() -> void:
 	
@@ -115,7 +119,7 @@ func pause_controls() -> void:
 		#current_pos = default_pos
 		pause_pan = Vector3.ZERO
 		pause_pan_velocity = Vector3.ZERO
-		zoom_amt = 3.0
+		zoom_amt = default_zoom
 		resetting = true
 	else:
 		# Pan while paused
@@ -129,6 +133,7 @@ func pause_controls() -> void:
 			var cam_target = Game.player.position + pause_pan + zl_pan
 			var space_state = get_world().direct_space_state # get the space.
 			query.transform = Transform(Basis(), cam_target) # start at the cam_target
+			shape.radius = 0.3
 			var result = space_state.cast_motion(query, pause_pan_velocity) # until a collision happens
 			if result[0] > 0:
 				pause_pan += pause_pan_velocity * result[0] # final position
@@ -247,10 +252,13 @@ func debug() -> void:
 	Debug.text.newline()
 
 func update_position(new_pos:Vector3) -> void:
+	var cam_target = Game.player.position + zl_pan + pause_pan
+	if is_paused:
+		crosshair.global_transform = Transform(Basis(), cam_target)
 	if zoom_amt > 0.0:
-		var cam_target = Game.player.position + zl_pan + pause_pan
 		var space_state = get_world().direct_space_state # get the space.
 		query.transform = Transform(Basis(), cam_target) # start at the cam_target
+		shape.radius = 0.2
 		new_pos *= zoom_amt # multiply by the current zoom value
 		var result = space_state.cast_motion(query, new_pos) # until a collision happens
 		if result[0] > 0: # result[0] is how much to lerp
