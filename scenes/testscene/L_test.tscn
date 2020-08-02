@@ -13,10 +13,11 @@ data = PoolVector3Array( -10, 0, -10, 10, 0, 10, -10, 0, 10, -10, 5, -10, 10, 0,
 
 [sub_resource type="ShaderMaterial" id=3]
 shader = ExtResource( 3 )
+shader_param/enable_rim = true
 shader_param/color_lit = Color( 0.501961, 0.501961, 0.6, 1 )
 shader_param/color_dim = Color( 0.1, 0.1, 0.12, 1 )
-shader_param/enable_rim = true
 shader_param/damaged = false
+shader_param/locked = false
 
 [sub_resource type="SphereMesh" id=4]
 material = SubResource( 3 )
@@ -37,6 +38,7 @@ shape = SubResource( 2 )
 
 [node name="Target" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.06235, 0.889817, 3.63198 )
+layers = 2
 mesh = SubResource( 4 )
 material/0 = null
 
@@ -51,6 +53,7 @@ shape = SubResource( 5 )
 
 [node name="Target2" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.33346, 0.889817, 3.63198 )
+layers = 2
 mesh = SubResource( 4 )
 material/0 = null
 

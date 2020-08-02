@@ -171,13 +171,12 @@ func _draw(): # update called in player
 		var distance:float = (Game.cam.global_transform.origin - target.pos).length()
 		var opacity:float = 1.0
 		opacity = clamp(distance - 0.5, 0.0, 1.0)
-#		opacity = 1.0 - clamp((distance - 15.0) / 5.0, 0.0, 1.0)
 		
 		var color = Color(0.4, 0.4, 0.4, opacity * 0.5) # grey
 		if highest_rel == id:
-			color = Color(0.45, 0.45, 0.75, opacity * 0.75) # dull blue
+			color = Color(0.45, 0.5, 0.75, opacity * 0.85) # dull blue
 		if id == Game.player.zl_target:
-			color = Color(0.5, 0.5, 1.0, opacity) # bright blue
+			color = Color(0.5, 0.6, 1.0, opacity) # bright blue
 		
 		# where to draw the cursor corners:
 		var upper_left_pos   = Rect2(Vector2(target.aabb2d.position.x - half_corner_size, target.aabb2d.position.y - half_corner_size), size)

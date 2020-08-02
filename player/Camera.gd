@@ -34,8 +34,8 @@ var default_pos := Vector3(0, 0.316228, 0.948683) # default camera position, nor
 var current_pos:Vector3 # current camera position, normalized
 
 # Zoom
-var zoom_amt:float = 3.0
-var default_zoom:float = 3.0
+var zoom_amt:float = 3.5
+var default_zoom:float = 3.5
 
 #const zoom_lerp_amt:float = 0.2
 #var zoom_mode:String = 'medium'
@@ -143,7 +143,7 @@ func pause_controls() -> void:
 		# Zoom while paused
 		if Input.is_action_pressed("A"): zoom_amt += 0.1
 		if Input.is_action_pressed("X"): zoom_amt -= 0.1
-		zoom_amt = clamp(zoom_amt, 1.0, 10.0)
+		zoom_amt = clamp(zoom_amt, 0.5, 10.0)
 	
 #			print (new_pan_velocity)
 #			print (pan_velocity)

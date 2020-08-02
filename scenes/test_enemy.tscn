@@ -33,6 +33,7 @@ script = ExtResource( 2 )
 shape = SubResource( 1 )
 
 [node name="Mesh" type="MeshInstance" parent="."]
+layers = 2
 mesh = SubResource( 2 )
 material/0 = SubResource( 3 )
 

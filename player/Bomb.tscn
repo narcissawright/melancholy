@@ -3,7 +3,7 @@
 [ext_resource path="res://materials/actor.shader" type="Shader" id=1]
 [ext_resource path="res://player/Bomb.gd" type="Script" id=2]
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=1]
 resource_name = "bomb_pull"
 length = 0.166667
 step = 0.0166667
@@ -20,7 +20,7 @@ tracks/0/keys = {
 "values": [ Vector3( 0.01, 0.01, 0.01 ), Vector3( 1, 1, 1 ) ]
 }
 
-[sub_resource type="Animation" id=5]
+[sub_resource type="Animation" id=2]
 resource_name = "explode"
 step = 0.0166667
 tracks/0/type = "value"
@@ -96,7 +96,7 @@ tracks/5/keys = {
 "values": [ false, true, false ]
 }
 
-[sub_resource type="Animation" id=8]
+[sub_resource type="Animation" id=3]
 resource_name = "pulse"
 length = 4.0
 step = 0.125
@@ -125,14 +125,14 @@ tracks/1/keys = {
 "values": [ Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.12549, 0.0823529, 0.0823529, 1 ), Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.129412, 0.0784314, 0.0784314, 1 ), Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.129412, 0.0784314, 0.0784314, 1 ), Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.12549, 0.0823529, 0.0823529, 1 ), Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.129412, 0.0823529, 0.0823529, 1 ), Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.129412, 0.0784314, 0.0784314, 1 ), Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.129412, 0.0745098, 0.0745098, 1 ), Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.133333, 0.0745098, 0.0745098, 1 ) ]
 }
 
-[sub_resource type="SphereShape" id=7]
+[sub_resource type="SphereShape" id=4]
 radius = 1.5
 
-[sub_resource type="SphereMesh" id=2]
+[sub_resource type="SphereMesh" id=5]
 radius = 0.2
 height = 0.4
 
-[sub_resource type="ShaderMaterial" id=3]
+[sub_resource type="ShaderMaterial" id=6]
 shader = ExtResource( 1 )
 shader_param/enable_rim = true
 shader_param/color_lit = Color( 0.266667, 0.211765, 0.211765, 1 )
@@ -140,16 +140,16 @@ shader_param/color_dim = Color( 0.121569, 0.101961, 0.101961, 1 )
 shader_param/damaged = false
 shader_param/locked = false
 
-[sub_resource type="SphereShape" id=9]
+[sub_resource type="SphereShape" id=7]
 radius = 0.2
 
 [node name="Bomb" type="Position3D"]
 script = ExtResource( 2 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/bomb_pull = SubResource( 4 )
-anims/explode = SubResource( 5 )
-anims/pulse = SubResource( 8 )
+anims/bomb_pull = SubResource( 1 )
+anims/explode = SubResource( 2 )
+anims/pulse = SubResource( 3 )
 
 [node name="ExplosionArea" type="Area" parent="."]
 monitoring = false
@@ -158,11 +158,12 @@ collision_layer = 8
 collision_mask = 2
 
 [node name="Inner" type="CollisionShape" parent="ExplosionArea"]
-shape = SubResource( 7 )
+shape = SubResource( 4 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
-mesh = SubResource( 2 )
-material/0 = SubResource( 3 )
+layers = 2
+mesh = SubResource( 5 )
+material/0 = SubResource( 6 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.697503, 0.716582, 0, -0.716582, 0.697503, 0, 10.4521, 1.59155 )
@@ -174,7 +175,7 @@ collision_layer = 0
 collision_mask = 8
 
 [node name="CollisionShape" type="CollisionShape" parent="ExplosionDetector"]
-shape = SubResource( 9 )
+shape = SubResource( 7 )
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_animation_finished"]
 [connection signal="body_entered" from="ExplosionArea" to="." method="_on_ExplosionHit"]
 [connection signal="area_entered" from="ExplosionDetector" to="." method="_on_ExplosionDetected"]
