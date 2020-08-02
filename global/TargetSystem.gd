@@ -3,6 +3,7 @@ extends Node2D
 var cursor_tex = load("res://img/target.png")
 var list:Dictionary = {}
 var highest_rel:int = 0 # holds the priority target
+var paused # is the game paused
 
 const size := Vector2(15, 15) # cursor corner size, in pixels 
 const half_corner_size:int = 7 # rounded down
@@ -14,6 +15,10 @@ const bottom_right_slice := Rect2(size,               size)
 func _ready():
 	process_priority = 2 # Run after camera
 	pause_mode = PAUSE_MODE_PROCESS
+	Events.connect('pause', self, "_on_pause_state_change")
+
+func _on_pause_state_change(state) -> void:
+	paused = state
 
 func get_most_relevant_target() -> int:
 	if highest_rel == 0: return 0
@@ -33,16 +38,19 @@ func target_is_valid(target:int) -> bool:
 	return false
 
 func _physics_process(_t) -> void:
-	manage_target_list()
+	if paused:
+		manage_target_list_paused()
+	else:
+		manage_target_list()
+		
 	debug()
 	update()
 
-func debug() -> void:
-	Debug.text.write('Target list:')
+func manage_target_list_paused() -> void:
 	for id in list:
 		var target = list[id]
-		Debug.text.write('[id:' + str(id) + '] ' + target.name + ' | Rel: ' + str(target.relevance), 'red' if target.relevance <= 0 else 'blue')
-	Debug.text.newline()
+		target.aabb2d = find_aabb_2d(target.pos, target.aabb) 
+		target.on_cam = is_target_on_camera(target)
 
 func manage_target_list() -> void:
 	for id in list:
@@ -50,29 +58,18 @@ func manage_target_list() -> void:
 		
 		# Assign properties
 		target.pos = target.parent.global_transform.origin
-		target.aabb2d = find_aabb_2d(target.pos, target.aabb)
 		target.length = (target.pos - Game.player.translation).length()
 		target.move_vector = -(Game.player.translation - target.pos).normalized()
+		target.aabb2d = find_aabb_2d(target.pos, target.aabb) 
+		target.on_cam = is_target_on_camera(target)
 		
-		var window_size := Rect2(Vector2.ZERO, OS.window_size)
-		
-		# Check if object is blocked (behind camera, behind wall, etc)
+		# Check for player line of sight
 		var ss:PhysicsDirectSpaceState = target.area.get_world().direct_space_state
 		var result:Dictionary = ss.intersect_ray(Game.player.translation, target.area.global_transform.origin, [], Layers.solid)
-		var blocked:bool = result.size() > 0 # If no line of sight, do not draw.
-		if Game.cam.is_position_behind(target.pos): blocked = true # If behind camera, do not draw
-		if not blocked:
-			# Check if on camera
-			window_size = window_size.grow(half_corner_size) # always draw the partial graphic @ screen edge
-			blocked = true # Assumed blocked unless any of the corners are on screen
-			if   window_size.has_point(Vector2(target.aabb2d.position.x, target.aabb2d.position.y)): blocked = false
-			elif window_size.has_point(Vector2(target.aabb2d.end.x,      target.aabb2d.position.y)): blocked = false
-			elif window_size.has_point(Vector2(target.aabb2d.position.x, target.aabb2d.end.y)):      blocked = false
-			elif window_size.has_point(Vector2(target.aabb2d.end.x,      target.aabb2d.end.y)):      blocked = false
+		var blocked = result.size() > 0 # If no line of sight, do not draw.
 		
 		target.relevance = 0.0
-		
-		if not blocked: # Assign relevance (for targeting priority)
+		if not blocked and target.on_cam: # Assign relevance (for targeting priority)
 			
 			# The closer the target is to the middle of the screen, the higher relevance it has
 			var target_pos_2d:Vector2 = Game.cam.unproject_position(target.pos)
@@ -151,12 +148,25 @@ func find_aabb_2d(target_pos:Vector3, aabb:AABB) -> Rect2:
 	
 	return Rect2(x_min, y_min, x_max-x_min, y_max-y_min)
 
+func is_target_on_camera(target:Dictionary) -> bool:
+	# Rule out the stuff behind the camera.
+	if Game.cam.is_position_behind(target.pos): return false
+	
+	# Check if within screen bounds
+	var window_size := Rect2(Vector2.ZERO, OS.window_size).grow(half_corner_size) # always draw the partial graphic @ screen edge
+	if   window_size.has_point(Vector2(target.aabb2d.position.x, target.aabb2d.position.y)): return true
+	elif window_size.has_point(Vector2(target.aabb2d.end.x,      target.aabb2d.position.y)): return true
+	elif window_size.has_point(Vector2(target.aabb2d.position.x, target.aabb2d.end.y)):      return true
+	elif window_size.has_point(Vector2(target.aabb2d.end.x,      target.aabb2d.end.y)):      return true
+	
+	return false
+
 func _draw(): # update called in player
 	for id in list:
 		var target = list[id]
 		
-		if target.relevance <= 0.0:
-			continue # if no direct line of sight to the target, do not draw crosshair
+		if not target.on_cam or target.relevance <= 0.0:
+			continue # do not draw irrelevant targets
 			
 		var distance:float = (Game.cam.global_transform.origin - target.pos).length()
 		var opacity:float = 1.0
@@ -197,3 +207,10 @@ func target_lost(area: Area) -> void:
 	var id = area.get_instance_id()
 # warning-ignore:return_value_discarded
 	list.erase(id)
+	
+func debug() -> void:
+	Debug.text.write('Target list:')
+	for id in list:
+		var target = list[id]
+		Debug.text.write('[id:' + str(id) + '] ' + target.name + ' | Rel: ' + str(target.relevance), 'red' if target.relevance <= 0 else 'blue')
+	Debug.text.newline()

@@ -27,6 +27,7 @@ Layers="*res://global/Layers.gd"
 TargetSystem="*res://global/TargetSystem.gd"
 Debug="*res://global/debug/Debug.tscn"
 Events="*res://global/Events.gd"
+Projectiles="*res://global/Projectiles.tscn"
 
 [debug]
 

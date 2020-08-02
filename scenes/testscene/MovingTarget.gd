@@ -33,7 +33,7 @@ func fire() -> void:
 	p.translation = translation
 	p.velocity = (Game.player.position - translation).normalized() * 14.0 + Vector3.UP * 2.0
 	p.projectile_owner = self
-	Game.add_child(p)
+	Projectiles.add_child(p)
 
 func hit(_collision: Dictionary) -> String:
 	material.set_shader_param("damaged", true)

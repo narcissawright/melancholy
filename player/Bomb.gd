@@ -70,7 +70,7 @@ func reparent_to_game_world() -> void:
 func reparent_deferred() -> void:
 	var current_position = global_transform.origin
 	get_parent().remove_child(self)
-	Game.add_child(self)
+	Projectiles.add_child(self)
 	global_transform.origin = current_position
 
 # Signal from AnimationPlayer
