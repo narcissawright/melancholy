@@ -58,12 +58,6 @@ var saved_cam_state: Dictionary = {
 # Joystick Movement
 const move_speed:float = 0.04
 
-# ZL Targeting
-var multiple_targets:bool = false # True when ZL Target is an object
-var zl_target_pos:Vector3 # might not need this as a "global" variable here.
-var zl_pan := Vector3.ZERO # camera may pan during ZL Targeting
-const zl_pan_lerp_amt:float = 0.08
-
 # Camera Reset
 var resetting:bool = false
 const cam_reset_time:float = 16.0 # frames @ 60fps
@@ -88,24 +82,22 @@ func _ready() -> void:
 	query.set_shape(shape)
 	
 	# initialize the camera position
-	update_cam_targets()
 	update_position(default_pos) # Move into position
 
-func update_cam_targets() -> void:
-	# ZL Target Position
-	if Game.player.zl_target == 0:
-		multiple_targets = false
-		zl_target_pos = Vector3.ZERO
-	else:
-		multiple_targets = true
-		zl_target_pos = TargetSystem.list[Game.player.zl_target].pos
-
-func screen_edge_detector(pos3d:Vector3) -> float:
-	var pos2d:Vector2 = unproject_position(pos3d)
-	var midpoint:Vector2 = OS.window_size / 2.0
-	pos2d -= midpoint
-	pos2d /= midpoint # Store this value more in terms of "percentage" rather than pixels.
-	return abs(pos2d.x) + abs(pos2d.y) # these values may exceed 1 on each axis if offscreen
+func update_position(new_pos:Vector3) -> void:
+	var cam_target = Game.player.position + pan
+	if is_paused:
+		crosshair.global_transform = Transform(Basis(), cam_target)
+	if zoom > 0.0:
+		var space_state = get_world().direct_space_state # get the space.
+		query.transform = Transform(Basis(), cam_target) # start at the cam_target
+		shape.radius = 0.2
+		new_pos *= zoom # multiply by the current zoom value
+		var result = space_state.cast_motion(query, new_pos) # until a collision happens
+		if result[0] > 0: # result[0] is how much to lerp
+			new_pos = cam_target.linear_interpolate(new_pos + cam_target, result[0]) # now we have final position
+			look_at_from_position(new_pos, cam_target, Vector3.UP) # look at player from final position
+		current_pos = (self.global_transform.origin - cam_target).normalized() # update current position
 
 func _on_pause_state_change(paused:bool) -> void:
 	if paused:
@@ -125,6 +117,40 @@ func _on_pause_state_change(paused:bool) -> void:
 		zoom = saved_cam_state.zoom
 		
 		pause_pan_velocity = Vector3.ZERO
+
+func _physics_process(_t:float) -> void:
+	if is_paused: pause_controls()
+	else: update_zl_target_pan()
+	
+	if resetting:
+		camera_reset()
+		return
+	
+	var rightstick = Game.get_stick_input("right")
+	if rightstick.length_squared() > 0.0:
+		autocamera = false
+		var new_pos = current_pos
+		var cross:Vector3 = new_pos.cross(Vector3.UP).normalized()
+		if cross != Vector3.ZERO:
+			new_pos = new_pos.rotated(Vector3.UP, -rightstick.x * move_speed)
+			if (rightstick.y > 0.0 and new_pos.y > 0.0) or (rightstick.y < 0.0 and new_pos.y < 0.0):
+				rightstick.y *= 1.0 - abs(new_pos.y)
+			new_pos = new_pos.rotated(cross, rightstick.y * move_speed)
+			new_pos.y = clamp(new_pos.y, -0.85, 0.85)
+			update_position(new_pos)
+		return
+	
+	if not is_paused and autocamera:
+		if Game.player.grounded:
+			var leftstick = Game.get_stick_input("left")
+			var new_pos = current_pos
+			var factor = max(abs(leftstick.x) - 0.25, 0.0) * 0.5
+			var rotation_amount = -leftstick.x * move_speed * factor
+			new_pos = new_pos.rotated(Vector3.UP, rotation_amount)
+			update_position(new_pos)
+			return
+	
+	update_position(current_pos)
 
 func pause_controls() -> void:
 	
@@ -168,41 +194,40 @@ func pause_controls() -> void:
 		if Input.is_action_pressed("X"): zoom -= 0.1
 		zoom = clamp(zoom, 0.3, 10.0)
 
-func multiple_targets() -> void:
-	var player_amt:float = screen_edge_detector(Game.player.position)
-	var target_amt:float = screen_edge_detector(zl_target_pos)
+func update_zl_target_pan() -> void:
 	
-	player_amt = min(player_amt, 1.0)
-	target_amt = min(target_amt, 1.0)
+	var zl_pan_lerp_amt = 0.08
 	
-	var interpolate_amt:float = 0.5 - (player_amt / 2.0) + (target_amt / 2.0)
-	var goal_target:Vector3 = Game.player.position.linear_interpolate(zl_target_pos, interpolate_amt)
+	if Game.player.zl_target == 0:
+		if pan != Vector3.ZERO:
+			pan = pan.linear_interpolate(Vector3.ZERO, zl_pan_lerp_amt)
+		if pan.length_squared() < 0.00001: pan = Vector3.ZERO
+	else:
+		var zl_target_pos:Vector3 = TargetSystem.list[Game.player.zl_target].pos
 	
-	# Find goal_target distance from cam direction:
-	# d is how far to move across the cam vector to reach the nearest position to goal_target
-	var d:float = (goal_target - global_transform.origin).dot(-current_pos)
-	# X is the new position on the cam direction vector line
-	var X:Vector3 = global_transform.origin + -current_pos * d
-	var goal_pan:Vector3 = (goal_target - X)
-	pan = pan.linear_interpolate(goal_pan, zl_pan_lerp_amt)
+		var player_amt:float = screen_edge_detector(Game.player.position)
+		var target_amt:float = screen_edge_detector(zl_target_pos)
+		
+		player_amt = min(player_amt, 1.0)
+		target_amt = min(target_amt, 1.0)
+		
+		var interpolate_amt:float = 0.5 - (player_amt / 2.0) + (target_amt / 2.0)
+		var goal_target:Vector3 = Game.player.position.linear_interpolate(zl_target_pos, interpolate_amt)
+		
+		# Find goal_target distance from cam direction:
+		# d is how far to move across the cam vector to reach the nearest position to goal_target
+		var d:float = (goal_target - global_transform.origin).dot(-current_pos)
+		# X is the new position on the cam direction vector line
+		var X:Vector3 = global_transform.origin + -current_pos * d
+		var goal_pan:Vector3 = (goal_target - X)
+		pan = pan.linear_interpolate(goal_pan, zl_pan_lerp_amt)
 
-func zoom_change_unused() -> void:
-	pass
-	#	if Input.is_action_just_pressed('R3'):
-#		match zoom_mode:
-#			"medium": zoom_mode = 'near'
-#			"near": zoom_mode = 'far'
-#			"far": zoom_mode = 'medium'
-#	if zoom_amt != zoom_levels[zoom_mode]:
-#		zoom_amt = lerp(zoom_amt, zoom_levels[zoom_mode], zoom_lerp_amt)
-#		if abs(zoom_amt - zoom_levels[zoom_mode]) < 0.05:
-#			zoom_amt = zoom_levels[zoom_mode]
-			
-#	if Input.is_action_just_pressed('R3'):
-#		zoom_amt = 0.0
-#	if zoom_amt == 0.0: # 1st person
-#		look_at_from_position(Game.player.position, Game.player.position + Game.player.forwards(), Vector3.UP)
-#	else: # 3rd person
+func screen_edge_detector(pos3d:Vector3) -> float:
+	var pos2d:Vector2 = unproject_position(pos3d)
+	var midpoint:Vector2 = OS.window_size / 2.0
+	pos2d -= midpoint
+	pos2d /= midpoint # Store this value more in terms of "percentage" rather than pixels.
+	return abs(pos2d.x) + abs(pos2d.y) # these values may exceed 1 on each axis if offscreen
 
 func camera_reset() -> void:
 	var goal_pos = default_pos.rotated(Vector3.UP, Game.player.rotation.y)
@@ -219,62 +244,9 @@ func camera_reset() -> void:
 		var xz_goal = Vector2(goal_pos.x, goal_pos.z).normalized()
 		xz = xz.slerp(xz_goal, cam_reset_frame / cam_reset_time) # horizontal rotation
 		# need to multiply the xz values by a multiplier so new_pos is unit length
-		xz *= sqrt(1 - new_y * new_y) # Thanks Syn and Eta
+		xz *= sqrt(1.0 - new_y * new_y) # Thanks Syn and Eta
 		var new_pos = Vector3(xz.x, new_y, xz.y) # should be ~unit length
 		update_position(new_pos)
-
-func _physics_process(_t:float) -> void:
-	update_cam_targets()
-	#var pushdir:Vector2 = Game.get_stick_input("right")
-	
-	# Pause Mode / Panning
-	if is_paused:
-		pause_controls()
-	# If ZL Targeting an object:
-	elif multiple_targets:
-		multiple_targets()
-	# Not Multiple Targets
-	else:
-		if pan != Vector3.ZERO:
-			pan = pan.linear_interpolate(Vector3.ZERO, zl_pan_lerp_amt)
-			if pan.length_squared() < 0.00001: pan = Vector3.ZERO
-	
-	if resetting:
-		camera_reset()
-		return
-	
-	var rightstick = Game.get_stick_input("right")
-	if rightstick.length_squared() > 0.0:
-		autocamera = false
-		var new_pos = current_pos
-		var cross:Vector3 = new_pos.cross(Vector3.UP).normalized()
-		
-		# I want to prevent this from happening:
-		if cross == Vector3.ZERO:
-			print (current_pos) # (0, -1, 0)... so current position became totally vertical somehow.
-			# need to check for it to prevent a crash.
-			resetting = true
-			
-		if cross != Vector3.ZERO:
-			new_pos = new_pos.rotated(Vector3.UP, -rightstick.x * move_speed)
-			if (rightstick.y > 0.0 and new_pos.y > 0.0) or (rightstick.y < 0.0 and new_pos.y < 0.0):
-				rightstick.y *= 1.0 - abs(new_pos.y)
-			new_pos = new_pos.rotated(cross, rightstick.y * move_speed)
-			new_pos.y = clamp(new_pos.y, -0.85, 0.85)
-			update_position(new_pos)
-		return
-	
-	if not is_paused and autocamera:
-		if Game.player.grounded:
-			var leftstick = Game.get_stick_input("left")
-			var new_pos = current_pos
-			var factor = max(abs(leftstick.x) - 0.25, 0.0) * 0.5
-			var rotation_amount = -leftstick.x * move_speed * factor
-			new_pos = new_pos.rotated(Vector3.UP, rotation_amount)
-			update_position(new_pos)
-			return
-	
-	update_position(current_pos)
 
 func debug() -> void:
 	# Write debug info
@@ -284,18 +256,21 @@ func debug() -> void:
 	Debug.text.write("Cam Target: " + str(Game.player.position + pan))
 	Debug.text.write("Cam Resetting: " + str(resetting), 'green' if resetting else 'red')
 	Debug.text.newline()
-
-func update_position(new_pos:Vector3) -> void:
-	var cam_target = Game.player.position + pan
-	if is_paused:
-		crosshair.global_transform = Transform(Basis(), cam_target)
-	if zoom > 0.0:
-		var space_state = get_world().direct_space_state # get the space.
-		query.transform = Transform(Basis(), cam_target) # start at the cam_target
-		shape.radius = 0.2
-		new_pos *= zoom # multiply by the current zoom value
-		var result = space_state.cast_motion(query, new_pos) # until a collision happens
-		if result[0] > 0: # result[0] is how much to lerp
-			new_pos = cam_target.linear_interpolate(new_pos + cam_target, result[0]) # now we have final position
-			look_at_from_position(new_pos, cam_target, Vector3.UP) # look at player from final position
-		current_pos = (self.global_transform.origin - cam_target).normalized() # update current position
+	
+func zoom_change_unused() -> void:
+	pass
+#	if Input.is_action_just_pressed('R3'):
+#		match zoom_mode:
+#			"medium": zoom_mode = 'near'
+#			"near": zoom_mode = 'far'
+#			"far": zoom_mode = 'medium'
+#	if zoom_amt != zoom_levels[zoom_mode]:
+#		zoom_amt = lerp(zoom_amt, zoom_levels[zoom_mode], zoom_lerp_amt)
+#		if abs(zoom_amt - zoom_levels[zoom_mode]) < 0.05:
+#			zoom_amt = zoom_levels[zoom_mode]
+			
+#	if Input.is_action_just_pressed('R3'):
+#		zoom_amt = 0.0
+#	if zoom_amt == 0.0: # 1st person
+#		look_at_from_position(Game.player.position, Game.player.position + Game.player.forwards(), Vector3.UP)
+#	else: # 3rd person
