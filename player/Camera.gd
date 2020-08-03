@@ -45,15 +45,14 @@ var pan:Vector3
 var is_paused = false
 var pause_pan_velocity := Vector3.ZERO # used for linear interpolation..
 
-
-# WIP
-# pressing ZL while paused should bring the cam to where it was when pause was initiated.
+# State of the camera when pause was initiated
 var saved_cam_state: Dictionary = {
 	"cam_pos": Vector3.ZERO,
 	"zoom": 0.0,
 	"pan": Vector3.ZERO
-} # do I need two pan values here?... I don't think so.
+}
 
+var first_person:bool = false
 
 # Joystick Movement
 const move_speed:float = 0.04
@@ -88,7 +87,9 @@ func update_position(new_pos:Vector3) -> void:
 	var cam_target = Game.player.position + pan
 	if is_paused:
 		crosshair.global_transform = Transform(Basis(), cam_target)
-	if zoom > 0.0:
+	if false: #first_person:
+		look_at_from_position(Game.player.position, Game.player.position + Game.player.forwards(), Vector3.UP)
+	else:
 		var space_state = get_world().direct_space_state # get the space.
 		query.transform = Transform(Basis(), cam_target) # start at the cam_target
 		shape.radius = 0.2
@@ -117,29 +118,27 @@ func _on_pause_state_change(paused:bool) -> void:
 		zoom = saved_cam_state.zoom
 		
 		pause_pan_velocity = Vector3.ZERO
-
+		
 func _physics_process(_t:float) -> void:
-	if is_paused: pause_controls()
-	else: update_zl_target_pan()
+	debug()
+	if is_paused: 
+		pause_controls()
+	else: 
+		update_zl_target_pan()
+		if resetting:
+			camera_reset()
+			return
+
+	#first_person()
 	
-	if resetting:
-		camera_reset()
-		return
-	
+	# Rotation
 	var rightstick = Game.get_stick_input("right")
 	if rightstick.length_squared() > 0.0:
 		autocamera = false
-		var new_pos = current_pos
-		var cross:Vector3 = new_pos.cross(Vector3.UP).normalized()
-		if cross != Vector3.ZERO:
-			new_pos = new_pos.rotated(Vector3.UP, -rightstick.x * move_speed)
-			if (rightstick.y > 0.0 and new_pos.y > 0.0) or (rightstick.y < 0.0 and new_pos.y < 0.0):
-				rightstick.y *= 1.0 - abs(new_pos.y)
-			new_pos = new_pos.rotated(cross, rightstick.y * move_speed)
-			new_pos.y = clamp(new_pos.y, -0.85, 0.85)
-			update_position(new_pos)
+		rotate_cam(rightstick)
 		return
 	
+	# Autocamera
 	if not is_paused and autocamera:
 		if Game.player.grounded:
 			var leftstick = Game.get_stick_input("left")
@@ -150,7 +149,19 @@ func _physics_process(_t:float) -> void:
 			update_position(new_pos)
 			return
 	
+	# No camera motion
 	update_position(current_pos)
+
+func rotate_cam(dir:Vector2) -> void:
+	var new_pos = current_pos
+	var cross:Vector3 = new_pos.cross(Vector3.UP).normalized()
+	if cross != Vector3.ZERO:
+		new_pos = new_pos.rotated(Vector3.UP, -dir.x * move_speed)
+		if (dir.y > 0.0 and new_pos.y > 0.0) or (dir.y < 0.0 and new_pos.y < 0.0):
+			dir.y *= 1.0 - abs(new_pos.y)
+		new_pos = new_pos.rotated(cross, dir.y * move_speed)
+		new_pos.y = clamp(new_pos.y, -0.85, 0.85)
+		update_position(new_pos)
 
 func pause_controls() -> void:
 	
@@ -247,6 +258,30 @@ func camera_reset() -> void:
 		xz *= sqrt(1.0 - new_y * new_y) # Thanks Syn and Eta
 		var new_pos = Vector3(xz.x, new_y, xz.y) # should be ~unit length
 		update_position(new_pos)
+
+func first_person() -> void:
+	if first_person:
+		var exiting = false
+		if Input.is_action_just_pressed("A"): exiting = true
+		elif Input.is_action_just_pressed("B"): exiting = true
+		elif Input.is_action_just_pressed("X"): exiting = true
+		elif Input.is_action_just_pressed("Y"): exiting = true
+		elif Input.is_action_just_pressed("R3"): exiting = true
+		if exiting: exit_first_person()
+		else:
+			var dir = Game.get_stick_input("left")
+			rotate_cam(dir)
+	else:
+		if not Game.player.locked and Input.is_action_just_pressed("R3"):
+			first_person = true
+			zoom = 0.05
+			#Game.player.untarget()
+			Game.player.lockplayer()
+
+func exit_first_person() -> void:
+	Game.player.unlock()
+	first_person = false
+	zoom = default_zoom
 
 func debug() -> void:
 	# Write debug info

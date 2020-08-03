@@ -110,11 +110,13 @@ func update_target_state() -> void:
 	if Input.is_action_pressed("target"):
 		if not TargetSystem.target_is_valid(zl_target):
 			# Target broken from distance or lost line of sight
-			targeting = false
-			zl_target = 0
+			untarget()
 	elif Game.cam.resetting == false:
-		targeting = false
-		zl_target = 0
+		untarget()
+		
+func untarget() -> void:
+	targeting = false
+	zl_target = 0
 
 ##  ##        ##  ##  #####  ##     ####    ####  ##  ######  ##  ##
 ##  ##        ##  ##  ##     ##    ##  ##  ##     ##    ##    ##  ##
