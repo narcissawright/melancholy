@@ -95,6 +95,18 @@ tracks/5/keys = {
 "update": 1,
 "values": [ false, true, false ]
 }
+tracks/6/type = "value"
+tracks/6/path = NodePath("MeshInstance:material/0:shader_param/not_shaded")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
 
 [sub_resource type="Animation" id=3]
 resource_name = "pulse"
@@ -124,6 +136,18 @@ tracks/1/keys = {
 "update": 0,
 "values": [ Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.12549, 0.0823529, 0.0823529, 1 ), Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.129412, 0.0784314, 0.0784314, 1 ), Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.129412, 0.0784314, 0.0784314, 1 ), Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.12549, 0.0823529, 0.0823529, 1 ), Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.129412, 0.0823529, 0.0823529, 1 ), Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.129412, 0.0784314, 0.0784314, 1 ), Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.129412, 0.0745098, 0.0745098, 1 ), Color( 0.121569, 0.101961, 0.101961, 1 ), Color( 0.133333, 0.0745098, 0.0745098, 1 ) ]
 }
+tracks/2/type = "value"
+tracks/2/path = NodePath("ExplosionDetector:monitoring")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
 
 [sub_resource type="SphereShape" id=4]
 radius = 1.5
@@ -135,6 +159,9 @@ height = 0.4
 [sub_resource type="ShaderMaterial" id=6]
 shader = ExtResource( 1 )
 shader_param/enable_rim = true
+shader_param/only_rim = false
+shader_param/not_shaded = false
+shader_param/use_vertex_color = false
 shader_param/color_lit = Color( 0.266667, 0.211765, 0.211765, 1 )
 shader_param/color_dim = Color( 0.121569, 0.101961, 0.101961, 1 )
 shader_param/damaged = false
@@ -157,7 +184,7 @@ monitorable = false
 collision_layer = 8
 collision_mask = 2
 
-[node name="Inner" type="CollisionShape" parent="ExplosionArea"]
+[node name="Shape" type="CollisionShape" parent="ExplosionArea"]
 shape = SubResource( 4 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
@@ -174,7 +201,7 @@ monitorable = false
 collision_layer = 0
 collision_mask = 8
 
-[node name="CollisionShape" type="CollisionShape" parent="ExplosionDetector"]
+[node name="Shape" type="CollisionShape" parent="ExplosionDetector"]
 shape = SubResource( 7 )
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_animation_finished"]
 [connection signal="body_entered" from="ExplosionArea" to="." method="_on_ExplosionHit"]

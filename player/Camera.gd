@@ -2,34 +2,19 @@ extends Camera
 
 """ 
 To Do:
-	- autocamera:
-		- [DONE] auto rotate
-		- peer over ledges
-	* autocamera should not function when free cam is enabled (by moving right stick)
-	
+	- autocamera peer over ledges
 	- quick change target: 
-		- release and repress ZL quickly to change target (maybe this is actually for the player code)
-	
-	- pause mode improvements
-		- zooming in pause mode should be smoother
-		- reaching the pan boundary should be smoother
-		
-		- allow sliding the crosshair against surfaces.
-			- this may be accomplished using a KinematicBody
-			- it's complex though, because I was using one 'pan' value for the total pan
-			- this would also require that the kinematicbody isnt a child of the camera
-			- it may be worth considering creating a 'cam target' node??
-	
-		- I think the cam target in pause mode should be more than the IG node
-		- should probably make a custom model for it or something
-		
+		- release and repress ZL quickly to change target (maybe this is actually for the player code
 	- first person view
-	
 	- code organization
 	
 Maybe:
 	- perhaps some context-sensitive rotation limits (such as looking from very low while targeting)
-	- tilt in pause mode
+	- pause mode improvements
+		- tilt in pause mode.
+		- smoother zoom in pause mode.
+		- allow sliding the crosshair against surfaces.
+		- a better boundary indicator
 """
 
 # Collision
@@ -124,7 +109,6 @@ func screen_edge_detector(pos3d:Vector3) -> float:
 
 func _on_pause_state_change(paused:bool) -> void:
 	if paused:
-		crosshair.visible = true
 		is_paused = true
 		
 		# Save State
@@ -150,33 +134,39 @@ func pause_controls() -> void:
 		current_pos = saved_cam_state.pos
 		pan = saved_cam_state.pan
 		zoom = saved_cam_state.zoom
+		crosshair.visible = false
 	else:
 		# Pan while paused
 		# Find pan axes
 		var h_axis = current_pos.cross(Vector3.DOWN)
 		var v_axis = -h_axis.rotated(current_pos, PI/2.0)
+		
 		# Find pan velocity
 		var pan_dir = Game.get_stick_input("left")
-		var new_pan_velocity = (pan_dir.x * h_axis) + (pan_dir.y * v_axis)
-		new_pan_velocity *= 0.08
+		var new_pan_velocity := Vector3.ZERO
+		if pan_dir != Vector2.ZERO:
+			new_pan_velocity = (pan_dir.x * h_axis) + (pan_dir.y * v_axis)
+			new_pan_velocity *= 0.08
+			crosshair.visible = true
 		pause_pan_velocity = pause_pan_velocity.linear_interpolate(new_pan_velocity, 0.15)
-		# If velocity isnt zero, perform collision detection
-		if not pause_pan_velocity.is_equal_approx(Vector3.ZERO):
+		if pause_pan_velocity.is_equal_approx(Vector3.ZERO):
+			crosshair.visible = false
+		else:
+			# If velocity isnt zero, perform collision detection
 			var cam_target = Game.player.position + pan
 			var space_state = get_world().direct_space_state
 			shape.radius = 0.3
 			query.transform = Transform(Basis(), cam_target)
 			var result = space_state.cast_motion(query, pause_pan_velocity)
-			if result[1] == 1: # No collision
-				pan += pause_pan_velocity
-		# If the boundary has been reached, stop there.
-		if pan.length() > 10.0:
+			pan += pause_pan_velocity * result[0]
+		# If boundary has been reached, stop.
+		if pan.length_squared() > 100.0: 
 			pan = pan.normalized() * 10.0
 		
 		# Zoom while paused
 		if Input.is_action_pressed("A"): zoom += 0.1
 		if Input.is_action_pressed("X"): zoom -= 0.1
-		zoom = clamp(zoom, 0.5, 10.0)
+		zoom = clamp(zoom, 0.3, 10.0)
 
 func multiple_targets() -> void:
 	var player_amt:float = screen_edge_detector(Game.player.position)
@@ -274,7 +264,7 @@ func _physics_process(_t:float) -> void:
 			update_position(new_pos)
 		return
 	
-	if autocamera:
+	if not is_paused and autocamera:
 		if Game.player.grounded:
 			var leftstick = Game.get_stick_input("left")
 			var new_pos = current_pos

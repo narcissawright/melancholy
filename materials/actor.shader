@@ -1,7 +1,11 @@
 shader_type spatial;
 render_mode shadows_disabled, ambient_light_disabled;
 
+// RIM
 uniform bool enable_rim = false;
+uniform bool only_rim = false;
+uniform bool not_shaded = false;
+uniform bool use_vertex_color = false;
 
 uniform vec4 color_lit : hint_color = vec4(0.5, 0.5, 0.6, 1.0);
 uniform vec4 color_dim : hint_color = vec4(0.1, 0.1, 0.12, 1.0);
@@ -15,6 +19,8 @@ const vec3 locked_lit = vec3(0.2, 0.6, 0.8);
 const vec3 locked_dim = vec3(0.0, 0.3, 0.4);
 
 void fragment() {
+	if (use_vertex_color) { ALBEDO = COLOR.rgb; }
+	
 	// Opacity Dithering...
 	int x = int(FRAGCOORD.x / 2.0) % 4;
 	int y = int(FRAGCOORD.y / 2.0) % 4;
@@ -48,18 +54,19 @@ void fragment() {
 	view.xyz /= view.w;
 	float linear_depth = -view.z;
 	if (linear_depth < limit) { discard; }
+	
+	if (enable_rim) {
+		float NdotV = dot(VIEW, NORMAL);
+		float rim = smoothstep(0.0, 1.0, NdotV);
+		if ((only_rim) && (rim > 0.2)) { discard; } 
+	}
 }
+
 
 void light() {
 	// Cel Shading
 	float NdotL = dot(LIGHT, NORMAL);
 	float lit = smoothstep(0.0, 1.0, NdotL);
-	
-	float rim = 1.0;
-	if (enable_rim) {
-		float NdotV = dot(VIEW, NORMAL);
-		rim = smoothstep(0.0, 1.0, NdotV);
-	}
 	
 	// god I would love a way to use MULTIPLE LIGHTS with cel shading.
 	//vec3 extra_light = LIGHT_COLOR * ATTENUATION;
@@ -73,14 +80,26 @@ void light() {
 	} else if (locked) {
 		final_lit = locked_lit;
 		final_dim = locked_dim;
+	} else if (use_vertex_color) {
+		final_lit = ALBEDO;
+		final_dim = ALBEDO * 0.5;
 	} else {
 		final_lit = color_lit.rgb;
 		final_dim = color_dim.rgb;
 	}
 	
-	if (lit > 0.5 || rim < 0.2) {
-		DIFFUSE_LIGHT = final_lit;
-	} else {
+	if (not_shaded) { lit = 1.0; }
+	
+	if (enable_rim) {
+		float NdotV = dot(VIEW, NORMAL);
+		float rim = smoothstep(0.0, 1.0, NdotV);
+		if (rim < 0.2) { lit = 0.0; } 
+	}
+	
+	
+	if (lit > 0.5) { 
+		DIFFUSE_LIGHT = final_lit; 
+	} else { 
 		DIFFUSE_LIGHT = final_dim;
 	}
 }

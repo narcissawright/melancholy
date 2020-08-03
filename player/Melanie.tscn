@@ -13,6 +13,9 @@ mid_height = 1.37
 [sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 5 )
 shader_param/enable_rim = true
+shader_param/only_rim = false
+shader_param/not_shaded = false
+shader_param/use_vertex_color = false
 shader_param/color_lit = Color( 0.380392, 0.380392, 1, 1 )
 shader_param/color_dim = Color( 0.168627, 0.129412, 0.396078, 1 )
 shader_param/damaged = false
@@ -24,6 +27,9 @@ size = Vector3( 0.2, 0.2, 0.2 )
 [sub_resource type="ShaderMaterial" id=4]
 shader = ExtResource( 5 )
 shader_param/enable_rim = false
+shader_param/only_rim = false
+shader_param/not_shaded = false
+shader_param/use_vertex_color = false
 shader_param/color_lit = Color( 0.678431, 0.678431, 0.843137, 1 )
 shader_param/color_dim = Color( 0.290196, 0.25098, 0.501961, 1 )
 shader_param/damaged = false
@@ -42,6 +48,9 @@ size = Vector3( 0.75, 1.5, 0.1 )
 [sub_resource type="ShaderMaterial" id=8]
 shader = ExtResource( 5 )
 shader_param/enable_rim = false
+shader_param/only_rim = false
+shader_param/not_shaded = false
+shader_param/use_vertex_color = false
 shader_param/color_lit = Color( 0.780392, 0.807843, 0.811765, 1 )
 shader_param/color_dim = Color( 0.407843, 0.45098, 0.501961, 1 )
 shader_param/damaged = false

@@ -15,6 +15,9 @@ mid_height = 0.885
 [sub_resource type="ShaderMaterial" id=3]
 shader = ExtResource( 3 )
 shader_param/enable_rim = true
+shader_param/only_rim = false
+shader_param/not_shaded = false
+shader_param/use_vertex_color = false
 shader_param/color_lit = Color( 0.329412, 0.862745, 0.352941, 1 )
 shader_param/color_dim = Color( 0.0941176, 0.458824, 0.270588, 1 )
 shader_param/damaged = false
