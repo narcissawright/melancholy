@@ -11,11 +11,18 @@ To Do:
 		- release and repress ZL quickly to change target (maybe this is actually for the player code)
 	
 	- pause mode improvements
-		- it should save the state of the camera before you entered pause mode
 		- zooming in pause mode should be smoother
 		- reaching the pan boundary should be smoother
-		- panning into walls should be less glitchy
+		
+		- allow sliding the crosshair against surfaces.
+			- this may be accomplished using a KinematicBody
+			- it's complex though, because I was using one 'pan' value for the total pan
+			- this would also require that the kinematicbody isnt a child of the camera
+			- it may be worth considering creating a 'cam target' node??
 	
+		- I think the cam target in pause mode should be more than the IG node
+		- should probably make a custom model for it or something
+		
 	- first person view
 	
 	- code organization
@@ -34,9 +41,8 @@ var default_pos := Vector3(0, 0.316228, 0.948683) # default camera position, nor
 var current_pos:Vector3 # current camera position, normalized
 
 # Zoom
-var zoom_amt:float = 3.5
+var zoom:float = 3.5
 var default_zoom:float = 3.5
-
 #const zoom_lerp_amt:float = 0.2
 #var zoom_mode:String = 'medium'
 #const zoom_levels:Dictionary = {
@@ -45,10 +51,23 @@ var default_zoom:float = 3.5
 #		"far": 4.2
 #	}
 
+
+# Pan
+var pan:Vector3
+
 # Pause Mode
 var is_paused = false
-var pause_pan := Vector3.ZERO # while paused, allow camera pan via left joystick
 var pause_pan_velocity := Vector3.ZERO # used for linear interpolation..
+
+
+# WIP
+# pressing ZL while paused should bring the cam to where it was when pause was initiated.
+var saved_cam_state: Dictionary = {
+	"cam_pos": Vector3.ZERO,
+	"zoom": 0.0,
+	"pan": Vector3.ZERO
+} # do I need two pan values here?... I don't think so.
+
 
 # Joystick Movement
 const move_speed:float = 0.04
@@ -66,7 +85,7 @@ var cam_reset_frame:float = 0.0   # stored as float to avoid integer division
 
 # Child nodes
 #onready var crosshair = $Crosshair
-onready var crosshair = $Crosshair_IG
+onready var crosshair = $Crosshair
 
 func _ready() -> void:
 	
@@ -106,50 +125,57 @@ func _on_pause_state_change(paused:bool) -> void:
 	if paused:
 		crosshair.visible = true
 		is_paused = true
+		
+		# Save State
+		saved_cam_state.pos = current_pos
+		saved_cam_state.pan = pan
+		saved_cam_state.zoom = zoom
 	else:
 		crosshair.visible = false
 		is_paused = false
-		pause_pan = Vector3.ZERO
+		
+		# Recover State
+		pan = saved_cam_state.pan
+		current_pos = saved_cam_state.pos
+		zoom = saved_cam_state.zoom
+		
 		pause_pan_velocity = Vector3.ZERO
-		zoom_amt = default_zoom
 
 func pause_controls() -> void:
 	
 	if Input.is_action_just_pressed('ZL'):
-		#current_pos = default_pos
-		pause_pan = Vector3.ZERO
+		# This will bring the camera back to where it was when the pause was initiated
 		pause_pan_velocity = Vector3.ZERO
-		zoom_amt = default_zoom
-		resetting = true
+		current_pos = saved_cam_state.pos
+		pan = saved_cam_state.pan
+		zoom = saved_cam_state.zoom
 	else:
 		# Pan while paused
+		# Find pan axes
 		var h_axis = current_pos.cross(Vector3.DOWN)
 		var v_axis = -h_axis.rotated(current_pos, PI/2.0)
+		# Find pan velocity
 		var pan_dir = Game.get_stick_input("left")
 		var new_pan_velocity = (pan_dir.x * h_axis) + (pan_dir.y * v_axis)
 		new_pan_velocity *= 0.08
 		pause_pan_velocity = pause_pan_velocity.linear_interpolate(new_pan_velocity, 0.15)
+		# If velocity isnt zero, perform collision detection
 		if not pause_pan_velocity.is_equal_approx(Vector3.ZERO):
-			var cam_target = Game.player.position + pause_pan + zl_pan
-			var space_state = get_world().direct_space_state # get the space.
-			query.transform = Transform(Basis(), cam_target) # start at the cam_target
+			var cam_target = Game.player.position + pan
+			var space_state = get_world().direct_space_state
 			shape.radius = 0.3
-			var result = space_state.cast_motion(query, pause_pan_velocity) # until a collision happens
-			if result[0] > 0:
-				pause_pan += pause_pan_velocity * result[0] # final position
-			if pause_pan.length() > 10.0:
-				pause_pan = pause_pan.normalized() * 10.0
+			query.transform = Transform(Basis(), cam_target)
+			var result = space_state.cast_motion(query, pause_pan_velocity)
+			if result[1] == 1: # No collision
+				pan += pause_pan_velocity
+		# If the boundary has been reached, stop there.
+		if pan.length() > 10.0:
+			pan = pan.normalized() * 10.0
 		
 		# Zoom while paused
-		if Input.is_action_pressed("A"): zoom_amt += 0.1
-		if Input.is_action_pressed("X"): zoom_amt -= 0.1
-		zoom_amt = clamp(zoom_amt, 0.5, 10.0)
-	
-#			print (new_pan_velocity)
-#			print (pan_velocity)
-#			print (cam_target)
-#			print (pause_pan)
-#			print ("---")
+		if Input.is_action_pressed("A"): zoom += 0.1
+		if Input.is_action_pressed("X"): zoom -= 0.1
+		zoom = clamp(zoom, 0.5, 10.0)
 
 
 func _physics_process(_t:float) -> void:
@@ -177,13 +203,13 @@ func _physics_process(_t:float) -> void:
 		# X is the new position on the cam direction vector line
 		var X:Vector3 = global_transform.origin + -current_pos * d
 		var goal_pan:Vector3 = (goal_target - X)
-		zl_pan = zl_pan.linear_interpolate(goal_pan, zl_pan_lerp_amt)
+		pan = pan.linear_interpolate(goal_pan, zl_pan_lerp_amt)
 		
 	# Not Multiple Targets
 	else:
-		if zl_pan != Vector3.ZERO:
-			zl_pan = zl_pan.linear_interpolate(Vector3.ZERO, zl_pan_lerp_amt)
-			if zl_pan.length_squared() < 0.00001: zl_pan = Vector3.ZERO
+		if pan != Vector3.ZERO:
+			pan = pan.linear_interpolate(Vector3.ZERO, zl_pan_lerp_amt)
+			if pan.length_squared() < 0.00001: pan = Vector3.ZERO
 		
 #	if Input.is_action_just_pressed('R3'):
 #		match zoom_mode:
@@ -242,24 +268,22 @@ func _physics_process(_t:float) -> void:
 
 func debug() -> void:
 	# Write debug info
-	#Debug.text.write("Cam Position: " + str(self.global_transform.origin))
-	#Debug.text.write("Cam Relative Y-Pos: " + str(current_pos.y))
-	Debug.text.write("Cam Zoom: " + str(zoom_amt))
-	Debug.text.write("Cam ZL Pan: " + str(zl_pan))
-	Debug.text.write("Pause Mode Pan: " + str(pause_pan))
+	Debug.text.write("Cam Pos: " + str(current_pos))
+	Debug.text.write("Cam Zoom: " + str(zoom))
+	Debug.text.write("Cam Pan: " + str(pan))
+	Debug.text.write("Cam Target: " + str(Game.player.position + pan))
 	Debug.text.write("Cam Resetting: " + str(resetting), 'green' if resetting else 'red')
-	#Debug.text.write("Multiple Cam Targets: " + str(multiple_targets), 'green' if multiple_targets else 'red')
 	Debug.text.newline()
 
 func update_position(new_pos:Vector3) -> void:
-	var cam_target = Game.player.position + zl_pan + pause_pan
+	var cam_target = Game.player.position + pan
 	if is_paused:
 		crosshair.global_transform = Transform(Basis(), cam_target)
-	if zoom_amt > 0.0:
+	if zoom > 0.0:
 		var space_state = get_world().direct_space_state # get the space.
 		query.transform = Transform(Basis(), cam_target) # start at the cam_target
 		shape.radius = 0.2
-		new_pos *= zoom_amt # multiply by the current zoom value
+		new_pos *= zoom # multiply by the current zoom value
 		var result = space_state.cast_motion(query, new_pos) # until a collision happens
 		if result[0] > 0: # result[0] is how much to lerp
 			new_pos = cam_target.linear_interpolate(new_pos + cam_target, result[0]) # now we have final position
