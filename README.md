@@ -17,11 +17,9 @@
 - Naturally sprints when holding joystick fully (3s to build to full speed, subtle increase).
 - Jumping. Variable Jump Height. Leniency when falling off a ledge.
 - Shielding. Melanie has a big shield. She moves slower with the shield up. The shield bounces projectiles off. 
-
-#### `Mostly Done`
+- Subweapon: Bombs. Pull bomb (hold overhead). Cannot pull while area above head is blocked. Can throw bombs. Bombs explode on impact. Bomb will drop if damaged or if you shield. Shielding a bomb will give you shield knockback but no damage. Getting hit by a bomb directly can boost you, but does damage.
 - Shield bash. Quickly releasing and re-pressing results in a shield bash. Reflects projectiles w/ higher velocity.
 - Impact landing. Landing from a height will result damage or being unable to move for a time.
-- Subweapon: Bombs. Pull bomb (hold overhead). Cannot pull while area above head is blocked. Can throw bombs. Bombs explode on impact. Bomb will drop if damaged or if you shield. Shielding a bomb will give you shield knockback but no damage. Getting hit by a bomb directly can boost you, but does damage.
 
 #### `To Do`
 - Proper movement & physics on slopes and small ledges
@@ -68,21 +66,16 @@
 ## Camera & Targeting system:
 
 #### `Completed:`
-- Right stick for free movement.
-- R3 to change zoom level.
+- Right stick for free cam (rotate to any position)
 - Hold ZL to target stuff. While targeting, the player faces the target. The camera pans to show both yourself and the target. Sprinting is not possible while targeting, and all directions of movement other than forward become slower.
 - When there is nothing to target, pressing ZL will move the camera to the default position. If you're hugging the wall during this, your character becomes aligned with the wall normal. 
-- Press + to pause the game, D-Pad then allows for free camera panning. 
+- Pause Mode: Press + to pause the game. Left stick pans the camera. X and A to zoom.
+- Autocamera: When the player is moving left or right relative to the camera, the camera will automatically rotate towards the back of the player. This won't happen if you've used the right stick for free cam.
 
 #### `To do:`
+- 1st person view.
 - Target swapping: Release and repress to change target.
-- Better features when paused (better control over zoom, less glitchy behavior while panning through walls etc.)
-- Autocamera... I envision this as a togglable option.
-1. It should naturally look in the same direction that you're going. 
-2. It look down from a higher angle when approaching ledges.
-3. Better avoidance of walls (avoid abruptly crashing into them.
-4. Perhaps incorporate a custom zoom amount when targeting things that end up on the screen edge.
-
+- Autocamera should peer down if you're standing near a high ledge.
 
 ## Other Mechanics and Features:
 
