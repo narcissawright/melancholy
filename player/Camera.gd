@@ -6,6 +6,7 @@ To Do:
 	- quick change target: 
 		- release and repress ZL quickly to change target (maybe this is actually for the player code
 	- first person view
+	- let the L button reset camera without targeting actors
 	- code organization
 	
 Maybe:
@@ -36,29 +37,24 @@ var default_zoom:float = 3.5
 #		"far": 4.2
 #	}
 
-var autocamera = true
+var mode = "auto" # "free", "first_person", "pause", "reset"
 
 # Pan
 var pan:Vector3
-
-# Pause Mode
-var is_paused = false
 var pause_pan_velocity := Vector3.ZERO # used for linear interpolation..
 
 # State of the camera when pause was initiated
 var saved_cam_state: Dictionary = {
 	"cam_pos": Vector3.ZERO,
 	"zoom": 0.0,
-	"pan": Vector3.ZERO
+	"pan": Vector3.ZERO,
+	"mode": "auto"
 }
-
-var first_person:bool = false
 
 # Joystick Movement
 const move_speed:float = 0.04
 
 # Camera Reset
-var resetting:bool = false
 const cam_reset_time:float = 16.0 # frames @ 60fps
 var cam_reset_frame:float = 0.0   # stored as float to avoid integer division
 
@@ -81,76 +77,99 @@ func _ready() -> void:
 	query.set_shape(shape)
 	
 	# initialize the camera position
-	update_position(default_pos) # Move into position
+	current_pos = default_pos
+	update_position() # Move into position
 
-func update_position(new_pos:Vector3) -> void:
+func update_position() -> void:
 	var cam_target = Game.player.position + pan
-	if is_paused:
+	if mode == "pause":
 		crosshair.global_transform = Transform(Basis(), cam_target)
-	if false: #first_person:
-		look_at_from_position(Game.player.position, Game.player.position + Game.player.forwards(), Vector3.UP)
-	else:
-		var space_state = get_world().direct_space_state # get the space.
-		query.transform = Transform(Basis(), cam_target) # start at the cam_target
-		shape.radius = 0.2
-		new_pos *= zoom # multiply by the current zoom value
-		var result = space_state.cast_motion(query, new_pos) # until a collision happens
-		if result[0] > 0: # result[0] is how much to lerp
-			new_pos = cam_target.linear_interpolate(new_pos + cam_target, result[0]) # now we have final position
-			look_at_from_position(new_pos, cam_target, Vector3.UP) # look at player from final position
-		current_pos = (self.global_transform.origin - cam_target).normalized() # update current position
+	#if false: #first_person:
+		#look_at_from_position(Game.player.position, Game.player.position + Game.player.forwards(), Vector3.UP)
+	#else:
+	var space_state = get_world().direct_space_state # get the space.
+	query.transform = Transform(Basis(), cam_target) # start at the cam_target
+	shape.radius = 0.2
+	var new_pos = current_pos * zoom
+	var result = space_state.cast_motion(query, new_pos) # until a collision happens
+	if result[0] > 0: # result[0] is how much to lerp
+		new_pos = cam_target.linear_interpolate(new_pos + cam_target, result[0]) # now we have final position
+		look_at_from_position(new_pos, cam_target, Vector3.UP) # look at player from final position
+	current_pos = (self.global_transform.origin - cam_target).normalized() # update current position
+	#current_pos = current_pos.normalized()
 
 func _on_pause_state_change(paused:bool) -> void:
 	if paused:
-		is_paused = true
-		
 		# Save State
 		saved_cam_state.pos = current_pos
 		saved_cam_state.pan = pan
 		saved_cam_state.zoom = zoom
+		saved_cam_state.mode = mode
+		mode = "pause"
 	else:
 		crosshair.visible = false
-		is_paused = false
-		
+		pause_pan_velocity = Vector3.ZERO
 		# Recover State
 		pan = saved_cam_state.pan
 		current_pos = saved_cam_state.pos
 		zoom = saved_cam_state.zoom
-		
-		pause_pan_velocity = Vector3.ZERO
+		mode = saved_cam_state.mode
 		
 func _physics_process(_t:float) -> void:
 	debug()
-	if is_paused: 
-		pause_controls()
-	else: 
-		update_zl_target_pan()
-		if resetting:
+		
+	match mode:
+		"pause":
+			pause_controls()
+		"first_person":
+			first_person()
+		"reset":
 			camera_reset()
-			return
+		"auto":
+			if Input.is_action_just_pressed("R3"):
+				enter_first_person()
+				return
+			update_zl_target_pan()
+			auto_mode()
+		"free":
+			if Input.is_action_just_pressed("R3"):
+				enter_first_person()
+				return
+			update_zl_target_pan()
+			free_mode()
+			
+func free_mode() -> void:
+	var rightstick = Game.get_stick_input("right")
+	rotate_cam(rightstick)
+	update_position()
 
-	#first_person()
-	
-	# Rotation
+func auto_mode() -> void:
+	# Autocamera
 	var rightstick = Game.get_stick_input("right")
 	if rightstick.length_squared() > 0.0:
-		autocamera = false
-		rotate_cam(rightstick)
+		mode = "free"
+		free_mode()
 		return
 	
-	# Autocamera
-	if not is_paused and autocamera:
-		if Game.player.grounded:
-			var leftstick = Game.get_stick_input("left")
-			var new_pos = current_pos
-			var factor = max(abs(leftstick.x) - 0.25, 0.0) * 0.5
-			var rotation_amount = -leftstick.x * move_speed * factor
-			new_pos = new_pos.rotated(Vector3.UP, rotation_amount)
-			update_position(new_pos)
-			return
+	""" 
+	It would be better if the rotation is based on your movement direction instead of joystick dir.
+	there are some awkward behaviors that emerge when locked -- the camera shouldnt spin there..
+	using horizontal velocity would be better.
+	"""
 	
-	# No camera motion
-	update_position(current_pos)
+#		WIP - use velocity relative to camera instead of left joystick
+#		var hvelocity = Game.player.horizontal_velocity()
+#		movedir = Vector2(hvelocity.x, hvelocity.z) / 8.0
+#		movedir.x = clamp(movedir.x, -1.0, 1.0)
+#		movedir.y = clamp(movedir.y, -1.0, 1.0)
+	
+	if Game.player.grounded and not Game.player.targeting:
+		var movedir:Vector2 = Game.get_stick_input("left")
+		var factor = max(abs(movedir.x) - 0.25, 0.0) * 0.5
+		var rotation_amount = -movedir.x * move_speed * factor
+		current_pos = current_pos.rotated(Vector3.UP, rotation_amount)
+	
+	update_position()
 
 func rotate_cam(dir:Vector2) -> void:
 	var new_pos = current_pos
@@ -161,7 +180,7 @@ func rotate_cam(dir:Vector2) -> void:
 			dir.y *= 1.0 - abs(new_pos.y)
 		new_pos = new_pos.rotated(cross, dir.y * move_speed)
 		new_pos.y = clamp(new_pos.y, -0.85, 0.85)
-		update_position(new_pos)
+		current_pos = new_pos
 
 func pause_controls() -> void:
 	
@@ -204,6 +223,13 @@ func pause_controls() -> void:
 		if Input.is_action_pressed("A"): zoom += 0.1
 		if Input.is_action_pressed("X"): zoom -= 0.1
 		zoom = clamp(zoom, 0.3, 10.0)
+		
+		# Rotate while paused
+		var rightstick = Game.get_stick_input("right")
+		if rightstick.length_squared() > 0.0:
+			rotate_cam(rightstick)
+	
+	update_position()
 
 func update_zl_target_pan() -> void:
 	
@@ -240,13 +266,15 @@ func screen_edge_detector(pos3d:Vector3) -> float:
 	pos2d /= midpoint # Store this value more in terms of "percentage" rather than pixels.
 	return abs(pos2d.x) + abs(pos2d.y) # these values may exceed 1 on each axis if offscreen
 
+func reset() -> void:
+	mode = "reset"
+
 func camera_reset() -> void:
 	var goal_pos = default_pos.rotated(Vector3.UP, Game.player.rotation.y)
 	if current_pos.is_equal_approx(goal_pos) or cam_reset_frame >= cam_reset_time:
-		resetting = false
-		autocamera = true
+		mode = "auto"
 		cam_reset_frame = 0.0
-		update_position(current_pos)
+		update_position()
 	else:
 		cam_reset_frame += 1.0
 		# new_y is the final y position in a normalized vec3
@@ -256,40 +284,39 @@ func camera_reset() -> void:
 		xz = xz.slerp(xz_goal, cam_reset_frame / cam_reset_time) # horizontal rotation
 		# need to multiply the xz values by a multiplier so new_pos is unit length
 		xz *= sqrt(1.0 - new_y * new_y) # Thanks Syn and Eta
-		var new_pos = Vector3(xz.x, new_y, xz.y) # should be ~unit length
-		update_position(new_pos)
+		current_pos = Vector3(xz.x, new_y, xz.y) # should be ~unit length
+		update_position()
 
 func first_person() -> void:
-	if first_person:
-		var exiting = false
-		if Input.is_action_just_pressed("A"): exiting = true
-		elif Input.is_action_just_pressed("B"): exiting = true
-		elif Input.is_action_just_pressed("X"): exiting = true
-		elif Input.is_action_just_pressed("Y"): exiting = true
-		elif Input.is_action_just_pressed("R3"): exiting = true
-		if exiting: exit_first_person()
-		else:
-			var dir = Game.get_stick_input("left")
-			rotate_cam(dir)
+	var exiting = false
+	if Input.is_action_just_pressed("A"): exiting = true
+	elif Input.is_action_just_pressed("B"): exiting = true
+	elif Input.is_action_just_pressed("X"): exiting = true
+	elif Input.is_action_just_pressed("Y"): exiting = true
+	elif Input.is_action_just_pressed("R3"): exiting = true
+	if exiting: exit_first_person()
 	else:
-		if not Game.player.locked and Input.is_action_just_pressed("R3"):
-			first_person = true
-			zoom = 0.05
-			#Game.player.untarget()
-			Game.player.lockplayer()
+		var dir = Game.get_stick_input("right")
+		rotate_cam(dir)
+
+func enter_first_person() -> void:
+	mode = "first_person"
+	zoom = 0.05
+	Game.player.untarget()
+	Game.player.lockplayer()
 
 func exit_first_person() -> void:
 	Game.player.unlock()
-	first_person = false
 	zoom = default_zoom
+	reset()
 
 func debug() -> void:
 	# Write debug info
+	Debug.text.write("Cam Mode: " + mode)
 	Debug.text.write("Cam Pos: " + str(current_pos))
 	Debug.text.write("Cam Zoom: " + str(zoom))
 	Debug.text.write("Cam Pan: " + str(pan))
-	Debug.text.write("Cam Target: " + str(Game.player.position + pan))
-	Debug.text.write("Cam Resetting: " + str(resetting), 'green' if resetting else 'red')
+	Debug.text.write("Cam Reset: " + str(cam_reset_frame))
 	Debug.text.newline()
 	
 func zoom_change_unused() -> void:

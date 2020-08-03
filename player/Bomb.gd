@@ -1,5 +1,14 @@
 extends Position3D
 
+""" 
+Known exploits:
+	- Bomb Jump (intentional)
+	- Double Bomb Jump (the timing is tight but it's a half decent mechanic)
+	- Double Bomb Slide (requires taking damage.. seems acceptable)
+	- Unshield during a shield slide by getting knockback during the putaway animation...
+"""
+
+
 # Collision
 var query := PhysicsShapeQueryParameters.new()
 var shape := SphereShape.new()

@@ -90,33 +90,42 @@ To Do:
 """
 
 var targeting:bool = false
-var zl_target:int = 0
+var zl_target:int = 0      
 
 func update_target_state() -> void:
+	
+	if Input.is_action_just_pressed("L"):
+		cam_reset_wall_align()
+	
 	# Begin ZL Targeting:
 	if not targeting and Input.is_action_just_pressed("target"):
-		targeting = true
 		zl_target = TargetSystem.get_most_relevant_target()
-		if zl_target == 0: 
-			Game.cam.resetting = true
-			# align with wall if relevant
-			var from = Game.player.position
-			var to =   Game.player.position + forwards() * 0.25
-			var result = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
-			if result.size() > 0:
-				look_at(translation - result.normal, Vector3.UP)
+		cam_reset_wall_align()
 	
 	# Check if no longer targeting:
 	if Input.is_action_pressed("target"):
 		if not TargetSystem.target_is_valid(zl_target):
 			# Target broken from distance or lost line of sight
 			untarget()
-	elif Game.cam.resetting == false:
+	elif Game.cam.mode != "reset":
 		untarget()
 		
 func untarget() -> void:
 	targeting = false
 	zl_target = 0
+
+func cam_reset_wall_align() -> void:
+	targeting = true
+	
+	if zl_target == 0:
+		Game.cam.reset()
+		
+		# align with wall if relevant
+		var from = Game.player.position
+		var to =   Game.player.position + forwards() * 0.25
+		var result = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
+		if result.size() > 0:
+			look_at(translation - result.normal, Vector3.UP)
 
 ##  ##        ##  ##  #####  ##     ####    ####  ##  ######  ##  ##
 ##  ##        ##  ##  ##     ##    ##  ##  ##     ##    ##    ##  ##
@@ -357,7 +366,7 @@ func respawn() -> void:
 	velocity = Vector3.ZERO
 	rotation = Vector3.ZERO
 	lockplayer_for_frames(20)
-	Game.cam.resetting = true
+	Game.cam.reset()
 
 #####    ####    ######    ####    #####  #####
 ##  ##  ##  ##  ## ## ##  ##  ##  ##      ##
