@@ -6,6 +6,7 @@ To Do:
 	- quick change target: 
 		- release and repress ZL quickly to change target (maybe this is actually for the player code
 	- first person view
+		- if player unlocks (damage or whatnot) it needs to exit 1st person view.
 	- let the L button reset camera without targeting actors
 	- code organization
 	

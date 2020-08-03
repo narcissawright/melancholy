@@ -24,7 +24,7 @@ func process_state() -> void:
 				var velocity = Game.player.forwards()*10.0 + Vector3.UP*5.0
 				throw_bomb_asap(velocity)
 				
-			elif can_spawn_bomb(): # If a bomb can be spawned, do so.
+			elif not Game.player.locked and can_spawn_bomb(): # If a bomb can be spawned, do so.
 				spawn_bomb()
 	
 	elif holding: 

@@ -8,7 +8,6 @@ Known exploits:
 	- Unshield during a shield slide by getting knockback during the putaway animation...
 """
 
-
 # Collision
 var query := PhysicsShapeQueryParameters.new()
 var shape := SphereShape.new()

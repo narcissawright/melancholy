@@ -2,12 +2,7 @@ extends AnimationPlayer
 
 """
 I could really see using animationplayer for more properties,
-such as animating the shield slide interpolation value
-
-Currently, when the shield is initiated, your speed drops to 2.0.
-This means if you try to shield drop a bomb and move backwards to block it
-you can barely get there. I would prefer if you retained more speed until the animation
-is further along. Maybe something for the future.
+such as animating the shield slide interpolation value ??
 """
 
 var active = false
@@ -45,6 +40,12 @@ func _physics_process(_t:float) -> void:
 			if active and not is_playing():
 				put_away()
 				shieldbash_timer = 10 # frames
+
+func slide() -> void:
+	active = true
+	sliding = true
+	play("take_out")
+	seek(current_animation_length)
 
 func put_away() -> void:
 	play("put_away")

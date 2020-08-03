@@ -383,7 +383,7 @@ func hit_by_explosion(explosion_center:Vector3) -> void:
 		if result.shape > 0:
 			# hit shield
 			velocity += forwards() * -14.0
-			shield.sliding = true
+			shield.slide()
 			lockplayer()
 			return
 	# Bomb did not hit your shield; apply damage.
@@ -436,6 +436,7 @@ func debug() -> void:
 	Debug.text.newline()
 	Debug.text.write('Shielding: ' + str(shield.active), 'green' if shield.active else 'red')
 	Debug.text.write('Bashing: ' + str(shield.bash_str), 'green' if shield.bash_str > 0.0 else 'red')
+	Debug.text.write('Sliding: ' + str(shield.sliding), 'green' if shield.sliding else 'red')
 	Debug.text.newline()
 	Debug.text.write('Sprinting: ' + str(sprint_count) + '/180')
 #	Debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
