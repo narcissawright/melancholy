@@ -3,10 +3,10 @@ extends Camera
 """ 
 To Do:
 	- autocamera peer over ledges
-	- autocamera rotate should use velocity instead of input
 	- code organization
 	
 Maybe:
+	- maybe autocamera should rotate to a higher point while you're falling down.
 	- perhaps some context-sensitive rotation limits (such as looking from very low while targeting)
 	- pause mode improvements
 		- tilt in pause mode.
@@ -157,22 +157,13 @@ func auto_mode() -> void:
 		free_mode()
 		return
 	
-	""" 
-	It would be better if the rotation is based on your movement direction instead of joystick dir.
-	there are some awkward behaviors that emerge when locked -- the camera shouldnt spin there..
-	using horizontal velocity would be better.
-	"""
-	
-#		WIP - use velocity relative to camera instead of left joystick
-#		var hvelocity = Game.player.horizontal_velocity()
-#		movedir = Vector2(hvelocity.x, hvelocity.z) / 8.0
-#		movedir.x = clamp(movedir.x, -1.0, 1.0)
-#		movedir.y = clamp(movedir.y, -1.0, 1.0)
-	
-	if Game.player.grounded and not Game.player.targeting:
-		var movedir:Vector2 = Game.get_stick_input("left")
-		var factor = max(abs(movedir.x) - 0.25, 0.0) * 0.5
-		var rotation_amount = -movedir.x * move_speed * factor
+	if not Game.player.targeting:
+		var hvelocity = Game.player.horizontal_velocity()
+		var movedir := Vector2(hvelocity.x, hvelocity.z)
+		var x_movement = -movedir.rotated(rotation.y).x
+		x_movement = clamp(x_movement / 10.0, -1.0, 1.0)
+		var factor = max(abs(x_movement) - 0.25, 0.0) * 0.5 * move_speed
+		var rotation_amount = x_movement * factor
 		current_pos = current_pos.rotated(Vector3.UP, rotation_amount)
 	
 	update_position()
@@ -338,7 +329,7 @@ func exit_first_person() -> void:
 	current_pos = default_pos.rotated(Vector3.UP, Game.player.rotation.y)
 	Game.player.visible = true
 
-func _on_ZoomTween_tween_completed(object: Object, key: NodePath) -> void:
+func _on_ZoomTween_tween_completed(_object: Object, _key: NodePath) -> void:
 	if mode == "first_person":
 		Game.player.visible = false
 
