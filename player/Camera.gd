@@ -3,10 +3,7 @@ extends Camera
 """ 
 To Do:
 	- autocamera peer over ledges
-	- first person view
-		- if player unlocks (damage or whatnot) it needs to exit 1st person view.
-		- cam reset should either be blocked or remove you from first person view.
-		- need transitions in and out of first person
+	- autocamera rotate should use velocity instead of input
 	- code organization
 	
 Maybe:
@@ -27,7 +24,8 @@ var default_pos := Vector3(0, 0.316228, 0.948683) # default camera position, nor
 var current_pos:Vector3 # current camera position, normalized
 
 # Zoom
-var zoom:float = 3.5
+export var current_zoom:float = 3.5
+var custom_zoom:float = 3.5
 var default_zoom:float = 3.5
 #const zoom_lerp_amt:float = 0.2
 #var zoom_mode:String = 'medium'
@@ -38,6 +36,8 @@ var default_zoom:float = 3.5
 #	}
 
 var mode = "auto" # "free", "first_person", "pause", "reset"
+
+onready var zoom_tween = $ZoomTween
 
 # Pan
 var pan:Vector3
@@ -63,7 +63,7 @@ var cam_reset_frame:float = 0.0   # stored as float to avoid integer division
 onready var crosshair = $Crosshair
 
 func _ready() -> void:
-	
+	Events.connect("player_damaged", self, "_on_player_damaged")
 	Events.connect("pause", self, "_on_pause_state_change")
 	crosshair.visible = false
 	
@@ -80,17 +80,18 @@ func _ready() -> void:
 	current_pos = default_pos
 	update_position() # Move into position
 
+func _on_player_damaged() -> void:
+	if mode == "first_person":
+		exit_first_person()
+
 func update_position() -> void:
-	var cam_target = Game.player.position + pan
+	var cam_target = Game.player.head_position + pan
 	if mode == "pause":
 		crosshair.global_transform = Transform(Basis(), cam_target)
-	#if false: #first_person:
-		#look_at_from_position(Game.player.position, Game.player.position + Game.player.forwards(), Vector3.UP)
-	#else:
 	var space_state = get_world().direct_space_state # get the space.
 	query.transform = Transform(Basis(), cam_target) # start at the cam_target
 	shape.radius = 0.2
-	var new_pos = current_pos * zoom
+	var new_pos = current_pos * current_zoom
 	var result = space_state.cast_motion(query, new_pos) # until a collision happens
 	if result[0] > 0: # result[0] is how much to lerp
 		new_pos = cam_target.linear_interpolate(new_pos + cam_target, result[0]) # now we have final position
@@ -105,7 +106,7 @@ func _on_pause_state_change(paused:bool) -> void:
 		# Save State
 		saved_cam_state.pos = current_pos
 		saved_cam_state.pan = pan
-		saved_cam_state.zoom = zoom
+		saved_cam_state.zoom = current_zoom
 		saved_cam_state.mode = mode
 		mode = "pause"
 	else:
@@ -114,7 +115,7 @@ func _on_pause_state_change(paused:bool) -> void:
 		# Recover State
 		pan = saved_cam_state.pan
 		current_pos = saved_cam_state.pos
-		zoom = saved_cam_state.zoom
+		current_zoom = saved_cam_state.zoom
 		mode = saved_cam_state.mode
 		
 func _physics_process(_t:float) -> void:
@@ -191,7 +192,7 @@ func pause_controls() -> void:
 		pause_pan_velocity = Vector3.ZERO
 		current_pos = saved_cam_state.pos
 		pan = saved_cam_state.pan
-		zoom = saved_cam_state.zoom
+		current_zoom = saved_cam_state.zoom
 		crosshair.visible = false
 	else:
 		# Pan while paused
@@ -211,7 +212,7 @@ func pause_controls() -> void:
 			crosshair.visible = false
 		else:
 			# If velocity isnt zero, perform collision detection
-			var cam_target = Game.player.position + pan
+			var cam_target = Game.player.head_position + pan
 			var space_state = get_world().direct_space_state
 			shape.radius = 0.3
 			query.transform = Transform(Basis(), cam_target)
@@ -222,9 +223,9 @@ func pause_controls() -> void:
 			pan = pan.normalized() * 10.0
 		
 		# Zoom while paused
-		if Input.is_action_pressed("A"): zoom += 0.1
-		if Input.is_action_pressed("X"): zoom -= 0.1
-		zoom = clamp(zoom, 0.3, 10.0)
+		if Input.is_action_pressed("A"): current_zoom += 0.1
+		if Input.is_action_pressed("X"): current_zoom -= 0.1
+		current_zoom = clamp(current_zoom, 0.3, 10.0)
 		
 		# Rotate while paused
 		var rightstick = Game.get_stick_input("right")
@@ -244,14 +245,14 @@ func update_zl_target_pan() -> void:
 	else:
 		var zl_target_pos:Vector3 = TargetSystem.list[Game.player.zl_target].pos
 	
-		var player_amt:float = screen_edge_detector(Game.player.position)
+		var player_amt:float = screen_edge_detector(Game.player.head_position)
 		var target_amt:float = screen_edge_detector(zl_target_pos)
 		
 		player_amt = min(player_amt, 1.0)
 		target_amt = min(target_amt, 1.0)
 		
 		var interpolate_amt:float = 0.5 - (player_amt / 2.0) + (target_amt / 2.0)
-		var goal_target:Vector3 = Game.player.position.linear_interpolate(zl_target_pos, interpolate_amt)
+		var goal_target:Vector3 = Game.player.head_position.linear_interpolate(zl_target_pos, interpolate_amt)
 		
 		# Find goal_target distance from cam direction:
 		# d is how far to move across the cam vector to reach the nearest position to goal_target
@@ -310,24 +311,35 @@ func first_person() -> void:
 
 func enter_first_person() -> void:
 	mode = "first_person"
-	zoom = 0.01
+	zoom_tween.interpolate_property(self, "current_zoom", current_zoom, 0.01, 0.15)
+	zoom_tween.interpolate_property(self, "pan", pan, Vector3.ZERO, 0.15)
+	zoom_tween.start()
+	if Game.player.shield.active:
+		Game.player.shield.put_away()
+	if Game.player.bombspawner.holding:
+		Game.player.bombspawner.drop_bomb()
 	current_pos = -Game.player.forwards()
 	Game.player.untarget()
 	Game.player.lockplayer("first_person")
-	Game.player.visible = false
+	#Game.player.visible = false
 
 func exit_first_person() -> void:
 	Game.player.unlockplayer("first_person")
-	zoom = default_zoom
+	zoom_tween.interpolate_property(self, "current_zoom", current_zoom, custom_zoom, 0.15)
+	zoom_tween.start()
 	mode = "auto"
 	current_pos = default_pos.rotated(Vector3.UP, Game.player.rotation.y)
 	Game.player.visible = true
+
+func _on_ZoomTween_tween_completed(object: Object, key: NodePath) -> void:
+	if mode == "first_person":
+		Game.player.visible = false
 
 func debug() -> void:
 	# Write debug info
 	Debug.text.write("Cam Mode: " + mode)
 	Debug.text.write("Cam Pos: " + str(current_pos))
-	Debug.text.write("Cam Zoom: " + str(zoom))
+	Debug.text.write("Cam Zoom: " + str(current_zoom))
 	Debug.text.write("Cam Pan: " + str(pan))
 	Debug.text.write("Cam Reset: " + str(cam_reset_frame))
 	Debug.text.newline()
@@ -347,5 +359,7 @@ func zoom_change_unused() -> void:
 #	if Input.is_action_just_pressed('R3'):
 #		zoom_amt = 0.0
 #	if zoom_amt == 0.0: # 1st person
-#		look_at_from_position(Game.player.position, Game.player.position + Game.player.forwards(), Vector3.UP)
+#		look_at_from_position(Game.player.head_position, Game.player.head_position + Game.player.forwards(), Vector3.UP)
 #	else: # 3rd person
+
+

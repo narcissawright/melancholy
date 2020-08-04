@@ -41,11 +41,11 @@ onready var bombspawner = $BombSpawner
 # Material
 onready var material = $Body.get_surface_material(0)
 
-# Position3D
-onready var position3d = $Position3D # Camera points at this, enemies attack this point.
-var position:Vector3 setget , _get_position  # Gets Position3D global_transform.origin
-func _get_position() -> Vector3:
-	return position3d.global_transform.origin
+# Head Position
+onready var head_position_node = $HeadPosition # Camera points at this, enemies attack this point.
+var head_position:Vector3 setget , _get_head_position  # Gets Position3D global_transform.origin
+func _get_head_position() -> Vector3:
+	return head_position_node.global_transform.origin
 
 
 func _ready() -> void:
@@ -129,8 +129,8 @@ func cam_reset_wall_align() -> void:
 		Game.cam.reset()
 		
 		# align with wall if relevant
-		var from = Game.player.position
-		var to =   Game.player.position + forwards() * 0.25
+		var from = self.head_position
+		var to =   self.head_position + forwards() * 0.25
 		var result = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
 		if result.size() > 0:
 			look_at(translation - result.normal, Vector3.UP)
@@ -394,9 +394,9 @@ func respawn() -> void:
 
 func hit_by_explosion(explosion_center:Vector3) -> void:
 	# Check if bomb hit your shield
-	var travel_vector = (self.position - explosion_center).normalized()
+	var travel_vector = (self.head_position - explosion_center).normalized()
 	var space_state = get_world().direct_space_state
-	var result = space_state.intersect_ray(explosion_center, self.position, [], Layers.actor)
+	var result = space_state.intersect_ray(explosion_center, self.head_position, [], Layers.actor)
 	if result.size() > 0:
 		if result.shape > 0:
 			# hit shield
@@ -468,10 +468,10 @@ func debug() -> void:
 
 	# Debug Draw
 #	Debug.draw.begin(Mesh.PRIMITIVE_LINES)
-#	Debug.draw.add_vertex(Game.player.position)
-#	Debug.draw.add_vertex(Game.player.position + forwards())
-#	Debug.draw.add_vertex(Game.player.position)
-#	Debug.draw.add_vertex(Game.player.position + Vector3(velocity.x, 0, velocity.z).normalized())
+#	Debug.draw.add_vertex(Game.player.head_position)
+#	Debug.draw.add_vertex(Game.player.head_position + forwards())
+#	Debug.draw.add_vertex(Game.player.head_position)
+#	Debug.draw.add_vertex(Game.player.head_position + Vector3(velocity.x, 0, velocity.z).normalized())
 #	Debug.draw.end()
 
 

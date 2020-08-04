@@ -72,11 +72,10 @@
 - Retarget: If you are targeting something and release and repress, it will change to the next most relevant target.
 - Pause Mode: Press + to pause the game. Left stick pans the camera. X and A to zoom.
 - Autocamera: When the player is moving left or right relative to the camera, the camera will automatically rotate towards the back of the player. This won't happen if you've used the right stick for free cam.
-
-### `In Progress:`
-- 1st person view.
+- 1st person view. Press R3 to initiate. Automatically puts away shield, drops bomb. If you take damage, leaves first person.
 
 #### `To do:`
+- Autocamera should use velocity instead of joystick movement.
 - Autocamera should peer down if you're standing near a high ledge.
 
 ## Other Mechanics and Features:
