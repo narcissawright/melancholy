@@ -25,16 +25,8 @@ var default_pos := Vector3(0, 0.316228, 0.948683) # default camera position, nor
 var current_pos:Vector3 # current camera position, normalized
 
 # Zoom
-export var current_zoom:float = 3.5
+var current_zoom:float = 3.5
 var custom_zoom:float = 3.5
-var default_zoom:float = 3.5
-#const zoom_lerp_amt:float = 0.2
-#var zoom_mode:String = 'medium'
-#const zoom_levels:Dictionary = {
-#		"near": 1.8,
-#		"medium": 3.0,
-#		"far": 4.2
-#	}
 
 var mode = "auto" # "free", "first_person", "pause", "reset"
 
@@ -60,7 +52,6 @@ const cam_reset_time:float = 16.0 # frames @ 60fps
 var cam_reset_frame:float = 0.0   # stored as float to avoid integer division
 
 # Child nodes
-#onready var crosshair = $Crosshair
 onready var crosshair = $Crosshair
 
 func _ready() -> void:
@@ -120,7 +111,7 @@ func _on_pause_state_change(paused:bool) -> void:
 		mode = saved_cam_state.mode
 		
 func _physics_process(_t:float) -> void:
-	debug()
+	#debug()
 		
 	match mode:
 		"pause":
@@ -162,7 +153,7 @@ func auto_mode() -> void:
 		var movedir := Vector2(hvelocity.x, hvelocity.z)
 		var x_movement = -movedir.rotated(rotation.y).x
 		x_movement = clamp(x_movement / 10.0, -1.0, 1.0)
-		var factor = max(abs(x_movement) - 0.25, 0.0) * 0.5 * move_speed
+		var factor = max(abs(x_movement) - 0.20, 0.0) * 0.02
 		var rotation_amount = x_movement * factor
 		current_pos = current_pos.rotated(Vector3.UP, rotation_amount)
 	
@@ -172,6 +163,7 @@ func rotate_cam(dir:Vector2) -> void:
 	var new_pos = current_pos
 	var cross:Vector3 = new_pos.cross(Vector3.UP).normalized()
 	if cross != Vector3.ZERO:
+		var move_speed = 0.04
 		new_pos = new_pos.rotated(Vector3.UP, -dir.x * move_speed)
 		if (dir.y > 0.0 and new_pos.y > 0.0) or (dir.y < 0.0 and new_pos.y < 0.0):
 			dir.y *= 1.0 - abs(new_pos.y)

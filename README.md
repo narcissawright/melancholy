@@ -2,16 +2,14 @@
 
 - 3D game project (Godot Engine)
 - Kind of like Castlevania N64 (structured levels) with some Zelda-ish mechanics (Z-Targeting) sprinkled in?
-
+- Graphics and visual design are currently taking a backseat to working on core mechanics w/ placeholder art.
 
 ## Two Characters
 
-- Melanie (sword & shield)
-- Melancholy (magic & sorcery)
-
+- Melanie. Uses Sword & Shield. More "Link-like."
+- Melancholy. Uses sorcery. More "Carrie-like."
 
 ## Melanie - Sword & Shield - in-progress
-- Graphics and visual design are currently taking a backseat to working on core mechanics w/ placeholder art.
 
 #### `Completed:`
 - Naturally sprints when holding joystick fully (3s to build to full speed, subtle increase).
@@ -27,7 +25,7 @@
 #### `To Do`
 - Proper movement & physics on slopes and small ledges
 - Sword (Primary Attack). Sword draw, sword slash, heavy sword slash, air slash, put away.
-- `might move this to Melancholy? its similar to bombs...` Subweapon: Vitriol. Vitriol: Similar to holy water in CV64. Big damage for innermost (smallest) hitbox. 
+- Subweapon: Vitriol. Vitriol: Similar to holy water in CV64. Big damage for innermost (smallest) hitbox. `might move this to Melancholy? its similar to bombs...`
 - Subweapon: Bow & Arrow. Manual aiming (1st person?), targeted aiming (3rd person). Think Link from OoT
 - Subweapon: TBD
 - Ledge grab. Ledge movement (left or right), Ledge climb. Ledge release.
@@ -74,9 +72,10 @@
 - Autocamera: When the player is moving left or right relative to the camera, the camera will automatically rotate towards the back of the player. This won't happen if you've used the right stick for free cam.
 - 1st person view. Press R3 to initiate. Automatically puts away shield, drops bomb. If you take damage, leaves first person.
 
-#### `To do:`
-- Autocamera should use velocity instead of joystick movement.
+#### `Low Priority:`
 - Autocamera should peer down if you're standing near a high ledge.
+- Autocamera should rotate to a higher position while the player is falling
+- Pause Cam should allow you to slide the pan position across solid surfaces.
 
 ## Other Mechanics and Features:
 

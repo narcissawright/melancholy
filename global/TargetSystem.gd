@@ -41,7 +41,7 @@ func _physics_process(_t) -> void:
 	else:
 		manage_target_list()
 		
-	debug()
+	#debug()
 	update()
 
 func manage_target_list_paused() -> void:
