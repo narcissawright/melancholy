@@ -16,22 +16,22 @@
 #### `Completed:`
 - Naturally sprints when holding joystick fully (3s to build to full speed, subtle increase).
 - Jumping. Variable Jump Height. Leniency when falling off a ledge.
-- Shielding. Melanie has a big shield. She moves slower with the shield up. The shield bounces projectiles off. 
-- Subweapon: Bombs. Pull bomb (hold overhead). Cannot pull while area above head is blocked. Can throw bombs. Bombs explode on impact. Bomb will drop if damaged or if you shield. Shielding a bomb will give you shield knockback but no damage. Getting hit by a bomb directly can boost you, but does damage.
-- Shield bash. Quickly releasing and re-pressing results in a shield bash. Reflects projectiles w/ higher velocity.
 - Impact landing. Landing from a height will result damage or being unable to move for a time.
+- Shielding. Melanie has a big shield. She moves slower with the shield up. The shield bounces projectiles off. 
+- Shield bash. Quickly releasing and re-pressing results in a shield bash. Reflects projectiles w/ higher velocity.
+- Subweapon: Bombs. Pull bomb (hold overhead). Cannot pull while area above head is blocked. Can throw bombs. Bombs explode on impact. Bomb will drop if damaged or if you shield. Shielding a bomb will give you shield knockback but no damage. Getting hit by a bomb directly can boost you, but does damage.
+
+#### `Partially Done`
+- Damaged. All damage right now simply locks you for a certain amount of frames. Would like to add other kinds of damage maybe. There is no death animation or anything yet.
 
 #### `To Do`
 - Proper movement & physics on slopes and small ledges
 - Sword (Primary Attack). Sword draw, sword slash, heavy sword slash, air slash, put away.
-- Subweapon: Vitriol. Vitriol: Similar to holy water in CV64. Big damage for innermost (smallest) hitbox. 
+- `might move this to Melancholy? its similar to bombs...` Subweapon: Vitriol. Vitriol: Similar to holy water in CV64. Big damage for innermost (smallest) hitbox. 
 - Subweapon: Bow & Arrow. Manual aiming (1st person?), targeted aiming (3rd person). Think Link from OoT
 - Subweapon: TBD
 - Ledge grab. Ledge movement (left or right), Ledge climb. Ledge release.
-- Crawl (crouch while not moving). Slide attack (crouch while running). Divekick (crouch while in air)
-- First person view. This should interact with Bow & Arrow similarly to Zelda I guess.
-- Damaged (mobile, immobile, knockdown). Dying.
-- Drowning.
+- Crouch. Slide attack (crouch while running). Divekick (crouch while in air)
 - Interacting. Opening door. Item pickup (on floor or in front as two diff animations?)
 - Respawn animation.
 - Power up system.
@@ -69,12 +69,14 @@
 - Right stick for free cam (rotate to any position)
 - Hold ZL to target stuff. While targeting, the player faces the target. The camera pans to show both yourself and the target. Sprinting is not possible while targeting, and all directions of movement other than forward become slower.
 - When there is nothing to target, pressing ZL will move the camera to the default position. If you're hugging the wall during this, your character becomes aligned with the wall normal. 
+- Retarget: If you are targeting something and release and repress, it will change to the next most relevant target.
 - Pause Mode: Press + to pause the game. Left stick pans the camera. X and A to zoom.
 - Autocamera: When the player is moving left or right relative to the camera, the camera will automatically rotate towards the back of the player. This won't happen if you've used the right stick for free cam.
 
-#### `To do:`
+### `In Progress:`
 - 1st person view.
-- Target swapping: Release and repress to change target.
+
+#### `To do:`
 - Autocamera should peer down if you're standing near a high ledge.
 
 ## Other Mechanics and Features:

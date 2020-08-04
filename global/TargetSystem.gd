@@ -1,10 +1,13 @@
 extends Node2D
 
-var cursor_tex = load("res://img/target.png")
+# Data
 var list:Dictionary = {}
-var highest_rel:int = 0 # holds the priority target
-var paused # is the game paused
+var priority_target:int = 0 # holds the priority target
+var secondary_target:int = 0 # holds the secondary target (for retargeting)
 
+# Misc
+var cursor_tex = load("res://img/target.png")
+var paused # is the game paused
 const size := Vector2(15, 15) # cursor corner size, in pixels 
 const half_corner_size:int = 7 # rounded down
 const upper_left_slice   := Rect2(Vector2.ZERO,       size) # how to slice up the cursor texture
@@ -19,11 +22,6 @@ func _ready():
 
 func _on_pause_state_change(state) -> void:
 	paused = state
-
-func get_most_relevant_target() -> int:
-	if highest_rel == 0: return 0
-	elif list[highest_rel].relevance > 0.0: return highest_rel
-	else: return 0
 
 func target_is_valid(target:int) -> bool:
 	if target == 0:
@@ -43,7 +41,7 @@ func _physics_process(_t) -> void:
 	else:
 		manage_target_list()
 		
-	#debug()
+	debug()
 	update()
 
 func manage_target_list_paused() -> void:
@@ -100,15 +98,26 @@ func manage_target_list() -> void:
 			# Combine all 3 factors
 			target.relevance = (rel_center_screen + rel_nearby_player + rel_player_facing) / 3.0
 	
-	highest_rel = 0
+	priority_target = 0
+	secondary_target = 0
 	# find which target has highest relevance
 	for id in list:
 		if list[id].relevance > 0.0:
-			if highest_rel != 0:
-				if list[id].relevance > list[highest_rel].relevance:
-					highest_rel = id
+			
+			if priority_target == 0:
+				priority_target = id
 			else:
-				highest_rel = id
+				if list[id].relevance > list[priority_target].relevance:
+					secondary_target = priority_target
+					priority_target = id
+					
+			if secondary_target == 0:
+				if id != priority_target:
+					secondary_target = id
+			else:
+				if list[id].relevance > list[secondary_target].relevance:
+					if id != priority_target:
+						secondary_target = id
 
 func find_aabb_2d(target_pos:Vector3, aabb:AABB) -> Rect2:
 	# a list of the 8 vertices that make up the axis aligned bounding box assigned to this target
@@ -173,7 +182,7 @@ func _draw(): # update called in player
 		opacity = clamp(distance - 0.5, 0.0, 1.0)
 		
 		var color = Color(0.4, 0.4, 0.4, opacity * 0.5) # grey
-		if highest_rel == id:
+		if priority_target == id:
 			color = Color(0.45, 0.5, 0.75, opacity * 0.85) # dull blue
 		if id == Game.player.zl_target:
 			color = Color(0.5, 0.6, 1.0, opacity) # bright blue
@@ -211,5 +220,8 @@ func debug() -> void:
 	Debug.text.write('Target list:')
 	for id in list:
 		var target = list[id]
-		Debug.text.write('[id:' + str(id) + '] ' + target.name + ' | Rel: ' + str(target.relevance), 'red' if target.relevance <= 0 else 'blue')
+		var color = 'red'
+		if id == priority_target: color = 'green'
+		elif id == secondary_target: color = 'blue'
+		Debug.text.write('[id:' + str(id) + '] ' + target.name + ' | Rel: ' + str(target.relevance), color)
 	Debug.text.newline()

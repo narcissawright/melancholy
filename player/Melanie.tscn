@@ -363,6 +363,10 @@ one_shot = true
 process_mode = 0
 one_shot = true
 
+[node name="ReTarget" type="Timer" parent="Timers"]
+wait_time = 0.3
+one_shot = true
+
 [node name="Shadow" type="Spatial" parent="."]
 
 [node name="SpotLightNegative" type="SpotLight" parent="Shadow"]
@@ -377,3 +381,4 @@ spot_angle_attenuation = 100.0
 [connection signal="body_entered" from="BombSpawner/SpawnArea" to="BombSpawner" method="_on_SpawnArea_body_entered"]
 [connection signal="timeout" from="Timers/Locked" to="." method="_on_Locked_timeout"]
 [connection signal="timeout" from="Timers/AirTransition" to="." method="_on_AirTransition_timeout"]
+[connection signal="timeout" from="Timers/ReTarget" to="." method="_on_ReTarget_timeout"]

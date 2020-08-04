@@ -84,13 +84,10 @@ func _physics_process(_t) -> void:
   ##   ##  ##  ##  ##  ##  ##  ##        ##
   ##   ##  ##  ##  ##   ####   ######    ##
 
-"""
-To Do:
-	- Retargeting. Quick release -> repress to switch target.
-"""
-
 var targeting:bool = false # this variable is used a little weirdly at times...
 var zl_target:int = 0 # which object are you targeting (0 for nothing)
+onready var retarget_timer:Timer = $'Timers/ReTarget'
+var retarget = 0
 
 func update_target_state() -> void:
 	
@@ -99,7 +96,12 @@ func update_target_state() -> void:
 	
 	# Begin ZL Targeting:
 	if not targeting and Input.is_action_just_pressed("target"):
-		zl_target = TargetSystem.get_most_relevant_target()
+		
+		if retarget == TargetSystem.priority_target and TargetSystem.secondary_target != 0:
+			zl_target = TargetSystem.secondary_target
+		else:
+			zl_target = TargetSystem.priority_target
+		
 		cam_reset_wall_align()
 	
 	# Check if no longer targeting:
@@ -111,8 +113,14 @@ func update_target_state() -> void:
 		untarget()
 		
 func untarget() -> void:
-	targeting = false
+	if zl_target != 0:
+		retarget = zl_target
+		retarget_timer.start()
 	zl_target = 0
+	targeting = false
+
+func _on_ReTarget_timeout() -> void:
+	retarget = 0
 
 func cam_reset_wall_align() -> void:
 	targeting = true
@@ -438,7 +446,14 @@ func debug() -> void:
 #	Debug.text.write('Forward Direction: ' + str(forwards()))
 	Debug.text.newline()
 	Debug.text.write('Locked: ' + str(lock_list), 'red' if is_locked() else 'green')
+	Debug.text.newline()
 	Debug.text.write('Targeting: ' + str(targeting), 'green' if targeting else 'red')
+	Debug.text.write('ReTarget: ' + str(retarget), 'green' if retarget > 0 else 'red')
+	if zl_target == 0:
+		Debug.text.write("ZL Target: ")
+	else:
+		Debug.text.write("ZL Target: " + TargetSystem.list[zl_target].name, 'blue')
+	Debug.text.newline()
 	Debug.text.write('Grounded: ' + str(grounded), 'green' if grounded else 'red')
 	Debug.text.write('Has Jump: ' + str(has_jump), 'green' if has_jump else 'red')
 	Debug.text.write('Jumping: ' + str(jumping), 'green' if jumping else 'red')
@@ -450,12 +465,7 @@ func debug() -> void:
 	Debug.text.write('Sprinting: ' + str(sprint_count) + '/180')
 #	Debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
 	Debug.text.newline()
-	if zl_target == 0:
-		Debug.text.write("ZL Target: ")
-	else:
-		Debug.text.write("ZL Target: " + TargetSystem.list[zl_target].name, 'blue')
-	Debug.text.newline()
-	
+
 	# Debug Draw
 #	Debug.draw.begin(Mesh.PRIMITIVE_LINES)
 #	Debug.draw.add_vertex(Game.player.position)
@@ -463,5 +473,6 @@ func debug() -> void:
 #	Debug.draw.add_vertex(Game.player.position)
 #	Debug.draw.add_vertex(Game.player.position + Vector3(velocity.x, 0, velocity.z).normalized())
 #	Debug.draw.end()
+
 
 
