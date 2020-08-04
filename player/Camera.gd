@@ -315,11 +315,11 @@ func enter_first_person() -> void:
 	zoom = 0.01
 	current_pos = -Game.player.forwards()
 	Game.player.untarget()
-	Game.player.lockplayer()
+	Game.player.lockplayer("first_person")
 	Game.player.visible = false
 
 func exit_first_person() -> void:
-	Game.player.unlock()
+	Game.player.unlockplayer("first_person")
 	zoom = default_zoom
 	mode = "auto"
 	current_pos = default_pos.rotated(Vector3.UP, Game.player.rotation.y)

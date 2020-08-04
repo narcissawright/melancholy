@@ -17,12 +17,12 @@ func _physics_process(_t:float) -> void:
 	if sliding:
 		if Game.player.horizontal_velocity().length() < 5.0:
 			sliding = false
-			Game.player.unlock()
+			Game.player.unlockplayer("shield_slide")
 	
 	if shieldbash_timer > 0:
 		shieldbash_timer -= 1
 	
-	if not Game.player.locked:
+	if not Game.player.is_locked():
 		# If you just pressed shield
 		if not active and Input.is_action_pressed("shield"):
 			if can_shield_bash():
@@ -44,6 +44,7 @@ func _physics_process(_t:float) -> void:
 func slide() -> void:
 	active = true
 	sliding = true
+	Game.player.lockplayer("shield_slide")
 	play("take_out")
 	seek(current_animation_length)
 

@@ -155,7 +155,7 @@ func update_horizontal_velocity() -> void:
 	if shield.sliding:
 		interpolate_amt = 0.025
 	
-	if not locked:
+	if not is_locked():
 		# Left Stick Movement
 		var direction:Vector3 = find_movement_direction()
 		look_target = look_target.linear_interpolate(direction, 0.15) # Used for player rotation later
@@ -212,7 +212,7 @@ func update_vertical_velocity() -> void:
 	"""
 	
 	# Check for jumping
-	if not locked:
+	if not is_locked():
 		if jumping:
 			velocity.y = 7.0 - (float(jumphold_framecount) * 0.1)
 			if shield.active: velocity.y /= 2.0
@@ -230,40 +230,39 @@ func update_vertical_velocity() -> void:
 ##    ##  ##  ##     ## ##   ##      ##  ##
 #####  ####    ####  ##  ##  ######  #####
 
-""" 
-There are problems where the player should be locked in some state, 
-but another state calls unlock. Example:
-- Initiating a shield slide calls to lock the player
-- So does getting damaged. both can happen simultaneously.
-- The damage ends and unlock is called, unlocking the player mid-slide.
+"""
+note: the damage lock overwrites the timer when you take dmg instead of adding more time.
+I may want to change this later... maybe
 """
 
-var locked:bool = true
+var lock_list:Array = []
 onready var lock_timer = $Timers/Locked
+
+func is_locked() -> bool:
+	return lock_list.size() > 0
 
 # Locked State:
 func lockplayer_for_frames(frames:int) -> void:
 	# Set Timer
 	lock_timer.wait_time = frames * frame_time
 	lock_timer.start()
-	lockplayer()
+	lockplayer("timer")
 
-func lockplayer() -> void:
-	locked = true
+func lockplayer(reason) -> void:
+	if not lock_list.has(reason):
+		lock_list.append(reason)
 	jumping = false
 	sprint_count = 0
 	material.set_shader_param("locked", true)
 
 func _on_Locked_timeout() -> void:
-	unlock()
+	unlockplayer("timer")
 	
-func unlock() -> void:
-	locked = false
-	if Game.cam.mode == "first_person":
-		pass
-		#Game.cam.exit_first_person() # stack overflow
-	material.set_shader_param("locked", false)
-	material.set_shader_param("damaged", false)
+func unlockplayer(reason) -> void:
+	lock_list.erase(reason)
+	if not is_locked():
+		material.set_shader_param("locked", false)
+		material.set_shader_param("damaged", false)
 	
 
  #####  #####    ####   ##  ##  ##  ##  #####   ######  #####
@@ -329,7 +328,7 @@ func handle_collision(collision:KinematicCollision) -> void:
 ##  ##   ####     ##    ##  ##    ##    ##   ####   ##  ##
 
 func handle_player_rotation() -> void:
-	if not locked:
+	if not is_locked():
 		
 		# While grounded -- look towards movement direction
 		if not targeting and grounded:
@@ -395,7 +394,6 @@ func hit_by_explosion(explosion_center:Vector3) -> void:
 			# hit shield
 			velocity += forwards() * -14.0
 			shield.slide()
-			lockplayer()
 			return
 	# Bomb did not hit your shield; apply damage.
 	velocity += travel_vector * 7.0
@@ -439,7 +437,7 @@ func debug() -> void:
 	Debug.text.write('Horizontal Velocity: ' + str(Vector3(velocity.x, 0, velocity.z).length()))
 #	Debug.text.write('Forward Direction: ' + str(forwards()))
 	Debug.text.newline()
-	Debug.text.write('Locked: ' + str(locked), 'green' if locked else 'red')
+	Debug.text.write('Locked: ' + str(lock_list), 'red' if is_locked() else 'green')
 	Debug.text.write('Targeting: ' + str(targeting), 'green' if targeting else 'red')
 	Debug.text.write('Grounded: ' + str(grounded), 'green' if grounded else 'red')
 	Debug.text.write('Has Jump: ' + str(has_jump), 'green' if has_jump else 'red')
