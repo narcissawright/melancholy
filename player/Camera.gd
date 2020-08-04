@@ -13,6 +13,7 @@ Maybe:
 		- smoother zoom in pause mode.
 		- allow sliding the crosshair against surfaces.
 		- a better boundary indicator
+	- maybe make the camera rotation less strong in first person mode
 """
 
 # Collision
@@ -130,14 +131,16 @@ func _physics_process(_t:float) -> void:
 			camera_reset()
 		"auto":
 			if Input.is_action_just_pressed("R3"):
-				enter_first_person()
-				return
+				if can_enter_first_person():
+					enter_first_person()
+					return
 			update_zl_target_pan()
 			auto_mode()
 		"free":
 			if Input.is_action_just_pressed("R3"):
-				enter_first_person()
-				return
+				if can_enter_first_person():
+					enter_first_person()
+					return
 			update_zl_target_pan()
 			free_mode()
 			
@@ -291,6 +294,24 @@ func camera_reset() -> void:
 		current_pos = Vector3(xz.x, new_y, xz.y) # should be ~unit length
 		update_position()
 
+func can_enter_first_person() -> bool:
+	if Game.player.grounded and not Game.player.is_locked():
+		return true
+	return false
+
+func enter_first_person() -> void:
+	mode = "first_person"
+	zoom_tween.interpolate_property(self, "current_zoom", current_zoom, 0.01, 0.15)
+	zoom_tween.interpolate_property(self, "pan", pan, Vector3.ZERO, 0.15)
+	zoom_tween.start()
+	if Game.player.shield.active:
+		Game.player.shield.put_away()
+	if Game.player.bombspawner.holding:
+		Game.player.bombspawner.drop_bomb()
+	current_pos = -Game.player.forwards()
+	Game.player.untarget()
+	Game.player.lockplayer("first_person")
+
 func first_person() -> void:
 	var exiting = false
 	if Input.is_action_just_pressed("A"): exiting = true
@@ -308,20 +329,6 @@ func first_person() -> void:
 			if dir.length_squared() > 0.0:
 				rotate_cam(dir)
 		update_position()
-
-func enter_first_person() -> void:
-	mode = "first_person"
-	zoom_tween.interpolate_property(self, "current_zoom", current_zoom, 0.01, 0.15)
-	zoom_tween.interpolate_property(self, "pan", pan, Vector3.ZERO, 0.15)
-	zoom_tween.start()
-	if Game.player.shield.active:
-		Game.player.shield.put_away()
-	if Game.player.bombspawner.holding:
-		Game.player.bombspawner.drop_bomb()
-	current_pos = -Game.player.forwards()
-	Game.player.untarget()
-	Game.player.lockplayer("first_person")
-	#Game.player.visible = false
 
 func exit_first_person() -> void:
 	Game.player.unlockplayer("first_person")

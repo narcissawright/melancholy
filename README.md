@@ -99,6 +99,11 @@
 ##### Items
 - Healing items. Green apples, other stuff.
 
+##### Pause Menu
+- Can change the zoom amount
+- Remap controls, set control sensitivity and axis invert
+- Access to the pause camera
+
 #### `Would like to add`
 
 - Dynamic grass, grass trampling, desire paths saved to a file on hard drive.
