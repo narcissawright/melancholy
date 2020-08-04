@@ -89,8 +89,8 @@ To Do:
 	- Retargeting. Quick release -> repress to switch target.
 """
 
-var targeting:bool = false
-var zl_target:int = 0      
+var targeting:bool = false # this variable is used a little weirdly at times...
+var zl_target:int = 0 # which object are you targeting (0 for nothing)
 
 func update_target_state() -> void:
 	
@@ -230,6 +230,14 @@ func update_vertical_velocity() -> void:
 ##    ##  ##  ##     ## ##   ##      ##  ##
 #####  ####    ####  ##  ##  ######  #####
 
+""" 
+There are problems where the player should be locked in some state, 
+but another state calls unlock. Example:
+- Initiating a shield slide calls to lock the player
+- So does getting damaged. both can happen simultaneously.
+- The damage ends and unlock is called, unlocking the player mid-slide.
+"""
+
 var locked:bool = true
 onready var lock_timer = $Timers/Locked
 
@@ -251,6 +259,9 @@ func _on_Locked_timeout() -> void:
 	
 func unlock() -> void:
 	locked = false
+	if Game.cam.mode == "first_person":
+		pass
+		#Game.cam.exit_first_person() # stack overflow
 	material.set_shader_param("locked", false)
 	material.set_shader_param("damaged", false)
 	

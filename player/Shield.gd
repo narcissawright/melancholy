@@ -48,8 +48,9 @@ func slide() -> void:
 	seek(current_animation_length)
 
 func put_away() -> void:
-	play("put_away")
-	active = false
+	if not sliding:
+		play("put_away")
+		active = false
 
 func can_shield_bash() -> bool:
 	if shieldbash_timer == 0: 

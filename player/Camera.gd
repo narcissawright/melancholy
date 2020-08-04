@@ -7,7 +7,8 @@ To Do:
 		- release and repress ZL quickly to change target (maybe this is actually for the player code
 	- first person view
 		- if player unlocks (damage or whatnot) it needs to exit 1st person view.
-	- let the L button reset camera without targeting actors
+		- cam reset should either be blocked or remove you from first person view.
+		- need transitions in and out of first person
 	- code organization
 	
 Maybe:
@@ -97,7 +98,9 @@ func update_position() -> void:
 		new_pos = cam_target.linear_interpolate(new_pos + cam_target, result[0]) # now we have final position
 		look_at_from_position(new_pos, cam_target, Vector3.UP) # look at player from final position
 	current_pos = (self.global_transform.origin - cam_target).normalized() # update current position
-	#current_pos = current_pos.normalized()
+	if mode == "first_person":
+		var lookdir = Vector3(-current_pos.x, 0, -current_pos.z)
+		Game.player.look_at(lookdir + Game.player.global_transform.origin, Vector3.UP)
 
 func _on_pause_state_change(paused:bool) -> void:
 	if paused:
@@ -268,7 +271,8 @@ func screen_edge_detector(pos3d:Vector3) -> float:
 	return abs(pos2d.x) + abs(pos2d.y) # these values may exceed 1 on each axis if offscreen
 
 func reset() -> void:
-	mode = "reset"
+	if mode != "first_person":
+		mode = "reset"
 
 func camera_reset() -> void:
 	var goal_pos = default_pos.rotated(Vector3.UP, Game.player.rotation.y)
@@ -297,19 +301,29 @@ func first_person() -> void:
 	elif Input.is_action_just_pressed("R3"): exiting = true
 	if exiting: exit_first_person()
 	else:
-		var dir = Game.get_stick_input("right")
-		rotate_cam(dir)
+		var dir = Game.get_stick_input("left")
+		if dir.length_squared() > 0.0:
+			rotate_cam(dir)
+		else:
+			dir = Game.get_stick_input("right")
+			if dir.length_squared() > 0.0:
+				rotate_cam(dir)
+		update_position()
 
 func enter_first_person() -> void:
 	mode = "first_person"
-	zoom = 0.05
+	zoom = 0.01
+	current_pos = -Game.player.forwards()
 	Game.player.untarget()
 	Game.player.lockplayer()
+	Game.player.visible = false
 
 func exit_first_person() -> void:
 	Game.player.unlock()
 	zoom = default_zoom
-	reset()
+	mode = "auto"
+	current_pos = default_pos.rotated(Vector3.UP, Game.player.rotation.y)
+	Game.player.visible = true
 
 func debug() -> void:
 	# Write debug info
