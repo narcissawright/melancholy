@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://img/heart_test.png" type="Texture" id=1]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+void fragment() {
+	vec3 light_vec = normalize(vec3(-10.0, 10.0, 0.0));
+	float brightness = dot(light_vec, NORMAL);
+	brightness += 1.0;
+	brightness /= 2.0;
+	
+	COLOR = vec4(brightness, brightness, brightness, 1.0);
+}"
+custom_defines = ""
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+
+[node name="UI" type="CanvasLayer"]
+layer = 2
+
+[node name="ColorRect" type="Sprite" parent="."]
+material = SubResource( 2 )
+position = Vector2( 653.16, 320.917 )
+texture = ExtResource( 1 )
+normal_map = ExtResource( 1 )

@@ -3,6 +3,7 @@ extends Node
 onready var melanie = preload("res://actor/melanie/Melanie.tscn")
 #onready var melancholy = preload("res://player/Melancholy.tscn")
 onready var cam = preload("res://camera/Camera.tscn")
+onready var ui = preload("res://ui/UI.tscn")
 var current_character:String = "Melanie"
 var player:Node
 
@@ -15,19 +16,21 @@ func _ready() -> void:
 	pause_mode = Node.PAUSE_MODE_PROCESS # Run this script while paused
 	
 	# Some kind of load save data thing here
+	pass
 	
 	# Instance player character
 	match current_character:
 		"Melanie":
 			player = melanie.instance()
-			#ui = melanie_ui.instance() ??
 	
-	# Instance cam
+	# Instance scenes
 	cam = cam.instance()
+	ui = ui.instance()
 	
 	# Add nodes.
 	add_child(player)
 	add_child(cam)
+	add_child(ui)
 
 func _physics_process(_t) -> void:
 	if Input.is_action_just_pressed("ui_cancel"):
