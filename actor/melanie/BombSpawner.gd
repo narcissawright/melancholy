@@ -2,13 +2,11 @@ extends Position3D
 
 """
 Issues:
-- no custom shader logic, particles, lighting, etc.
 - doesnt check for jewel requirement
-- no sfx
 """
 
 onready var spawn_area = $SpawnArea
-onready var bomb = preload("res://player/Bomb.tscn")
+onready var bomb = preload("res://actor/bomb/Bomb.tscn")
 
 var current_bomb:Node
 var holding = false
@@ -22,6 +20,7 @@ func process_state() -> void:
 			
 			if holding: # If you are already holding the bomb, throw it.
 				var velocity = Game.player.forwards()*10.0 + Vector3.UP*5.0
+				velocity += Game.player.velocity * 0.3
 				throw_bomb_asap(velocity)
 				
 			elif not Game.player.is_locked() and can_spawn_bomb(): # If a bomb can be spawned, do so.

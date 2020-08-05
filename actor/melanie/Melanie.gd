@@ -47,7 +47,6 @@ var head_position:Vector3 setget , _get_head_position  # Gets Position3D global_
 func _get_head_position() -> Vector3:
 	return head_position_node.global_transform.origin
 
-
 func _ready() -> void:
 	process_priority = 0 # Run this before camera
 	lockplayer_for_frames(20) # Set locked state
@@ -87,7 +86,7 @@ func _physics_process(_t) -> void:
 var targeting:bool = false # this variable is used a little weirdly at times...
 var zl_target:int = 0 # which object are you targeting (0 for nothing)
 onready var retarget_timer:Timer = $'Timers/ReTarget'
-var retarget = 0
+var retarget = 0 # which object were you just targeting
 
 func update_target_state() -> void:
 	

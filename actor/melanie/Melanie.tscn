@@ -1,17 +1,17 @@
 [gd_scene load_steps=19 format=2]
 
-[ext_resource path="res://player/Melanie.gd" type="Script" id=1]
-[ext_resource path="res://player/TargetAcquired.gd" type="Script" id=2]
-[ext_resource path="res://player/BombSpawner.gd" type="Script" id=3]
-[ext_resource path="res://player/Shield.gd" type="Script" id=4]
-[ext_resource path="res://materials/actor.shader" type="Shader" id=5]
+[ext_resource path="res://shaders/actor.shader" type="Shader" id=1]
+[ext_resource path="res://actor/melanie/TargetAcquired.gd" type="Script" id=2]
+[ext_resource path="res://actor/melanie/Shield.gd" type="Script" id=3]
+[ext_resource path="res://actor/melanie/BombSpawner.gd" type="Script" id=4]
+[ext_resource path="res://actor/melanie/Melanie.gd" type="Script" id=5]
 
 [sub_resource type="CapsuleMesh" id=1]
 radius = 0.2
 mid_height = 1.37
 
 [sub_resource type="ShaderMaterial" id=2]
-shader = ExtResource( 5 )
+shader = ExtResource( 1 )
 shader_param/enable_rim = true
 shader_param/only_rim = false
 shader_param/not_shaded = false
@@ -25,7 +25,7 @@ shader_param/locked = false
 size = Vector3( 0.2, 0.2, 0.2 )
 
 [sub_resource type="ShaderMaterial" id=4]
-shader = ExtResource( 5 )
+shader = ExtResource( 1 )
 shader_param/enable_rim = false
 shader_param/only_rim = false
 shader_param/not_shaded = false
@@ -46,7 +46,7 @@ extents = Vector3( 0.1, 0.2, 0.05 )
 size = Vector3( 0.75, 1.5, 0.1 )
 
 [sub_resource type="ShaderMaterial" id=8]
-shader = ExtResource( 5 )
+shader = ExtResource( 1 )
 shader_param/enable_rim = false
 shader_param/only_rim = false
 shader_param/not_shaded = false
@@ -285,7 +285,7 @@ radius = 0.18
 pause_mode = 1
 collision_layer = 2
 collision_mask = 21
-script = ExtResource( 1 )
+script = ExtResource( 5 )
 
 [node name="EditorLight" type="DirectionalLight" parent="."]
 transform = Transform( -0.610698, -0.555606, 0.564225, 0, 0.712528, 0.701644, -0.791864, 0.428492, -0.435139, 5.75187, 6.27839, 0 )
@@ -327,7 +327,7 @@ material/0 = SubResource( 8 )
 anims/put_away = SubResource( 9 )
 anims/shield_bash = SubResource( 10 )
 anims/take_out = SubResource( 11 )
-script = ExtResource( 4 )
+script = ExtResource( 3 )
 
 [node name="TargetDetector" type="Area" parent="."]
 collision_layer = 0
@@ -343,7 +343,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.57, 0 )
 
 [node name="BombSpawner" type="Position3D" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0 )
-script = ExtResource( 3 )
+script = ExtResource( 4 )
 
 [node name="SpawnArea" type="Area" parent="BombSpawner"]
 monitorable = false

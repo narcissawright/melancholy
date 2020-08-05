@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://player/Camera.gd" type="Script" id=1]
-[ext_resource path="res://player/Crosshair.gd" type="Script" id=2]
+[ext_resource path="res://camera/Crosshair.gd" type="Script" id=1]
+[ext_resource path="res://camera/Camera.gd" type="Script" id=2]
 
 [sub_resource type="SpatialMaterial" id=1]
 flags_unshaded = true
@@ -13,11 +13,11 @@ vertex_color_use_as_albedo = true
 pause_mode = 2
 process_priority = 1
 far = 300.0
-script = ExtResource( 1 )
+script = ExtResource( 2 )
 
 [node name="Crosshair" type="ImmediateGeometry" parent="."]
 material_override = SubResource( 1 )
-script = ExtResource( 2 )
+script = ExtResource( 1 )
 
 [node name="ZoomTween" type="Tween" parent="."]
 [connection signal="tween_completed" from="ZoomTween" to="." method="_on_ZoomTween_tween_completed"]

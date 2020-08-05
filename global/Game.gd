@@ -1,7 +1,10 @@
 extends Node
 
-onready var player = preload("res://player/Melanie.tscn")
-onready var cam = preload("res://player/Camera.tscn")
+onready var melanie = preload("res://actor/melanie/Melanie.tscn")
+#onready var melancholy = preload("res://player/Melancholy.tscn")
+onready var cam = preload("res://camera/Camera.tscn")
+var current_character:String = "Melanie"
+var player:Node
 
 const GRAVITY:float = -20.0
 
@@ -11,12 +14,20 @@ func _init() -> void:
 func _ready() -> void:
 	pause_mode = Node.PAUSE_MODE_PROCESS # Run this script while paused
 	
-	# Instance and add nodes.
-	player = player.instance()
+	# Some kind of load save data thing here
+	
+	# Instance player character
+	match current_character:
+		"Melanie":
+			player = melanie.instance()
+			#ui = melanie_ui.instance() ??
+	
+	# Instance cam
 	cam = cam.instance()
+	
+	# Add nodes.
 	add_child(player)
 	add_child(cam)
-
 
 func _physics_process(_t) -> void:
 	if Input.is_action_just_pressed("ui_cancel"):

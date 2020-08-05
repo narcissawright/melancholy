@@ -5,6 +5,9 @@ Known exploits:
 	- Bomb Jump (intentional)
 	- Double Bomb Jump (the timing is tight but it's a half decent mechanic)
 	- Double Bomb Slide (requires taking damage.. seems acceptable)
+	
+To Be Improved:
+	- no particles, lighting, sfx.
 """
 
 # Collision

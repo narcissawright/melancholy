@@ -4,7 +4,7 @@ var velocity := Vector3.ZERO
 var player_nearby:bool = false
 
 onready var material = $Mesh.get_surface_material(0)
-onready var projectile = preload("res://scenes/projectile.tscn")
+onready var projectile = preload("res://actor/test_enemy/projectile.tscn")
 var fire_cooldown = 0
 var locked:int = 0
 
