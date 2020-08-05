@@ -7,22 +7,20 @@
 
 [sub_resource type="ShaderMaterial" id=3]
 shader = ExtResource( 8 )
-shader_param/light_vec = Vector3( -0.794816, 0.509054, 0.33035 )
+shader_param/light_vec = Vector3( -0.532922, 0.779014, 0.33035 )
 
 [node name="UI" type="CanvasLayer"]
 layer = 2
 
 [node name="HeartContainer" type="Sprite" parent="."]
-position = Vector2( 20, 20 )
+position = Vector2( 60, 60 )
 texture = ExtResource( 5 )
-centered = false
 
 [node name="Heart" type="Sprite" parent="HeartContainer"]
 material = SubResource( 3 )
 texture = ExtResource( 6 )
 normal_map = ExtResource( 6 )
-centered = false
 script = ExtResource( 2 )
 
 [node name="Light" type="Position2D" parent="HeartContainer/Heart"]
-position = Vector2( -116.525, -74.6303 )
+position = Vector2( -20.7976, -30.4016 )

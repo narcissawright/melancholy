@@ -18,16 +18,14 @@ void fragment() {
 	*/
 	
 	
-	if (brightness > 0.9) {
-		brightness = mix(brightness, 0.9, 0.5);
-	} else if (brightness > 0.8) {
-		brightness = mix(brightness, 0.75, 0.45);
-	} else if (brightness > 0.45) {
-		brightness = mix(brightness, 0.66, 0.65);
-	} else if (brightness > 0.25) {
-		brightness = mix(brightness, 0.5, 0.65);
+	if (brightness > 0.94) {
+		brightness = mix(brightness, 1.0, 0.5);
+	} else if (brightness > 0.5) {
+		brightness = mix(brightness, 0.75, 0.65);
+	} else if (brightness > 0.28) {
+		brightness = mix(brightness, 0.7, 0.65);
 	} else {
-		brightness = mix(brightness, 0.3, 0.75);
+		brightness = mix(brightness, 0.8, 0.75);
 	}
 	
 	
