@@ -140,12 +140,6 @@ func cam_reset_wall_align() -> void:
 ##  ##         ####   ##     ##    ##  ##  ##     ##    ##      ##
 ##  ##          ##    #####  #####  ####    ####  ##    ##      ##
 
-"""
-Issues:
-	when attaining a sudden high horizontal velocity from shield pushback (explosions),
-		it ends up decaying much too quickly when grounded.
-"""
-
 func horizontal_velocity() -> Vector3:
 	return Vector3(velocity.x, 0, velocity.z)
 

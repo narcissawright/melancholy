@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/small_heart_normalmap.png-2532aef7ec4f7f77b32218bf3f09892d.stex"
+path="res://.import/small_heart_normalmap_100px.png-c9f531160be8219c7a80d66ed384a14b.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://img/small_heart_normalmap.png"
-dest_files=[ "res://.import/small_heart_normalmap.png-2532aef7ec4f7f77b32218bf3f09892d.stex" ]
+source_file="res://img/small_heart_normalmap_100px.png"
+dest_files=[ "res://.import/small_heart_normalmap_100px.png-c9f531160be8219c7a80d66ed384a14b.stex" ]
 
 [params]
 
@@ -21,7 +21,7 @@ compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
 flags/filter=true
-flags/mipmaps=false
+flags/mipmaps=true
 flags/anisotropic=false
 flags/srgb=2
 process/fix_alpha_border=true
