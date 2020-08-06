@@ -3,7 +3,7 @@ extends Sprite
 
 onready var pos = $Light
 
-func _process(delta:float) -> void:
+func _process(_delta:float) -> void:
 	if Engine.editor_hint:
 		update_position()
 

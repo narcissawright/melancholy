@@ -79,6 +79,13 @@
 
 ## Other Mechanics and Features:
 
+#### `Partially implemented`
+
+##### Time of day system
+- Melanie is strongest at noon, Melancholy strongest at midnight.
+- Certain events or enemies may only exist at certain times.
+- Item or method to change time of day rapidly. (Sun Card / Moon Card)
+
 #### `To Do`
 
 ##### Power Ups
@@ -86,11 +93,6 @@
 - Color scheme should be dull red -> yellow -> green -> cyan -> piercing blue
 - Lose 1 stage of power upon death.
 - Melancholy will lose 1 stage of power upon Magic Meter being fully used. (Will refill immediately if not at powerup lvl 1)
-
-##### Time of day system
-- Melanie is strongest at noon, Melancholy strongest at midnight.
-- Certain events or enemies may only exist at certain times.
-- Item or method to change time of day rapidly. (Sun Card / Moon Card)
 
 ##### "Score / XP / RNG" system.
 - Gimmick! (NES) had a score system that accounted for all drops. I want to use a system like this to avoid RNG. Essentially it is a predictable generator of numbers that are used for all "random" events. A good player could utilize this to their advantage. It must be visible or "readable" somehow while playing so you can re-sync yourself if you end up with the wrong value.

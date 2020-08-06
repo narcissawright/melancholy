@@ -23,7 +23,7 @@ func _ready():
 	if star_field == null:
 		create_star_field()
 
-func _process(delta):
+func _process(_delta):
 	update() #calls _draw()
 
 func fix_saturation(brightness):
@@ -38,7 +38,6 @@ func create_star_field():
 	var r
 	var g
 	var b
-	var a
 	var size
 	randomize()
 	for i in range (1,STARTOTAL):
@@ -72,6 +71,7 @@ func create_star_field():
 		field.push_back([size, position, color])
 	
 	star_field = field
+	print(field)
 
 func gaussian(mean, deviation):
 	var x1 = null
@@ -103,8 +103,8 @@ func _draw():
 			pos.y = round(pos.y)
 			if bounds.has_point(pos):
 				var star_c = star[COLOR_INDEX]
-				var color_sum = (star_c.r + star_c.g + star_c.b + star_c.a) / 4.0
-				var star_opacity
+				#var color_sum = (star_c.r + star_c.g + star_c.b + star_c.a) / 4.0
+				#var star_opacity
 				draw_texture (textures[star[SIZE_INDEX]], pos, star_c)
 	
 	var sun_rot = sun_vec.rotated(axis_of_rotation, deg2rad(rot_amount) )
