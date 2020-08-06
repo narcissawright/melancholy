@@ -7,6 +7,9 @@ onready var ui = preload("res://ui/UI.tscn")
 var current_character:String = "Melanie"
 var player:Node
 
+var time_of_day:float = 540.0
+var timescale:float = 1.0
+
 const GRAVITY:float = -20.0
 
 func _init() -> void:
@@ -33,7 +36,10 @@ func _ready() -> void:
 	add_child(cam)
 	add_child(ui)
 
-func _physics_process(_t) -> void:
+func _physics_process(t) -> void:
+	time_of_day = fmod(time_of_day + t * timescale, 1440.0)
+	Debug.text.write("Time of day: " + str(time_of_day))
+	
 	if Input.is_action_just_pressed("ui_cancel"):
 		get_tree().quit()
 	if Input.is_action_just_pressed("fullscreen"):

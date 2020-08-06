@@ -1,4 +1,4 @@
-extends Node2D
+extends Control
 
 # Data
 var list:Dictionary = {}

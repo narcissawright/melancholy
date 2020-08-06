@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://backgrounds/starfield.gd" type="Script" id=1]
+[ext_resource path="res://backgrounds/default_env.tres" type="Environment" id=2]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+layer = -1
+
+[node name="Starfield_Control" type="Control" parent="."]
+pause_mode = 2
+margin_right = 1920.0
+margin_bottom = 1080.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Starfield_Control"]
+environment = ExtResource( 2 )
+
+[node name="SunLight" type="DirectionalLight" parent="Starfield_Control"]
+transform = Transform( 1, 0, 0, 0, 0.788687, 0.614795, 0, -0.614795, 0.788687, 0, 0, 0 )

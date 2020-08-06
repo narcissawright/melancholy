@@ -1,8 +1,9 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://scenes/testscene/L_test.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/testscene/Flatland.tscn" type="PackedScene" id=2]
 [ext_resource path="res://actor/test_enemy/test_enemy.tscn" type="PackedScene" id=3]
+[ext_resource path="res://backgrounds/Starfield.tscn" type="PackedScene" id=4]
 
 [sub_resource type="CubeMesh" id=1]
 size = Vector3( 8, 0.2, 8 )
@@ -31,8 +32,7 @@ data = PoolVector3Array( -1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1, 1, -1, -1
 
 [node name="TestScene" type="Spatial"]
 
-[node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( -0.278924, -0.779306, 0.561145, 0, 0.584335, 0.811512, -0.960313, 0.22635, -0.162985, 0, 7.66135, 0 )
+[node name="Starfield" parent="." instance=ExtResource( 4 )]
 
 [node name="TestEnemy" parent="." instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 29.3145, -28.3584, -28.054 )

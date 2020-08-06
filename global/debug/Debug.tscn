@@ -9,11 +9,10 @@ pause_mode = 2
 script = ExtResource( 2 )
 
 [node name="Text" type="RichTextLabel" parent="."]
-visible = false
-margin_left = 10.0
-margin_top = 10.0
-margin_right = 1270.0
-margin_bottom = 710.0
+margin_left = 95.0
+margin_top = 121.0
+margin_right = 1749.0
+margin_bottom = 941.0
 bbcode_enabled = true
 script = ExtResource( 1 )
 __meta__ = {
@@ -21,5 +20,4 @@ __meta__ = {
 }
 
 [node name="Draw" type="ImmediateGeometry" parent="."]
-visible = false
 script = ExtResource( 3 )

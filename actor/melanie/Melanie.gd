@@ -12,6 +12,7 @@ var frame_time:float = 1.0 / 60.0
 
 # Health
 var hp:float = 200.0
+var max_hp:float = 200.0
 
 # Grounded State
 var grounded:bool = true
@@ -372,7 +373,7 @@ func respawn_check() -> void:
 		respawn()
 
 func respawn() -> void:
-	hp = 200.0
+	hp = max_hp
 	translation = Vector3.ZERO
 	velocity = Vector3.ZERO
 	rotation = Vector3.ZERO
@@ -410,11 +411,11 @@ func hit(collision:Dictionary) -> String:
 
 func apply_damage(value:float) -> void:
 	lockplayer_for_frames(int(value))
-	Events.emit_signal('player_damaged')
 	material.set_shader_param("damaged", true)
 	hp -= value
 	if hp <= 0:
 		die()
+	Events.emit_signal('player_damaged')
 		
 func die() -> void:
 	respawn()

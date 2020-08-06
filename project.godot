@@ -219,4 +219,4 @@ R3={
 [rendering]
 
 quality/filters/msaa=2
-environment/default_environment="res://scenes/default_env.tres"
+environment/default_environment="res://backgrounds/default_env.tres"
