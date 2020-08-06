@@ -11,6 +11,7 @@ const GRAVITY:float = -20.0
 
 func _init() -> void:
 	OS.window_position = Vector2(172, 30) # so it shows up on my monitor in a comfy spot
+	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 
 func _ready() -> void:
 	pause_mode = Node.PAUSE_MODE_PROCESS # Run this script while paused

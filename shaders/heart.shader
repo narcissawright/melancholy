@@ -7,15 +7,6 @@ void fragment() {
 	brightness += 1.0;
 	brightness /= 2.0;
 	
-	/*
-	if (brightness > 0.8) {
-		brightness = mix(brightness, 0.9, 0.65);
-	} else if (brightness > 0.4) {
-		brightness = mix(brightness, 0.72, 0.65);
-	} else {
-		brightness = mix(brightness, 0.5, 0.65);
-	}
-	*/
 	vec3 color;
 	
 	if (brightness > 0.975) {

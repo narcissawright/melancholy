@@ -7,7 +7,7 @@
 
 [sub_resource type="ShaderMaterial" id=3]
 shader = ExtResource( 8 )
-shader_param/light_vec = Vector3( -0.652059, 0.682413, 0.33035 )
+shader_param/light_vec = Vector3( -0.616861, 0.714389, 0.33035 )
 
 [sub_resource type="Animation" id=4]
 resource_name = "heartbeat"
@@ -29,16 +29,60 @@ tracks/0/keys = {
 [node name="UI" type="CanvasLayer"]
 layer = 2
 
-[node name="HeartContainer" type="Sprite" parent="."]
-position = Vector2( 60, 60 )
-texture = ExtResource( 5 )
+[node name="halfscreen" type="ColorRect" parent="."]
+visible = false
+margin_left = -0.210266
+margin_right = 959.79
+margin_bottom = 540.0
+color = Color( 1, 1, 1, 0.0392157 )
 __meta__ = {
-"_edit_lock_": true
+"_edit_lock_": true,
+"_edit_use_anchors_": false
 }
 
-[node name="Heart" type="Sprite" parent="HeartContainer"]
+[node name="10+60px" type="ColorRect" parent="."]
+visible = false
+margin_left = 880.0
+margin_top = 10.0
+margin_right = 944.0
+margin_bottom = 74.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HP" type="Node2D" parent="."]
+position = Vector2( 45, 45 )
+
+[node name="HP_Back" type="ColorRect" parent="HP"]
+margin_left = 31.0
+margin_top = -6.0
+margin_right = 915.0
+margin_bottom = 6.0
+color = Color( 0.52549, 0.0588235, 0.113725, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HP_Front" type="ColorRect" parent="HP/HP_Back"]
+margin_top = 2.0
+margin_right = 882.0
+margin_bottom = 10.0
+color = Color( 0.705882, 0.0705882, 0.105882, 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Node2D" type="Node2D" parent="HP"]
+scale = Vector2( 0.9, 0.9 )
+
+[node name="HeartCircle" type="Sprite" parent="HP/Node2D"]
+scale = Vector2( 0.8, 0.8 )
+texture = ExtResource( 5 )
+
+[node name="Heart" type="Sprite" parent="HP/Node2D"]
 material = SubResource( 3 )
-scale = Vector2( 0.802559, 0.802559 )
+scale = Vector2( 0.790719, 0.790719 )
 texture = ExtResource( 1 )
 normal_map = ExtResource( 1 )
 script = ExtResource( 2 )
@@ -46,9 +90,10 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Light" type="Position2D" parent="HeartContainer/Heart"]
-position = Vector2( -41.1541, -43.0699 )
+[node name="Light" type="Position2D" parent="HP/Node2D/Heart"]
+position = Vector2( -35.4576, -41.0635 )
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="HeartContainer/Heart"]
+[node name="HeartBeat" type="AnimationPlayer" parent="HP/Node2D/Heart"]
 autoplay = "heartbeat"
+playback_speed = 0.75
 anims/heartbeat = SubResource( 4 )
