@@ -1,23 +1,17 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://shaders/actor.shader" type="Shader" id=1]
 [ext_resource path="res://actor/jewel/jewel.obj" type="ArrayMesh" id=2]
 
-[sub_resource type="ShaderMaterial" id=4]
-shader = ExtResource( 1 )
-shader_param/celshaded = false
-shader_param/enable_rim = false
-shader_param/only_rim = false
-shader_param/not_shaded = false
-shader_param/use_vertex_color = false
-shader_param/color_lit = Color( 1, 0.0784314, 0.447059, 1 )
-shader_param/color_dim = Color( 0.580392, 0.0470588, 0.262745, 1 )
-shader_param/damaged = false
-shader_param/locked = false
+[sub_resource type="SpatialMaterial" id=4]
+albedo_color = Color( 0.768627, 0.00392157, 0.286275, 1 )
+roughness = 0.15
+rim_enabled = true
+rim = 0.2
+rim_tint = 0.5
 
 [sub_resource type="Animation" id=3]
 resource_name = "jewel_rotate"
-length = 2.0
+length = 2.5
 loop = true
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:rotation_degrees:y")
@@ -26,14 +20,14 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 2 ),
+"times": PoolRealArray( 0, 2.5 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
 "values": [ 0.0, 360.0 ]
 }
 
 [node name="Jewel" type="MeshInstance"]
-transform = Transform( 0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 0, 0 )
+transform = Transform( 0.0971045, 0, 0.743687, 0, 0.75, 0, -0.743687, 0, 0.0971045, 0, 0, 0 )
 layers = 2
 mesh = ExtResource( 2 )
 material/0 = SubResource( 4 )
@@ -48,3 +42,7 @@ light_negative = true
 light_cull_mask = 4294967293
 spot_angle = 8.0
 spot_angle_attenuation = 100.0
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( -0.380315, -0.623865, 1.11532, -0.201349, 1.17838, 0.59048, -1.26198, 1.8805e-08, -0.430326, 0, 4.75079, 0 )
+editor_only = true

@@ -33,8 +33,6 @@ data = PoolVector3Array( -1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1, 1, -1, -1
 
 [node name="TestScene" type="Spatial"]
 
-[node name="Starfield" parent="." instance=ExtResource( 4 )]
-
 [node name="TestEnemy" parent="." instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 29.3145, -28.3584, -28.054 )
 collision_layer = 2
@@ -169,3 +167,5 @@ shape = SubResource( 9 )
 
 [node name="Jewel" parent="." instance=ExtResource( 5 )]
 transform = Transform( 0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 8.79219, 0, 0 )
+
+[node name="Environment" parent="." instance=ExtResource( 4 )]

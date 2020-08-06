@@ -1,0 +1,13 @@
+[gd_resource type="SpatialMaterial" format=2]
+
+[resource]
+albedo_color = Color( 0.635294, 0, 0.254902, 1 )
+roughness = 0.15
+emission_enabled = true
+emission = Color( 0.533333, 0, 0.211765, 1 )
+emission_energy = 0.5
+emission_operator = 0
+emission_on_uv2 = false
+rim_enabled = true
+rim = 0.2
+rim_tint = 0.5

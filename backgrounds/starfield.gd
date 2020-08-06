@@ -1,9 +1,10 @@
 extends Control
 
 """
-Doing the actual drawing on the CPU is awful.
-It also sometimes chokes even when the startotal isn't that high.
-Pls move to GPU somehow.
+Doing the actual drawing on the CPU is awful. Pls move to GPU somehow.
+
+Also using a worldenvironment node with canvas sometimes chokes 
+even when the startotal isn't that high.
 """
 
 var textures = []
@@ -30,7 +31,8 @@ func _ready():
 		create_star_field()
 
 func _process(_delta):
-	update() #calls _draw()
+	pass
+	#update() #calls _draw()
 
 func fix_saturation(brightness):
 	if brightness < 0.15:
@@ -92,6 +94,7 @@ func gaussian(mean, deviation):
 	return (mean + deviation * x1 * w)
 
 func _draw():
+	return
 	var rot_amount = (Game.time_of_day / 1440.0) * 360
 	var cam_pos = Game.cam.global_transform.origin
 	var bounds = Rect2(-64, -64, 1920 + 128, 1080 + 128)
