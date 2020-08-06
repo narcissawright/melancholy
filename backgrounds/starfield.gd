@@ -5,6 +5,8 @@ Doing the actual drawing on the CPU is awful. Pls move to GPU somehow.
 
 Also using a worldenvironment node with canvas sometimes chokes 
 even when the startotal isn't that high.
+
+God I need to upgrade my PC i think my GPU might be bottlenecked anyways
 """
 
 var textures = []
@@ -14,7 +16,7 @@ const POSITION_INDEX = 1
 const COLOR_INDEX = 2
 var sun_vec = Vector3(-0.446634, 0.893269, 0.050884).normalized()
 onready var sunlight = $'SunLight'
-var axis_of_rotation = Vector3(1,0.5,0).normalized()
+var axis_of_rotation = Vector3(1, 0.5 ,0).normalized()
 #onready var sun_tex = load("res://img/sun.png")
 onready var blackbody_radiation = load('res://backgrounds/blackbody_radiation.tres')
 #var we = null # worldenvironment child node for setting ambient light based on time of day
@@ -31,8 +33,8 @@ func _ready():
 		create_star_field()
 
 func _process(_delta):
-	pass
-	#update() #calls _draw()
+	
+	update() #calls _draw()
 
 func fix_saturation(brightness):
 	if brightness < 0.15:
@@ -94,7 +96,6 @@ func gaussian(mean, deviation):
 	return (mean + deviation * x1 * w)
 
 func _draw():
-	return
 	var rot_amount = (Game.time_of_day / 1440.0) * 360
 	var cam_pos = Game.cam.global_transform.origin
 	var bounds = Rect2(-64, -64, 1920 + 128, 1080 + 128)
@@ -117,4 +118,13 @@ func _draw():
 				draw_texture (textures[star[SIZE_INDEX]], pos, star_c)
 	
 	var sun_rot = sun_vec.rotated(axis_of_rotation, deg2rad(rot_amount) )
+	
+	Debug.draw.begin(Mesh.PRIMITIVE_LINES)
+	Debug.draw.set_color(Color(1,1,0))
+	Debug.draw.add_vertex(Vector3(0, 2.5, 0))
+	Debug.draw.set_color(Color(0.3,0.3,1))
+	Debug.draw.add_vertex(Vector3(0, 2.5, 0) + sun_rot)
+	Debug.draw.end()
+	
 	sunlight.look_at(sun_rot, Vector3.UP)
+	sunlight.light_energy = ((-sun_rot.y + 1.0) / 2.0)

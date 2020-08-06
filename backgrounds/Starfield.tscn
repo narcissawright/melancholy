@@ -20,4 +20,3 @@ __meta__ = {
 environment = ExtResource( 2 )
 
 [node name="SunLight" type="DirectionalLight" parent="Starfield_Control"]
-transform = Transform( 1, 0, 0, 0, 0.788687, 0.614795, 0, -0.614795, 0.788687, 0, 2.48384, 0 )

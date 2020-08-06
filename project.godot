@@ -218,5 +218,5 @@ R3={
 
 [rendering]
 
-quality/filters/msaa=2
+quality/filters/anisotropic_filter_level=2
 environment/default_environment="res://backgrounds/default_env.tres"

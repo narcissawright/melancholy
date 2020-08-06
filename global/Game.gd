@@ -8,7 +8,7 @@ var current_character:String = "Melanie"
 var player:Node
 
 var time_of_day:float = 540.0
-var timescale:float = 1.0
+var timescale:float = 100
 
 const GRAVITY:float = -20.0
 
