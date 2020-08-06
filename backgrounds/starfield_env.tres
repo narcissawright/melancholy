@@ -3,7 +3,7 @@
 [sub_resource type="ProceduralSky" id=1]
 
 [resource]
-background_mode = 1
+background_mode = 4
 background_sky = SubResource( 1 )
 background_color = Color( 0.0862745, 0.0862745, 0.113725, 1 )
 background_canvas_max_layer = -1

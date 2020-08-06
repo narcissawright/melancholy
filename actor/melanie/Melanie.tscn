@@ -12,6 +12,7 @@ mid_height = 1.37
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 1 )
+shader_param/celshaded = true
 shader_param/enable_rim = true
 shader_param/only_rim = false
 shader_param/not_shaded = false
@@ -26,6 +27,7 @@ size = Vector3( 0.2, 0.2, 0.2 )
 
 [sub_resource type="ShaderMaterial" id=4]
 shader = ExtResource( 1 )
+shader_param/celshaded = true
 shader_param/enable_rim = false
 shader_param/only_rim = false
 shader_param/not_shaded = false
@@ -47,6 +49,7 @@ size = Vector3( 0.75, 1.5, 0.1 )
 
 [sub_resource type="ShaderMaterial" id=8]
 shader = ExtResource( 1 )
+shader_param/celshaded = true
 shader_param/enable_rim = false
 shader_param/only_rim = false
 shader_param/not_shaded = false
@@ -371,7 +374,6 @@ one_shot = true
 
 [node name="SpotLightNegative" type="SpotLight" parent="Shadow"]
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, 1, 0, -1, -1.62921e-07, 0, 1.7, 0 )
-light_energy = 1.5
 light_negative = true
 light_cull_mask = 4294967293
 spot_angle = 8.0

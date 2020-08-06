@@ -2,6 +2,7 @@ shader_type spatial;
 render_mode shadows_disabled, ambient_light_disabled;
 
 // RIM
+uniform bool celshaded = true;
 uniform bool enable_rim = false;
 uniform bool only_rim = false;
 uniform bool not_shaded = false;
@@ -96,10 +97,13 @@ void light() {
 		if (rim < 0.2) { lit = 0.0; } 
 	}
 	
-	
-	if (lit > 0.5) { 
-		DIFFUSE_LIGHT = final_lit; 
-	} else { 
-		DIFFUSE_LIGHT = final_dim;
+	if (celshaded) {
+		if (lit > 0.5) { 
+			DIFFUSE_LIGHT = final_lit; 
+		} else { 
+			DIFFUSE_LIGHT = final_dim;
+		}
+	} else {
+		DIFFUSE_LIGHT = mix(final_dim, final_lit, lit)
 	}
 }

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://backgrounds/starfield.gd" type="Script" id=1]
-[ext_resource path="res://backgrounds/default_env.tres" type="Environment" id=2]
+[ext_resource path="res://backgrounds/starfield_env.tres" type="Environment" id=2]
 
 [node name="CanvasLayer" type="CanvasLayer"]
 layer = -1

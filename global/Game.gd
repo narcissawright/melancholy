@@ -37,8 +37,9 @@ func _ready() -> void:
 	add_child(ui)
 
 func _physics_process(t) -> void:
-	time_of_day = fmod(time_of_day + t * timescale, 1440.0)
-	Debug.text.write("Time of day: " + str(time_of_day))
+	if not get_tree().paused:
+		time_of_day = fmod(time_of_day + t * timescale, 1440.0)
+		Debug.text.write("Time of day: " + str(time_of_day))
 	
 	if Input.is_action_just_pressed("ui_cancel"):
 		get_tree().quit()

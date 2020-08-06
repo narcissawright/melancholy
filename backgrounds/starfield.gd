@@ -1,7 +1,13 @@
 extends Control
 
+"""
+Doing the actual drawing on the CPU is awful.
+It also sometimes chokes even when the startotal isn't that high.
+Pls move to GPU somehow.
+"""
+
 var textures = []
-const STARTOTAL = 600
+const STARTOTAL = 1000
 const SIZE_INDEX = 0
 const POSITION_INDEX = 1
 const COLOR_INDEX = 2
@@ -65,13 +71,12 @@ func create_star_field():
 			b = fix_saturation(randf())
 		
 		var radiation = blackbody_radiation.gradient.interpolate(randf())
-		var color = radiation.linear_interpolate(Color(r,g,b), 0.75)
+		var color = radiation.linear_interpolate(Color(r,g,b), 0.5)
 		color.a = (randf()/2) + 0.5
 		var position = Vector3(gaussian(0,1), gaussian(0,1), gaussian(0,1)).normalized()
 		field.push_back([size, position, color])
 	
 	star_field = field
-	print(field)
 
 func gaussian(mean, deviation):
 	var x1 = null
@@ -91,7 +96,8 @@ func _draw():
 	var cam_pos = Game.cam.global_transform.origin
 	var bounds = Rect2(-64, -64, 1920 + 128, 1080 + 128)
 	
-	var c = Color('050510')
+	#var c = Color('050510')
+	var c = Color('181822')
 		
 	draw_rect(bounds, c, true)
 		
