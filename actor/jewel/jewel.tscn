@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://actor/jewel/jewel_shadermaterial.tres" type="Material" id=1]
+[ext_resource path="res://actor/jewel/Interactable.gd" type="Script" id=2]
 [ext_resource path="res://actor/jewel/SpotLight.tscn" type="PackedScene" id=3]
 
 [sub_resource type="ArrayMesh" id=1]
@@ -36,6 +37,9 @@ tracks/0/keys = {
 "values": [ Vector3( 0, 0, 0 ), Vector3( 0, 360, 0 ) ]
 }
 
+[sub_resource type="SphereShape" id=3]
+radius = 0.5
+
 [node name="Jewel" type="MeshInstance"]
 layers = 2
 mesh = SubResource( 1 )
@@ -51,3 +55,13 @@ anims/jewel_rotate = SubResource( 2 )
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.710185, 0.704015, 0, -0.704015, 0.710185, 0, 2.32019, 3.03945 )
 editor_only = true
+
+[node name="Interactable" type="Area" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
+monitoring = false
+collision_layer = 16
+collision_mask = 0
+script = ExtResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="Interactable"]
+shape = SubResource( 3 )

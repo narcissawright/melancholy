@@ -171,6 +171,9 @@ shape = SubResource( 9 )
 [node name="Jewel" parent="." instance=ExtResource( 5 )]
 transform = Transform( 0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 8.79219, 0, 0 )
 
+[node name="Jewel2" parent="." instance=ExtResource( 5 )]
+transform = Transform( 0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 8.79219, 0, -0.438945 )
+
 [node name="Environment" parent="." instance=ExtResource( 4 )]
 
 [node name="Checkpoint" parent="." instance=ExtResource( 6 )]

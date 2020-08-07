@@ -1,7 +1,6 @@
 extends Node
 
-onready var melanie = preload("res://actor/melanie/Melanie.tscn")
-#onready var melancholy = preload("res://player/Melancholy.tscn")
+onready var melanie = preload("res://actor/playable/melanie/Melanie.tscn")
 onready var cam = preload("res://camera/Camera.tscn")
 onready var ui = preload("res://ui/UI.tscn")
 var current_character:String = "Melanie"

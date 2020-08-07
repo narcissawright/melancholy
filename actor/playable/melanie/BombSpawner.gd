@@ -1,15 +1,12 @@
 extends Position3D
 
-"""
-Issues:
-- doesnt check for jewel requirement
-"""
-
 onready var spawn_area = $SpawnArea
 onready var bomb = preload("res://actor/bomb/Bomb.tscn")
 
 var current_bomb:Node
 var holding = false
+
+const jewel_cost:int = 5
 
 func _ready() -> void:
 	Events.connect("player_damaged", self, "on_player_damaged")
@@ -31,15 +28,16 @@ func process_state() -> void:
 
 # Spawn
 func can_spawn_bomb() -> bool:
-	if spawn_area.get_overlapping_bodies().size() == 0:
-		return true
+	if Game.player.jewels >= jewel_cost:
+		if spawn_area.get_overlapping_bodies().size() == 0:
+			return true
 	return false
 	
 func spawn_bomb() -> void:
 	current_bomb = bomb.instance()
 	add_child(current_bomb)
 	holding = true
-	Game.player.jewels -= 5
+	Game.player.jewels -= jewel_cost
 	Game.player.lockplayer_for_frames(10)
 
 # Buffered Throws

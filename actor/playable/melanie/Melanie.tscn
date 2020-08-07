@@ -1,10 +1,11 @@
 [gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://shaders/actor.shader" type="Shader" id=1]
-[ext_resource path="res://actor/melanie/TargetAcquired.gd" type="Script" id=2]
-[ext_resource path="res://actor/melanie/Shield.gd" type="Script" id=3]
-[ext_resource path="res://actor/melanie/BombSpawner.gd" type="Script" id=4]
-[ext_resource path="res://actor/melanie/Melanie.gd" type="Script" id=5]
+[ext_resource path="res://actor/playable/TargetDetector.tscn" type="PackedScene" id=2]
+[ext_resource path="res://actor/playable/melanie/Shield.gd" type="Script" id=3]
+[ext_resource path="res://actor/playable/melanie/BombSpawner.gd" type="Script" id=4]
+[ext_resource path="res://actor/playable/melanie/Melanie.gd" type="Script" id=5]
+[ext_resource path="res://actor/playable/InteractArea.tscn" type="PackedScene" id=6]
 
 [sub_resource type="CapsuleMesh" id=1]
 radius = 0.2
@@ -278,9 +279,6 @@ tracks/6/keys = {
 "values": [ true, false ]
 }
 
-[sub_resource type="SphereShape" id=12]
-radius = 20.0
-
 [sub_resource type="CapsuleShape" id=13]
 radius = 0.18
 
@@ -339,18 +337,10 @@ anims/shield_bash = SubResource( 10 )
 anims/take_out = SubResource( 11 )
 script = ExtResource( 3 )
 
-[node name="TargetDetector" type="Area" parent="."]
-collision_layer = 0
-collision_mask = 4
-script = ExtResource( 2 )
-__meta__ = {
-"_edit_group_": true,
-"_edit_lock_": true
-}
+[node name="TargetDetector" parent="." instance=ExtResource( 2 )]
+visible = false
 
-[node name="BigSphere" type="CollisionShape" parent="TargetDetector"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
-shape = SubResource( 12 )
+[node name="Interactables" parent="." instance=ExtResource( 6 )]
 
 [node name="HeadPosition" type="Position3D" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.57, 0 )
@@ -380,8 +370,6 @@ one_shot = true
 [node name="ReTarget" type="Timer" parent="Timers"]
 wait_time = 0.3
 one_shot = true
-[connection signal="area_entered" from="TargetDetector" to="TargetDetector" method="_target_acquired"]
-[connection signal="area_exited" from="TargetDetector" to="TargetDetector" method="_target_lost"]
 [connection signal="body_entered" from="BombSpawner/SpawnArea" to="BombSpawner" method="_on_SpawnArea_body_entered"]
 [connection signal="timeout" from="Timers/Locked" to="." method="_on_Locked_timeout"]
 [connection signal="timeout" from="Timers/AirTransition" to="." method="_on_AirTransition_timeout"]

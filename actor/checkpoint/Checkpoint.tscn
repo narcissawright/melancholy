@@ -8,7 +8,7 @@ size = Vector3( 1, 2, 1 )
 [sub_resource type="SpatialMaterial" id=2]
 flags_transparent = true
 flags_unshaded = true
-albedo_color = Color( 0.0509804, 0.392157, 0.537255, 0.105882 )
+albedo_color = Color( 1, 0.701961, 0, 0.388235 )
 
 [sub_resource type="BoxShape" id=3]
 extents = Vector3( 0.5, 1, 0.5 )

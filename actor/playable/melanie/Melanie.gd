@@ -41,6 +41,9 @@ onready var bombspawner = $BombSpawner
 # Material
 onready var material = $Body.get_surface_material(0)
 
+# Interactables
+onready var interactables = $Interactables
+
 # Head Position
 onready var head_position_node = $HeadPosition # Camera points at this, enemies attack this point.
 var head_position:Vector3 setget , _get_head_position  # Gets Position3D global_transform.origin
@@ -76,6 +79,7 @@ func _physics_process(_t) -> void:
 	handle_collision(collision) # Redirect velocity, check landing impact, etc
 	if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO # If velocity is very small, make it 0
 	handle_player_rotation() # Make player face the correct direction
+	handle_interactable() # Pick up jewels, read text, etc.
 	update_subweapon_state() # performed AFTER move_and_collide to correctly place projectiles.
 	respawn_check() # Check if player fell below the map
 	debug() # Write debug info onscreen
@@ -293,6 +297,17 @@ func set_grounded(state:bool) -> void:
 func _on_AirTransition_timeout() -> void:
 	has_jump = false
 
+##  ##  ##  ######  ######  #####    ####    #####  ######
+##  ### ##    ##    ##      ##  ##  ##  ##  ##        ##
+##  ######    ##    #####   #####   ######  ##        ##
+##  ## ###    ##    ##      ##  ##  ##  ##  ##        ##
+##  ##  ##    ##    ######  ##  ##  ##  ##   #####    ##
+
+func handle_interactable():
+	if grounded and not is_locked():
+		if Input.is_action_just_pressed("X"):
+			interactables.execute()
+
  #####  ##  ##  #####   ##    ##  #####   ####   #####    ####   ##  ## 
 ##      ##  ##  ##  ##  ##    ##  ##     ##  ##  ##  ##  ##  ##  ### ## 
  ####   ##  ##  #####   ## ## ##  ####   ######  #####   ##  ##  ###### 
@@ -477,6 +492,7 @@ func debug() -> void:
 	Debug.text.write('Sprinting: ' + str(sprint_count) + '/180')
 #	Debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
 	Debug.text.newline()
+	Debug.text.write('Interactables: ' + str(interactables.list))
 
 	# Debug Draw
 #	Debug.draw.begin(Mesh.PRIMITIVE_LINES)
