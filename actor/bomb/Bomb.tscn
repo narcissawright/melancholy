@@ -1,13 +1,14 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://actor/bomb/Bomb.gd" type="Script" id=1]
+[ext_resource path="res://actor/bomb/bomb_model.tscn" type="PackedScene" id=2]
 
 [sub_resource type="Animation" id=1]
 resource_name = "bomb_pull"
 length = 0.166667
 step = 0.0166667
 tracks/0/type = "value"
-tracks/0/path = NodePath("./MeshInstance:scale")
+tracks/0/path = NodePath("BombModel:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -19,7 +20,7 @@ tracks/0/keys = {
 "values": [ Vector3( 0.01, 0.01, 0.01 ), Vector3( 1, 1, 1 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("MeshInstance:material/0:shader_param/not_shaded")
+tracks/1/path = NodePath("BombModel:material/0:shader_param/not_shaded")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
@@ -36,7 +37,7 @@ resource_name = "explode"
 length = 0.5
 step = 0.0166667
 tracks/0/type = "value"
-tracks/0/path = NodePath("./MeshInstance:scale")
+tracks/0/path = NodePath("Explosion:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -48,7 +49,7 @@ tracks/0/keys = {
 "values": [ Vector3( 1, 1, 1 ), Vector3( 10, 10, 10 ), Vector3( 9.5, 9.5, 9.5 ), Vector3( 10, 10, 10 ), Vector3( 9.5, 9.5, 9.5 ), Vector3( 10, 10, 10 ), Vector3( 9.5, 9.5, 9.5 ), Vector3( 0.01, 0.01, 0.01 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("./MeshInstance:material/0:shader_param/color_lit")
+tracks/1/path = NodePath("Explosion:material/0:shader_param/color_lit")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
@@ -60,7 +61,7 @@ tracks/1/keys = {
 "values": [ Color( 0.266667, 0.211765, 0.211765, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 0.831373, 0.0705882, 1 ), Color( 0.741176, 0.160784, 0.160784, 1 ), Color( 0.266667, 0.211765, 0.211765, 1 ) ]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("./MeshInstance:material/0:shader_param/color_dim")
+tracks/2/path = NodePath("Explosion:material/0:shader_param/color_dim")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
@@ -108,12 +109,24 @@ tracks/5/keys = {
 "values": [ false, true, false ]
 }
 tracks/6/type = "value"
-tracks/6/path = NodePath("MeshInstance:material/0:shader_param/not_shaded")
+tracks/6/path = NodePath("Explosion:material/0:shader_param/not_shaded")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/imported = false
 tracks/6/enabled = true
 tracks/6/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Explosion:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
@@ -125,7 +138,7 @@ resource_name = "pulse"
 length = 4.0
 step = 0.125
 tracks/0/type = "value"
-tracks/0/path = NodePath("MeshInstance:material/0:shader_param/color_lit")
+tracks/0/path = NodePath("BombModel:material/0:shader_param/color_lit")
 tracks/0/interp = 2
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -137,7 +150,7 @@ tracks/0/keys = {
 "values": [ Color( 0.266667, 0.211765, 0.211765, 1 ), Color( 0.270588, 0.176471, 0.176471, 1 ), Color( 0.266667, 0.211765, 0.211765, 1 ), Color( 0.27451, 0.164706, 0.164706, 1 ), Color( 0.266667, 0.211765, 0.211765, 1 ), Color( 0.278431, 0.160784, 0.160784, 1 ), Color( 0.266667, 0.211765, 0.211765, 1 ), Color( 0.282353, 0.156863, 0.156863, 1 ), Color( 0.266667, 0.211765, 0.211765, 1 ), Color( 0.290196, 0.152941, 0.152941, 1 ), Color( 0.266667, 0.211765, 0.211765, 1 ), Color( 0.294118, 0.14902, 0.14902, 1 ), Color( 0.266667, 0.211765, 0.211765, 1 ), Color( 0.301961, 0.145098, 0.145098, 1 ), Color( 0.266667, 0.211765, 0.211765, 1 ), Color( 0.309804, 0.141176, 0.141176, 1 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("MeshInstance:material/0:shader_param/color_dim")
+tracks/1/path = NodePath("BombModel:material/0:shader_param/color_dim")
 tracks/1/interp = 2
 tracks/1/loop_wrap = true
 tracks/1/imported = false
@@ -168,7 +181,7 @@ radius = 1.5
 radius = 0.2
 height = 0.4
 
-[sub_resource type="Shader" id=6]
+[sub_resource type="Shader" id=9]
 code = "shader_type spatial;
 render_mode shadows_disabled, ambient_light_disabled;
 
@@ -275,11 +288,11 @@ void light() {
 	}
 }"
 
-[sub_resource type="ShaderMaterial" id=7]
-shader = SubResource( 6 )
+[sub_resource type="ShaderMaterial" id=10]
+shader = SubResource( 9 )
 shader_param/enable_rim = true
 shader_param/only_rim = false
-shader_param/not_shaded = false
+shader_param/not_shaded = true
 shader_param/use_vertex_color = false
 shader_param/color_lit = Color( 0.266667, 0.211765, 0.211765, 1 )
 shader_param/color_dim = Color( 0.121569, 0.101961, 0.101961, 1 )
@@ -306,23 +319,25 @@ collision_mask = 2
 [node name="Shape" type="CollisionShape" parent="ExplosionArea"]
 shape = SubResource( 4 )
 
-[node name="MeshInstance" type="MeshInstance" parent="."]
+[node name="Explosion" type="MeshInstance" parent="."]
+visible = false
 layers = 2
 mesh = SubResource( 5 )
-material/0 = SubResource( 7 )
+material/0 = SubResource( 10 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.697503, 0.716582, 0, -0.716582, 0.697503, 0, 10.4521, 1.59155 )
 editor_only = true
 
 [node name="ExplosionDetector" type="Area" parent="."]
-monitoring = false
 monitorable = false
 collision_layer = 0
 collision_mask = 8
 
 [node name="Shape" type="CollisionShape" parent="ExplosionDetector"]
 shape = SubResource( 8 )
+
+[node name="BombModel" parent="." instance=ExtResource( 2 )]
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_animation_finished"]
 [connection signal="body_entered" from="ExplosionArea" to="." method="_on_ExplosionHit"]
 [connection signal="area_entered" from="ExplosionDetector" to="." method="_on_ExplosionDetected"]

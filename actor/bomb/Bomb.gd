@@ -7,7 +7,7 @@ Known exploits:
 	- Double Bomb Slide (requires taking damage.. seems acceptable)
 	
 To Be Improved:
-	- no particles, lighting, sfx.
+	- particles, lighting, sfx.
 """
 
 # Collision
@@ -18,8 +18,8 @@ var shape := SphereShape.new()
 onready var anim = $AnimationPlayer
 
 # Material
-onready var meshinstance = $MeshInstance
-var material:Material
+onready var bomb_mesh = $BombModel
+onready var explosion_mesh = $Explosion
 
 # Explosion
 onready var explosion = $ExplosionArea
@@ -34,8 +34,10 @@ var exploding:bool = false
 
 func _ready() -> void:
 	# Duplicate material per bomb
-	material = meshinstance.get_surface_material(0).duplicate()
-	meshinstance.set_surface_material(0, material)
+	var material = bomb_mesh.get_surface_material(0).duplicate()
+	bomb_mesh.set_surface_material(0, material)
+	material = explosion_mesh.get_surface_material(0).duplicate()
+	explosion_mesh.set_surface_material(0, material)
 	
 	# Set up physics query
 	query.exclude = [Game.player]

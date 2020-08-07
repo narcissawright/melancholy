@@ -11,6 +11,10 @@ uniform bool use_vertex_color = false;
 uniform vec4 color_lit : hint_color = vec4(0.5, 0.5, 0.6, 1.0);
 uniform vec4 color_dim : hint_color = vec4(0.1, 0.1, 0.12, 1.0);
 
+uniform bool use_texture = false;
+uniform sampler2D tex_lit : hint_albedo;
+uniform sampler2D tex_shaded : hint_albedo;
+
 uniform bool damaged = false;
 const vec3 damaged_lit = vec3(1.0, 0.03, 0.03);
 const vec3 damaged_dim = vec3(0.5, 0.0, 0.0);
@@ -74,19 +78,24 @@ void light() {
 	
 	vec3 final_lit;
 	vec3 final_dim;
-	
-	if (damaged) {
-		final_lit = damaged_lit;
-		final_dim = damaged_dim;
-	} else if (locked) {
-		final_lit = locked_lit;
-		final_dim = locked_dim;
-	} else if (use_vertex_color) {
-		final_lit = ALBEDO;
-		final_dim = ALBEDO * 0.5;
+
+	if (use_texture) {
+		final_lit = texture(tex_lit, UV).rgb;
+		final_dim = texture(tex_shaded, UV).rgb;
 	} else {
-		final_lit = color_lit.rgb;
-		final_dim = color_dim.rgb;
+		if (damaged) {
+			final_lit = damaged_lit;
+			final_dim = damaged_dim;
+		} else if (locked) {
+			final_lit = locked_lit;
+			final_dim = locked_dim;
+		} else if (use_vertex_color) {
+			final_lit = ALBEDO;
+			final_dim = ALBEDO * 0.5;
+		} else {
+			final_lit = color_lit.rgb;
+			final_dim = color_dim.rgb;
+		}
 	}
 	
 	if (not_shaded) { lit = 1.0; }
@@ -94,7 +103,7 @@ void light() {
 	if (enable_rim) {
 		float NdotV = dot(VIEW, NORMAL);
 		float rim = smoothstep(0.0, 1.0, NdotV);
-		if (rim < 0.2) { lit = 0.0; } 
+		if (rim < 0.2) { lit = 1.0 - lit; } 
 	}
 	
 	if (celshaded) {
@@ -104,6 +113,6 @@ void light() {
 			DIFFUSE_LIGHT = final_dim;
 		}
 	} else {
-		DIFFUSE_LIGHT = mix(final_dim, final_lit, lit)
+		DIFFUSE_LIGHT = mix(final_dim, final_lit, lit);
 	}
 }

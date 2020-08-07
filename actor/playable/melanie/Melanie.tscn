@@ -20,6 +20,7 @@ shader_param/not_shaded = false
 shader_param/use_vertex_color = false
 shader_param/color_lit = Color( 0.380392, 0.380392, 1, 1 )
 shader_param/color_dim = Color( 0.168627, 0.129412, 0.396078, 1 )
+shader_param/use_texture = false
 shader_param/damaged = false
 shader_param/locked = false
 
@@ -35,6 +36,7 @@ shader_param/not_shaded = false
 shader_param/use_vertex_color = false
 shader_param/color_lit = Color( 0.678431, 0.678431, 0.843137, 1 )
 shader_param/color_dim = Color( 0.290196, 0.25098, 0.501961, 1 )
+shader_param/use_texture = false
 shader_param/damaged = false
 shader_param/locked = false
 
@@ -57,6 +59,7 @@ shader_param/not_shaded = false
 shader_param/use_vertex_color = false
 shader_param/color_lit = Color( 0.780392, 0.807843, 0.811765, 1 )
 shader_param/color_dim = Color( 0.407843, 0.45098, 0.501961, 1 )
+shader_param/use_texture = false
 shader_param/damaged = false
 shader_param/locked = false
 
