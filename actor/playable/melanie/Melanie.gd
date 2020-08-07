@@ -35,7 +35,7 @@ onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shi
 
 # Subweapons
 var current_subweapon:String = "bomb"
-var jewels:int = 50 # Subweapon ammo
+var jewels:int = 999 # Subweapon ammo
 onready var bombspawner = $BombSpawner
 
 # Material

@@ -57,7 +57,7 @@ void fragment() {
 	vec3 ndc = vec3(SCREEN_UV, depth) * 2.0 - 1.0;
 	vec4 view = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
 	view.xyz /= view.w;
-	float linear_depth = -view.z;
+	float linear_depth = -view.z * 2.0; // this *2 is experiment
 	if (linear_depth < limit) { discard; }
 	
 	if (enable_rim) {

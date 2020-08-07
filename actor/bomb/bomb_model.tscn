@@ -46,13 +46,16 @@ surfaces/0 = {
 
 [node name="BombModel" type="MeshInstance"]
 transform = Transform( 0.866025, -0.5, 0, 0.5, 0.866025, 0, 0, 0, 1, 0, 0, 0 )
+layers = 2
 mesh = SubResource( 1 )
 material/0 = ExtResource( 1 )
 
 [node name="Cylinder" type="MeshInstance" parent="."]
+layers = 2
 mesh = SubResource( 2 )
 material/0 = ExtResource( 1 )
 
 [node name="Fuse" type="MeshInstance" parent="Cylinder"]
+layers = 2
 mesh = SubResource( 3 )
 material/0 = ExtResource( 1 )

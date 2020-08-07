@@ -17,16 +17,16 @@ var shape := SphereShape.new()
 # Animation
 onready var anim = $AnimationPlayer
 
-# Material
+# Meshes
 onready var bomb_mesh = $BombModel
 onready var explosion_mesh = $Explosion
 
-# Explosion
-onready var explosion = $ExplosionArea
+# Explosion Data
 var explosion_list:Array # Keep track of what has been hit already.
 
 # Properties
 var velocity:Vector3
+var throw_spin:Vector3 # added to rotation each frame while thrown or dropped. purely visual.
 
 # Flags
 var is_ready:bool = false
@@ -51,10 +51,15 @@ func _ready() -> void:
 
 func throw(v:Vector3) -> void:
 	velocity = v
+	if v == Vector3.ZERO:
+		throw_spin = Vector3(randf(), randf(), randf()) * 0.02
+	else:
+		throw_spin = Vector3(randf(), randf(), randf()) * 0.05
 	set_physics_process(true)
 
 # Apply gravity, use shapecasting to determine collisions.
 func _physics_process(t:float) -> void:
+	rotation += throw_spin
 	velocity.y += Game.GRAVITY * t
 	var step = velocity * t
 	query.transform = global_transform
@@ -80,10 +85,10 @@ func reparent_to_game_world() -> void:
 
 # Don't call this directly, use reparent_to_game_world() instead.
 func reparent_deferred() -> void:
-	var current_position = global_transform.origin
+	var current_transform = global_transform
 	get_parent().remove_child(self)
 	Projectiles.add_child(self)
-	global_transform.origin = current_position
+	global_transform = current_transform
 
 # Signal from AnimationPlayer
 func _animation_finished(anim_name:String) -> void:
