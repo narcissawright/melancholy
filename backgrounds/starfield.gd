@@ -1,16 +1,11 @@
 extends Control
 
 """
-Doing the actual drawing on the CPU is awful. Pls move to GPU somehow.
-
-Also using a worldenvironment node with canvas sometimes chokes 
-even when the startotal isn't that high.
-
-God I need to upgrade my PC i think my GPU might be bottlenecked anyways
+Would like to move the actual star texture drawing to a shader for GPU.
 """
 
 var textures = []
-const STARTOTAL = 1000
+const STARTOTAL = 2000
 const SIZE_INDEX = 0
 const POSITION_INDEX = 1
 const COLOR_INDEX = 2
@@ -24,6 +19,9 @@ onready var blackbody_radiation = load('res://backgrounds/blackbody_radiation.tr
 var star_field = null
 
 func _ready():
+	$WorldEnvironment.environment.background_mode = Environment.BG_CANVAS
+	# Changing this to canvas only at runtime helps the editor not look awful.
+	
 	#if self.has_node('WorldEnvironment'):
 	#	we = $'WorldEnvironment'
 	textures.push_back(load("res://img/star_0_hd.png"))
