@@ -25,20 +25,15 @@ func _on_player_respawning():
 
 func update_healthbar():
 	tween.stop_all()
-	var start_size = hp_bar_light.rect_size.x
 	var new_size = (Game.player.hp / Game.player.max_hp) * full_length
 	var difference = hp_bar_light.rect_size.x - new_size
-	var tween_time = min(1.0, abs(difference) * Game.frame_time * 0.45)
+	var tween_time = min(1.5, abs(difference) * Game.frame_time * 0.5)
 	if difference > 0.0:
 		# Decrease Healthbar
-		tween.interpolate_property(hp_bar_dark, "rect_size:x", start_size, new_size, tween_time)
+		tween.interpolate_property(hp_bar_dark, "rect_size:x", hp_bar_dark.rect_size.x, new_size, tween_time)
 		hp_bar_light.rect_size.x = new_size
-		print("Decreasing...")
-		print(start_size, "  ", new_size, "  ", tween_time)
 	else:
 		# Increase Healthbar
-		tween.interpolate_property(hp_bar_light, "rect_size:x", start_size, new_size, tween_time)
+		tween.interpolate_property(hp_bar_light, "rect_size:x", hp_bar_light.rect_size.x, new_size, tween_time)
 		hp_bar_dark.rect_size.x = new_size
-		print("Increasing...")
-		print(start_size, "  ", new_size, "  ", tween_time)
 	tween.start()
