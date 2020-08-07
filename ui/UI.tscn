@@ -59,6 +59,8 @@ __meta__ = {
 "_edit_lock_": true
 }
 
+[node name="HP_Bar_Tween" type="Tween" parent="HP"]
+
 [node name="HP_Empty" type="ColorRect" parent="HP"]
 margin_left = 32.0
 margin_top = -6.0
@@ -69,7 +71,17 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HP_Bar" type="ColorRect" parent="HP"]
+[node name="HP_Bar_Dark" type="ColorRect" parent="HP"]
+margin_left = 32.0
+margin_top = -6.0
+margin_right = 913.0
+margin_bottom = 6.0
+color = Color( 0.4, 0.0470588, 0.0862745, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HP_Bar_Light" type="ColorRect" parent="HP"]
 margin_left = 32.0
 margin_top = -6.0
 margin_right = 913.0
@@ -112,7 +124,7 @@ __meta__ = {
 }
 
 [node name="Light" type="Position2D" parent="HP/HeartScale/Heart"]
-position = Vector2( 43.5749, -43.4238 )
+position = Vector2( 39.8628, -43.7331 )
 
 [node name="HeartBeat" type="AnimationPlayer" parent="HP/HeartScale/Heart"]
 autoplay = "heartbeat"

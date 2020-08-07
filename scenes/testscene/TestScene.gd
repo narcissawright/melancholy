@@ -4,24 +4,13 @@ func _ready() -> void:
 	Events.connect('checkpoint', self, 'checkpoint_reached')
 
 func checkpoint_reached(where:Vector3) -> void:
-	# I might want to have a Y axis rotation
-	# or facing direction for the checkpoint
-	# otherwise cam will reset along world z axis
+	Game.player.checkpoint.position = where
+	Game.player.checkpoint.jewels = Game.player.jewels
+	Game.player.checkpoint.subweapon = Game.player.current_subweapon
+	Game.player.checkpoint.y_rotation = 0.0
 	
-	# I was also considering passing a "checkpoint id" into here
-	# instead of position and rotation
-	# might be easier, although I would have to organize
-	# the checkpoints so I know which one is which
+	# Consider passing a "checkpoint id" into here instead of position/rotation.
+	# Might be easier, although the checkpoints would have to be organized to have ids.
 	
-	# I also need to think of how to track "level state"
-	# ie. what ends up getting saved by the checkpoint
-	# and what is irrelevant
-	
-	# You know, without having actual levels with functional goals
-	# it sort of feels weird to code this now
-	
-	# But at the very least I can update the respawn state
-	# Checkpoints could probably also let you keep your jewels
-	# Even though they would power you down 1 level.
-	
-	print (where)
+	# Also need to think of how to track "level state"
+	# ie. what ends up getting saved by the checkpoint and what is irrelevant.

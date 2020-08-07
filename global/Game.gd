@@ -7,6 +7,7 @@ onready var ui = preload("res://ui/UI.tscn")
 var current_character:String = "Melanie"
 var player:Node
 
+var frame_time:float = 1.0 / 60.0
 var time_of_day:float = 540.0
 var timescale:float = 10
 

@@ -8,7 +8,6 @@ extends KinematicBody
 
 # Time
 var framecount:int = 0
-var frame_time:float = 1.0 / 60.0
 
 # Health
 var hp:float = 200.0
@@ -36,7 +35,7 @@ onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shi
 
 # Subweapons
 var current_subweapon:String = "bomb"
-var jewels:int = 99 # Subweapon ammo
+var jewels:int = 50 # Subweapon ammo
 onready var bombspawner = $BombSpawner
 
 # Material
@@ -71,7 +70,7 @@ func _physics_process(_t) -> void:
 	update_horizontal_velocity() # General movement
 	update_vertical_velocity() # Jumping and gravity
 	
-	var collision:KinematicCollision = move_and_collide(velocity * frame_time) # Apply Physics
+	var collision:KinematicCollision = move_and_collide(velocity * Game.frame_time) # Apply Physics
 	
 	set_grounded(raycast.is_colliding()) # Check if grounded
 	handle_collision(collision) # Redirect velocity, check landing impact, etc
@@ -210,7 +209,7 @@ func can_sprint() -> bool:
 
 func update_vertical_velocity() -> void:
 	# Apply Gravity
-	velocity.y += Game.GRAVITY * frame_time
+	velocity.y += Game.GRAVITY * Game.frame_time
 	
 	"""
 	I feel like my jump code is very jank and I wish to change it at some point.
@@ -249,7 +248,7 @@ func is_locked() -> bool:
 # Locked State:
 func lockplayer_for_frames(frames:int) -> void:
 	# Set Timer
-	lock_timer.wait_time = frames * frame_time
+	lock_timer.wait_time = frames * Game.frame_time
 	lock_timer.start()
 	lockplayer("timer")
 
@@ -286,7 +285,7 @@ func set_grounded(state:bool) -> void:
 			has_jump = true
 		else:
 			# Transition to air:
-			air_transition_timer.wait_time = 5.0 * frame_time
+			air_transition_timer.wait_time = 5.0 * Game.frame_time
 			air_transition_timer.start()
 	grounded = state
 
@@ -373,16 +372,28 @@ func rotate_towards(look_target_2d:Vector2) -> void:
 ##  ##  ##        ##  ##      ##  ##  ## ## ##  ## ###
 ##  ##  #####  ####   ##      ##  ##   ######   ##  ##
 
+var checkpoint:Dictionary = {
+		"position": Vector3.ZERO,
+		"jewels": 50,
+		"subweapon": "bomb",
+		"y_rotation": 0.0
+	}
+
 func respawn_check() -> void:
 	# If player fell off the map, respawn
 	if translation.y < -50:
 		respawn()
 
 func respawn() -> void:
+	Events.emit_signal("player_respawning")
 	hp = max_hp
-	translation = Vector3.ZERO
 	velocity = Vector3.ZERO
-	rotation = Vector3.ZERO
+	
+	translation = checkpoint.position
+	rotation = Vector3(0, checkpoint.y_rotation, 0)
+	current_subweapon = checkpoint.subweapon
+	jewels = checkpoint.jewels
+	
 	lockplayer_for_frames(20)
 	Game.cam.reset()
 
@@ -420,10 +431,12 @@ func apply_damage(value:float) -> void:
 	material.set_shader_param("damaged", true)
 	hp -= value
 	if hp <= 0:
+		hp = 0
 		die()
 	Events.emit_signal('player_damaged')
 		
 func die() -> void:
+	#Events.emit_signal('player_died')
 	respawn()
 
 #####   #####  #####   ##  ##   #####
