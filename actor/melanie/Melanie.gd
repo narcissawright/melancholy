@@ -48,12 +48,15 @@ var head_position:Vector3 setget , _get_head_position  # Gets Position3D global_
 func _get_head_position() -> Vector3:
 	return head_position_node.global_transform.origin
 
+#####   ######   ####   #####   ##  ##
+##  ##  ##      ##  ##  ##  ##  ##  ##
+#####   #####   ######  ##  ##   ####
+##  ##  ##      ##  ##  ##  ##    ##
+##  ##  ######  ##  ##  #####     ##
+
 func _ready() -> void:
 	process_priority = 0 # Run this before camera
 	lockplayer_for_frames(20) # Set locked state
-
-func forwards() -> Vector3:
-	return -transform.basis.z
 
 #####   #####    ####    #####  #####   #####   #####
 ##  ##  ##  ##  ##  ##  ##      ##     ##      ##
@@ -328,6 +331,9 @@ func handle_collision(collision:KinematicCollision) -> void:
 #####   ##  ##    ##    ######    ##    ##  ##  ##  ######
 ##  ##  ##  ##    ##    ##  ##    ##    ##  ##  ##  ## ###
 ##  ##   ####     ##    ##  ##    ##    ##   ####   ##  ##
+
+func forwards() -> Vector3:
+	return -transform.basis.z
 
 func handle_player_rotation() -> void:
 	if not is_locked():
