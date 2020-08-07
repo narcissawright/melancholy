@@ -8,12 +8,13 @@ var current_character:String = "Melanie"
 var player:Node
 
 var time_of_day:float = 540.0
-var timescale:float = 1
+var timescale:float = 10
 
 const GRAVITY:float = -20.0
 
 func _init() -> void:
 	OS.window_position = Vector2(172, 30) # so it shows up on my monitor in a comfy spot
+	OS.window_size = Vector2(1280, 720)
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 
 func _ready() -> void:
@@ -36,10 +37,29 @@ func _ready() -> void:
 	add_child(cam)
 	add_child(ui)
 
+func time_readable (time:float) -> String:
+	var hours:int
+	var minutes:int
+	var am:bool = true
+# warning-ignore:integer_division
+	hours = int(time) / 60
+	if hours >= 12: 
+		hours -= 12
+		am = false
+	if hours == 0: hours = 12
+	minutes = int(time) % 60
+	
+	var time_string:String = str(hours).pad_zeros(2)
+	time_string += ":"
+	time_string += str(minutes).pad_zeros(2)
+	time_string += " "
+	time_string += "AM" if am else "PM"
+	return time_string
+
 func _physics_process(t) -> void:
 	if not get_tree().paused:
 		time_of_day = fmod(time_of_day + t * timescale, 1440.0)
-		Debug.text.write("Time of day: " + str(time_of_day))
+		Debug.text.write("Time of day: " + time_readable(time_of_day))
 	
 	if Input.is_action_just_pressed("ui_cancel"):
 		get_tree().quit()

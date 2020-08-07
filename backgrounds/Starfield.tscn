@@ -6,14 +6,6 @@
 [node name="Environment" type="CanvasLayer"]
 layer = -1
 
-[node name="ColorRect" type="ColorRect" parent="."]
-margin_right = 1920.0
-margin_bottom = 1080.0
-color = Color( 0.0941176, 0.0941176, 0.133333, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="Starfield_Control" type="Control" parent="."]
 pause_mode = 2
 margin_right = 1920.0
