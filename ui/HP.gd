@@ -9,6 +9,8 @@ HeartScale node has a scale of 0.9
 HeartCircle and Heart have a scaling of 0.8
 giving a combined scale of 0.72
 those images are 100px wide, so 72px wide after scaling.
+
+Also the health bar looks too dark during a bright scene.
 """
 
 

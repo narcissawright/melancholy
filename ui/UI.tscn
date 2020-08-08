@@ -9,7 +9,8 @@
 [ext_resource path="res://ui/img/jewel_icon.png" type="Texture" id=7]
 [ext_resource path="res://shaders/heart.shader" type="Shader" id=8]
 [ext_resource path="res://ui/Jewel_count.gd" type="Script" id=9]
-[ext_resource path="res://ui/img/clock_albedo.png" type="Texture" id=11]
+[ext_resource path="res://ui/img/clock_hand.png" type="Texture" id=10]
+[ext_resource path="res://ui/img/clock_v2.png" type="Texture" id=11]
 [ext_resource path="res://ui/Clock.gd" type="Script" id=12]
 
 [sub_resource type="ShaderMaterial" id=1]
@@ -33,8 +34,6 @@ tracks/0/keys = {
 "values": [ Vector2( 0.8, 0.8 ), Vector2( 0.805, 0.805 ), Vector2( 0.8, 0.8 ), Vector2( 0.82, 0.82 ), Vector2( 0.78, 0.78 ), Vector2( 0.8, 0.8 ), Vector2( 0.805, 0.805 ), Vector2( 0.8, 0.8 ), Vector2( 0.8, 0.8 ) ]
 }
 
-[sub_resource type="ShaderMaterial" id=3]
-
 [node name="UI" type="CanvasLayer"]
 pause_mode = 1
 layer = 3
@@ -52,10 +51,10 @@ __meta__ = {
 
 [node name="10+60px" type="ColorRect" parent="."]
 visible = false
-margin_left = 880.0
-margin_top = 10.0
-margin_right = 944.0
-margin_bottom = 74.0
+margin_left = 0.163181
+margin_top = 929.701
+margin_right = 15.1632
+margin_bottom = 1079.7
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -176,14 +175,20 @@ scale = Vector2( 0.25, 0.25 )
 texture = ExtResource( 7 )
 
 [node name="Clock" type="Node2D" parent="."]
-position = Vector2( 45, 1035 )
+position = Vector2( 56, 1024 )
+scale = Vector2( 0.17, 0.17 )
 script = ExtResource( 12 )
 
-[node name="BG" type="Sprite" parent="Clock"]
-scale = Vector2( 0.72, 0.72 )
-texture = ExtResource( 5 )
-
 [node name="ClockSprite" type="Sprite" parent="Clock"]
-material = SubResource( 3 )
-scale = Vector2( 0.68, 0.68 )
 texture = ExtResource( 11 )
+
+[node name="Minutes" type="Sprite" parent="Clock/ClockSprite"]
+modulate = Color( 1, 0.364706, 0.615686, 1 )
+self_modulate = Color( 0.890196, 0.921569, 0.933333, 1 )
+rotation = 5.45415
+scale = Vector2( 0.75, 1.5 )
+texture = ExtResource( 10 )
+
+[node name="Hours" type="Sprite" parent="Clock/ClockSprite"]
+rotation = 0.986111
+texture = ExtResource( 10 )
