@@ -1,14 +1,16 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=15 format=2]
 
-[ext_resource path="res://img/small_heart_normalmap_100px.png" type="Texture" id=1]
-[ext_resource path="res://img/subweapon_bomb.png" type="Texture" id=2]
+[ext_resource path="res://ui/img/small_heart_normalmap_100px.png" type="Texture" id=1]
+[ext_resource path="res://ui/img/subweapon_bomb.png" type="Texture" id=2]
 [ext_resource path="res://ui/HP.gd" type="Script" id=3]
-[ext_resource path="res://img/hp_border.png" type="Texture" id=4]
-[ext_resource path="res://img/small_heart_circle.png" type="Texture" id=5]
+[ext_resource path="res://ui/img/hp_border.png" type="Texture" id=4]
+[ext_resource path="res://ui/img/UI_circle.png" type="Texture" id=5]
 [ext_resource path="res://ui/fonts/Univers57.tres" type="DynamicFont" id=6]
-[ext_resource path="res://img/jewel_icon.png" type="Texture" id=7]
+[ext_resource path="res://ui/img/jewel_icon.png" type="Texture" id=7]
 [ext_resource path="res://shaders/heart.shader" type="Shader" id=8]
 [ext_resource path="res://ui/Jewel_count.gd" type="Script" id=9]
+[ext_resource path="res://ui/img/clock_albedo.png" type="Texture" id=11]
+[ext_resource path="res://ui/Clock.gd" type="Script" id=12]
 
 [sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 8 )
@@ -30,6 +32,8 @@ tracks/0/keys = {
 "update": 0,
 "values": [ Vector2( 0.8, 0.8 ), Vector2( 0.805, 0.805 ), Vector2( 0.8, 0.8 ), Vector2( 0.82, 0.82 ), Vector2( 0.78, 0.78 ), Vector2( 0.8, 0.8 ), Vector2( 0.805, 0.805 ), Vector2( 0.8, 0.8 ), Vector2( 0.8, 0.8 ) ]
 }
+
+[sub_resource type="ShaderMaterial" id=3]
 
 [node name="UI" type="CanvasLayer"]
 pause_mode = 1
@@ -170,3 +174,16 @@ modulate = Color( 0, 0.823529, 0.729412, 1 )
 position = Vector2( -9, 17 )
 scale = Vector2( 0.25, 0.25 )
 texture = ExtResource( 7 )
+
+[node name="Clock" type="Node2D" parent="."]
+position = Vector2( 45, 1035 )
+script = ExtResource( 12 )
+
+[node name="BG" type="Sprite" parent="Clock"]
+scale = Vector2( 0.72, 0.72 )
+texture = ExtResource( 5 )
+
+[node name="ClockSprite" type="Sprite" parent="Clock"]
+material = SubResource( 3 )
+scale = Vector2( 0.68, 0.68 )
+texture = ExtResource( 11 )

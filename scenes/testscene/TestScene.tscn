@@ -174,7 +174,7 @@ transform = Transform( 0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 8.79219, 0, 0 )
 [node name="Jewel2" parent="." instance=ExtResource( 5 )]
 transform = Transform( 0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 8.79219, 0, -0.438945 )
 
-[node name="Environment" parent="." instance=ExtResource( 4 )]
-
 [node name="Checkpoint" parent="." instance=ExtResource( 6 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 15.3095, -16.9192, -10.1288 )
+
+[node name="Environment" parent="." instance=ExtResource( 4 )]

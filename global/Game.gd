@@ -8,7 +8,7 @@ var player:Node
 
 var frame_time:float = 1.0 / 60.0
 var time_of_day:float = 540.0
-var timescale:float = 1
+var timescale:float = 100
 
 const GRAVITY:float = -20.0
 

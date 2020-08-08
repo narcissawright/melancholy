@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/jewel_icon.png-35d0e6cf198d8b5a02037b8fcce0f725.stex"
+path="res://.import/UI_circle.png-61728b7c15ec268b19300fcfe3f9cc9b.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://img/jewel_icon.png"
-dest_files=[ "res://.import/jewel_icon.png-35d0e6cf198d8b5a02037b8fcce0f725.stex" ]
+source_file="res://ui/img/UI_circle.png"
+dest_files=[ "res://.import/UI_circle.png-61728b7c15ec268b19300fcfe3f9cc9b.stex" ]
 
 [params]
 
@@ -21,7 +21,7 @@ compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
 flags/filter=true
-flags/mipmaps=false
+flags/mipmaps=true
 flags/anisotropic=false
 flags/srgb=2
 process/fix_alpha_border=true
