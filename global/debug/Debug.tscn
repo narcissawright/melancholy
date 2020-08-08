@@ -8,15 +8,19 @@
 flags_unshaded = true
 vertex_color_use_as_albedo = true
 
-[node name="Debug" type="Node"]
+[node name="Debug" type="Control"]
 pause_mode = 2
+visible = false
 script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Text" type="RichTextLabel" parent="."]
-margin_left = 95.0
-margin_top = 121.0
-margin_right = 1749.0
-margin_bottom = 941.0
+margin_left = 92.0034
+margin_top = 243.861
+margin_right = 1746.0
+margin_bottom = 1063.86
 bbcode_enabled = true
 script = ExtResource( 1 )
 __meta__ = {
