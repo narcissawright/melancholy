@@ -25,9 +25,9 @@
 #### `To Do`
 - Proper movement & physics on slopes and small ledges
 - Sword (Primary Attack). Sword draw, sword slash, heavy sword slash, air slash, put away.
-- Subweapon: Vitriol. Vitriol: Similar to holy water in CV64. Big damage for innermost (smallest) hitbox. `might move this to Melancholy? its similar to bombs...`
 - Subweapon: Bow & Arrow. Manual aiming (1st person?), targeted aiming (3rd person). Think Link from OoT
 - Subweapon: TBD
+- Subweapon: TBD 
 - Ledge grab. Ledge movement (left or right), Ledge climb. Ledge release.
 - Crouch. Slide attack (crouch while running). Divekick (crouch while in air)
 - Interacting. Opening door. Item pickup (on floor or in front as two diff animations?)
@@ -48,11 +48,12 @@
 - Has a bubble shield. Can absorb jewels (subweapon ammo) from afar.
 - Primary Attack - Orb (charge attack, can charge while doing any action. Lose charge upon damage). Only 1 Orb may be present at a time. Orb is a seeking projectile when charged.
 - Secondary Attack - (not fleshed out, but definitely some very weak close range attack).
-- Spells instead of subweapons. Jewels get converted into mana (magic meter, exclusive mechanic)
+- Spells instead of subweapons. `Maybe. I guess.` Jewels get converted into mana (magic meter, exclusive mechanic)
 1. Lightning - Attacks all enemies nearby. If no enemies nearby, attacks you instead.
 2. Beam - big laser projectile, aimable in any direction. Some kind of teleport mechanic to travel along the beam.
 3. Airwalker - stand in mid air as if it is solid ground. Each step costs mana. Can jump from the air.
 4. Tree - summon a tree from the earth. Massive damage and knockback. Can be cut down via lightning. May spawn health apples.
+5. Vitriol - I might replace Tree with this actually. Holy water item.
 - Repeatedly jumping can gain more speed. Sort of like traveling on a sine-wave, she can re-jump close to the ground w/o touching it directly and curve back upwards. Has a unique mechanic that allows her to airjump when tapping Jump at ledgegrab height.
 - Maybe the same landing mechanics as Melanie but with the ability to curb your fall dmg with a landing "jump"
 - Ledgegrab same as Melanie
@@ -77,16 +78,37 @@
 - Autocamera should rotate to a higher position while the player is falling
 - Pause Cam should allow you to slide the pan position across solid surfaces.
 
-## Other Mechanics and Features:
 
-#### `Partially implemented`
+## User Interface:
+
+#### `Done`
+- Heart symbol, with a heart beat animation, normal map, and time of day lighting.
+- Functional HP bar
+- Jewel count
+- Current subweapon (only bombs so far)
+- Clock (Time of day)
+
+#### `To do`
+- Powerup container (5 orbs, should look like they are energized.)
+- Item selector (in between subweapon and hp bar)
+- Day/Night indicator attached to Clock.
+- Speedrun timer
+- "Score/XP System" UI
+- Pause screen UI
+- Boss health
+- Melancholy magic stuff
+- General polish of the UI, for both light and dark scenes. should look cohesive and clean.
+
+#### `Maybe`
+- Input display
+- Current camera mode indicator
+
+## Other Mechanics and Features:
 
 ##### Time of day system
 - Melanie is strongest at noon, Melancholy strongest at midnight.
 - Certain events or enemies may only exist at certain times.
-- Item or method to change time of day rapidly. (Sun Card / Moon Card)
-
-#### `To Do`
+- Item to change time of day rapidly. (Sun Card / Moon Card)
 
 ##### Power Ups
 - Five Levels of Primary weapon power. Obtaining a powerup item will level you up.
@@ -103,7 +125,9 @@
 ##### Pause Menu
 - Can change the zoom amount
 - Remap controls, set control sensitivity and axis invert
-- Access to the pause camera
+- Pause Camera
+- Return to the Field of Falling Stars
+- Quit Game
 
 #### `Would like to add`
 
