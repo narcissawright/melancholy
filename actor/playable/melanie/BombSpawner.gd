@@ -38,6 +38,7 @@ func spawn_bomb() -> void:
 	add_child(current_bomb)
 	holding = true
 	Game.player.jewels -= jewel_cost
+	Events.emit_signal("jewel_count_changed")
 	Game.player.lockplayer_for_frames(10)
 
 # Buffered Throws

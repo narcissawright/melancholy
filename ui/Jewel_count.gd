@@ -1,9 +1,9 @@
 extends RichTextLabel
 
-# this shouldnt update every frame.
+func _ready() -> void:
+	Events.connect("jewel_count_changed", self, "update_jewel_count")
 
-func _process(delta: float) -> void:
-	
+func update_jewel_count() -> void:
 	if Game.player.jewels == 0:
 		bbcode_text = "[center][color=#808080]000[/color][/center]"
 	else:
