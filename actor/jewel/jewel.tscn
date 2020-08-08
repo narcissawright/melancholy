@@ -1,8 +1,9 @@
 [gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://actor/jewel/jewel_shadermaterial.tres" type="Material" id=1]
-[ext_resource path="res://actor/jewel/Interactable.gd" type="Script" id=2]
+[ext_resource path="res://actor/jewel/Jewel_Interact.gd" type="Script" id=2]
 [ext_resource path="res://actor/jewel/SpotLight.tscn" type="PackedScene" id=3]
+
 
 [sub_resource type="ArrayMesh" id=1]
 resource_name = "Jewel"

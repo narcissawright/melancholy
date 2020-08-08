@@ -1,11 +1,14 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://img/small_heart_normalmap_100px.png" type="Texture" id=1]
 [ext_resource path="res://img/subweapon_bomb.png" type="Texture" id=2]
 [ext_resource path="res://ui/HP.gd" type="Script" id=3]
 [ext_resource path="res://img/hp_border.png" type="Texture" id=4]
 [ext_resource path="res://img/small_heart_circle.png" type="Texture" id=5]
+[ext_resource path="res://ui/fonts/Univers57.tres" type="DynamicFont" id=6]
+[ext_resource path="res://img/jewel_icon.png" type="Texture" id=7]
 [ext_resource path="res://shaders/heart.shader" type="Shader" id=8]
+[ext_resource path="res://ui/Jewel_count.gd" type="Script" id=9]
 
 [sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 8 )
@@ -134,7 +137,36 @@ anims/heartbeat = SubResource( 2 )
 
 [node name="Subweapon" type="Node2D" parent="."]
 position = Vector2( 1875, 45 )
-scale = Vector2( 0.72, 0.72 )
 
 [node name="Sprite" type="Sprite" parent="Subweapon"]
+scale = Vector2( 0.72, 0.72 )
 texture = ExtResource( 2 )
+
+[node name="Jewels" type="Node2D" parent="Subweapon"]
+position = Vector2( -12, 36 )
+
+[node name="Jewel_count" type="RichTextLabel" parent="Subweapon/Jewels"]
+margin_right = 45.0
+margin_bottom = 36.0
+custom_fonts/normal_font = ExtResource( 6 )
+bbcode_enabled = true
+bbcode_text = "[center]999[/center]"
+text = "999"
+fit_content_height = true
+scroll_active = false
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="JewelIcon_Outline" type="Sprite" parent="Subweapon/Jewels"]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( -9, 17 )
+scale = Vector2( 0.35, 0.3 )
+texture = ExtResource( 7 )
+
+[node name="JewelIcon_Front" type="Sprite" parent="Subweapon/Jewels"]
+modulate = Color( 0, 0.823529, 0.729412, 1 )
+position = Vector2( -9, 17 )
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 7 )
