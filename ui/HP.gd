@@ -1,5 +1,17 @@
 extends Node2D
 
+"""
+Might be slightly jank right now but:
+
+Full health bar = 881 pixels @ 1080p
+
+HeartScale node has a scale of 0.9
+HeartCircle and Heart have a scaling of 0.8
+giving a combined scale of 0.72
+those images are 100px wide, so 72px wide after scaling.
+"""
+
+
 var full_length = 881 # pixels, melanie
 onready var tween = $HP_Bar_Tween
 onready var hp_bar_light = $HP_Bar_Light

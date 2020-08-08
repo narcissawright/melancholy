@@ -322,6 +322,7 @@ void light() {
 	} else { 
 		DIFFUSE_LIGHT = final_dim;
 	}
+	
 }"
 
 [sub_resource type="ShaderMaterial" id=10]
