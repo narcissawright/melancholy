@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://shaders/actor.shader" type="Shader" id=1]
 [ext_resource path="res://actor/playable/TargetDetector.tscn" type="PackedScene" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://actor/playable/melanie/BombSpawner.gd" type="Script" id=4]
 [ext_resource path="res://actor/playable/melanie/Melanie.gd" type="Script" id=5]
 [ext_resource path="res://actor/playable/InteractArea.tscn" type="PackedScene" id=6]
+[ext_resource path="res://actor/playable/melanie/ShieldMesh.tscn" type="PackedScene" id=7]
 
 [sub_resource type="CapsuleMesh" id=1]
 radius = 0.2
@@ -74,7 +75,7 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.0333333, 0.266667 ),
+"times": PoolRealArray( 0, 0.15, 0.25 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
 "values": [ 0.375, 0.375, 0.1 ]
@@ -86,67 +87,79 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.0333333, 0.266667 ),
+"times": PoolRealArray( 0, 0.15, 0.25 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
 "values": [ 0.75, 0.75, 0.2 ]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("ShieldCollision:translation")
+tracks/2/path = NodePath("ShieldCollision:shape:extents:z")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/keys = {
-"times": PoolRealArray( 0, 0.0333333, 0.266667 ),
+"times": PoolRealArray( 0, 0.15, 0.25 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0, 0.75, -0.3 ), Vector3( 0, 0.75, -0.3 ), Vector3( 0, 0.75, 0 ) ]
+"values": [ 0.2, 0.2, 0.05 ]
 }
 tracks/3/type = "value"
-tracks/3/path = NodePath("ShieldMesh:rotation_degrees")
+tracks/3/path = NodePath("ShieldCollision:translation")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/imported = false
 tracks/3/enabled = true
 tracks/3/keys = {
-"times": PoolRealArray( 0, 0.0333333, 0.1, 0.166667, 0.266667 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.15, 0.25 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0, -180, 0 ), Vector3( 0, -180, 0 ), Vector3( 0, -135, 0 ), Vector3( 0, -90, 0 ), Vector3( 0, 0, 0 ) ]
+"values": [ Vector3( 0, 0.75, -0.2 ), Vector3( 0, 0.75, -0.2 ), Vector3( 0, 0.75, 0 ) ]
 }
 tracks/4/type = "value"
-tracks/4/path = NodePath("ShieldMesh:translation")
+tracks/4/path = NodePath("ShieldMesh:rotation_degrees")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/imported = false
 tracks/4/enabled = true
 tracks/4/keys = {
-"times": PoolRealArray( 0, 0.0333333, 0.0666667, 0.116667, 0.166667, 0.216667, 0.266667 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.0333333, 0.1, 0.166667, 0.266667 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0, 0.75, -0.3 ), Vector3( 0, 0.75, -0.3 ), Vector3( -0.2, 0.813, -0.25 ), Vector3( -0.2, 0.813, -0.15 ), Vector3( -0.3, 0.875, 0 ), Vector3( -0.2, 0.95, 0.15 ), Vector3( 0, 1, 0.2 ) ]
+"values": [ Vector3( 0, -180, 0 ), Vector3( 0, -180, 0 ), Vector3( 0, -135, 0 ), Vector3( 0, -90, 0 ), Vector3( 0, 0, 0 ) ]
 }
 tracks/5/type = "value"
-tracks/5/path = NodePath("ShieldMesh:scale")
+tracks/5/path = NodePath("ShieldMesh:translation")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/imported = false
 tracks/5/enabled = true
 tracks/5/keys = {
-"times": PoolRealArray( 0, 0.0333333, 0.166667, 0.266667 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.0333333, 0.0666667, 0.116667, 0.166667, 0.216667, 0.266667 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( 1, 1, 1 ), Vector3( 1, 1, 1 ), Vector3( 0.75, 0.75, 0.75 ), Vector3( 0.5, 0.5, 0.5 ) ]
+"values": [ Vector3( 0, 0, -0.3 ), Vector3( 0, 0, -0.3 ), Vector3( -0.2, 0.1, -0.25 ), Vector3( -0.2, 0.2, -0.15 ), Vector3( -0.3, 0.3, 0 ), Vector3( -0.2, 0.4, 0.15 ), Vector3( 0, 0.5, 0.2 ) ]
 }
 tracks/6/type = "value"
-tracks/6/path = NodePath("ShieldCollision:disabled")
+tracks/6/path = NodePath("ShieldMesh:scale")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/imported = false
 tracks/6/enabled = true
 tracks/6/keys = {
-"times": PoolRealArray( 0, 0.15 ),
+"times": PoolRealArray( 0, 0.0333333, 0.166667, 0.266667 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 1, 1, 1 ), Vector3( 1, 1, 1 ), Vector3( 0.75, 0.75, 0.75 ), Vector3( 0.5, 0.5, 0.5 ) ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("ShieldCollision:disabled")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PoolRealArray( 0, 0.25 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ false, true ]
@@ -166,31 +179,31 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 0.017, 0.034, 0.133333, 0.233333 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0, 0.75, -0.3 ), Vector3( 0, 0.75, -0.38 ), Vector3( 0, 0.75, -0.4 ), Vector3( 0, 0.75, -0.4 ), Vector3( 0, 0.75, -0.3 ) ]
+"values": [ Vector3( 0, 0, -0.3 ), Vector3( 0, 0, -0.38 ), Vector3( 0, 0, -0.4 ), Vector3( 0, 0, -0.4 ), Vector3( 0, 0, -0.3 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("ShieldCollision:translation")
+tracks/1/path = NodePath("ShieldCollision:disabled")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.017, 0.034, 0.133333, 0.233333 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
-"update": 0,
-"values": [ Vector3( 0, 0.75, -0.3 ), Vector3( 0, 0.75, -0.38 ), Vector3( 0, 0.75, -0.4 ), Vector3( 0, 0.75, -0.4 ), Vector3( 0, 0.75, -0.3 ) ]
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("ShieldCollision:disabled")
+tracks/2/path = NodePath("ShieldCollision:shape:extents:z")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 1,
-"values": [ false ]
+"times": PoolRealArray( 0, 0.116667, 0.233333 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.2, 0.25, 0.2 ]
 }
 
 [sub_resource type="Animation" id=11]
@@ -204,7 +217,7 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.133333 ),
+"times": PoolRealArray( 0, 0.0666667 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
 "values": [ 0.1, 0.375 ]
@@ -216,7 +229,7 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.133333 ),
+"times": PoolRealArray( 0, 0.0666667 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
 "values": [ 0.2, 0.75 ]
@@ -228,10 +241,10 @@ tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/keys = {
-"times": PoolRealArray( 0, 0.133333 ),
+"times": PoolRealArray( 0, 0.0666667 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0, 0.75, 0 ), Vector3( 0, 0.75, -0.3 ) ]
+"values": [ Vector3( 0, 0.75, 0 ), Vector3( 0, 0.75, -0.2 ) ]
 }
 tracks/3/type = "value"
 tracks/3/path = NodePath("ShieldMesh:rotation_degrees")
@@ -252,10 +265,10 @@ tracks/4/loop_wrap = true
 tracks/4/imported = false
 tracks/4/enabled = true
 tracks/4/keys = {
-"times": PoolRealArray( 0, 0.0333333, 0.0666667, 0.1, 0.133333 ),
+"times": PoolRealArray( 0, 0.0333333, 0.0666667, 0.102, 0.133333 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0, 1, 0.2 ), Vector3( -0.2, 0.95, 0.15 ), Vector3( -0.3, 0.875, 0 ), Vector3( -0.2, 0.813, -0.15 ), Vector3( 0, 0.75, -0.3 ) ]
+"values": [ Vector3( 0, 0.5, 0.2 ), Vector3( -0.2, 0.375, 0.15 ), Vector3( -0.3, 0.25, 0 ), Vector3( -0.2, 0.125, -0.15 ), Vector3( 0, 0, -0.3 ) ]
 }
 tracks/5/type = "value"
 tracks/5/path = NodePath("ShieldMesh:scale")
@@ -276,10 +289,22 @@ tracks/6/loop_wrap = true
 tracks/6/imported = false
 tracks/6/enabled = true
 tracks/6/keys = {
-"times": PoolRealArray( 0, 0.0500001 ),
+"times": PoolRealArray( 0, 0.0166667 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ true, false ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("ShieldCollision:shape:extents:z")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PoolRealArray( 0, 0.0666667 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0.0500002, 0.2 ]
 }
 
 [sub_resource type="CapsuleShape" id=12]
@@ -326,13 +351,17 @@ cast_to = Vector3( 0, -0.11, 0 )
 [node name="ShieldCollision" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0 )
 shape = SubResource( 6 )
-disabled = true
 
-[node name="ShieldMesh" type="MeshInstance" parent="."]
+[node name="ShieldMesh_old" type="MeshInstance" parent="."]
 transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 1, 0.2 )
+visible = false
 layers = 2
 mesh = SubResource( 7 )
 material/0 = SubResource( 8 )
+
+[node name="ShieldMesh" parent="." instance=ExtResource( 7 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.5, 0.2 )
+layers = 2
 
 [node name="ShieldAnim" type="AnimationPlayer" parent="."]
 anims/put_away = SubResource( 9 )

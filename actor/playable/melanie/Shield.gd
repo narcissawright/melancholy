@@ -1,8 +1,8 @@
 extends AnimationPlayer
 
 """
-I could really see using animationplayer for more properties,
-such as animating the shield slide interpolation value ??
+Animating the collider itself is kind of jank
+and I'm not totally happy w/ the results yet.
 """
 
 var active = false
