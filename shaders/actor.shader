@@ -8,6 +8,8 @@ uniform bool only_rim = false;
 uniform bool not_shaded = false;
 uniform bool use_vertex_color = false;
 
+uniform bool vertex_color_as_occlusion = false;
+
 uniform vec4 color_lit : hint_color = vec4(0.5, 0.5, 0.6, 1.0);
 uniform vec4 color_dim : hint_color = vec4(0.1, 0.1, 0.12, 1.0);
 
@@ -24,7 +26,7 @@ const vec3 locked_lit = vec3(0.2, 0.6, 0.8);
 const vec3 locked_dim = vec3(0.0, 0.3, 0.4);
 
 void fragment() {
-	if (use_vertex_color) { ALBEDO = COLOR.rgb; }
+	ALBEDO = COLOR.rgb;
 	
 	// Opacity Dithering...
 	int x = int(FRAGCOORD.x / 2.0) % 4;
@@ -104,6 +106,11 @@ void light() {
 		float NdotV = dot(VIEW, NORMAL);
 		float rim = smoothstep(0.0, 1.0, NdotV);
 		if (rim < 0.2) { lit = 1.0 - lit; } 
+	}
+	
+	float factor = 0.5;
+	if (vertex_color_as_occlusion) {
+		factor = ALBEDO.r;
 	}
 	
 	if (celshaded) {

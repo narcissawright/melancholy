@@ -19,6 +19,7 @@ shader_param/enable_rim = true
 shader_param/only_rim = false
 shader_param/not_shaded = false
 shader_param/use_vertex_color = false
+shader_param/vertex_color_as_occlusion = false
 shader_param/color_lit = Color( 0.380392, 0.380392, 1, 1 )
 shader_param/color_dim = Color( 0.168627, 0.129412, 0.396078, 1 )
 shader_param/use_texture = false
@@ -35,6 +36,7 @@ shader_param/enable_rim = false
 shader_param/only_rim = false
 shader_param/not_shaded = false
 shader_param/use_vertex_color = false
+shader_param/vertex_color_as_occlusion = false
 shader_param/color_lit = Color( 0.678431, 0.678431, 0.843137, 1 )
 shader_param/color_dim = Color( 0.290196, 0.25098, 0.501961, 1 )
 shader_param/use_texture = false
@@ -46,7 +48,7 @@ radius = 0.2
 height = 1.37
 
 [sub_resource type="BoxShape" id=6]
-extents = Vector3( 0.1, 0.2, 0.0500002 )
+extents = Vector3( 0.1, 0.2, 0.05 )
 
 [sub_resource type="Animation" id=9]
 resource_name = "put_away"
