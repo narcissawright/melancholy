@@ -6,6 +6,12 @@ extends KinematicBody
 ##    ##  ##      ##      ##  ##  ## ###  ##  ##
 ##    ##  ######  ######  ##  ##  ##  ##  ##  ######
 
+"""
+Things to think about...
+- External nodes currently alter player state sometimes, such as decreasing or increasing jewels.
+Should this be changed?
+"""
+
 # Time
 var framecount:int = 0
 
@@ -35,7 +41,11 @@ onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shi
 
 # Subweapons
 var current_subweapon:String = "bomb"
-var jewels:int = 999 # Subweapon ammo
+var jewels:int = 999 setget update_jewel_count # Subweapon ammo
+func update_jewel_count(value):
+	jewels = value
+	Events.emit_signal("jewel_count_changed")
+
 const max_jewels:int = 999
 onready var bombspawner = $BombSpawner
 
@@ -148,6 +158,8 @@ func cam_reset_wall_align() -> void:
 ##  ##         ####   ##     ##    ##  ##  ##     ##    ##      ##
 ##  ##          ##    #####  #####  ####    ####  ##    ##      ##
 
+""" Would be nice to add tap to change face dir without moving. """
+
 func horizontal_velocity() -> Vector3:
 	return Vector3(velocity.x, 0, velocity.z)
 
@@ -218,6 +230,11 @@ func update_vertical_velocity() -> void:
 	
 	"""
 	I feel like my jump code is very jank and I wish to change it at some point.
+	I also need to add the other types of jumps.
+	- Standing Jump
+	- Running Jump
+	- Backhop
+	- Sidehop
 	"""
 	
 	# Check for jumping
@@ -401,14 +418,14 @@ func respawn_check() -> void:
 		respawn()
 
 func respawn() -> void:
-	Events.emit_signal("player_respawning")
 	hp = max_hp
+	Events.emit_signal("player_respawning")
 	velocity = Vector3.ZERO
 	
 	translation = checkpoint.position
 	rotation = Vector3(0, checkpoint.y_rotation, 0)
 	current_subweapon = checkpoint.subweapon
-	jewels = checkpoint.jewels
+	self.jewels = checkpoint.jewels
 	
 	lockplayer_for_frames(20)
 	Game.cam.reset()

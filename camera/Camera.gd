@@ -96,12 +96,14 @@ func update_position() -> void:
 func _on_pause_state_change(paused:bool) -> void:
 	if paused:
 		# Save State
+		zoom_tween.stop_all()
 		saved_cam_state.pos = current_pos
 		saved_cam_state.pan = pan
 		saved_cam_state.zoom = current_zoom
 		saved_cam_state.mode = mode
 		mode = "pause"
 	else:
+		zoom_tween.resume_all()
 		crosshair.visible = false
 		pause_pan_velocity = Vector3.ZERO
 		# Recover State
@@ -297,6 +299,7 @@ func enter_first_person() -> void:
 
 func first_person() -> void:
 	var exiting = false
+	if not Game.player.grounded: exiting = true
 	if Input.is_action_just_pressed("A"): exiting = true
 	elif Input.is_action_just_pressed("B"): exiting = true
 	elif Input.is_action_just_pressed("X"): exiting = true

@@ -282,7 +282,7 @@ tracks/6/keys = {
 "values": [ true, false ]
 }
 
-[sub_resource type="CapsuleShape" id=13]
+[sub_resource type="CapsuleShape" id=12]
 radius = 0.18
 
 [node name="Melanie" type="KinematicBody"]
@@ -358,7 +358,7 @@ collision_layer = 0
 
 [node name="CollisionShape" type="CollisionShape" parent="BombSpawner/SpawnArea"]
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, -0.5, 0 )
-shape = SubResource( 13 )
+shape = SubResource( 12 )
 
 [node name="Timers" type="Node" parent="."]
 
