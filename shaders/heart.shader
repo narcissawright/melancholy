@@ -13,22 +13,22 @@ void fragment() {
 		color = vec3(1.0, 0.55, 0.55);
 	} else if (brightness > 0.9) {
 		brightness = mix(brightness, 1.0, 0.4);
-		color = vec3(1.0, 0.15, 0.15);
+		color = vec3(1.0, 0.25, 0.25);
 		color *= brightness;
 	} else if (brightness > 0.82) {
-		color = vec3(1.0, 0.13, 0.15);
+		color = vec3(1.0, 0.25, 0.25);
 		color *= brightness;
 	} else if (brightness > 0.48) {
-		color = vec3(1.0, 0.1, 0.15);
+		color = vec3(1.0, 0.18, 0.2);
 		brightness = mix(brightness, 0.76, 0.45);
 		color *= brightness;
 	} else if (brightness > 0.28) {
 		brightness = mix(brightness, 0.72, 0.65);
-		color = vec3(0.9, 0.1, 0.2);
+		color = vec3(0.9, 0.15, 0.2);
 		color *= brightness;
 	} else {
 		brightness = mix(brightness, 0.85, 0.75);
-		color = vec3(0.8, 0.13, 0.27);
+		color = vec3(0.8, 0.2, 0.35);
 		color *= brightness;
 	}
 	
