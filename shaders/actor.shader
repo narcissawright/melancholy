@@ -73,10 +73,7 @@ void fragment() {
 void light() {
 	// Cel Shading
 	float NdotL = dot(LIGHT, NORMAL);
-	float lit = smoothstep(0.0, 1.0, NdotL);
-	
-	// god I would love a way to use MULTIPLE LIGHTS with cel shading.
-	//vec3 extra_light = LIGHT_COLOR * ATTENUATION;
+	float lit = NdotL; //clamp(NdotL, 0.0, 1.0); //smoothstep(0.0, 1.0, NdotL);
 	
 	vec3 final_lit;
 	vec3 final_dim;
@@ -100,21 +97,32 @@ void light() {
 		}
 	}
 	
-	if (not_shaded) { lit = 1.0; }
-	
-	if (enable_rim) {
-		float NdotV = dot(VIEW, NORMAL);
-		float rim = smoothstep(0.0, 1.0, NdotV);
-		if (rim < 0.2) { lit = 1.0 - lit; } 
-	}
-	
 	float factor = 0.5;
 	if (vertex_color_as_occlusion) {
 		factor = ALBEDO.r;
 	}
 	
+	
+	
+	float threshold = 0.5;
+	if (not_shaded) { lit = 1.0; }
+	
+	if (enable_rim) {
+		float NdotV = dot(VIEW, NORMAL);
+		
+		if (NdotV < 0.2f) {
+			threshold = -0.7;
+		}
+		
+		/*
+		if (rim < 0.2) { 
+			lit = 1.0 - lit; 
+		} 
+		*/
+	}
+	
 	if (celshaded) {
-		if (lit > 0.5) { 
+		if (lit > threshold) { 
 			DIFFUSE_LIGHT = final_lit; 
 		} else { 
 			DIFFUSE_LIGHT = final_dim;

@@ -227,4 +227,5 @@ debug={
 [rendering]
 
 quality/filters/anisotropic_filter_level=2
+quality/filters/msaa=1
 environment/default_environment="res://backgrounds/default_env.tres"

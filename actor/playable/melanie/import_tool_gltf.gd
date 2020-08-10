@@ -8,6 +8,7 @@ func post_import(scene):
 			for mesh in skele.get_children():
 				if mesh is MeshInstance:
 					mesh.set_surface_material(0, preload("res://actor/playable/melanie/Melanie_Material.tres"))
+					mesh.layers = Layers.actor
 
 	var editor_light = DirectionalLight.new()
 	scene.add_child(editor_light)
@@ -15,5 +16,5 @@ func post_import(scene):
 	editor_light.name = "EditorLight"
 	editor_light.editor_only = true
 	editor_light.transform = Basis(Vector3(-0.24, 0.71, 0.65), Vector3(0.396, -0.54, 0.73), Vector3(0.886, 0.43, -0.15))
-	print(scene)
+	editor_light.transform.origin = Vector3(0, 7.5, 0)
 	return scene
