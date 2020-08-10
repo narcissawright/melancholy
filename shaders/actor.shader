@@ -81,22 +81,22 @@ void light() {
 	if (use_texture) {
 		final_lit = texture(tex_lit, UV).rgb;
 		final_dim = texture(tex_shaded, UV).rgb;
+	} else if (use_vertex_color) {
+		final_lit = ALBEDO;
+		final_dim = ALBEDO * 0.5;
 	} else {
-		if (damaged) {
-			final_lit = damaged_lit;
-			final_dim = damaged_dim;
-		} else if (locked) {
-			final_lit = locked_lit;
-			final_dim = locked_dim;
-		} else if (use_vertex_color) {
-			final_lit = ALBEDO;
-			final_dim = ALBEDO * 0.5;
-		} else {
-			final_lit = color_lit.rgb;
-			final_dim = color_dim.rgb;
-		}
+		final_lit = color_lit.rgb;
+		final_dim = color_dim.rgb;
 	}
 	
+	if (damaged) {
+		final_lit = damaged_lit;
+		final_dim = damaged_dim;
+	} else if (locked) {
+		final_lit = locked_lit;
+		final_dim = locked_dim;
+	}
+
 	float factor = 0.5;
 	if (vertex_color_as_occlusion) {
 		factor = ALBEDO.r;

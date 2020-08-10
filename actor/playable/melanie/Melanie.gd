@@ -50,7 +50,7 @@ const max_jewels:int = 999
 onready var bombspawner = $BombSpawner
 
 # Material
-onready var material = $Body.get_surface_material(0)
+onready var material = $melanie_test/Armature/Skeleton/Face.get_surface_material(0)
 
 # Interactables
 onready var interactables = $Interactables
