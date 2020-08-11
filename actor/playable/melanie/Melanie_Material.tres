@@ -6,14 +6,14 @@
 
 [resource]
 shader = ExtResource( 1 )
-shader_param/light_vec = Vector3( -0.425403, 0.612072, 0.666633 )
+shader_param/light_vec = Vector3( 0.00562299, 0.67913, 0.733997 )
 shader_param/opacity_dither = false
 shader_param/celshaded = false
 shader_param/enable_rim = false
 shader_param/not_shaded = false
 shader_param/use_vertex_color = false
 shader_param/vertex_color_as_occlusion = false
-shader_param/color_lit = Color( 0.501961, 0, 0, 1 )
+shader_param/color_lit = Color( 0.12549, 0.141176, 0.192157, 1 )
 shader_param/color_dim = Color( 0.1, 0.1, 0.12, 1 )
 shader_param/use_texture = true
 shader_param/damaged = false

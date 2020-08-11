@@ -86,7 +86,9 @@ void fragment() {
 		final_lit = texture(tex_lit, UV).rgb;
 		final_shaded = texture(tex_shaded, UV).rgb;
 	}
-	float threshold = 1.0 - COLOR.r; // stupid
+	
+	float threshold = 0.5;
+	// 1.0 - COLOR.r; // stupid
 	//threshold = 0.78;
 	
 	if (NdotL > threshold) {
@@ -94,6 +96,8 @@ void fragment() {
 	} else {
 		ALBEDO = final_shaded;
 	}
+
+	
 	
 	/*
 	if (enable_rim) {
