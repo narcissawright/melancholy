@@ -1,10 +1,11 @@
 shader_type spatial;
-render_mode shadows_disabled, ambient_light_disabled;
+render_mode shadows_disabled, unshaded, ambient_light_disabled;
 
-// RIM
+uniform vec3 light_vec;
+
+uniform bool opacity_dither = true;
 uniform bool celshaded = true;
 uniform bool enable_rim = false;
-uniform bool only_rim = false;
 uniform bool not_shaded = false;
 uniform bool use_vertex_color = false;
 
@@ -25,51 +26,83 @@ uniform bool locked = false;
 const vec3 locked_lit = vec3(0.2, 0.6, 0.8);
 const vec3 locked_dim = vec3(0.0, 0.3, 0.4);
 
+void vertex() {
+	// use world space normals
+	NORMAL = (CAMERA_MATRIX * vec4(NORMAL, 0.0)).xyz;
+	//COLOR.rgb = mix( pow((COLOR.rgb + vec3(0.055)) * (1.0 / (1.0 + 0.055)), vec3(2.4)), COLOR.rgb* (1.0 / 12.92), lessThan(COLOR.rgb,vec3(0.04045)) );
+}
+
 void fragment() {
-	ALBEDO = COLOR.rgb;
 	
-	// Opacity Dithering...
-	int x = int(FRAGCOORD.x / 2.0) % 4;
-	int y = int(FRAGCOORD.y / 2.0) % 4;
-	int index = x + y * 4;
-	float limit = 0.0;
+	if (opacity_dither) {
 	
-	// Dither pattern
-	switch (index) {
-		case 0:  limit = 0.0625; break;
-		case 1:  limit = 0.5625; break;
-		case 2:  limit = 0.1875; break;
-		case 3:  limit = 0.6875; break;
-		case 4:  limit = 0.8125; break;
-		case 5:  limit = 0.3125; break;
-		case 6:  limit = 0.9375; break;
-		case 7:  limit = 0.4375; break;
-		case 8:  limit = 0.25;   break;
-		case 9:  limit = 0.75;   break;
-		case 10: limit = 0.125;  break;
-		case 11: limit = 0.625;  break;
-		case 12: limit = 1.0;    break;
-		case 13: limit = 0.5;    break;
-		case 14: limit = 0.875;  break;
-		case 15: limit = 0.375;  break;
+		// Opacity Dithering...
+		int x = int(FRAGCOORD.x / 2.0) % 4;
+		int y = int(FRAGCOORD.y / 2.0) % 4;
+		int index = x + y * 4;
+		float limit = 0.0;
+		
+		// Dither pattern
+		switch (index) {
+			case 0:  limit = 0.0625; break;
+			case 1:  limit = 0.5625; break;
+			case 2:  limit = 0.1875; break;
+			case 3:  limit = 0.6875; break;
+			case 4:  limit = 0.8125; break;
+			case 5:  limit = 0.3125; break;
+			case 6:  limit = 0.9375; break;
+			case 7:  limit = 0.4375; break;
+			case 8:  limit = 0.25;   break;
+			case 9:  limit = 0.75;   break;
+			case 10: limit = 0.125;  break;
+			case 11: limit = 0.625;  break;
+			case 12: limit = 1.0;    break;
+			case 13: limit = 0.5;    break;
+			case 14: limit = 0.875;  break;
+			case 15: limit = 0.375;  break;
+		}
+		
+		// Depth Test
+		float depth = FRAGCOORD.z;
+		vec3 ndc = vec3(SCREEN_UV, depth) * 2.0 - 1.0;
+		vec4 view = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
+		view.xyz /= view.w;
+		float linear_depth = -view.z * 2.0; // this *2 is experiment
+		if (linear_depth < limit) { discard; }
 	}
 	
-	// Depth Test
-	float depth = FRAGCOORD.z;
-	vec3 ndc = vec3(SCREEN_UV, depth) * 2.0 - 1.0;
-	vec4 view = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
-	view.xyz /= view.w;
-	float linear_depth = -view.z * 2.0; // this *2 is experiment
-	if (linear_depth < limit) { discard; }
+	//
+	//
+	//
+	//
+	//
 	
+	vec3 final_lit;
+	vec3 final_shaded;
+	
+	float NdotL = dot(light_vec, NORMAL);
+
+	if (use_texture) {
+		final_lit = texture(tex_lit, UV).rgb;
+		final_shaded = texture(tex_shaded, UV).rgb;
+	}
+	float threshold = 1.0 - COLOR.r; // stupid
+	//threshold = 0.78;
+	
+	if (NdotL > threshold) {
+		ALBEDO = final_lit;
+	} else {
+		ALBEDO = final_shaded;
+	}
+	
+	/*
 	if (enable_rim) {
 		float NdotV = dot(VIEW, NORMAL);
 		float rim = smoothstep(0.0, 1.0, NdotV);
-		if ((only_rim) && (rim > 0.2)) { discard; } 
-	}
+	}*/
 }
 
-
+/*
 void light() {
 	// Cel Shading
 	float NdotL = dot(LIGHT, NORMAL);
@@ -97,30 +130,21 @@ void light() {
 		final_dim = locked_dim;
 	}
 
-	float factor = 0.5;
-	if (vertex_color_as_occlusion) {
-		factor = ALBEDO.r;
-	}
-	
-	
-	
 	float threshold = 0.5;
-	if (not_shaded) { lit = 1.0; }
+	if (vertex_color_as_occlusion) {
+		threshold = 1.0 - ALBEDO.r; // should be 1.0 - 0.5. wtf????
+	}
 	
 	if (enable_rim) {
 		float NdotV = dot(VIEW, NORMAL);
 		
-		if (NdotV < 0.2f) {
+		if (NdotV < 0.2) {
 			threshold = -0.7;
 		}
-		
-		/*
-		if (rim < 0.2) { 
-			lit = 1.0 - lit; 
-		} 
-		*/
 	}
 	
+	
+	if (not_shaded) { lit = 1.0; }
 	if (celshaded) {
 		if (lit > threshold) { 
 			DIFFUSE_LIGHT = final_lit; 
@@ -131,3 +155,4 @@ void light() {
 		DIFFUSE_LIGHT = mix(final_dim, final_lit, lit);
 	}
 }
+*/

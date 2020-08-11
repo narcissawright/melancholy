@@ -6,9 +6,10 @@
 
 [resource]
 shader = ExtResource( 3 )
+shader_param/light_vec = null
+shader_param/opacity_dither = true
 shader_param/celshaded = true
 shader_param/enable_rim = true
-shader_param/only_rim = false
 shader_param/not_shaded = false
 shader_param/use_vertex_color = false
 shader_param/vertex_color_as_occlusion = false
