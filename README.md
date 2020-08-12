@@ -162,3 +162,11 @@
 - Try to keep a bit of "arcade scenario" -- gameplay design focused levels, but not too arcadey. Ideally each stage is minutes (3-15) long if you know what you're doing.
 - Checkpoints exist. 
 - I want an ice level. (slippery physics)
+
+## Character Design:
+- Melanie should have shorter hair than Melancholy. Neither character will have bangs.
+- The hair covering Melanie's eye should not cover it much (less than it is now, with the current model.) Melancholy will have her eye more obscured.
+- Would like to include a Cardigan for Melanie but would need to figure out the state of cloth simulation in Godot, and my GPU is old right now.
+- Melancholy should have a dress or medium length skirt. Might keep same boots (I like this design). Unsure about other aspects of the outfit. Leggings/Tights probably good for both.
+- Melanie will have plum colored hair, Melancholy a blue color. The eye color should be different, too.
+- Melancholy's heartbeat should be slower (seen in the UI).
