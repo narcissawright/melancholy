@@ -6,7 +6,7 @@
 
 [resource]
 shader = ExtResource( 1 )
-shader_param/light_vec = Vector3( 0.00562299, 0.67913, 0.733997 )
+shader_param/light_vec = Vector3( 0.57735, 0.57735, 0.57735 )
 shader_param/opacity_dither = false
 shader_param/celshaded = false
 shader_param/enable_rim = false
