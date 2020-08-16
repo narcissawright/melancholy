@@ -25,8 +25,8 @@ var default_pos := Vector3(0, 0.316228, 0.948683) # default camera position, nor
 var current_pos:Vector3 # current camera position, normalized
 
 # Zoom
-var current_zoom:float = 3.5
-var custom_zoom:float = 3.5
+var current_zoom:float = 3.2
+var custom_zoom:float = 3.2
 
 var mode = "auto" # "free", "first_person", "pause", "reset"
 

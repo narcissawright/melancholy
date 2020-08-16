@@ -92,6 +92,7 @@ func _physics_process(_t) -> void:
 	set_grounded(raycast.is_colliding()) # Check if grounded
 	handle_collision(collision) # Redirect velocity, check landing impact, etc
 	if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO # If velocity is very small, make it 0
+	walk_animation()
 	handle_player_rotation() # Make player face the correct direction
 	handle_interactable() # Pick up jewels, read text, etc.
 	update_subweapon_state() # performed AFTER move_and_collide to correctly place projectiles.
@@ -318,11 +319,29 @@ func set_grounded(state:bool) -> void:
 func _on_AirTransition_timeout() -> void:
 	has_jump = false
 
+ ####   ##  ##  ##   ######
+##  ##  ### ##  ##  ## ## ##
+######  ######  ##  ## ## ##
+##  ##  ## ###  ##  ##    ##
+##  ##  ##  ##  ##  ##    ##
+
+"""
+Note that other animations may be called elsewhere.
+e.g. BombSpawner or Bomb may call bomb pull or bomb throw.
+"""
+
+func walk_animation() -> void:
+	animtree['parameters/IdleWalk/blend_amount'] = clamp(horizontal_velocity().length() / 10.0, 0.0, 1.0)
+
 ##  ##  ##  ######  ######  #####    ####    #####  ######
 ##  ### ##    ##    ##      ##  ##  ##  ##  ##        ##
 ##  ######    ##    #####   #####   ######  ##        ##
 ##  ## ###    ##    ##      ##  ##  ##  ##  ##        ##
 ##  ##  ##    ##    ######  ##  ##  ##  ##   #####    ##
+
+"""
+Need to add UI element showing that interacting is possible.
+"""
 
 func handle_interactable():
 	if grounded and not is_locked():

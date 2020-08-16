@@ -297,7 +297,7 @@ tracks/7/keys = {
 }
 
 [sub_resource type="CapsuleShape" id=10]
-radius = 0.18
+radius = 0.15
 
 [node name="Melanie" type="KinematicBody"]
 pause_mode = 1

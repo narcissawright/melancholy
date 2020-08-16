@@ -34,7 +34,6 @@ func can_spawn_bomb() -> bool:
 	return false
 	
 func spawn_bomb() -> void:
-	
 	current_bomb = bomb.instance()
 	add_child(current_bomb)
 	holding = true

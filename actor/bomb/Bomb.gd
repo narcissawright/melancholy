@@ -48,6 +48,9 @@ func _ready() -> void:
 	
 	# Play pull animation
 	anim.play("bomb_pull")
+	$Tween.stop_all()
+	$Tween.interpolate_property(Game.player.animtree, 'parameters/BombBlend/blend_amount', 0.0, 1.0, 0.1)
+	$Tween.start()
 
 func throw(v:Vector3) -> void:
 	velocity = v
@@ -56,6 +59,8 @@ func throw(v:Vector3) -> void:
 	else:
 		throw_spin = Vector3(randf(), randf(), randf()) * 0.05
 	set_physics_process(true)
+	#var state_machine = Game.player.animtree["parameters/BombStuff/playback"]
+	#state_machine.travel('BombThrow')
 
 # Apply gravity, use shapecasting to determine collisions.
 func _physics_process(t:float) -> void:
