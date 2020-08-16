@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode shadows_disabled, unshaded, ambient_light_disabled;
+render_mode shadows_disabled, ambient_light_disabled;
 
 uniform vec3 light_vec;
 
@@ -28,7 +28,7 @@ const vec3 locked_dim = vec3(0.0, 0.3, 0.4);
 
 void vertex() {
 	// use world space normals
-	NORMAL = (CAMERA_MATRIX * vec4(NORMAL, 0.0)).xyz;
+	//NORMAL = (CAMERA_MATRIX * vec4(NORMAL, 0.0)).xyz;
 	//COLOR.rgb = mix( pow((COLOR.rgb + vec3(0.055)) * (1.0 / (1.0 + 0.055)), vec3(2.4)), COLOR.rgb* (1.0 / 12.92), lessThan(COLOR.rgb,vec3(0.04045)) );
 }
 
@@ -77,6 +77,8 @@ void fragment() {
 	//
 	//
 	
+	/*
+	
 	vec3 final_lit;
 	vec3 final_shaded;
 	
@@ -97,16 +99,15 @@ void fragment() {
 		ALBEDO = final_shaded;
 	}
 
-	
-	
-	/*
 	if (enable_rim) {
 		float NdotV = dot(VIEW, NORMAL);
 		float rim = smoothstep(0.0, 1.0, NdotV);
-	}*/
+	}
+	
+	*/
 }
 
-/*
+
 void light() {
 	// Cel Shading
 	float NdotL = dot(LIGHT, NORMAL);
@@ -135,14 +136,15 @@ void light() {
 	}
 
 	float threshold = 0.5;
+	
 	if (vertex_color_as_occlusion) {
-		threshold = 1.0 - ALBEDO.r; // should be 1.0 - 0.5. wtf????
+		threshold = 1.0 - ALBEDO.r; // this fails to do reading it as SRGB
 	}
 	
 	if (enable_rim) {
 		float NdotV = dot(VIEW, NORMAL);
 		
-		if (NdotV < 0.2) {
+		if (NdotV < 0.3) {
 			threshold = -0.7;
 		}
 	}
@@ -159,4 +161,3 @@ void light() {
 		DIFFUSE_LIGHT = mix(final_dim, final_lit, lit);
 	}
 }
-*/

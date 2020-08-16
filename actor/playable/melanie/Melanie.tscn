@@ -51,7 +51,7 @@ radius = 0.2
 height = 1.37
 
 [sub_resource type="BoxShape" id=6]
-extents = Vector3( 0.1, 0.2, 0.05 )
+extents = Vector3( 0.1, 0.2, 0.0500002 )
 
 [sub_resource type="Animation" id=7]
 resource_name = "put_away"
@@ -127,7 +127,7 @@ tracks/5/keys = {
 "times": PoolRealArray( 0, 0.0333333, 0.0666667, 0.116667, 0.166667, 0.216667, 0.266667 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0, 0, -0.3 ), Vector3( 0, 0, -0.3 ), Vector3( -0.2, 0.1, -0.25 ), Vector3( -0.2, 0.25, -0.15 ), Vector3( -0.3, 0.35, 0 ), Vector3( -0.2, 0.5, 0.15 ), Vector3( 0, 0.6, 0.2 ) ]
+"values": [ Vector3( 0, 0, -0.3 ), Vector3( 0, 0, -0.3 ), Vector3( -0.2, 0.1, -0.25 ), Vector3( -0.2, 0.25, -0.15 ), Vector3( -0.3, 0.35, 0 ), Vector3( -0.2, 0.5, 0.15 ), Vector3( 0, 0.7, 0.13 ) ]
 }
 tracks/6/type = "value"
 tracks/6/path = NodePath("ShieldMesh:scale")
@@ -257,7 +257,7 @@ tracks/4/keys = {
 "times": PoolRealArray( 0, 0.0333333, 0.0666667, 0.102, 0.133333 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0, 0.6, 0.2 ), Vector3( -0.2, 0.45, 0.15 ), Vector3( -0.3, 0.3, 0 ), Vector3( -0.2, 0.15, -0.15 ), Vector3( 0, 0, -0.3 ) ]
+"values": [ Vector3( 0, 0.7, 0.13 ), Vector3( -0.2, 0.45, 0.15 ), Vector3( -0.3, 0.3, 0 ), Vector3( -0.2, 0.15, -0.15 ), Vector3( 0, 0, -0.3 ) ]
 }
 tracks/5/type = "value"
 tracks/5/path = NodePath("ShieldMesh:scale")
@@ -347,7 +347,7 @@ shape = SubResource( 6 )
 disabled = true
 
 [node name="ShieldMesh" parent="." instance=ExtResource( 7 )]
-transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.6, 0.2 )
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.7, 0.13 )
 layers = 2
 
 [node name="ShieldAnim" type="AnimationPlayer" parent="."]

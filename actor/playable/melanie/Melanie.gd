@@ -61,6 +61,9 @@ var head_position:Vector3 setget , _get_head_position  # Gets Position3D global_
 func _get_head_position() -> Vector3:
 	return head_position_node.global_transform.origin
 
+# AnimationTree
+onready var animtree = $melanie_test/AnimationTree
+
 #####   ######   ####   #####   ##  ##
 ##  ##  ##      ##  ##  ##  ##  ##  ##
 #####   #####   ######  ##  ##   ####

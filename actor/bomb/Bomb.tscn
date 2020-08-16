@@ -217,7 +217,7 @@ radius = 1.5
 radius = 0.2
 height = 0.4
 
-[sub_resource type="Shader" id=9]
+[sub_resource type="Shader" id=6]
 code = "shader_type spatial;
 render_mode shadows_disabled, ambient_light_disabled;
 
@@ -325,8 +325,8 @@ void light() {
 	
 }"
 
-[sub_resource type="ShaderMaterial" id=10]
-shader = SubResource( 9 )
+[sub_resource type="ShaderMaterial" id=7]
+shader = SubResource( 6 )
 shader_param/enable_rim = true
 shader_param/only_rim = false
 shader_param/not_shaded = true
@@ -360,7 +360,7 @@ shape = SubResource( 4 )
 visible = false
 layers = 2
 mesh = SubResource( 5 )
-material/0 = SubResource( 10 )
+material/0 = SubResource( 7 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.697503, 0.716582, 0, -0.716582, 0.697503, 0, 10.4521, 1.59155 )
@@ -376,6 +376,7 @@ collision_mask = 8
 shape = SubResource( 8 )
 
 [node name="BombModel" parent="." instance=ExtResource( 2 )]
+transform = Transform( 0.00866025, -0.005, 0, 0.005, 0.00866025, 0, 0, 0, 0.01, 0, 0, 0 )
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_animation_finished"]
 [connection signal="body_entered" from="ExplosionArea" to="." method="_on_ExplosionHit"]
 [connection signal="area_entered" from="ExplosionDetector" to="." method="_on_ExplosionDetected"]
