@@ -364,6 +364,7 @@ all of the processing of the subweapon state, similar to how shield works.
 func update_subweapon_state() -> void:
 	match(current_subweapon):
 		"bomb":
+			bombspawner.translation = $melanie_test/Armature/Skeleton/BombPos.translation
 			bombspawner.process_state()
  
  ####   ####   ##     ##     ##   #####  ##   ####   ##  ##
@@ -430,7 +431,7 @@ func rotate_towards(look_target_2d:Vector2) -> void:
 
 var checkpoint:Dictionary = {
 		"position": Vector3.ZERO,
-		"jewels": 50,
+		"jewels": 999,
 		"subweapon": "bomb",
 		"y_rotation": 0.0
 	}

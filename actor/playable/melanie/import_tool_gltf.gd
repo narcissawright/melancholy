@@ -9,6 +9,16 @@ func post_import(scene):
 				if mesh is MeshInstance:
 					mesh.set_surface_material(0, preload("res://actor/playable/melanie/Melanie_Material.tres"))
 					mesh.layers = Layers.actor
+					
+			var bone_attachment = BoneAttachment.new()
+			skele.add_child(bone_attachment)
+			bone_attachment.set_owner(scene)
+			bone_attachment.name = "BombPos"
+			bone_attachment.bone_name = "bomb"
+			
+		if child.name == "AnimationPlayer":
+			child.get_animation("Idle").loop = true
+			child.get_animation("Walk").loop = true
 
 	var editor_light = DirectionalLight.new()
 	scene.add_child(editor_light)
@@ -18,7 +28,9 @@ func post_import(scene):
 	editor_light.transform.origin = Vector3(1, 1, 1)
 	editor_light.rotation_degrees = Vector3(-34.6, 10.16, -2.37)
 	
-#	var script = load("res://actor/playable/melanie/melanie_light_passer.gd")
-#	scene.set_script(script)
+	var anim_tree = load("res://actor/playable/melanie/AnimationTree.tscn").instance()
+	scene.add_child(anim_tree)
+	anim_tree.set_owner(scene)
+	anim_tree.active = true
 	
 	return scene
