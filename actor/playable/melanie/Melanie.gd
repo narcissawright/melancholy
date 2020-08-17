@@ -204,7 +204,7 @@ func update_horizontal_velocity() -> void:
 			else: sprint_count = 0
 		else: sprint_count = 0
 		
-		#speed = 1.067994 # test for walk animation
+		#speed = 1.709286 # test for walk animation
 		move_vec = direction * speed
 	
 	# Interpolate horizontal movement
@@ -332,7 +332,7 @@ e.g. BombSpawner or Bomb may call bomb pull or bomb throw.
 """
 
 func walk_animation() -> void:
-	anim_tree['parameters/IdleWalk/blend_amount'] = clamp(horizontal_velocity().length() / 1.067994, 0.0, 1.0)
+	anim_tree['parameters/IdleWalk/blend_amount'] = clamp(horizontal_velocity().length() / 1.65, 0.0, 1.0)
 
 ##  ##  ##  ######  ######  #####    ####    #####  ######
 ##  ### ##    ##    ##      ##  ##  ##  ##  ##        ##

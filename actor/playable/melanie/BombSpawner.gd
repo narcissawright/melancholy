@@ -14,6 +14,8 @@ func _ready() -> void:
 	Events.connect("player_damaged", self, "on_player_damaged")
 
 func process_state() -> void:
+	#translation.y = Game.player.get_node("melanie_test/AnimationPlayer").get_animation("Walk").get_track("Spine1").translation.y
+	
 	if not Game.player.shield.active:
 		if Input.is_action_just_pressed("subweapon"):
 			

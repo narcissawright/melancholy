@@ -14,6 +14,7 @@ func _ready() -> void:
 	Events.connect("player_damaged", self, "on_player_damaged")
 
 func _physics_process(_t:float) -> void:
+	
 	if sliding:
 		if Game.player.horizontal_velocity().length() < 5.0:
 			sliding = false
