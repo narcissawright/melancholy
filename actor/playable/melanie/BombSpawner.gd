@@ -8,6 +8,8 @@ var holding = false
 
 const jewel_cost:int = 5
 
+onready var tween = $Tween
+
 func _ready() -> void:
 	Events.connect("player_damaged", self, "on_player_damaged")
 
@@ -39,6 +41,9 @@ func spawn_bomb() -> void:
 	holding = true
 	Game.player.jewels -= jewel_cost
 	Game.player.lockplayer_for_frames(10)
+	tween.stop_all()
+	tween.interpolate_property(Game.player.anim_tree, 'parameters/BombBlend/blend_amount', null, 1.0, 0.1)
+	tween.start()
 
 # Buffered Throws
 func throw_bomb_asap(velocity) -> void:
@@ -57,9 +62,16 @@ func throw_bomb(velocity) -> void:
 	# Reparent and launch
 	current_bomb.reparent_to_game_world()
 	current_bomb.throw(velocity)
+	tween.stop_all()
 	if velocity != Vector3.ZERO:
 		# don't slow player when dropping, only throwing.
 		Game.player.lockplayer_for_frames(10)
+		
+		tween.interpolate_property(Game.player.anim_tree, 'parameters/BombBlend/blend_amount', null, 0.0, 0.1)
+	else:
+		tween.interpolate_property(Game.player.anim_tree, 'parameters/BombBlend/blend_amount', null, 0.0, 0.1)
+	
+	tween.start()
 
 # Drop
 func drop_bomb() -> void:

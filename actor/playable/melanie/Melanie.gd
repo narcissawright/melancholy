@@ -62,7 +62,7 @@ func _get_head_position() -> Vector3:
 	return head_position_node.global_transform.origin
 
 # AnimationTree
-onready var animtree = $melanie_test/AnimationTree
+onready var anim_tree = $melanie_test/AnimationTree
 
 #####   ######   ####   #####   ##  ##
 ##  ##  ##      ##  ##  ##  ##  ##  ##
@@ -204,6 +204,7 @@ func update_horizontal_velocity() -> void:
 			else: sprint_count = 0
 		else: sprint_count = 0
 		
+		#speed = 1.067994 # test for walk animation
 		move_vec = direction * speed
 	
 	# Interpolate horizontal movement
@@ -283,7 +284,7 @@ func lockplayer(reason) -> void:
 		lock_list.append(reason)
 	jumping = false
 	sprint_count = 0
-	material.set_shader_param("locked", true)
+	#material.set_shader_param("locked", true)
 
 func _on_Locked_timeout() -> void:
 	unlockplayer("timer")
@@ -331,7 +332,7 @@ e.g. BombSpawner or Bomb may call bomb pull or bomb throw.
 """
 
 func walk_animation() -> void:
-	animtree['parameters/IdleWalk/blend_amount'] = clamp(horizontal_velocity().length() / 10.0, 0.0, 1.0)
+	anim_tree['parameters/IdleWalk/blend_amount'] = clamp(horizontal_velocity().length() / 1.067994, 0.0, 1.0)
 
 ##  ##  ##  ######  ######  #####    ####    #####  ######
 ##  ### ##    ##    ##      ##  ##  ##  ##  ##        ##

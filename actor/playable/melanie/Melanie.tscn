@@ -376,6 +376,8 @@ collision_layer = 0
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, -0.5, 0 )
 shape = SubResource( 10 )
 
+[node name="Tween" type="Tween" parent="BombSpawner"]
+
 [node name="Timers" type="Node" parent="."]
 
 [node name="Locked" type="Timer" parent="Timers"]
