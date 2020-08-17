@@ -18,7 +18,7 @@ func post_import(scene):
 	editor_light.transform.origin = Vector3(1, 1, 1)
 	editor_light.rotation_degrees = Vector3(-34.6, 10.16, -2.37)
 	
-	var script = load("res://actor/playable/melanie/melanie_light_passer.gd")
-	scene.set_script(script)
+#	var script = load("res://actor/playable/melanie/melanie_light_passer.gd")
+#	scene.set_script(script)
 	
 	return scene
