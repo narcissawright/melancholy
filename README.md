@@ -170,3 +170,32 @@
 - Melancholy should have a dress or medium length skirt. Might keep same boots (I like this design). Unsure about other aspects of the outfit. Leggings/Tights probably good for both.
 - Melanie will have plum colored hair, Melancholy a blue color. The eye color should be different, too.
 - Melancholy's heartbeat should be slower (seen in the UI).
+
+
+## Current Limitations
+
+#### Clean line shader
+
+I wanted to make clean outlines (and inner lines) using combined depth+normals of the entire scene. right now getting this in a shader requires you to do a really complicated 2nd pass where everything renders only their normals first, I guess. it's annoying and bad. so hopefully Vulkan in Godot 4 will allow this kind of stuff. BUT, actually GDQuest released an interesting technique in the "Shader secrets" project. It also uses a 2nd pass shader but the lines came out cleaner than I imagined without having the normal data. So it might still be doable now, but it's not a priority.
+
+#### Inverse Kinematics
+
+IK can be achieved though animations that are exported, but having dynamic IK in-game (for sloped ground, etc), is not plausible with the current state of SkeletonIK. I will avoid this until SkeletonIK in Godot is much improved.
+
+#### Modeling, Animations, and Importing
+
+I feel like I need to write down some of the things I've learned after trying to get my 3D character working in Godot. 
+
+- You can make complex rigs with control bones, etc for animation in Blender. The animations will still come through, although the constraints and controls will not. Any kind of constraint or control (such as giving the eyes a look target, or the head a look target), needs to be created entirely in Godot (once you have confirmed that the head or eyes are cleanly capable of rotation in blender)
+
+- Preserve Volume in the Armature modifier does not exist in Godot; therefore all deformations will ignore this option. This means making clean deformations is more difficult, but you can still get 1:1 deformations afaik as long as you do not enable this.
+
+- Inherit Rotation, under an individual bone setting, must remain on. Disabling this will be ignored in Godot, and the animations will be incorrect. I don't believe that "Bake animation" will help with these issues either. Unfortunately, forcing inherited rotation makes certain aspects of animation more difficult, like keeping a foot flat on the ground as the shin moves and rotates.
+
+- GLTF works for now. I haven't explored other new options (such as the somewhat recent FBX support).
+
+- Writing an import script for complex models is helpful, as you can set all the needed materials, set up lighting etc. the moment the import occurs.
+
+- Currently, my animations import but the keyframes don't seem identical, and are set at a fixed interval (every tenth of a second). I don't know how to avoid this, perhaps making the animation a lot slower or spacing out the keyframes more in blender, then playing the animation faster in Godot. Currently this hasn't really resulted in a loss of animation quality though so far, so maybe this is a non-issue. 
+
+- Vertex Colors in shader. These come through already in SRGB form afaik, so when you read COLOR in a shader, something like 0.5 red in blender will turn into ~0.23 or something. This is very awkward for "Occlusion painting" as seen in the GGXrd graphical presentation, but it can certainly be worked around.
