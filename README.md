@@ -22,6 +22,7 @@
 
 #### `Partially Done`
 - Damaged. All damage right now simply locks you for a certain amount of frames. Would like to add other kinds of damage maybe. There is no death animation or anything yet.
+- Interacting. Item pickup is functional (no animation).
 
 #### `To Do`
 - Proper movement & physics on slopes and small ledges
@@ -31,7 +32,6 @@
 - Subweapon: TBD 
 - Ledge grab. Ledge movement (left or right), Ledge climb. Ledge release.
 - Crouch. Crouch movement. Slidekick (crouch while running). Divekick (crouch while in air)
-- Interacting. Opening door. Item pickup (on floor or in front as two diff animations?)
 - Respawn animation.
 - Power up system.
 
@@ -44,7 +44,7 @@
 
 #### `Progress: 0%`
 
-- Only has 1/4th the Max HP that Melanie has. Uses a magic meter instead of jewels.
+- Only has 1/4th the Max HP that Melanie has. Uses a magic meter instead of jewels. `Might not use a meter actually...?`
 - Immediately at her top grounded speed (slightly slower than Melanie's top grounded speed) while holding joystick fully. Glides across the ground instead of sprinting.
 - Has a bubble shield. Can absorb jewels (subweapon ammo) from afar.
 - Primary Attack - Orb (charge attack, can charge while doing any action. Lose charge upon damage). Only 1 Orb may be present at a time. Orb is a seeking projectile when charged.
@@ -91,6 +91,7 @@
 
 #### `Partially done`:
 - Powerup container (5 orbs, should look like they are energized.)
+- Contextual button hints (X to interact)
 
 #### `To do`
 - Item selector (in between subweapon and hp bar)
@@ -99,7 +100,6 @@
 - "Score/XP System" UI
 - Pause screen UI
 - Boss health
-- Contextual button hints (X to interact)
 
 #### `Maybe`
 - Input display

@@ -1,11 +1,11 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://ui/img/heart_normalmap_512.png" type="Texture" id=1]
 [ext_resource path="res://ui/img/UI_circle_subweapon.png" type="Texture" id=2]
 [ext_resource path="res://ui/HP.gd" type="Script" id=3]
 [ext_resource path="res://ui/img/hp_border.png" type="Texture" id=4]
 [ext_resource path="res://ui/img/UI_circle_health.png" type="Texture" id=5]
-[ext_resource path="res://ui/fonts/Univers57.tres" type="DynamicFont" id=6]
+[ext_resource path="res://ui/fonts/Roboto.tres" type="DynamicFont" id=6]
 [ext_resource path="res://ui/img/jewel_icon.png" type="Texture" id=7]
 [ext_resource path="res://shaders/heart.shader" type="Shader" id=8]
 [ext_resource path="res://ui/Jewel_count.gd" type="Script" id=9]
@@ -15,6 +15,10 @@
 [ext_resource path="res://ui/img/powerup_container_512.png" type="Texture" id=13]
 [ext_resource path="res://ui/Pause.gd" type="Script" id=14]
 [ext_resource path="res://ui/img/game_corner.png" type="Texture" id=15]
+[ext_resource path="res://ui/img/X.png" type="Texture" id=16]
+[ext_resource path="res://ui/img/bottom_shadow.png" type="Texture" id=17]
+[ext_resource path="res://ui/fonts/Roboto-Italic.ttf" type="DynamicFontData" id=18]
+[ext_resource path="res://ui/ContextHint.gd" type="Script" id=19]
 
 [sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 8 )
@@ -37,9 +41,49 @@ tracks/0/keys = {
 "values": [ Vector2( 0.9, 0.9 ), Vector2( 0.905, 0.905 ), Vector2( 0.9, 0.9 ), Vector2( 0.92, 0.92 ), Vector2( 0.88, 0.88 ), Vector2( 0.9, 0.9 ), Vector2( 0.905, 0.905 ), Vector2( 0.9, 0.9 ), Vector2( 0.9, 0.9 ) ]
 }
 
+[sub_resource type="DynamicFont" id=3]
+size = 24
+font_data = ExtResource( 18 )
+
+[sub_resource type="Animation" id=4]
+resource_name = "FadeIn"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "FadeOut"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
 [node name="UI" type="CanvasLayer"]
 pause_mode = 1
 layer = 3
+__meta__ = {
+"_edit_horizontal_guides_": [ 1062.2 ],
+"_edit_vertical_guides_": [ 884.089, 1037.8 ]
+}
 
 [node name="halfscreen" type="ColorRect" parent="."]
 visible = false
@@ -83,6 +127,9 @@ margin_top = 200.0
 margin_right = 1920.0
 margin_bottom = 235.0
 custom_fonts/font = ExtResource( 6 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
 text = "Game Paused"
 align = 1
 __meta__ = {
@@ -175,9 +222,14 @@ texture = ExtResource( 2 )
 position = Vector2( -12, 36 )
 
 [node name="Jewel_count" type="RichTextLabel" parent="Subweapon/Jewels"]
-margin_right = 45.0
-margin_bottom = 36.0
+margin_left = -2.0
+margin_top = 3.0
+margin_right = 44.0
+margin_bottom = 39.0
 custom_fonts/normal_font = ExtResource( 6 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
 bbcode_enabled = true
 bbcode_text = "[center]999[/center]"
 text = "999"
@@ -190,13 +242,13 @@ __meta__ = {
 
 [node name="JewelIcon_Outline" type="Sprite" parent="Subweapon/Jewels"]
 modulate = Color( 0, 0, 0, 1 )
-position = Vector2( -9, 17 )
+position = Vector2( -11, 17 )
 scale = Vector2( 0.35, 0.3 )
 texture = ExtResource( 7 )
 
 [node name="JewelIcon_Front" type="Sprite" parent="Subweapon/Jewels"]
 modulate = Color( 0, 0.823529, 0.729412, 1 )
-position = Vector2( -9, 17 )
+position = Vector2( -11, 17 )
 scale = Vector2( 0.25, 0.25 )
 texture = ExtResource( 7 )
 
@@ -255,3 +307,56 @@ position = Vector2( 0, 1034 )
 texture = ExtResource( 15 )
 centered = false
 flip_v = true
+
+[node name="ContextHint" type="Node2D" parent="."]
+script = ExtResource( 19 )
+
+[node name="Backdrop" type="Sprite" parent="ContextHint"]
+modulate = Color( 1, 1, 1, 0.690196 )
+position = Vector2( 960, 1032 )
+texture = ExtResource( 17 )
+
+[node name="PickUpText" type="Label" parent="ContextHint"]
+margin_left = 889.177
+margin_top = 1034.0
+margin_right = 990.177
+margin_bottom = 1063.0
+custom_fonts/font = SubResource( 3 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Pick Up"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ButtonShadow" type="Sprite" parent="ContextHint"]
+modulate = Color( 0, 0, 0, 0.501961 )
+position = Vector2( 1005, 1050 )
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 16 )
+
+[node name="Button" type="Sprite" parent="ContextHint"]
+modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
+position = Vector2( 1004, 1049 )
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 16 )
+
+[node name="Label" type="Label" parent="ContextHint"]
+visible = false
+margin_left = 1003.0
+margin_top = 1034.0
+margin_right = 1021.0
+margin_bottom = 1063.0
+custom_fonts/font = ExtResource( 6 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "X"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="ContextHint"]
+anims/FadeIn = SubResource( 4 )
+anims/FadeOut = SubResource( 5 )

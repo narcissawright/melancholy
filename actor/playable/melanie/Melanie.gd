@@ -6,12 +6,6 @@ extends KinematicBody
 ##    ##  ##      ##      ##  ##  ## ###  ##  ##
 ##    ##  ######  ######  ##  ##  ##  ##  ##  ######
 
-"""
-Things to think about...
-- External nodes currently alter player state sometimes, such as decreasing or increasing jewels.
-Should this be changed?
-"""
-
 # Time
 var framecount:int = 0
 
