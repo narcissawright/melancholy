@@ -2,7 +2,6 @@
 
 - 3D game project (Godot Engine)
 - Kind of like Castlevania N64 (structured levels) with some Zelda-ish mechanics (Z-Targeting) sprinkled in?
-- Graphics and visual design are currently taking a backseat to working on core mechanics w/ placeholder art.
 
 ## Two Characters
 
@@ -11,7 +10,9 @@
 
 ## Melanie - Sword & Shield - in-progress
 
-#### `Completed:`
+3D modeling and animations are in progress, but it is a long and slow process. 
+
+#### `Completed Mechanics:`
 - Naturally sprints when holding joystick fully (3s to build to full speed, subtle increase).
 - Jumping. Variable Jump Height. Leniency when falling off a ledge.
 - Impact landing. Landing from a height will result damage or being unable to move for a time.
@@ -29,7 +30,7 @@
 - Subweapon: TBD
 - Subweapon: TBD 
 - Ledge grab. Ledge movement (left or right), Ledge climb. Ledge release.
-- Crouch. Slide attack (crouch while running). Divekick (crouch while in air)
+- Crouch. Crouch movement. Slidekick (crouch while running). Divekick (crouch while in air)
 - Interacting. Opening door. Item pickup (on floor or in front as two diff animations?)
 - Respawn animation.
 - Power up system.
@@ -88,16 +89,17 @@
 - Current subweapon (only bombs so far)
 - Clock (Time of day)
 
-#### `To do`
+#### `Partially done`:
 - Powerup container (5 orbs, should look like they are energized.)
+
+#### `To do`
 - Item selector (in between subweapon and hp bar)
 - Day/Night indicator attached to Clock.
 - Speedrun timer
 - "Score/XP System" UI
 - Pause screen UI
 - Boss health
-- Melancholy magic stuff
-- General polish of the UI, for both light and dark scenes. should look cohesive and clean.
+- Contextual button hints (X to interact)
 
 #### `Maybe`
 - Input display
@@ -165,11 +167,12 @@
 
 ## Character Design:
 - Melanie should have shorter hair than Melancholy. Neither character will have bangs.
-- The hair covering Melanie's eye should not cover it much (less than it is now, with the current model.) Melancholy will have her eye more obscured.
+- The hair covering Melanie's eye should not cover it much. Melancholy will have her eye more obscured.
 - Would like to include a Cardigan for Melanie but would need to figure out the state of cloth simulation in Godot, and my GPU is old right now.
-- Melancholy should have a dress or medium length skirt. Might keep same boots (I like this design). Unsure about other aspects of the outfit. Leggings/Tights probably good for both.
+- Melancholy should have a dress or medium length skirt. Might keep same boots (I like this design, but perhaps black instead of brown). Unsure about other aspects of the outfit. Leggings/Tights probably good for both.
 - Melanie will have plum colored hair, Melancholy a blue color. The eye color should be different, too.
 - Melancholy's heartbeat should be slower (seen in the UI).
+- Melancholy should have slight "raccoon eyes," and look more tired and pale.
 
 
 ## Current Limitations
