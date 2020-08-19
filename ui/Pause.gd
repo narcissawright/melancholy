@@ -17,7 +17,7 @@ var time = 0.0
 
 var menu_items = ["Resume", "Customize", "Free Camera", "Quit Game"]
 
-var selected = Color(1, 1, 0.4, 1)
+var selected = Color(1, 1, 0.8, 1)
 var unselected = Color('a9b8b4')
 
 func _ready() -> void:
@@ -28,10 +28,10 @@ func pause_state_changed(state:bool) -> void:
 	visible = state
 	if state == true:
 		current_menu_index = RESUME
-		time = 0.0
 		update_menu_items()
 
 func update_menu_items() -> void:
+	time = 0.0
 	for i in pause_menu.get_child_count():
 		var menu_item = pause_menu.get_child(i)
 		menu_item.text = ">  " + menu_items[i] + "  <" if i == current_menu_index else menu_items[i]
@@ -57,20 +57,14 @@ func _process(t:float) -> void:
 					Game.quit_game()
 		else:
 			if Input.is_action_just_pressed("ui_down"):
-				if current_menu_index < QUIT_GAME:
-					current_menu_index += 1
-				else:
-					current_menu_index = RESUME
+				current_menu_index = posmod(current_menu_index + 1, 4)
 			if Input.is_action_just_pressed("ui_up"):
-				if current_menu_index > RESUME:
-					current_menu_index -= 1
-				else:
-					current_menu_index = QUIT_GAME
-					
+				current_menu_index = posmod(current_menu_index - 1, 4)
+			
 			# Update animated selected color
 			time += t
-			time = fmod(time, 0.5)
-			var blue = 0.4 if time < 0.25 else 0.8
+			time = fmod(time, 0.6)
+			var blue = 0.7 if time < 0.3 else 0.35
 			selected = Color(1, 1, blue, 1)
 			
 			if current_menu_index != prior_menu_index:

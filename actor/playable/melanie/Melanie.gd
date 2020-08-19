@@ -386,20 +386,21 @@ func forwards() -> Vector3:
 	return -transform.basis.z
 
 func handle_player_rotation() -> void:
-	if not is_locked():
+	if is_locked() or not grounded:
+		return
 		
-		# While grounded -- look towards movement direction
-		if not targeting and grounded:
-			var look_target_2d = Vector2(look_target.x, look_target.z).normalized()
-			if not look_target_2d.is_equal_approx(Vector2.ZERO): # If not moving, don't rotate
-				rotate_towards(look_target_2d)
-
-		# While targeting -- look towards target
-		elif targeting and zl_target != 0:
-			var look_target_2d := Vector2(translation.x, translation.z)
-			look_target_2d -= Vector2(TargetSystem.list[zl_target].pos.x, TargetSystem.list[zl_target].pos.z)
-			look_target_2d = -look_target_2d.normalized()
+	# While not targeting: Look towards movement direction
+	if not targeting:
+		var look_target_2d = Vector2(look_target.x, look_target.z).normalized()
+		if not look_target_2d.is_equal_approx(Vector2.ZERO): # If not moving, don't rotate
 			rotate_towards(look_target_2d)
+
+	# While targeting -- look towards target
+	elif targeting and zl_target != 0:
+		var look_target_2d := Vector2(translation.x, translation.z)
+		look_target_2d -= Vector2(TargetSystem.list[zl_target].pos.x, TargetSystem.list[zl_target].pos.z)
+		look_target_2d = -look_target_2d.normalized()
+		rotate_towards(look_target_2d)
 
 func rotate_towards(look_target_2d:Vector2) -> void:
 	# find the amount of radians needed to face target direction
