@@ -12,6 +12,8 @@ To do:
 onready var pause_menu = $MainMenu/menu_items
 onready var customize = $Customize
 
+var controller_display_visible = false
+
 enum { RESUME, CUSTOMIZE, FREE_CAMERA, QUIT_GAME }
 var current_menu_index = RESUME
 var time = 0.0
@@ -26,6 +28,8 @@ func _ready() -> void:
 	Events.connect("pause", self, "pause_state_changed")
 	
 func pause_state_changed(state:bool) -> void:
+	if controller_display_visible:
+		return
 	visible = state
 	if state == true:
 		current_menu_index = RESUME
@@ -49,7 +53,9 @@ func _process(t:float) -> void:
 				RESUME:
 					Game.unpause()
 				CUSTOMIZE:
+					controller_display_visible = true
 					customize.visible = not customize.visible
+					set_process(false)
 				FREE_CAMERA:
 					Game.cam.enable_pause_controls()
 					visible = false
