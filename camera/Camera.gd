@@ -182,7 +182,7 @@ func pause_controls() -> void:
 	if not pause_controls_enabled:
 		return
 	
-	if Input.is_action_just_pressed('ZL'):
+	if Input.is_action_just_pressed('L'):
 		# This will bring the camera back to where it was when the pause was initiated
 		pause_pan_velocity = Vector3.ZERO
 		current_pos = saved_cam_state.pos
@@ -218,8 +218,8 @@ func pause_controls() -> void:
 			pan = pan.normalized() * 10.0
 		
 		# Zoom while paused
-		if Input.is_action_pressed("A"): current_zoom += 0.1
-		if Input.is_action_pressed("X"): current_zoom -= 0.1
+		if Input.is_action_pressed("ZL"): current_zoom += 0.1
+		if Input.is_action_pressed("ZR"): current_zoom -= 0.1
 		current_zoom = clamp(current_zoom, 0.3, 10.0)
 		
 		# Rotate while paused

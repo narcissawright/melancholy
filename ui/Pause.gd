@@ -69,9 +69,12 @@ func _process(t:float) -> void:
 					
 			# Update animated selected color
 			time += t
-			time = fmod(time, 0.8)
-			var blue = 0.4 if time < 0.4 else 0.8
+			time = fmod(time, 0.5)
+			var blue = 0.4 if time < 0.25 else 0.8
 			selected = Color(1, 1, blue, 1)
 			
 			if current_menu_index != prior_menu_index:
 				update_menu_items()
+			else:
+				pause_menu.get_child(current_menu_index).modulate = selected
+				
