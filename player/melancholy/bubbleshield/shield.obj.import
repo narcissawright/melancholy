@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/shield.obj-e83b6fc64f13e083aa9c47770baf959f.mesh"
+
+[deps]
+
+files=[ "res://.import/shield.obj-e83b6fc64f13e083aa9c47770baf959f.mesh" ]
+
+source_file="res://player/melancholy/bubbleshield/shield.obj"
+dest_files=[ "res://.import/shield.obj-e83b6fc64f13e083aa9c47770baf959f.mesh", "res://.import/shield.obj-e83b6fc64f13e083aa9c47770baf959f.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

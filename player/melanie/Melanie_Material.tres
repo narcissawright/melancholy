@@ -1,0 +1,22 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=2]
+
+[ext_resource path="res://shaders/actor.shader" type="Shader" id=1]
+[ext_resource path="res://player/melanie/texture_shade.png" type="Texture" id=2]
+[ext_resource path="res://player/melanie/texture_lit.png" type="Texture" id=3]
+
+[resource]
+shader = ExtResource( 1 )
+shader_param/light_vec = Vector3( 0.57735, 0.57735, 0.57735 )
+shader_param/opacity_dither = false
+shader_param/celshaded = true
+shader_param/enable_rim = true
+shader_param/not_shaded = false
+shader_param/use_vertex_color = false
+shader_param/vertex_color_as_occlusion = false
+shader_param/color_lit = Color( 0.12549, 0.141176, 0.192157, 1 )
+shader_param/color_dim = Color( 0.1, 0.1, 0.12, 1 )
+shader_param/use_texture = true
+shader_param/damaged = false
+shader_param/locked = false
+shader_param/tex_lit = ExtResource( 3 )
+shader_param/tex_shaded = ExtResource( 2 )
