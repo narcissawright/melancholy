@@ -9,7 +9,8 @@ To do:
 	- are you sure you want to quit?
 """
 
-onready var pause_menu = $PauseMenu
+onready var pause_menu = $MainMenu/menu_items
+onready var customize = $Customize
 
 enum { RESUME, CUSTOMIZE, FREE_CAMERA, QUIT_GAME }
 var current_menu_index = RESUME
@@ -48,7 +49,7 @@ func _process(t:float) -> void:
 				RESUME:
 					Game.unpause()
 				CUSTOMIZE:
-					pass
+					customize.visible = not customize.visible
 				FREE_CAMERA:
 					Game.cam.enable_pause_controls()
 					visible = false
