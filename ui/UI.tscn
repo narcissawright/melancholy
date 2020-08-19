@@ -20,20 +20,19 @@
 [ext_resource path="res://ui/fonts/Roboto-Italic.ttf" type="DynamicFontData" id=18]
 [ext_resource path="res://ui/ContextHint.gd" type="Script" id=19]
 
-[sub_resource type="DynamicFont" id=6]
+[sub_resource type="DynamicFont" id=1]
 size = 48
 font_data = ExtResource( 17 )
 
-[sub_resource type="DynamicFont" id=8]
+[sub_resource type="DynamicFont" id=2]
 size = 31
 font_data = ExtResource( 17 )
 
-[sub_resource type="ShaderMaterial" id=1]
+[sub_resource type="ShaderMaterial" id=3]
 shader = ExtResource( 8 )
 shader_param/light_vec = Vector3( 0.680179, 0.654389, 0.33035 )
 
-[sub_resource type="Animation" id=2]
-resource_name = "heartbeat"
+[sub_resource type="Animation" id=4]
 loop = true
 step = 0.125
 tracks/0/type = "value"
@@ -49,16 +48,15 @@ tracks/0/keys = {
 "values": [ Vector2( 0.9, 0.9 ), Vector2( 0.905, 0.905 ), Vector2( 0.9, 0.9 ), Vector2( 0.92, 0.92 ), Vector2( 0.88, 0.88 ), Vector2( 0.9, 0.9 ), Vector2( 0.905, 0.905 ), Vector2( 0.9, 0.9 ), Vector2( 0.9, 0.9 ) ]
 }
 
-[sub_resource type="DynamicFont" id=7]
+[sub_resource type="DynamicFont" id=5]
 size = 24
 font_data = ExtResource( 17 )
 
-[sub_resource type="DynamicFont" id=3]
+[sub_resource type="DynamicFont" id=6]
 size = 24
 font_data = ExtResource( 18 )
 
-[sub_resource type="Animation" id=4]
-resource_name = "FadeIn"
+[sub_resource type="Animation" id=7]
 length = 0.1
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:modulate")
@@ -73,8 +71,7 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
 }
 
-[sub_resource type="Animation" id=5]
-resource_name = "FadeOut"
+[sub_resource type="Animation" id=8]
 length = 0.1
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:modulate")
@@ -121,7 +118,7 @@ script = ExtResource( 14 )
 [node name="ColorRect" type="ColorRect" parent="Pause"]
 margin_right = 1920.0
 margin_bottom = 1080.0
-color = Color( 0, 0, 0, 0.505882 )
+color = Color( 0, 0, 0, 0.752941 )
 __meta__ = {
 "_edit_lock_": true,
 "_edit_use_anchors_": false
@@ -131,7 +128,7 @@ __meta__ = {
 margin_top = 375.0
 margin_right = 1920.0
 margin_bottom = 435.0
-custom_fonts/font = SubResource( 6 )
+custom_fonts/font = SubResource( 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -157,7 +154,7 @@ modulate = Color( 1, 1, 0.4, 1 )
 margin_top = 460.0
 margin_right = 1920.0
 margin_bottom = 497.0
-custom_fonts/font = SubResource( 8 )
+custom_fonts/font = SubResource( 2 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -169,7 +166,7 @@ modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_top = 501.0
 margin_right = 1920.0
 margin_bottom = 538.0
-custom_fonts/font = SubResource( 8 )
+custom_fonts/font = SubResource( 2 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -181,7 +178,7 @@ modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_top = 542.0
 margin_right = 1920.0
 margin_bottom = 579.0
-custom_fonts/font = SubResource( 8 )
+custom_fonts/font = SubResource( 2 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -193,7 +190,7 @@ modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_top = 583.0
 margin_right = 1920.0
 margin_bottom = 620.0
-custom_fonts/font = SubResource( 8 )
+custom_fonts/font = SubResource( 2 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -259,7 +256,7 @@ __meta__ = {
 }
 
 [node name="Heart" type="Sprite" parent="HP/HeartScale"]
-material = SubResource( 1 )
+material = SubResource( 3 )
 scale = Vector2( 0.805, 0.805 )
 texture = ExtResource( 1 )
 normal_map = ExtResource( 1 )
@@ -273,7 +270,7 @@ position = Vector2( 39.8628, -43.7331 )
 [node name="HeartBeat" type="AnimationPlayer" parent="HP/HeartScale/Heart"]
 autoplay = "heartbeat"
 playback_speed = 0.75
-anims/heartbeat = SubResource( 2 )
+anims/heartbeat = SubResource( 4 )
 
 [node name="Subweapon" type="Node2D" parent="."]
 position = Vector2( 1870, 50 )
@@ -290,7 +287,7 @@ margin_left = -2.0
 margin_top = 3.0
 margin_right = 44.0
 margin_bottom = 39.0
-custom_fonts/normal_font = SubResource( 7 )
+custom_fonts/normal_font = SubResource( 5 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -388,7 +385,7 @@ margin_left = 889.177
 margin_top = 1034.0
 margin_right = 990.177
 margin_bottom = 1063.0
-custom_fonts/font = SubResource( 3 )
+custom_fonts/font = SubResource( 6 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -412,5 +409,5 @@ scale = Vector2( 0.25, 0.25 )
 texture = ExtResource( 16 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="ContextHint"]
-anims/FadeIn = SubResource( 4 )
-anims/FadeOut = SubResource( 5 )
+anims/FadeIn = SubResource( 7 )
+anims/FadeOut = SubResource( 8 )

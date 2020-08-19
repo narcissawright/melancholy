@@ -13,7 +13,7 @@ var sun_vec = Vector3(-0.446634, 0.893269, 0.050884).normalized()
 onready var sunlight = $'SunLight'
 var axis_of_rotation = Vector3(1, 0.5 ,0).normalized()
 #onready var sun_tex = load("res://img/sun.png")
-onready var blackbody_radiation = load('res://backgrounds/blackbody_radiation.tres')
+onready var blackbody_radiation = load('res://backgrounds/starfield/blackbody_radiation.tres')
 #var we = null # worldenvironment child node for setting ambient light based on time of day
 
 var star_field = null
@@ -24,9 +24,9 @@ func _ready():
 	
 	#if self.has_node('WorldEnvironment'):
 	#	we = $'WorldEnvironment'
-	textures.push_back(load("res://img/star_0_hd.png"))
-	textures.push_back(load("res://img/star_1_hd.png"))
-	textures.push_back(load("res://img/star_2_hd.png"))
+	textures.push_back(load("res://backgrounds/starfield/star_0_hd.png"))
+	textures.push_back(load("res://backgrounds/starfield/star_1_hd.png"))
+	textures.push_back(load("res://backgrounds/starfield/star_2_hd.png"))
 	if star_field == null:
 		create_star_field()
 
@@ -117,12 +117,12 @@ func _draw():
 	
 	var sun_rot = sun_vec.rotated(axis_of_rotation, deg2rad(rot_amount) )
 	
-	Debug.draw.begin(Mesh.PRIMITIVE_LINES)
-	Debug.draw.set_color(Color(1,1,0))
-	Debug.draw.add_vertex(Vector3(0, 2.5, 0))
-	Debug.draw.set_color(Color(0.3,0.3,1))
-	Debug.draw.add_vertex(Vector3(0, 2.5, 0) + sun_rot)
-	Debug.draw.end()
+#	Debug.draw.begin(Mesh.PRIMITIVE_LINES)
+#	Debug.draw.set_color(Color(1,1,0))
+#	Debug.draw.add_vertex(Vector3(0, 2.5, 0))
+#	Debug.draw.set_color(Color(0.3,0.3,1))
+#	Debug.draw.add_vertex(Vector3(0, 2.5, 0) + sun_rot)
+#	Debug.draw.end()
 	
 	sunlight.look_at(sun_rot, Vector3.UP)
 	sunlight.light_energy = ((-sun_rot.y + 1.0) / 2.0)

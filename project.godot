@@ -18,7 +18,7 @@ _global_script_class_icons={
 config/name="Melancholy"
 config/description="Godot 2020 project by NW"
 run/main_scene="res://scenes/testscene/TestScene.tscn"
-config/icon="res://img/icon.png"
+config/icon="res://icon.png"
 
 [autoload]
 
