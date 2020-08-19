@@ -29,6 +29,7 @@ var current_zoom:float = 3.2
 var custom_zoom:float = 3.2
 
 var mode = "auto" # "free", "first_person", "pause", "reset"
+var pause_controls_enabled = false
 
 onready var zoom_tween = $ZoomTween
 
@@ -106,6 +107,7 @@ func _on_pause_state_change(paused:bool) -> void:
 		zoom_tween.resume_all()
 		crosshair.visible = false
 		pause_pan_velocity = Vector3.ZERO
+		pause_controls_enabled = false
 		# Recover State
 		pan = saved_cam_state.pan
 		current_pos = saved_cam_state.pos
@@ -173,7 +175,12 @@ func rotate_cam(dir:Vector2) -> void:
 		new_pos.y = clamp(new_pos.y, -0.85, 0.85)
 		current_pos = new_pos
 
+func enable_pause_controls() -> void:
+	pause_controls_enabled = true
+
 func pause_controls() -> void:
+	if not pause_controls_enabled:
+		return
 	
 	if Input.is_action_just_pressed('ZL'):
 		# This will bring the camera back to where it was when the pause was initiated

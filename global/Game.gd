@@ -62,12 +62,18 @@ func _physics_process(t) -> void:
 		Debug.text.write("Time of day: " + time_readable(time_of_day))
 	
 	if Input.is_action_just_pressed("ui_cancel"):
-		get_tree().quit()
+		quit_game()
 	if Input.is_action_just_pressed("fullscreen"):
 		OS.window_fullscreen = !OS.window_fullscreen
 	if Input.is_action_just_pressed("pause"):
-		get_tree().paused = not get_tree().paused
-		Events.emit_signal("pause", get_tree().paused)
+		unpause()
+
+func unpause() -> void:
+	get_tree().paused = not get_tree().paused
+	Events.emit_signal("pause", get_tree().paused)
+
+func quit_game() -> void:
+	get_tree().quit()
 
 static func get_stick_input(which:String) -> Vector2:
 	"""
