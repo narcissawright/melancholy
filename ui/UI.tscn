@@ -1,4 +1,4 @@
-[gd_scene load_steps=78 format=2]
+[gd_scene load_steps=79 format=2]
 
 [ext_resource path="res://ui/img/heart_normalmap_512.png" type="Texture" id=1]
 [ext_resource path="res://ui/img/UI_circle_subweapon.png" type="Texture" id=2]
@@ -53,6 +53,7 @@
 [ext_resource path="res://ui/img/controller/l_lit.png" type="Texture" id=51]
 [ext_resource path="res://ui/img/controller/l_unlit.png" type="Texture" id=52]
 [ext_resource path="res://ui/ControllerDisplay.gd" type="Script" id=53]
+[ext_resource path="res://ui/img/input_action_bg.png" type="Texture" id=54]
 
 [sub_resource type="DynamicFont" id=1]
 size = 48
@@ -251,6 +252,9 @@ tracks/0/keys = {
 [node name="UI" type="CanvasLayer"]
 pause_mode = 1
 layer = 3
+__meta__ = {
+"_edit_vertical_guides_": [ 959.515 ]
+}
 
 [node name="halfscreen" type="ColorRect" parent="."]
 visible = false
@@ -287,6 +291,10 @@ __meta__ = {
 }
 
 [node name="MainMenu" type="Node2D" parent="Pause"]
+position = Vector2( 2.0791, 0 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="Game Paused" type="Label" parent="Pause/MainMenu"]
 margin_top = 375.0
@@ -299,6 +307,7 @@ custom_constants/shadow_offset_y = 2
 text = "Game Paused"
 align = 1
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -310,6 +319,8 @@ margin_right = 1920.0
 margin_bottom = 1080.0
 alignment = 1
 __meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -362,168 +373,144 @@ text = "Quit Game"
 align = 1
 
 [node name="Customize" type="Node2D" parent="Pause"]
-position = Vector2( 666, 333 )
+position = Vector2( 653, 333 )
 scale = Vector2( 0.5, 0.5 )
 script = ExtResource( 53 )
 
 [node name="ZR_Button" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 9 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="ZL_Button" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 10 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="L_Button" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 11 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="R_Button" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 12 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Controller_Base" type="Sprite" parent="Pause/Customize"]
 texture = ExtResource( 27 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="A_Button" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 13 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="B_Button" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 14 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Y_Button" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 15 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="X_Button" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 16 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Start_Button" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 17 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Select_Button" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 18 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="D_Up" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 19 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="D_Down" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 20 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="D_Left" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 21 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="D_Right" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 22 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Left_Stick" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 23 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Right_Stick" type="AnimatedSprite" parent="Pause/Customize"]
 frames = SubResource( 24 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Tween" type="Tween" parent="Pause/Customize"]
 
-[node name="Node2D" type="Node2D" parent="Pause"]
-visible = false
+[node name="ActionDisplay" type="Node2D" parent="Pause/Customize"]
+position = Vector2( -1332, -666 )
+scale = Vector2( 2, 2 )
 
-[node name="TextAction" type="Label" parent="Pause/Node2D"]
-margin_left = 1495.28
-margin_top = 452.06
-margin_right = 1596.28
-margin_bottom = 481.06
-custom_fonts/font = SubResource( 6 )
-custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
-custom_constants/shadow_offset_x = 2
-custom_constants/shadow_offset_y = 2
-text = "Jump"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="ZR_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 1500, 250 )
+texture = ExtResource( 54 )
 
-[node name="TextAction2" type="Label" parent="Pause/Node2D"]
-margin_left = 1348.79
-margin_top = 510.779
-margin_right = 1504.79
-margin_bottom = 539.779
-custom_fonts/font = SubResource( 6 )
-custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
-custom_constants/shadow_offset_x = 2
-custom_constants/shadow_offset_y = 2
-text = "Primary Attack"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TextAction3" type="Label" parent="Pause/Node2D"]
-margin_left = 1260.92
-margin_top = 448.871
-margin_right = 1382.92
-margin_bottom = 477.871
-custom_fonts/font = SubResource( 6 )
-custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
-custom_constants/shadow_offset_x = 2
-custom_constants/shadow_offset_y = 2
-text = "Subweapon"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TextAction4" type="Label" parent="Pause/Node2D"]
-margin_left = 1328.28
-margin_top = 391.578
-margin_right = 1527.28
-margin_bottom = 420.578
-custom_fonts/font = SubResource( 6 )
-custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
-custom_constants/shadow_offset_x = 2
-custom_constants/shadow_offset_y = 2
-text = "Contextual Interact"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TextAction5" type="Label" parent="Pause/Node2D"]
-margin_left = 1249.02
-margin_top = 302.599
-margin_right = 1546.02
-margin_bottom = 331.599
-custom_fonts/font = SubResource( 6 )
-custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
-custom_constants/shadow_offset_x = 2
-custom_constants/shadow_offset_y = 2
-text = "Crouch / Slide / Dive"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TextAction6" type="Label" parent="Pause/Node2D"]
-margin_left = 1069.45
-margin_top = 256.219
-margin_right = 1366.45
-margin_bottom = 285.219
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/ZR_Action"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
 custom_fonts/font = SubResource( 6 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
@@ -531,111 +518,71 @@ custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
 text = "Shield"
 align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
-[node name="TextAction7" type="Label" parent="Pause/Node2D"]
-margin_left = 627.332
-margin_top = 254.587
-margin_right = 924.332
-margin_bottom = 283.587
+[node name="R_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 1500, 300 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/R_Action"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
 custom_fonts/font = SubResource( 6 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
-text = "Target"
+text = "Crouch / Slide / Dive"
 align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
-[node name="TextAction8" type="Label" parent="Pause/Node2D"]
-margin_left = 527.433
-margin_top = 299.485
-margin_right = 824.433
-margin_bottom = 328.485
+[node name="ZL_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 450, 250 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/ZL_Action"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
 custom_fonts/font = SubResource( 6 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
-text = "Reset Camera"
+text = "Target or Reset Camera"
 align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
-[node name="TextAction9" type="Label" parent="Pause/Node2D"]
-margin_left = 438.758
-margin_top = 437.548
-margin_right = 735.758
-margin_bottom = 466.548
-custom_fonts/font = SubResource( 6 )
-custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
-custom_constants/shadow_offset_x = 2
-custom_constants/shadow_offset_y = 2
-text = "Move"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="Select_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 822, 250 )
+texture = ExtResource( 54 )
 
-[node name="TextAction10" type="Label" parent="Pause/Node2D"]
-margin_left = 732.843
-margin_top = 659.796
-margin_right = 1029.84
-margin_bottom = 688.796
-custom_fonts/font = SubResource( 6 )
-custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
-custom_constants/shadow_offset_x = 2
-custom_constants/shadow_offset_y = 2
-text = "Select Item"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TextAction13" type="Label" parent="Pause/Node2D"]
-margin_left = 988.765
-margin_top = 772.042
-margin_right = 1292.76
-margin_bottom = 801.042
-custom_fonts/font = SubResource( 6 )
-custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
-custom_constants/shadow_offset_x = 2
-custom_constants/shadow_offset_y = 2
-text = "Rotate Camera / First Person"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TextAction11" type="Label" parent="Pause/Node2D"]
-margin_left = 883.253
-margin_top = 223.158
-margin_right = 1180.25
-margin_bottom = 252.158
-custom_fonts/font = SubResource( 6 )
-custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
-custom_constants/shadow_offset_x = 2
-custom_constants/shadow_offset_y = 2
-text = "Pause"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TextAction12" type="Label" parent="Pause/Node2D"]
-margin_left = 753.048
-margin_top = 223.158
-margin_right = 1050.05
-margin_bottom = 252.158
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/Select_Action"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
 custom_fonts/font = SubResource( 6 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
@@ -643,7 +590,348 @@ custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
 text = "Use Item"
 align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
 __meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Start_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 1123, 250 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/Start_Action"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Pause"
+align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="L_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 450, 300 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/L_Action"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Reset Camera"
+align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Left_Stick" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 450, 400 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/Left_Stick"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Move"
+align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Left_Stick_Click" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 450, 450 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/Left_Stick_Click"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "
+"
+align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="D_Up_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 450, 550 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/D_Up_Action"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "
+"
+align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="D_Left_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 450, 600 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/D_Left_Action"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Scroll Inventory Left"
+align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="D_Right_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 450, 650 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/D_Right_Action"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Scroll Inventory Right"
+align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="D_Down_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 450, 700 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/D_Down_Action"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="X_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 1500, 400 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/X_Action"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Contextual Interact"
+align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Y_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 1500, 450 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/Y_Action"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Use Subweapon"
+align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="A_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 1500, 500 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/A_Action"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Jump"
+align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="B_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 1500, 550 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/B_Action"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Primary Attack"
+align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Right_Stick" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 1500, 650 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/Right_Stick"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Rotate Camera"
+align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Right_Stick_Click" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+position = Vector2( 1500, 700 )
+texture = ExtResource( 54 )
+
+[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/Right_Stick_Click"]
+margin_left = -143.0
+margin_top = -20.0
+margin_right = 143.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "First Person Camera"
+align = 1
+valign = 1
+clip_text = true
+max_lines_visible = 1
+__meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
