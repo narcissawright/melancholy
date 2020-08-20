@@ -377,136 +377,137 @@ position = Vector2( 653, 333 )
 scale = Vector2( 0.5, 0.5 )
 script = ExtResource( 53 )
 
-[node name="ZR_Button" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="ControllerButtons" type="Node2D" parent="Pause/Customize"]
+
+[node name="ZR" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 9 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="ZL_Button" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="ZL" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 10 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="L_Button" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="L" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 11 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="R_Button" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="R" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 12 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Controller_Base" type="Sprite" parent="Pause/Customize"]
+[node name="Controller_Base" type="Sprite" parent="Pause/Customize/ControllerButtons"]
 texture = ExtResource( 27 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="A_Button" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="A" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 13 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="B_Button" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="B" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 14 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Y_Button" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="Y" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 15 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="X_Button" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="X" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 16 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Start_Button" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="Start" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 17 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Select_Button" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="Select" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 18 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="D_Up" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="D_Up" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 19 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="D_Down" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="D_Down" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 20 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="D_Left" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="D_Left" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 21 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="D_Right" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="D_Right" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 22 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Left_Stick" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="Left_Stick" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 23 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Right_Stick" type="AnimatedSprite" parent="Pause/Customize"]
+[node name="Right_Stick" type="AnimatedSprite" parent="Pause/Customize/ControllerButtons"]
 frames = SubResource( 24 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Tween" type="Tween" parent="Pause/Customize"]
-
-[node name="ActionDisplay" type="Node2D" parent="Pause/Customize"]
+[node name="ActionLabels" type="Node2D" parent="Pause/Customize"]
 position = Vector2( -1332, -666 )
 scale = Vector2( 2, 2 )
 
-[node name="ZR_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="ZR" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 1500, 250 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/ZR_Action"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/ZR"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -526,11 +527,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="R_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="R" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 1500, 300 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/R_Action"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/R"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -550,11 +552,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ZL_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="ZL" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 450, 250 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/ZL_Action"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/ZL"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -574,11 +577,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Select_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="Select" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 822, 250 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/Select_Action"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/Select"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -598,11 +602,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Start_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="Start" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 1123, 250 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/Start_Action"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/Start"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -622,11 +627,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="L_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="L" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 450, 300 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/L_Action"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/L"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -646,11 +652,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Left_Stick" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="Left_Stick" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 450, 400 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/Left_Stick"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/Left_Stick"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -670,11 +677,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Left_Stick_Click" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="L3" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 450, 450 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/Left_Stick_Click"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/L3"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -695,11 +703,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="D_Up_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="D_Up" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 450, 550 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/D_Up_Action"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/D_Up"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -720,11 +729,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="D_Left_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="D_Left" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 450, 600 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/D_Left_Action"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/D_Left"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -744,11 +754,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="D_Right_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="D_Right" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 450, 650 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/D_Right_Action"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/D_Right"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -768,11 +779,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="D_Down_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="D_Down" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 450, 700 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/D_Down_Action"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/D_Down"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -791,11 +803,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="X_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="X" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 1500, 400 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/X_Action"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/X"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -815,11 +828,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Y_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="Y" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 1500, 450 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/Y_Action"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/Y"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -839,11 +853,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="A_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="A" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 1500, 500 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/A_Action"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/A"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -863,11 +878,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="B_Action" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="B" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 1500, 550 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/B_Action"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/B"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -887,11 +903,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Right_Stick" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="Right_Stick" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 1500, 650 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/Right_Stick"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/Right_Stick"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -911,11 +928,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Right_Stick_Click" type="Sprite" parent="Pause/Customize/ActionDisplay"]
+[node name="R3" type="Sprite" parent="Pause/Customize/ActionLabels"]
+self_modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
 position = Vector2( 1500, 700 )
 texture = ExtResource( 54 )
 
-[node name="Label" type="Label" parent="Pause/Customize/ActionDisplay/Right_Stick_Click"]
+[node name="Label" type="Label" parent="Pause/Customize/ActionLabels/R3"]
 margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
@@ -934,6 +952,8 @@ __meta__ = {
 "_edit_lock_": true,
 "_edit_use_anchors_": false
 }
+
+[node name="Tween" type="Tween" parent="Pause/Customize"]
 
 [node name="HP" type="Node2D" parent="."]
 position = Vector2( 50, 50 )
