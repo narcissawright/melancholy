@@ -434,6 +434,8 @@ centered = false
 frames = SubResource( 24 )
 centered = false
 
+[node name="Tween" type="Tween" parent="Pause/Customize"]
+
 [node name="HP" type="Node2D" parent="."]
 position = Vector2( 50, 50 )
 script = ExtResource( 3 )
