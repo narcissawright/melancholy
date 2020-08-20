@@ -1,5 +1,58 @@
 extends Node2D
 
+"""
+Need to figure out a full list of all available button assignments
+
+- Target or Reset Camera (either, depending on context)
+- Target
+- Reset Camera
+
+- Jump
+- Primary Attack
+- Subweapon
+- Interact
+- Shield
+
+- Scroll Items Right
+- Scroll Items Left
+- Use Item
+
+- Pause (maybe cannot be remapped?)
+
+- First Person
+
+- Move (Stick Only)
+- Rotate Camera (Stick Only ?)
+
+- Move Up
+- Move Down
+- Move Left
+- Move Right
+- Custom move value
+"""
+
+
+"""
+Additionally, I want to figure out what exact options will be available for control stick customization
+
+- Outer deadzone
+- Inner deadzone
+- Ramp
+- Digital Notches
+"""
+
+
+"""
+Finally, I want to have other options:
+
+- Invert X axis (Right Stick, also first person?)
+- Invert Y axis (Right Stick, also first person?)
+- Camera Zoom
+- Show/Hide UI
+- Show/Hide contextual button prompt?
+- Rounded screen corners ON/OFF
+"""
+
 # Tween
 onready var tween = $Tween
 onready var color_pressed = Color("597dce")

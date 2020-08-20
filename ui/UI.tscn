@@ -190,6 +190,10 @@ animations = [ {
 "speed": 0.0
 } ]
 
+[sub_resource type="DynamicFont" id=6]
+size = 24
+font_data = ExtResource( 18 )
+
 [sub_resource type="ShaderMaterial" id=3]
 shader = ExtResource( 8 )
 shader_param/light_vec = Vector3( 0.680179, 0.654389, 0.33035 )
@@ -213,10 +217,6 @@ tracks/0/keys = {
 [sub_resource type="DynamicFont" id=5]
 size = 24
 font_data = ExtResource( 17 )
-
-[sub_resource type="DynamicFont" id=6]
-size = 24
-font_data = ExtResource( 18 )
 
 [sub_resource type="Animation" id=7]
 length = 0.1
@@ -435,6 +435,217 @@ frames = SubResource( 24 )
 centered = false
 
 [node name="Tween" type="Tween" parent="Pause/Customize"]
+
+[node name="Node2D" type="Node2D" parent="Pause"]
+visible = false
+
+[node name="TextAction" type="Label" parent="Pause/Node2D"]
+margin_left = 1495.28
+margin_top = 452.06
+margin_right = 1596.28
+margin_bottom = 481.06
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Jump"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextAction2" type="Label" parent="Pause/Node2D"]
+margin_left = 1348.79
+margin_top = 510.779
+margin_right = 1504.79
+margin_bottom = 539.779
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Primary Attack"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextAction3" type="Label" parent="Pause/Node2D"]
+margin_left = 1260.92
+margin_top = 448.871
+margin_right = 1382.92
+margin_bottom = 477.871
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Subweapon"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextAction4" type="Label" parent="Pause/Node2D"]
+margin_left = 1328.28
+margin_top = 391.578
+margin_right = 1527.28
+margin_bottom = 420.578
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Contextual Interact"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextAction5" type="Label" parent="Pause/Node2D"]
+margin_left = 1249.02
+margin_top = 302.599
+margin_right = 1546.02
+margin_bottom = 331.599
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Crouch / Slide / Dive"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextAction6" type="Label" parent="Pause/Node2D"]
+margin_left = 1069.45
+margin_top = 256.219
+margin_right = 1366.45
+margin_bottom = 285.219
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Shield"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextAction7" type="Label" parent="Pause/Node2D"]
+margin_left = 627.332
+margin_top = 254.587
+margin_right = 924.332
+margin_bottom = 283.587
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Target"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextAction8" type="Label" parent="Pause/Node2D"]
+margin_left = 527.433
+margin_top = 299.485
+margin_right = 824.433
+margin_bottom = 328.485
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Reset Camera"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextAction9" type="Label" parent="Pause/Node2D"]
+margin_left = 438.758
+margin_top = 437.548
+margin_right = 735.758
+margin_bottom = 466.548
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Move"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextAction10" type="Label" parent="Pause/Node2D"]
+margin_left = 732.843
+margin_top = 659.796
+margin_right = 1029.84
+margin_bottom = 688.796
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Select Item"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextAction13" type="Label" parent="Pause/Node2D"]
+margin_left = 988.765
+margin_top = 772.042
+margin_right = 1292.76
+margin_bottom = 801.042
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Rotate Camera / First Person"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextAction11" type="Label" parent="Pause/Node2D"]
+margin_left = 883.253
+margin_top = 223.158
+margin_right = 1180.25
+margin_bottom = 252.158
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Pause"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextAction12" type="Label" parent="Pause/Node2D"]
+margin_left = 753.048
+margin_top = 223.158
+margin_right = 1050.05
+margin_bottom = 252.158
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Use Item"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="HP" type="Node2D" parent="."]
 position = Vector2( 50, 50 )
