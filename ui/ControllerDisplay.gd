@@ -147,7 +147,7 @@ func update_pressed(key:String, pressed:bool) -> void:
 			tween.interpolate_property(controller[key].button, 
 				"modulate", Color(1,1,1,1), color_pressed, 0.2)
 		tween.interpolate_property(controller[key].action, 
-			"self_modulate", Color(1,1,1,1), color_pressed, 0.2)
+			"self_modulate", color_pressed, Color("30346d"), 0.2)
 		controller[key].action.get_node("Label").set("custom_colors/font_color", Color("ffffff"))
 		tween.start()
 	else:
@@ -173,14 +173,17 @@ func _process(_t:float) -> void:
 	# Check for stick movement
 	var left_stick_pos = Game.get_stick_input("left")
 	var right_stick_pos = Game.get_stick_input("right")
+	
 	controller["left_stick"].button.position = left_stick_pos * 35.0
 	controller["right_stick"].button.position = right_stick_pos * 35.0
+	
 	if not controller["left_stick"].pressed and left_stick_pos != Vector2.ZERO:
 		controller["left_stick"].pressed = true
 		update_pressed("left_stick", true)
 	elif controller["left_stick"].pressed and left_stick_pos == Vector2.ZERO:
 		controller["left_stick"].pressed = false
 		update_pressed("left_stick", false)
+		
 	if not controller["right_stick"].pressed and right_stick_pos != Vector2.ZERO:
 		controller["right_stick"].pressed = true
 		update_pressed("right_stick", true)

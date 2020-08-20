@@ -376,6 +376,9 @@ align = 1
 position = Vector2( 653, 333 )
 scale = Vector2( 0.5, 0.5 )
 script = ExtResource( 53 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="ControllerButtons" type="Node2D" parent="Pause/Customize"]
 
