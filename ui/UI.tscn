@@ -1201,7 +1201,7 @@ visible = false
 texture = ExtResource( 57 )
 
 [node name="Raw_Input" type="Node2D" parent="Pause/JoyStickCalibration"]
-position = Vector2( 1280, 300 )
+position = Vector2( 1280, 375 )
 
 [node name="Label" type="Label" parent="Pause/JoyStickCalibration/Raw_Input"]
 margin_left = -127.0
@@ -1233,9 +1233,25 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Line2D" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
-width = 2.0
-default_color = Color( 1, 1, 1, 1 )
+[node name="Length" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+width = 1.0
+default_color = Color( 0.501961, 0.501961, 1, 1 )
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="X" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+width = 1.0
+default_color = Color( 1, 0.501961, 0.501961, 1 )
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="Y" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+width = 1.0
+default_color = Color( 0.501961, 1, 0.501961, 1 )
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
@@ -1277,9 +1293,25 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Line2D" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
-width = 2.0
-default_color = Color( 1, 1, 1, 1 )
+[node name="Length" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
+width = 1.0
+default_color = Color( 0.501961, 0.501961, 1, 1 )
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="X" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
+width = 1.0
+default_color = Color( 1, 0.501961, 0.501961, 1 )
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="Y" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
+width = 1.0
+default_color = Color( 0.501961, 1, 0.501961, 1 )
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
@@ -1304,6 +1336,7 @@ __meta__ = {
 }
 
 [node name="Final_Input" type="Node2D" parent="Pause/JoyStickCalibration"]
+visible = false
 position = Vector2( 1280, 850 )
 
 [node name="Label" type="Label" parent="Pause/JoyStickCalibration/Final_Input"]
