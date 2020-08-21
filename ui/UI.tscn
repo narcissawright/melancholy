@@ -1,4 +1,4 @@
-[gd_scene load_steps=91 format=2]
+[gd_scene load_steps=90 format=2]
 
 [ext_resource path="res://ui/img/heart_normalmap_512.png" type="Texture" id=1]
 [ext_resource path="res://ui/img/UI_circle_subweapon.png" type="Texture" id=2]
@@ -54,12 +54,11 @@
 [ext_resource path="res://ui/img/controller/l_unlit.png" type="Texture" id=52]
 [ext_resource path="res://ui/ControllerDisplay.gd" type="Script" id=53]
 [ext_resource path="res://ui/img/input_action_bg.png" type="Texture" id=54]
-[ext_resource path="res://ui/img/controller/joystick_calibration.png" type="Texture" id=55]
 [ext_resource path="res://ui/JoyStickCalibration.gd" type="Script" id=56]
-[ext_resource path="res://backgrounds/starfield/star_2_hd.png" type="Texture" id=57]
 [ext_resource path="res://ui/img/controller/stickpos.png" type="Texture" id=58]
 [ext_resource path="res://ui/img/controller/joystick_calibration_linework.png" type="Texture" id=59]
 [ext_resource path="res://ui/fonts/RobotoMono-Medium.ttf" type="DynamicFontData" id=60]
+[ext_resource path="res://ui/img/controller/joystick_calibration_bgsquare.png" type="Texture" id=61]
 
 [sub_resource type="DynamicFont" id=31]
 size = 31
@@ -209,53 +208,90 @@ font_data = ExtResource( 18 )
 size = 48
 font_data = ExtResource( 17 )
 
-[sub_resource type="Shader" id=25]
+[sub_resource type="Shader" id=32]
 code = "shader_type canvas_item;
 render_mode unshaded;
 
-uniform float outer_deadzone = 0.938;
+uniform vec2 stick_pos = vec2(0,0);
+uniform float outer_deadzone = 0.9;
 uniform float inner_deadzone = 0.1225;
+uniform float xy_deadzone = 0.1;
 uniform float ramp = 2.0;
 
-const vec3 full_input = vec3(1,1,1);
+const vec4 full_input = vec4(0.5,0.5,1.0,0.5);
 const vec3 no_input =   vec3(0,0,0);
 const vec3 full_mix = vec3(1, 0.3, 0.3);
 const vec3 no_mix = vec3 (0.3, 0.3, 1);
 
 void fragment() {
-	COLOR = texture(TEXTURE, UV);
-	float len = length(UV - vec2(0.5, 0.5)) * 2.0;
+	COLOR = vec4(0,0,0,0);
 	
-	if (len > outer_deadzone) {
-		COLOR.rgb = full_input;
-	} else if (len < inner_deadzone) {
-		COLOR.rgb = no_input;
-	}  else {
-		COLOR.rgb = mix(no_mix, full_mix, pow(len, ramp));
+	// how do we determine which area it is in?
+	vec2 position = (UV - vec2(0.5, 0.5)) * 2.0;
+	if (abs(position.x) < xy_deadzone) {
+		COLOR += vec4(1.0, 0.5, 0.5, 0.3);
 	}
 	
-	vec3 mix_amount = mix(no_input, full_input, len);
+	if (abs(position.y) < xy_deadzone) {
+		COLOR += vec4(0.5, 1.0, 0.5, 0.3);
+	}
 	
-	// antialiasing
-//	float aa_factor = fwidth(len);
-//	float blend_amt = smoothstep(outer_deadzone - aa_factor, outer_deadzone, len);
-//	COLOR.rgb = mix(mix_amount, full_input, blend_amt);
+	float len = length(position);
+	if (len > 0.9) {
+		COLOR += vec4(0.5, 0.5, 1, 0.3);
+	}
+	
+	COLOR.a = 0.2;
+	
+	
+	//COLOR = vec4(position.x, position.y, 0, 1);
+	
+	
+	
+	
+	
+	
+
+	//float len = length(UV - vec2(0.5, 0.5)) * 2.0;
+	
+	//float aa_factor = fwidth(len);
+	//float blend_amt = smoothstep(outer_deadzone - aa_factor, outer_deadzone, len);
+	//COLOR.rgba = mix(vec4(0,0,0,0), full_input, blend_amt);
+	
+	
+	
+	
+	//if (len > outer_deadzone) {
+	//	COLOR.rgb = full_input;
+	//} 
+	
+	
+//	else if (len < inner_deadzone) {
+//		COLOR.rgb = no_input;
+//	}  else {
+//		COLOR.rgb = mix(no_mix, full_mix, pow(len, ramp));
+//	}
+//
+//	vec3 mix_amount = mix(no_input, full_input, len);
+	
 }"
 custom_defines = ""
 
-[sub_resource type="ShaderMaterial" id=26]
-shader = SubResource( 25 )
-shader_param/outer_deadzone = 0.938
+[sub_resource type="ShaderMaterial" id=33]
+shader = SubResource( 32 )
+shader_param/stick_pos = Vector2( 0, 0 )
+shader_param/outer_deadzone = 0.9
 shader_param/inner_deadzone = 0.1225
+shader_param/xy_deadzone = 0.1
 shader_param/ramp = 2.0
-
-[sub_resource type="DynamicFont" id=28]
-size = 31
-font_data = ExtResource( 18 )
 
 [sub_resource type="DynamicFont" id=30]
 size = 12
 font_data = ExtResource( 60 )
+
+[sub_resource type="DynamicFont" id=28]
+size = 31
+font_data = ExtResource( 18 )
 
 [sub_resource type="Animation" id=7]
 length = 0.1
@@ -1186,20 +1222,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="CalibrationCircle" type="Sprite" parent="Pause/JoyStickCalibration"]
-visible = false
-material = SubResource( 26 )
-position = Vector2( -1.18921, 0 )
-texture = ExtResource( 55 )
-
-[node name="StickPos_Left" type="Sprite" parent="Pause/JoyStickCalibration/CalibrationCircle"]
-scale = Vector2( 3, 3 )
-texture = ExtResource( 58 )
-
-[node name="StickPos_Right" type="Sprite" parent="Pause/JoyStickCalibration/CalibrationCircle"]
-visible = false
-texture = ExtResource( 57 )
-
 [node name="Raw_Input" type="Node2D" parent="Pause/JoyStickCalibration"]
 position = Vector2( 1280, 375 )
 
@@ -1219,16 +1241,31 @@ __meta__ = {
 [node name="Left" type="Sprite" parent="Pause/JoyStickCalibration/Raw_Input"]
 texture = ExtResource( 59 )
 
-[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
-margin_left = 173.0
-margin_top = -168.0
-margin_right = 426.0
-margin_bottom = -131.0
-custom_fonts/font = SubResource( 28 )
-custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
-text = "Right Stick"
-align = 1
-valign = 1
+[node name="Deadzone" type="Sprite" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+show_behind_parent = true
+material = SubResource( 33 )
+texture = ExtResource( 61 )
+
+[node name="YDead" type="ColorRect" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+visible = false
+show_behind_parent = true
+margin_left = -127.0
+margin_top = -20.0
+margin_right = 127.0
+margin_bottom = 20.0
+color = Color( 0.501961, 1, 0.501961, 0.501961 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="XDead" type="ColorRect" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+visible = false
+show_behind_parent = true
+margin_left = -20.0
+margin_top = -127.0
+margin_right = 20.0
+margin_bottom = 127.0
+color = Color( 1, 0.501961, 0.501961, 0.501961 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -1258,7 +1295,6 @@ end_cap_mode = 2
 antialiased = true
 
 [node name="StickPos" type="Sprite" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
-scale = Vector2( 4, 4 )
 texture = ExtResource( 58 )
 
 [node name="Data" type="RichTextLabel" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
@@ -1275,14 +1311,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Right" type="Sprite" parent="Pause/JoyStickCalibration/Raw_Input"]
-position = Vector2( 300, 0 )
-texture = ExtResource( 59 )
-
-[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
-margin_left = -426.587
+[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+margin_left = -126.587
 margin_top = -168.077
-margin_right = -173.587
+margin_right = 126.413
 margin_bottom = -131.077
 custom_fonts/font = SubResource( 28 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
@@ -1292,6 +1324,10 @@ valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Right" type="Sprite" parent="Pause/JoyStickCalibration/Raw_Input"]
+position = Vector2( 300, 0 )
+texture = ExtResource( 59 )
 
 [node name="Length" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
 width = 1.0
@@ -1318,7 +1354,6 @@ end_cap_mode = 2
 antialiased = true
 
 [node name="StickPos" type="Sprite" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
-scale = Vector2( 4, 4 )
 texture = ExtResource( 58 )
 
 [node name="Data" type="RichTextLabel" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
@@ -1331,6 +1366,20 @@ bbcode_enabled = true
 bbcode_text = "[center][color=#ff8080]X +0.000[/color] | [color=#80ff80]Y +0.000[/color] | [color=#8080ff]Length 1.000[/color]"
 text = "X +0.000 | Y +0.000 | Length 1.000"
 scroll_active = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
+margin_left = -127.0
+margin_top = -168.0
+margin_right = 126.0
+margin_bottom = -131.0
+custom_fonts/font = SubResource( 28 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+text = "Right Stick"
+align = 1
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -1513,7 +1562,6 @@ anims/FadeIn = SubResource( 7 )
 anims/FadeOut = SubResource( 8 )
 
 [node name="InGameUI" type="Node2D" parent="."]
-visible = false
 
 [node name="PowerupContainer" type="Node2D" parent="InGameUI"]
 position = Vector2( 90, 70 )

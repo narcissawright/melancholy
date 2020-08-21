@@ -1,7 +1,7 @@
 extends Node2D
 
 const size = 256
-const greyed_out:String = "404040"
+const greyed_out:String = "606060"
 
 #onready var calibration_circle = $CalibrationCircle
 #onready var stickpos_l = $CalibrationCircle/StickPos_Left
