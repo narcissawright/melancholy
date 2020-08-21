@@ -3,14 +3,14 @@ extends Node2D
 """
 To do:
 	- code cleanup
-	- slight blur of the 3d world or something when paused
+	- slight blur of the 3d world or something when paused?
 	- sfx
 	- customize (options and stuff)
 	- are you sure you want to quit?
 """
 
 onready var pause_menu = $MainMenu/menu_items
-onready var customize = $Customize
+onready var customize = $InputDisplay
 
 var controller_display_visible = false
 

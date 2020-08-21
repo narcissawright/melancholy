@@ -12,6 +12,9 @@ var timescale:float = 1
 
 const GRAVITY:float = -20.0
 
+var joystick_outer_deadzone = 0.88
+var joystick_inner_deadzone = 0.015
+
 func _init() -> void:
 	OS.window_position = Vector2(172, 30) # so it shows up on my monitor in a comfy spot
 	OS.window_size = Vector2(1280, 720)
@@ -75,7 +78,7 @@ func unpause() -> void:
 func quit_game() -> void:
 	get_tree().quit()
 
-static func get_stick_input(which:String) -> Vector2:
+func get_stick_input(which:String) -> Vector2:
 	"""
 	this function takes in 'left' or 'right'
 	referring to the left and right control sticks on the joypad
@@ -95,5 +98,13 @@ static func get_stick_input(which:String) -> Vector2:
 	elif length < 0.015: # lower limit
 		return Vector2()
 	axes = axes*axes.abs() # easing
+	
+#	var length:float = axes.length()
+#	if length > joystick_outer_deadzone: # upper limit
+#		return axes.normalized()
+#	elif length < joystick_inner_deadzone: # lower limit
+#		return Vector2.ZERO
+#	axes = axes*axes.abs() # easing
+	
 	
 	return axes
