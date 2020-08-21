@@ -253,4 +253,5 @@ select={
 
 quality/filters/anisotropic_filter_level=2
 quality/filters/msaa=1
+quality/depth/hdr=false
 environment/default_environment="res://backgrounds/default_env.tres"

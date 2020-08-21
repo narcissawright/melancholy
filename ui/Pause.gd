@@ -11,6 +11,7 @@ To do:
 
 onready var pause_menu = $MainMenu/menu_items
 onready var customize = $InputDisplay
+onready var ingameui = $"../InGameUI"
 
 var controller_display_visible = false
 
@@ -31,6 +32,7 @@ func pause_state_changed(state:bool) -> void:
 	if controller_display_visible:
 		return
 	visible = state
+	ingameui.visible = not state
 	if state == true:
 		current_menu_index = RESUME
 		update_menu_items()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=86 format=2]
+[gd_scene load_steps=91 format=2]
 
 [ext_resource path="res://ui/img/heart_normalmap_512.png" type="Texture" id=1]
 [ext_resource path="res://ui/img/UI_circle_subweapon.png" type="Texture" id=2]
@@ -58,6 +58,12 @@
 [ext_resource path="res://ui/JoyStickCalibration.gd" type="Script" id=56]
 [ext_resource path="res://backgrounds/starfield/star_2_hd.png" type="Texture" id=57]
 [ext_resource path="res://ui/img/controller/stickpos.png" type="Texture" id=58]
+[ext_resource path="res://ui/img/controller/joystick_calibration_linework.png" type="Texture" id=59]
+[ext_resource path="res://ui/fonts/RobotoMono-Medium.ttf" type="DynamicFontData" id=60]
+
+[sub_resource type="DynamicFont" id=31]
+size = 31
+font_data = ExtResource( 17 )
 
 [sub_resource type="DynamicFont" id=1]
 size = 48
@@ -199,6 +205,10 @@ animations = [ {
 size = 24
 font_data = ExtResource( 18 )
 
+[sub_resource type="DynamicFont" id=29]
+size = 48
+font_data = ExtResource( 17 )
+
 [sub_resource type="Shader" id=25]
 code = "shader_type canvas_item;
 render_mode unshaded;
@@ -239,33 +249,13 @@ shader_param/outer_deadzone = 0.938
 shader_param/inner_deadzone = 0.1225
 shader_param/ramp = 2.0
 
-[sub_resource type="DynamicFont" id=27]
-size = 24
-font_data = ExtResource( 17 )
+[sub_resource type="DynamicFont" id=28]
+size = 31
+font_data = ExtResource( 18 )
 
-[sub_resource type="ShaderMaterial" id=3]
-shader = ExtResource( 8 )
-shader_param/light_vec = Vector3( 0.680179, 0.654389, 0.33035 )
-
-[sub_resource type="Animation" id=4]
-loop = true
-step = 0.125
-tracks/0/type = "value"
-tracks/0/path = NodePath(".:scale")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
-"update": 0,
-"values": [ Vector2( 0.9, 0.9 ), Vector2( 0.905, 0.905 ), Vector2( 0.9, 0.9 ), Vector2( 0.92, 0.92 ), Vector2( 0.88, 0.88 ), Vector2( 0.9, 0.9 ), Vector2( 0.905, 0.905 ), Vector2( 0.9, 0.9 ), Vector2( 0.9, 0.9 ) ]
-}
-
-[sub_resource type="DynamicFont" id=5]
-size = 24
-font_data = ExtResource( 17 )
+[sub_resource type="DynamicFont" id=30]
+size = 12
+font_data = ExtResource( 60 )
 
 [sub_resource type="Animation" id=7]
 length = 0.1
@@ -295,6 +285,30 @@ tracks/0/keys = {
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
 "values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="DynamicFont" id=5]
+size = 24
+font_data = ExtResource( 17 )
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = ExtResource( 8 )
+shader_param/light_vec = Vector3( 0.680179, 0.654389, 0.33035 )
+
+[sub_resource type="Animation" id=4]
+loop = true
+step = 0.125
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0.9, 0.9 ), Vector2( 0.905, 0.905 ), Vector2( 0.9, 0.9 ), Vector2( 0.92, 0.92 ), Vector2( 0.88, 0.88 ), Vector2( 0.9, 0.9 ), Vector2( 0.905, 0.905 ), Vector2( 0.9, 0.9 ), Vector2( 0.9, 0.9 ) ]
 }
 
 [node name="UI" type="CanvasLayer"]
@@ -338,7 +352,61 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="CustomizeMenu\?" type="VBoxContainer" parent="Pause"]
+visible = false
+margin_left = 200.0
+margin_top = 200.0
+margin_right = 688.0
+margin_bottom = 360.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ViewControls" type="Label" parent="Pause/CustomizeMenu\?"]
+margin_right = 488.0
+margin_bottom = 37.0
+custom_fonts/font = SubResource( 31 )
+text = "View Controls"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ViewControls2" type="Label" parent="Pause/CustomizeMenu\?"]
+margin_top = 41.0
+margin_right = 488.0
+margin_bottom = 78.0
+custom_fonts/font = SubResource( 31 )
+text = "Remap Buttons"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ViewControls3" type="Label" parent="Pause/CustomizeMenu\?"]
+margin_top = 82.0
+margin_right = 488.0
+margin_bottom = 119.0
+custom_fonts/font = SubResource( 31 )
+text = "Configure Control Sticks"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ViewControls4" type="Label" parent="Pause/CustomizeMenu\?"]
+margin_top = 123.0
+margin_right = 488.0
+margin_bottom = 160.0
+custom_fonts/font = SubResource( 31 )
+text = "Reset to Default"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="MainMenu" type="Node2D" parent="Pause"]
+visible = false
 position = Vector2( -0.590576, 0 )
 __meta__ = {
 "_edit_group_": true
@@ -1008,10 +1076,118 @@ __meta__ = {
 [node name="Tween" type="Tween" parent="Pause/InputDisplay"]
 
 [node name="JoyStickCalibration" type="Node2D" parent="Pause"]
-position = Vector2( 1440, 540 )
 script = ExtResource( 56 )
 
+[node name="JoyStick Calibration" type="Label" parent="Pause/JoyStickCalibration"]
+margin_left = 200.0
+margin_top = 160.0
+margin_right = 754.0
+margin_bottom = 217.0
+custom_fonts/font = SubResource( 29 )
+text = "Joystick Calibration"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Menu" type="Node2D" parent="Pause/JoyStickCalibration"]
+
+[node name="OuterDeadzone" type="Label" parent="Pause/JoyStickCalibration/Menu"]
+margin_left = 222.247
+margin_top = 269.391
+margin_right = 822.247
+margin_bottom = 306.391
+custom_fonts/font = SubResource( 31 )
+text = "Outer Deadzone"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BG" type="ColorRect" parent="Pause/JoyStickCalibration/Menu/OuterDeadzone"]
+margin_left = 298.0
+margin_top = 3.0
+margin_right = 502.0
+margin_bottom = 37.0
+color = Color( 0.501961, 0.501961, 0.501961, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Visual" type="ColorRect" parent="Pause/JoyStickCalibration/Menu/OuterDeadzone"]
+margin_left = 450.0
+margin_top = 5.0
+margin_right = 500.0
+margin_bottom = 35.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Numerical" type="Label" parent="Pause/JoyStickCalibration/Menu/OuterDeadzone"]
+margin_right = 600.0
+margin_bottom = 37.0
+custom_fonts/font = SubResource( 31 )
+text = "0.875"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="InnerDeadzone" type="Label" parent="Pause/JoyStickCalibration/Menu"]
+margin_left = 222.247
+margin_top = 320.0
+margin_right = 710.247
+margin_bottom = 357.0
+custom_fonts/font = SubResource( 31 )
+text = "Inner Deadzone"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BG" type="ColorRect" parent="Pause/JoyStickCalibration/Menu/InnerDeadzone"]
+margin_left = 298.0
+margin_top = 3.0
+margin_right = 502.0
+margin_bottom = 37.0
+color = Color( 0.501961, 0.501961, 0.501961, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Visual" type="ColorRect" parent="Pause/JoyStickCalibration/Menu/InnerDeadzone"]
+margin_left = 300.0
+margin_top = 5.0
+margin_right = 350.0
+margin_bottom = 35.0
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Numerical" type="Label" parent="Pause/JoyStickCalibration/Menu/InnerDeadzone"]
+margin_right = 600.0
+margin_bottom = 37.0
+custom_fonts/font = SubResource( 31 )
+text = "0.125"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ResetToDefault" type="Label" parent="Pause/JoyStickCalibration/Menu"]
+margin_left = 220.003
+margin_top = 387.31
+margin_right = 708.003
+margin_bottom = 424.31
+custom_fonts/font = SubResource( 31 )
+text = "Reset to Default"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="CalibrationCircle" type="Sprite" parent="Pause/JoyStickCalibration"]
+visible = false
 material = SubResource( 26 )
 position = Vector2( -1.18921, 0 )
 texture = ExtResource( 55 )
@@ -1024,163 +1200,211 @@ texture = ExtResource( 58 )
 visible = false
 texture = ExtResource( 57 )
 
-[node name="XY" type="RichTextLabel" parent="Pause/JoyStickCalibration"]
-margin_left = -141.678
-margin_top = -386.0
-margin_right = 144.322
-margin_bottom = -259.0
-custom_fonts/normal_font = SubResource( 27 )
+[node name="Raw_Input" type="Node2D" parent="Pause/JoyStickCalibration"]
+position = Vector2( 1280, 300 )
+
+[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Raw_Input"]
+margin_left = -127.0
+margin_top = -225.0
+margin_right = 427.0
+margin_bottom = -168.0
+custom_fonts/font = SubResource( 29 )
+text = "Raw"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Left" type="Sprite" parent="Pause/JoyStickCalibration/Raw_Input"]
+texture = ExtResource( 59 )
+
+[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+margin_left = 173.0
+margin_top = -168.0
+margin_right = 426.0
+margin_bottom = -131.0
+custom_fonts/font = SubResource( 28 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+text = "Right Stick"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Line2D" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+width = 2.0
+default_color = Color( 1, 1, 1, 1 )
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="StickPos" type="Sprite" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+scale = Vector2( 4, 4 )
+texture = ExtResource( 58 )
+
+[node name="Data" type="RichTextLabel" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+margin_left = -128.0
+margin_top = 131.0
+margin_right = 128.0
+margin_bottom = 153.0
+custom_fonts/normal_font = SubResource( 30 )
 bbcode_enabled = true
-bbcode_text = "[center][color=#ff2020]X: VALUE[/color]
-[color=#20B020]Y: VALUE[/color][/center]"
-text = "X: VALUE
-Y: VALUE"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HP" type="Node2D" parent="."]
-position = Vector2( 50, 50 )
-script = ExtResource( 3 )
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="HP_Bar_Tween" type="Tween" parent="HP"]
-
-[node name="HP_Empty" type="ColorRect" parent="HP"]
-margin_left = 32.0
-margin_top = -6.0
-margin_right = 913.0
-margin_bottom = 6.0
-color = Color( 0, 0, 0, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HP_Bar_Dark" type="ColorRect" parent="HP"]
-margin_left = 32.0
-margin_top = -6.0
-margin_right = 913.0
-margin_bottom = 6.0
-color = Color( 0.4, 0.0470588, 0.0862745, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HP_Bar_Light" type="ColorRect" parent="HP"]
-margin_left = 32.0
-margin_top = -6.0
-margin_right = 913.0
-margin_bottom = 6.0
-color = Color( 0.764706, 0.137255, 0.152941, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HP_Border" type="TextureRect" parent="HP"]
-margin_left = 31.0
-margin_top = -6.0
-margin_right = 915.0
-margin_bottom = 6.0
-texture = ExtResource( 4 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HeartScale" type="Node2D" parent="HP"]
-scale = Vector2( 0.14, 0.14 )
-
-[node name="HeartCircle" type="Sprite" parent="HP/HeartScale"]
-texture = ExtResource( 5 )
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="Heart" type="Sprite" parent="HP/HeartScale"]
-material = SubResource( 3 )
-scale = Vector2( 0.805, 0.805 )
-texture = ExtResource( 1 )
-normal_map = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="Light" type="Position2D" parent="HP/HeartScale/Heart"]
-position = Vector2( 39.8628, -43.7331 )
-
-[node name="HeartBeat" type="AnimationPlayer" parent="HP/HeartScale/Heart"]
-autoplay = "heartbeat"
-playback_speed = 0.75
-anims/heartbeat = SubResource( 4 )
-
-[node name="Subweapon" type="Node2D" parent="."]
-position = Vector2( 1870, 50 )
-
-[node name="Sprite" type="Sprite" parent="Subweapon"]
-scale = Vector2( 0.14, 0.14 )
-texture = ExtResource( 2 )
-
-[node name="Jewels" type="Node2D" parent="Subweapon"]
-position = Vector2( -12, 36 )
-
-[node name="Jewel_count" type="RichTextLabel" parent="Subweapon/Jewels"]
-margin_left = -2.0
-margin_top = 3.0
-margin_right = 44.0
-margin_bottom = 39.0
-custom_fonts/normal_font = SubResource( 5 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_constants/shadow_offset_x = 2
-custom_constants/shadow_offset_y = 2
-bbcode_enabled = true
-bbcode_text = "[center]999[/center]"
-text = "999"
-fit_content_height = true
+bbcode_text = "[center][color=#ff8080]X +0.000[/color] | [color=#80ff80]Y +0.000[/color] | [color=#8080ff]Length 1.000[/color]"
+text = "X +0.000 | Y +0.000 | Length 1.000"
 scroll_active = false
-script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="JewelIcon_Outline" type="Sprite" parent="Subweapon/Jewels"]
-modulate = Color( 0, 0, 0, 1 )
-position = Vector2( -11, 17 )
-scale = Vector2( 0.35, 0.3 )
-texture = ExtResource( 7 )
+[node name="Right" type="Sprite" parent="Pause/JoyStickCalibration/Raw_Input"]
+position = Vector2( 300, 0 )
+texture = ExtResource( 59 )
 
-[node name="JewelIcon_Front" type="Sprite" parent="Subweapon/Jewels"]
-modulate = Color( 0, 0.823529, 0.729412, 1 )
-position = Vector2( -11, 17 )
-scale = Vector2( 0.25, 0.25 )
-texture = ExtResource( 7 )
+[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
+margin_left = -426.587
+margin_top = -168.077
+margin_right = -173.587
+margin_bottom = -131.077
+custom_fonts/font = SubResource( 28 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+text = "Left Stick"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Clock" type="Node2D" parent="."]
-position = Vector2( 50, 1030 )
-scale = Vector2( 0.14, 0.14 )
-script = ExtResource( 12 )
+[node name="Line2D" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
+width = 2.0
+default_color = Color( 1, 1, 1, 1 )
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
 
-[node name="ClockSprite" type="Sprite" parent="Clock"]
-texture = ExtResource( 11 )
+[node name="StickPos" type="Sprite" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
+scale = Vector2( 4, 4 )
+texture = ExtResource( 58 )
 
-[node name="Minutes" type="Sprite" parent="Clock/ClockSprite"]
-modulate = Color( 1, 0.364706, 0.615686, 1 )
-self_modulate = Color( 0.890196, 0.921569, 0.933333, 1 )
-rotation = 5.45415
-scale = Vector2( 0.75, 1.5 )
-texture = ExtResource( 10 )
+[node name="Data" type="RichTextLabel" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
+margin_left = -128.0
+margin_top = 131.0
+margin_right = 128.0
+margin_bottom = 153.0
+custom_fonts/normal_font = SubResource( 30 )
+bbcode_enabled = true
+bbcode_text = "[center][color=#ff8080]X +0.000[/color] | [color=#80ff80]Y +0.000[/color] | [color=#8080ff]Length 1.000[/color]"
+text = "X +0.000 | Y +0.000 | Length 1.000"
+scroll_active = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Hours" type="Sprite" parent="Clock/ClockSprite"]
-rotation = 0.986111
-texture = ExtResource( 10 )
+[node name="Final_Input" type="Node2D" parent="Pause/JoyStickCalibration"]
+position = Vector2( 1280, 850 )
 
-[node name="PowerupContainer" type="Node2D" parent="."]
-position = Vector2( 90, 70 )
-scale = Vector2( 0.4, 0.4 )
+[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Final_Input"]
+margin_left = -127.0
+margin_top = -225.0
+margin_right = 427.0
+margin_bottom = -168.0
+custom_fonts/font = SubResource( 29 )
+text = "Final"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Sprite" type="Sprite" parent="PowerupContainer"]
-texture = ExtResource( 13 )
-centered = false
+[node name="Left" type="Sprite" parent="Pause/JoyStickCalibration/Final_Input"]
+texture = ExtResource( 59 )
+
+[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Final_Input/Left"]
+margin_left = 173.0
+margin_top = -168.0
+margin_right = 426.0
+margin_bottom = -131.0
+custom_fonts/font = SubResource( 28 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+text = "Right Stick"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Line2D" type="Line2D" parent="Pause/JoyStickCalibration/Final_Input/Left"]
+width = 2.0
+default_color = Color( 1, 1, 1, 1 )
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="StickPos" type="Sprite" parent="Pause/JoyStickCalibration/Final_Input/Left"]
+scale = Vector2( 4, 4 )
+texture = ExtResource( 58 )
+
+[node name="Data" type="RichTextLabel" parent="Pause/JoyStickCalibration/Final_Input/Left"]
+margin_left = -128.0
+margin_top = 131.0
+margin_right = 128.0
+margin_bottom = 153.0
+custom_fonts/normal_font = SubResource( 30 )
+bbcode_enabled = true
+bbcode_text = "[center][color=#ff8080]X +0.000[/color] | [color=#80ff80]Y +0.000[/color] | [color=#8080ff]Length 1.000[/color]"
+text = "X +0.000 | Y +0.000 | Length 1.000"
+scroll_active = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Right" type="Sprite" parent="Pause/JoyStickCalibration/Final_Input"]
+position = Vector2( 300, 0 )
+texture = ExtResource( 59 )
+
+[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Final_Input/Right"]
+margin_left = -426.587
+margin_top = -168.077
+margin_right = -173.587
+margin_bottom = -131.077
+custom_fonts/font = SubResource( 28 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+text = "Left Stick"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Line2D" type="Line2D" parent="Pause/JoyStickCalibration/Final_Input/Right"]
+width = 2.0
+default_color = Color( 1, 1, 1, 1 )
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="StickPos" type="Sprite" parent="Pause/JoyStickCalibration/Final_Input/Right"]
+scale = Vector2( 4, 4 )
+texture = ExtResource( 58 )
+
+[node name="Data" type="RichTextLabel" parent="Pause/JoyStickCalibration/Final_Input/Right"]
+margin_left = -128.0
+margin_top = 131.0
+margin_right = 128.0
+margin_bottom = 153.0
+custom_fonts/normal_font = SubResource( 30 )
+bbcode_enabled = true
+bbcode_text = "[center][color=#ff8080]X +0.000[/color] | [color=#80ff80]Y +0.000[/color] | [color=#8080ff]Length 1.000[/color]"
+text = "X +0.000 | Y +0.000 | Length 1.000"
+scroll_active = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="RoundedEdges" type="Node2D" parent="."]
 __meta__ = {
@@ -1212,6 +1436,7 @@ centered = false
 flip_v = true
 
 [node name="ContextHint" type="Node2D" parent="."]
+modulate = Color( 1, 1, 1, 0 )
 script = ExtResource( 19 )
 __meta__ = {
 "_edit_group_": true
@@ -1253,3 +1478,149 @@ texture = ExtResource( 16 )
 [node name="AnimationPlayer" type="AnimationPlayer" parent="ContextHint"]
 anims/FadeIn = SubResource( 7 )
 anims/FadeOut = SubResource( 8 )
+
+[node name="InGameUI" type="Node2D" parent="."]
+visible = false
+
+[node name="PowerupContainer" type="Node2D" parent="InGameUI"]
+position = Vector2( 90, 70 )
+scale = Vector2( 0.4, 0.4 )
+
+[node name="Sprite" type="Sprite" parent="InGameUI/PowerupContainer"]
+texture = ExtResource( 13 )
+centered = false
+
+[node name="Clock" type="Node2D" parent="InGameUI"]
+position = Vector2( 50, 1030 )
+scale = Vector2( 0.14, 0.14 )
+script = ExtResource( 12 )
+
+[node name="ClockSprite" type="Sprite" parent="InGameUI/Clock"]
+texture = ExtResource( 11 )
+
+[node name="Minutes" type="Sprite" parent="InGameUI/Clock/ClockSprite"]
+modulate = Color( 1, 0.364706, 0.615686, 1 )
+self_modulate = Color( 0.890196, 0.921569, 0.933333, 1 )
+rotation = 5.45415
+scale = Vector2( 0.75, 1.5 )
+texture = ExtResource( 10 )
+
+[node name="Hours" type="Sprite" parent="InGameUI/Clock/ClockSprite"]
+rotation = 0.986111
+texture = ExtResource( 10 )
+
+[node name="Subweapon" type="Node2D" parent="InGameUI"]
+position = Vector2( 1870, 50 )
+
+[node name="Sprite" type="Sprite" parent="InGameUI/Subweapon"]
+scale = Vector2( 0.14, 0.14 )
+texture = ExtResource( 2 )
+
+[node name="Jewels" type="Node2D" parent="InGameUI/Subweapon"]
+position = Vector2( -12, 36 )
+
+[node name="Jewel_count" type="RichTextLabel" parent="InGameUI/Subweapon/Jewels"]
+margin_left = -2.0
+margin_top = 3.0
+margin_right = 44.0
+margin_bottom = 39.0
+custom_fonts/normal_font = SubResource( 5 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+bbcode_enabled = true
+bbcode_text = "[center]999[/center]"
+text = "999"
+fit_content_height = true
+scroll_active = false
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="JewelIcon_Outline" type="Sprite" parent="InGameUI/Subweapon/Jewels"]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( -11, 17 )
+scale = Vector2( 0.35, 0.3 )
+texture = ExtResource( 7 )
+
+[node name="JewelIcon_Front" type="Sprite" parent="InGameUI/Subweapon/Jewels"]
+modulate = Color( 0, 0.823529, 0.729412, 1 )
+position = Vector2( -11, 17 )
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 7 )
+
+[node name="HP" type="Node2D" parent="InGameUI"]
+position = Vector2( 50, 50 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="HP_Bar_Tween" type="Tween" parent="InGameUI/HP"]
+
+[node name="HP_Empty" type="ColorRect" parent="InGameUI/HP"]
+margin_left = 32.0
+margin_top = -6.0
+margin_right = 913.0
+margin_bottom = 6.0
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HP_Bar_Dark" type="ColorRect" parent="InGameUI/HP"]
+margin_left = 32.0
+margin_top = -6.0
+margin_right = 913.0
+margin_bottom = 6.0
+color = Color( 0.4, 0.0470588, 0.0862745, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HP_Bar_Light" type="ColorRect" parent="InGameUI/HP"]
+margin_left = 32.0
+margin_top = -6.0
+margin_right = 913.0
+margin_bottom = 6.0
+color = Color( 0.764706, 0.137255, 0.152941, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HP_Border" type="TextureRect" parent="InGameUI/HP"]
+margin_left = 31.0
+margin_top = -6.0
+margin_right = 915.0
+margin_bottom = 6.0
+texture = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HeartScale" type="Node2D" parent="InGameUI/HP"]
+scale = Vector2( 0.14, 0.14 )
+
+[node name="HeartCircle" type="Sprite" parent="InGameUI/HP/HeartScale"]
+texture = ExtResource( 5 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Heart" type="Sprite" parent="InGameUI/HP/HeartScale"]
+material = SubResource( 3 )
+scale = Vector2( 0.805, 0.805 )
+texture = ExtResource( 1 )
+normal_map = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Light" type="Position2D" parent="InGameUI/HP/HeartScale/Heart"]
+position = Vector2( 39.8628, -43.7331 )
+
+[node name="HeartBeat" type="AnimationPlayer" parent="InGameUI/HP/HeartScale/Heart"]
+autoplay = "heartbeat"
+playback_speed = 0.75
+anims/heartbeat = SubResource( 4 )
