@@ -27,7 +27,7 @@ func get_index_of_priority_interactable() -> int:
 
 func _on_InteractArea_area_entered(area: Area) -> void:
 	if list.size() == 0:
-		Game.ui.get_node("ContextHint").fadein()
+		Game.ui.get_node("ContextHint").fadein(area.type)
 	list.append(area)
 	
 func _on_InteractArea_area_exited(area: Area) -> void:

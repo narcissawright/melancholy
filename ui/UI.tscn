@@ -1,11 +1,11 @@
-[gd_scene load_steps=90 format=2]
+[gd_scene load_steps=91 format=2]
 
 [ext_resource path="res://ui/img/heart_normalmap_512.png" type="Texture" id=1]
 [ext_resource path="res://ui/img/UI_circle_subweapon.png" type="Texture" id=2]
 [ext_resource path="res://ui/HP.gd" type="Script" id=3]
 [ext_resource path="res://ui/img/hp_border.png" type="Texture" id=4]
 [ext_resource path="res://ui/img/UI_circle_health.png" type="Texture" id=5]
-[ext_resource path="res://ui/img/bottom_shadow.png" type="Texture" id=6]
+[ext_resource path="res://ui/img/controller/4buttons_B.png" type="Texture" id=6]
 [ext_resource path="res://ui/img/jewel_icon.png" type="Texture" id=7]
 [ext_resource path="res://shaders/heart.shader" type="Shader" id=8]
 [ext_resource path="res://ui/Jewel_count.gd" type="Script" id=9]
@@ -15,7 +15,7 @@
 [ext_resource path="res://ui/img/powerup_container_512.png" type="Texture" id=13]
 [ext_resource path="res://ui/Pause.gd" type="Script" id=14]
 [ext_resource path="res://ui/img/game_corner.png" type="Texture" id=15]
-[ext_resource path="res://ui/img/X.png" type="Texture" id=16]
+[ext_resource path="res://ui/img/controller/4buttons_X.png" type="Texture" id=16]
 [ext_resource path="res://ui/fonts/Roboto-Medium.ttf" type="DynamicFontData" id=17]
 [ext_resource path="res://ui/fonts/Roboto-Italic.ttf" type="DynamicFontData" id=18]
 [ext_resource path="res://ui/ContextHint.gd" type="Script" id=19]
@@ -54,6 +54,7 @@
 [ext_resource path="res://ui/img/controller/l_unlit.png" type="Texture" id=52]
 [ext_resource path="res://ui/ControllerDisplay.gd" type="Script" id=53]
 [ext_resource path="res://ui/img/input_action_bg.png" type="Texture" id=54]
+[ext_resource path="res://ui/img/controller/4buttons_A.png" type="Texture" id=55]
 [ext_resource path="res://ui/JoyStickCalibration.gd" type="Script" id=56]
 [ext_resource path="res://ui/img/controller/stickpos.png" type="Texture" id=58]
 [ext_resource path="res://ui/img/controller/joystick_calibration_linework.png" type="Texture" id=59]
@@ -208,6 +209,10 @@ font_data = ExtResource( 18 )
 size = 48
 font_data = ExtResource( 17 )
 
+[sub_resource type="DynamicFont" id=28]
+size = 24
+font_data = ExtResource( 18 )
+
 [sub_resource type="Shader" id=32]
 code = "shader_type canvas_item;
 render_mode unshaded;
@@ -289,10 +294,6 @@ shader_param/ramp = 2.0
 size = 12
 font_data = ExtResource( 60 )
 
-[sub_resource type="DynamicFont" id=28]
-size = 31
-font_data = ExtResource( 18 )
-
 [sub_resource type="Animation" id=7]
 length = 0.1
 tracks/0/type = "value"
@@ -351,6 +352,7 @@ tracks/0/keys = {
 pause_mode = 1
 layer = 3
 __meta__ = {
+"_edit_horizontal_guides_": [ 1063.02 ],
 "_edit_vertical_guides_": [ 959.515 ]
 }
 
@@ -390,10 +392,10 @@ __meta__ = {
 
 [node name="CustomizeMenu\?" type="VBoxContainer" parent="Pause"]
 visible = false
-margin_left = 200.0
-margin_top = 200.0
-margin_right = 688.0
-margin_bottom = 360.0
+margin_left = 714.899
+margin_top = 380.109
+margin_right = 1202.9
+margin_bottom = 540.109
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -419,31 +421,30 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ViewControls3" type="Label" parent="Pause/CustomizeMenu\?"]
+[node name="JoystickCalibration" type="Label" parent="Pause/CustomizeMenu\?"]
 margin_top = 82.0
 margin_right = 488.0
 margin_bottom = 119.0
 custom_fonts/font = SubResource( 31 )
-text = "Configure Control Sticks"
+text = "Joystick Calibration"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ViewControls4" type="Label" parent="Pause/CustomizeMenu\?"]
+[node name="ResetAllControlstoDefault" type="Label" parent="Pause/CustomizeMenu\?"]
 margin_top = 123.0
 margin_right = 488.0
 margin_bottom = 160.0
 custom_fonts/font = SubResource( 31 )
-text = "Reset to Default"
+text = "Reset All Controls to Default"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="MainMenu" type="Node2D" parent="Pause"]
-visible = false
-position = Vector2( -0.590576, 0 )
+position = Vector2( -0.702065, 0.241577 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -1111,10 +1112,10 @@ __meta__ = {
 
 [node name="Tween" type="Tween" parent="Pause/InputDisplay"]
 
-[node name="JoyStickCalibration" type="Node2D" parent="Pause"]
+[node name="JoystickCalibration" type="Node2D" parent="Pause"]
 script = ExtResource( 56 )
 
-[node name="JoyStick Calibration" type="Label" parent="Pause/JoyStickCalibration"]
+[node name="JoyStick Calibration" type="Label" parent="Pause/JoystickCalibration"]
 margin_left = 200.0
 margin_top = 160.0
 margin_right = 754.0
@@ -1127,20 +1128,20 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Menu" type="Node2D" parent="Pause/JoyStickCalibration"]
+[node name="Menu" type="Node2D" parent="Pause/JoystickCalibration"]
 
-[node name="OuterDeadzone" type="Label" parent="Pause/JoyStickCalibration/Menu"]
+[node name="OuterThreshold" type="Label" parent="Pause/JoystickCalibration/Menu"]
 margin_left = 222.247
 margin_top = 269.391
 margin_right = 822.247
 margin_bottom = 306.391
 custom_fonts/font = SubResource( 31 )
-text = "Outer Deadzone"
+text = "Outer Threshold"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="BG" type="ColorRect" parent="Pause/JoyStickCalibration/Menu/OuterDeadzone"]
+[node name="BG" type="ColorRect" parent="Pause/JoystickCalibration/Menu/OuterThreshold"]
 margin_left = 298.0
 margin_top = 3.0
 margin_right = 502.0
@@ -1150,7 +1151,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Visual" type="ColorRect" parent="Pause/JoyStickCalibration/Menu/OuterDeadzone"]
+[node name="Visual" type="ColorRect" parent="Pause/JoystickCalibration/Menu/OuterThreshold"]
 margin_left = 450.0
 margin_top = 5.0
 margin_right = 500.0
@@ -1159,7 +1160,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Numerical" type="Label" parent="Pause/JoyStickCalibration/Menu/OuterDeadzone"]
+[node name="Numerical" type="Label" parent="Pause/JoystickCalibration/Menu/OuterThreshold"]
 margin_right = 600.0
 margin_bottom = 37.0
 custom_fonts/font = SubResource( 31 )
@@ -1169,18 +1170,31 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="InnerDeadzone" type="Label" parent="Pause/JoyStickCalibration/Menu"]
+[node name="Descriptor" type="Label" parent="Pause/JoystickCalibration/Menu/OuterThreshold"]
+margin_left = -97.4966
+margin_top = 582.354
+margin_right = 612.503
+margin_bottom = 699.354
+custom_fonts/font = SubResource( 28 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+text = "The Outer Threshold determines how far the stick must be pushed for it to count as a maximum length input."
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AxisDeadzone" type="Label" parent="Pause/JoystickCalibration/Menu"]
 margin_left = 222.247
 margin_top = 320.0
 margin_right = 710.247
 margin_bottom = 357.0
 custom_fonts/font = SubResource( 31 )
-text = "Inner Deadzone"
+text = "Axis Deadzone"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="BG" type="ColorRect" parent="Pause/JoyStickCalibration/Menu/InnerDeadzone"]
+[node name="BG" type="ColorRect" parent="Pause/JoystickCalibration/Menu/AxisDeadzone"]
 margin_left = 298.0
 margin_top = 3.0
 margin_right = 502.0
@@ -1190,7 +1204,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Visual" type="ColorRect" parent="Pause/JoyStickCalibration/Menu/InnerDeadzone"]
+[node name="Visual" type="ColorRect" parent="Pause/JoystickCalibration/Menu/AxisDeadzone"]
 margin_left = 300.0
 margin_top = 5.0
 margin_right = 350.0
@@ -1200,7 +1214,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Numerical" type="Label" parent="Pause/JoyStickCalibration/Menu/InnerDeadzone"]
+[node name="Numerical" type="Label" parent="Pause/JoystickCalibration/Menu/AxisDeadzone"]
 margin_right = 600.0
 margin_bottom = 37.0
 custom_fonts/font = SubResource( 31 )
@@ -1210,7 +1224,21 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ResetToDefault" type="Label" parent="Pause/JoyStickCalibration/Menu"]
+[node name="Descriptor" type="Label" parent="Pause/JoystickCalibration/Menu/AxisDeadzone"]
+visible = false
+margin_left = -97.4961
+margin_top = 531.745
+margin_right = 612.504
+margin_bottom = 648.745
+custom_fonts/font = SubResource( 28 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+text = "The Axis Deadzone determines how far the stick must be pushed on an axis for it to start counting as non-zero input."
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ResetToDefault" type="Label" parent="Pause/JoystickCalibration/Menu"]
 margin_left = 220.003
 margin_top = 387.31
 margin_right = 708.003
@@ -1222,10 +1250,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Raw_Input" type="Node2D" parent="Pause/JoyStickCalibration"]
+[node name="Raw_Input" type="Node2D" parent="Pause/JoystickCalibration"]
 position = Vector2( 1280, 375 )
 
-[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Raw_Input"]
+[node name="Label" type="Label" parent="Pause/JoystickCalibration/Raw_Input"]
 margin_left = -127.0
 margin_top = -225.0
 margin_right = 427.0
@@ -1238,15 +1266,15 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Left" type="Sprite" parent="Pause/JoyStickCalibration/Raw_Input"]
+[node name="Left" type="Sprite" parent="Pause/JoystickCalibration/Raw_Input"]
 texture = ExtResource( 59 )
 
-[node name="Deadzone" type="Sprite" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+[node name="Deadzone" type="Sprite" parent="Pause/JoystickCalibration/Raw_Input/Left"]
 show_behind_parent = true
 material = SubResource( 33 )
 texture = ExtResource( 61 )
 
-[node name="YDead" type="ColorRect" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+[node name="YDead" type="ColorRect" parent="Pause/JoystickCalibration/Raw_Input/Left"]
 visible = false
 show_behind_parent = true
 margin_left = -127.0
@@ -1258,7 +1286,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="XDead" type="ColorRect" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+[node name="XDead" type="ColorRect" parent="Pause/JoystickCalibration/Raw_Input/Left"]
 visible = false
 show_behind_parent = true
 margin_left = -20.0
@@ -1270,7 +1298,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Length" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+[node name="Length" type="Line2D" parent="Pause/JoystickCalibration/Raw_Input/Left"]
 width = 1.0
 default_color = Color( 0.501961, 0.501961, 1, 1 )
 joint_mode = 2
@@ -1278,7 +1306,7 @@ begin_cap_mode = 2
 end_cap_mode = 2
 antialiased = true
 
-[node name="X" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+[node name="X" type="Line2D" parent="Pause/JoystickCalibration/Raw_Input/Left"]
 width = 1.0
 default_color = Color( 1, 0.501961, 0.501961, 1 )
 joint_mode = 2
@@ -1286,7 +1314,7 @@ begin_cap_mode = 2
 end_cap_mode = 2
 antialiased = true
 
-[node name="Y" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+[node name="Y" type="Line2D" parent="Pause/JoystickCalibration/Raw_Input/Left"]
 width = 1.0
 default_color = Color( 0.501961, 1, 0.501961, 1 )
 joint_mode = 2
@@ -1294,10 +1322,10 @@ begin_cap_mode = 2
 end_cap_mode = 2
 antialiased = true
 
-[node name="StickPos" type="Sprite" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+[node name="StickPos" type="Sprite" parent="Pause/JoystickCalibration/Raw_Input/Left"]
 texture = ExtResource( 58 )
 
-[node name="Data" type="RichTextLabel" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+[node name="Data" type="RichTextLabel" parent="Pause/JoystickCalibration/Raw_Input/Left"]
 margin_left = -128.0
 margin_top = 131.0
 margin_right = 128.0
@@ -1311,7 +1339,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Raw_Input/Left"]
+[node name="Label" type="Label" parent="Pause/JoystickCalibration/Raw_Input/Left"]
 margin_left = -126.587
 margin_top = -168.077
 margin_right = 126.413
@@ -1325,11 +1353,11 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Right" type="Sprite" parent="Pause/JoyStickCalibration/Raw_Input"]
+[node name="Right" type="Sprite" parent="Pause/JoystickCalibration/Raw_Input"]
 position = Vector2( 300, 0 )
 texture = ExtResource( 59 )
 
-[node name="Length" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
+[node name="Length" type="Line2D" parent="Pause/JoystickCalibration/Raw_Input/Right"]
 width = 1.0
 default_color = Color( 0.501961, 0.501961, 1, 1 )
 joint_mode = 2
@@ -1337,7 +1365,7 @@ begin_cap_mode = 2
 end_cap_mode = 2
 antialiased = true
 
-[node name="X" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
+[node name="X" type="Line2D" parent="Pause/JoystickCalibration/Raw_Input/Right"]
 width = 1.0
 default_color = Color( 1, 0.501961, 0.501961, 1 )
 joint_mode = 2
@@ -1345,7 +1373,7 @@ begin_cap_mode = 2
 end_cap_mode = 2
 antialiased = true
 
-[node name="Y" type="Line2D" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
+[node name="Y" type="Line2D" parent="Pause/JoystickCalibration/Raw_Input/Right"]
 width = 1.0
 default_color = Color( 0.501961, 1, 0.501961, 1 )
 joint_mode = 2
@@ -1353,10 +1381,10 @@ begin_cap_mode = 2
 end_cap_mode = 2
 antialiased = true
 
-[node name="StickPos" type="Sprite" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
+[node name="StickPos" type="Sprite" parent="Pause/JoystickCalibration/Raw_Input/Right"]
 texture = ExtResource( 58 )
 
-[node name="Data" type="RichTextLabel" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
+[node name="Data" type="RichTextLabel" parent="Pause/JoystickCalibration/Raw_Input/Right"]
 margin_left = -128.0
 margin_top = 131.0
 margin_right = 128.0
@@ -1370,7 +1398,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Raw_Input/Right"]
+[node name="Label" type="Label" parent="Pause/JoystickCalibration/Raw_Input/Right"]
 margin_left = -127.0
 margin_top = -168.0
 margin_right = 126.0
@@ -1384,11 +1412,11 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Final_Input" type="Node2D" parent="Pause/JoyStickCalibration"]
+[node name="Final_Input" type="Node2D" parent="Pause/JoystickCalibration"]
 visible = false
 position = Vector2( 1280, 850 )
 
-[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Final_Input"]
+[node name="Label" type="Label" parent="Pause/JoystickCalibration/Final_Input"]
 margin_left = -127.0
 margin_top = -225.0
 margin_right = 427.0
@@ -1401,10 +1429,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Left" type="Sprite" parent="Pause/JoyStickCalibration/Final_Input"]
+[node name="Left" type="Sprite" parent="Pause/JoystickCalibration/Final_Input"]
 texture = ExtResource( 59 )
 
-[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Final_Input/Left"]
+[node name="Label" type="Label" parent="Pause/JoystickCalibration/Final_Input/Left"]
 margin_left = 173.0
 margin_top = -168.0
 margin_right = 426.0
@@ -1418,7 +1446,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Line2D" type="Line2D" parent="Pause/JoyStickCalibration/Final_Input/Left"]
+[node name="Line2D" type="Line2D" parent="Pause/JoystickCalibration/Final_Input/Left"]
 width = 2.0
 default_color = Color( 1, 1, 1, 1 )
 joint_mode = 2
@@ -1426,11 +1454,11 @@ begin_cap_mode = 2
 end_cap_mode = 2
 antialiased = true
 
-[node name="StickPos" type="Sprite" parent="Pause/JoyStickCalibration/Final_Input/Left"]
+[node name="StickPos" type="Sprite" parent="Pause/JoystickCalibration/Final_Input/Left"]
 scale = Vector2( 4, 4 )
 texture = ExtResource( 58 )
 
-[node name="Data" type="RichTextLabel" parent="Pause/JoyStickCalibration/Final_Input/Left"]
+[node name="Data" type="RichTextLabel" parent="Pause/JoystickCalibration/Final_Input/Left"]
 margin_left = -128.0
 margin_top = 131.0
 margin_right = 128.0
@@ -1444,11 +1472,11 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Right" type="Sprite" parent="Pause/JoyStickCalibration/Final_Input"]
+[node name="Right" type="Sprite" parent="Pause/JoystickCalibration/Final_Input"]
 position = Vector2( 300, 0 )
 texture = ExtResource( 59 )
 
-[node name="Label" type="Label" parent="Pause/JoyStickCalibration/Final_Input/Right"]
+[node name="Label" type="Label" parent="Pause/JoystickCalibration/Final_Input/Right"]
 margin_left = -426.587
 margin_top = -168.077
 margin_right = -173.587
@@ -1462,7 +1490,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Line2D" type="Line2D" parent="Pause/JoyStickCalibration/Final_Input/Right"]
+[node name="Line2D" type="Line2D" parent="Pause/JoystickCalibration/Final_Input/Right"]
 width = 2.0
 default_color = Color( 1, 1, 1, 1 )
 joint_mode = 2
@@ -1470,11 +1498,11 @@ begin_cap_mode = 2
 end_cap_mode = 2
 antialiased = true
 
-[node name="StickPos" type="Sprite" parent="Pause/JoyStickCalibration/Final_Input/Right"]
+[node name="StickPos" type="Sprite" parent="Pause/JoystickCalibration/Final_Input/Right"]
 scale = Vector2( 4, 4 )
 texture = ExtResource( 58 )
 
-[node name="Data" type="RichTextLabel" parent="Pause/JoyStickCalibration/Final_Input/Right"]
+[node name="Data" type="RichTextLabel" parent="Pause/JoystickCalibration/Final_Input/Right"]
 margin_left = -128.0
 margin_top = 131.0
 margin_right = 128.0
@@ -1488,52 +1516,28 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="RoundedEdges" type="Node2D" parent="."]
-__meta__ = {
-"_edit_group_": true,
-"_edit_lock_": true
-}
-
-[node name="upper_left" type="Sprite" parent="RoundedEdges"]
-texture = ExtResource( 15 )
-centered = false
-
-[node name="upper_right" type="Sprite" parent="RoundedEdges"]
-position = Vector2( 1874, 0 )
-texture = ExtResource( 15 )
-centered = false
-flip_h = true
-
-[node name="bottom_right" type="Sprite" parent="RoundedEdges"]
-position = Vector2( 1874, 1034 )
-texture = ExtResource( 15 )
-centered = false
-flip_h = true
-flip_v = true
-
-[node name="bottom_left" type="Sprite" parent="RoundedEdges"]
-position = Vector2( 0, 1034 )
-texture = ExtResource( 15 )
-centered = false
-flip_v = true
-
 [node name="ContextHint" type="Node2D" parent="."]
-modulate = Color( 1, 1, 1, 0 )
+pause_mode = 2
+position = Vector2( 960, 1032 )
 script = ExtResource( 19 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="Backdrop" type="Sprite" parent="ContextHint"]
-modulate = Color( 1, 1, 1, 0.690196 )
-position = Vector2( 960, 1032 )
-texture = ExtResource( 6 )
+[node name="AnimationPlayer" type="AnimationPlayer" parent="ContextHint"]
+anims/FadeIn = SubResource( 7 )
+anims/FadeOut = SubResource( 8 )
 
-[node name="PickUpText" type="Label" parent="ContextHint"]
-margin_left = 889.177
-margin_top = 1034.0
-margin_right = 990.177
-margin_bottom = 1063.0
+[node name="Tween" type="Tween" parent="ContextHint"]
+
+[node name="PickUp" type="Node2D" parent="ContextHint"]
+visible = false
+
+[node name="Text" type="Label" parent="ContextHint/PickUp"]
+margin_left = -80.823
+margin_top = -11.0001
+margin_right = 20.177
+margin_bottom = 17.9999
 custom_fonts/font = SubResource( 6 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
@@ -1545,21 +1549,82 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ButtonShadow" type="Sprite" parent="ContextHint"]
-modulate = Color( 0, 0, 0, 0.501961 )
-position = Vector2( 1005, 1050 )
-scale = Vector2( 0.25, 0.25 )
+[node name="BtnShadow" type="Sprite" parent="ContextHint/PickUp"]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 55, 5 )
+scale = Vector2( 0.2, 0.2 )
 texture = ExtResource( 16 )
 
-[node name="Button" type="Sprite" parent="ContextHint"]
+[node name="Button" type="Sprite" parent="ContextHint/PickUp"]
 modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
-position = Vector2( 1004, 1049 )
-scale = Vector2( 0.25, 0.25 )
+position = Vector2( 54, 4 )
+scale = Vector2( 0.2, 0.2 )
 texture = ExtResource( 16 )
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="ContextHint"]
-anims/FadeIn = SubResource( 7 )
-anims/FadeOut = SubResource( 8 )
+[node name="MenuHints" type="Node2D" parent="ContextHint"]
+
+[node name="Select" type="Position2D" parent="ContextHint/MenuHints"]
+position = Vector2( -120, 0 )
+
+[node name="Text" type="Label" parent="ContextHint/MenuHints/Select"]
+margin_left = -83.0
+margin_top = -11.0
+margin_right = 18.0
+margin_bottom = 50.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Select
+"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BtnShadow" type="Sprite" parent="ContextHint/MenuHints/Select"]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 53, 5 )
+scale = Vector2( 0.2, 0.2 )
+texture = ExtResource( 55 )
+
+[node name="Button" type="Sprite" parent="ContextHint/MenuHints/Select"]
+modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
+position = Vector2( 52, 4 )
+scale = Vector2( 0.2, 0.2 )
+texture = ExtResource( 55 )
+
+[node name="Return" type="Position2D" parent="ContextHint/MenuHints"]
+position = Vector2( 120, 0 )
+
+[node name="Text" type="Label" parent="ContextHint/MenuHints/Return"]
+margin_left = -100.0
+margin_top = -11.0
+margin_right = 1.0
+margin_bottom = 18.0
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Return"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BtnShadow" type="Sprite" parent="ContextHint/MenuHints/Return"]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 36, 5 )
+scale = Vector2( 0.2, 0.2 )
+texture = ExtResource( 6 )
+
+[node name="Button" type="Sprite" parent="ContextHint/MenuHints/Return"]
+modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
+position = Vector2( 35, 4 )
+scale = Vector2( 0.2, 0.2 )
+texture = ExtResource( 6 )
 
 [node name="InGameUI" type="Node2D" parent="."]
 
@@ -1705,3 +1770,32 @@ position = Vector2( 39.8628, -43.7331 )
 autoplay = "heartbeat"
 playback_speed = 0.75
 anims/heartbeat = SubResource( 4 )
+
+[node name="RoundedEdges" type="Node2D" parent="InGameUI"]
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
+
+[node name="upper_left" type="Sprite" parent="InGameUI/RoundedEdges"]
+texture = ExtResource( 15 )
+centered = false
+
+[node name="upper_right" type="Sprite" parent="InGameUI/RoundedEdges"]
+position = Vector2( 1874, 0 )
+texture = ExtResource( 15 )
+centered = false
+flip_h = true
+
+[node name="bottom_right" type="Sprite" parent="InGameUI/RoundedEdges"]
+position = Vector2( 1874, 1034 )
+texture = ExtResource( 15 )
+centered = false
+flip_h = true
+flip_v = true
+
+[node name="bottom_left" type="Sprite" parent="InGameUI/RoundedEdges"]
+position = Vector2( 0, 1034 )
+texture = ExtResource( 15 )
+centered = false
+flip_v = true

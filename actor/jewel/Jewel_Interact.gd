@@ -1,6 +1,7 @@
 extends Area
 
-var amount = 10 # of jewels this is worth
+const amount:int = 10 # of jewels this is worth
+const type:String = "pickup"
 
 func interact():
 	Game.player.jewels = min(Game.player.jewels + amount, Game.player.max_jewels)
