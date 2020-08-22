@@ -1,4 +1,4 @@
-[gd_scene load_steps=91 format=2]
+[gd_scene load_steps=92 format=2]
 
 [ext_resource path="res://ui/img/heart_normalmap_512.png" type="Texture" id=1]
 [ext_resource path="res://ui/img/UI_circle_subweapon.png" type="Texture" id=2]
@@ -56,14 +56,11 @@
 [ext_resource path="res://ui/img/input_action_bg.png" type="Texture" id=54]
 [ext_resource path="res://ui/img/controller/4buttons_A.png" type="Texture" id=55]
 [ext_resource path="res://ui/JoyStickCalibration.gd" type="Script" id=56]
+[ext_resource path="res://ui/MainMenu.gd" type="Script" id=57]
 [ext_resource path="res://ui/img/controller/stickpos.png" type="Texture" id=58]
 [ext_resource path="res://ui/img/controller/joystick_calibration_linework.png" type="Texture" id=59]
 [ext_resource path="res://ui/fonts/RobotoMono-Medium.ttf" type="DynamicFontData" id=60]
 [ext_resource path="res://ui/img/controller/joystick_calibration_bgsquare.png" type="Texture" id=61]
-
-[sub_resource type="DynamicFont" id=31]
-size = 31
-font_data = ExtResource( 17 )
 
 [sub_resource type="DynamicFont" id=1]
 size = 48
@@ -207,6 +204,10 @@ font_data = ExtResource( 18 )
 
 [sub_resource type="DynamicFont" id=29]
 size = 48
+font_data = ExtResource( 17 )
+
+[sub_resource type="DynamicFont" id=31]
+size = 31
 font_data = ExtResource( 17 )
 
 [sub_resource type="DynamicFont" id=28]
@@ -381,7 +382,7 @@ __meta__ = {
 pause_mode = 2
 script = ExtResource( 14 )
 
-[node name="ColorRect" type="ColorRect" parent="Pause"]
+[node name="Darken" type="ColorRect" parent="Pause"]
 margin_right = 1920.0
 margin_bottom = 1080.0
 color = Color( 0, 0, 0, 0.752941 )
@@ -390,61 +391,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="CustomizeMenu\?" type="VBoxContainer" parent="Pause"]
-visible = false
-margin_left = 714.899
-margin_top = 380.109
-margin_right = 1202.9
-margin_bottom = 540.109
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ViewControls" type="Label" parent="Pause/CustomizeMenu\?"]
-margin_right = 488.0
-margin_bottom = 37.0
-custom_fonts/font = SubResource( 31 )
-text = "View Controls"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ViewControls2" type="Label" parent="Pause/CustomizeMenu\?"]
-margin_top = 41.0
-margin_right = 488.0
-margin_bottom = 78.0
-custom_fonts/font = SubResource( 31 )
-text = "Remap Buttons"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="JoystickCalibration" type="Label" parent="Pause/CustomizeMenu\?"]
-margin_top = 82.0
-margin_right = 488.0
-margin_bottom = 119.0
-custom_fonts/font = SubResource( 31 )
-text = "Joystick Calibration"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ResetAllControlstoDefault" type="Label" parent="Pause/CustomizeMenu\?"]
-margin_top = 123.0
-margin_right = 488.0
-margin_bottom = 160.0
-custom_fonts/font = SubResource( 31 )
-text = "Reset All Controls to Default"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="MainMenu" type="Node2D" parent="Pause"]
+visible = false
 position = Vector2( -0.702065, 0.241577 )
+script = ExtResource( 57 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -460,7 +410,6 @@ custom_constants/shadow_offset_y = 2
 text = "Game Paused"
 align = 1
 __meta__ = {
-"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -473,7 +422,6 @@ margin_bottom = 1080.0
 alignment = 1
 __meta__ = {
 "_edit_group_": true,
-"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -1113,6 +1061,7 @@ __meta__ = {
 [node name="Tween" type="Tween" parent="Pause/InputDisplay"]
 
 [node name="JoystickCalibration" type="Node2D" parent="Pause"]
+visible = false
 script = ExtResource( 56 )
 
 [node name="JoyStick Calibration" type="Label" parent="Pause/JoystickCalibration"]
@@ -1131,6 +1080,7 @@ __meta__ = {
 [node name="Menu" type="Node2D" parent="Pause/JoystickCalibration"]
 
 [node name="OuterThreshold" type="Label" parent="Pause/JoystickCalibration/Menu"]
+self_modulate = Color( 1, 1, 0.4, 1 )
 margin_left = 222.247
 margin_top = 269.391
 margin_right = 822.247
@@ -1146,7 +1096,7 @@ margin_left = 298.0
 margin_top = 3.0
 margin_right = 502.0
 margin_bottom = 37.0
-color = Color( 0.501961, 0.501961, 0.501961, 1 )
+color = Color( 0.25098, 0.25098, 0.501961, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -1156,6 +1106,7 @@ margin_left = 450.0
 margin_top = 5.0
 margin_right = 500.0
 margin_bottom = 35.0
+color = Color( 0.501961, 0.501961, 1, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -1184,6 +1135,7 @@ __meta__ = {
 }
 
 [node name="AxisDeadzone" type="Label" parent="Pause/JoystickCalibration/Menu"]
+self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_left = 222.247
 margin_top = 320.0
 margin_right = 710.247
@@ -1199,7 +1151,7 @@ margin_left = 298.0
 margin_top = 3.0
 margin_right = 502.0
 margin_bottom = 37.0
-color = Color( 0.501961, 0.501961, 0.501961, 1 )
+color = Color( 0.376471, 0.376471, 0.376471, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -1215,6 +1167,7 @@ __meta__ = {
 }
 
 [node name="Numerical" type="Label" parent="Pause/JoystickCalibration/Menu/AxisDeadzone"]
+self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_right = 600.0
 margin_bottom = 37.0
 custom_fonts/font = SubResource( 31 )
@@ -1516,6 +1469,59 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="CustomizeMenu\?" type="VBoxContainer" parent="Pause"]
+visible = false
+margin_left = 714.899
+margin_top = 380.109
+margin_right = 1202.9
+margin_bottom = 540.109
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ViewControls" type="Label" parent="Pause/CustomizeMenu\?"]
+margin_right = 487.0
+margin_bottom = 37.0
+custom_fonts/font = SubResource( 31 )
+text = "View Controls"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ViewControls2" type="Label" parent="Pause/CustomizeMenu\?"]
+margin_top = 41.0
+margin_right = 487.0
+margin_bottom = 78.0
+custom_fonts/font = SubResource( 31 )
+text = "Remap Buttons"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="JoystickCalibration" type="Label" parent="Pause/CustomizeMenu\?"]
+margin_top = 82.0
+margin_right = 487.0
+margin_bottom = 119.0
+custom_fonts/font = SubResource( 31 )
+text = "Joystick Calibration"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ResetAllControlstoDefault" type="Label" parent="Pause/CustomizeMenu\?"]
+margin_top = 123.0
+margin_right = 487.0
+margin_bottom = 160.0
+custom_fonts/font = SubResource( 31 )
+text = "Reset All Controls to Default"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="ContextHint" type="Node2D" parent="."]
 pause_mode = 2
 position = Vector2( 960, 1032 )
@@ -1626,46 +1632,46 @@ position = Vector2( 35, 4 )
 scale = Vector2( 0.2, 0.2 )
 texture = ExtResource( 6 )
 
-[node name="InGameUI" type="Node2D" parent="."]
+[node name="InGame_UI" type="Node2D" parent="."]
 
-[node name="PowerupContainer" type="Node2D" parent="InGameUI"]
+[node name="PowerupContainer" type="Node2D" parent="InGame_UI"]
 position = Vector2( 90, 70 )
 scale = Vector2( 0.4, 0.4 )
 
-[node name="Sprite" type="Sprite" parent="InGameUI/PowerupContainer"]
+[node name="Sprite" type="Sprite" parent="InGame_UI/PowerupContainer"]
 texture = ExtResource( 13 )
 centered = false
 
-[node name="Clock" type="Node2D" parent="InGameUI"]
+[node name="Clock" type="Node2D" parent="InGame_UI"]
 position = Vector2( 50, 1030 )
 scale = Vector2( 0.14, 0.14 )
 script = ExtResource( 12 )
 
-[node name="ClockSprite" type="Sprite" parent="InGameUI/Clock"]
+[node name="ClockSprite" type="Sprite" parent="InGame_UI/Clock"]
 texture = ExtResource( 11 )
 
-[node name="Minutes" type="Sprite" parent="InGameUI/Clock/ClockSprite"]
+[node name="Minutes" type="Sprite" parent="InGame_UI/Clock/ClockSprite"]
 modulate = Color( 1, 0.364706, 0.615686, 1 )
 self_modulate = Color( 0.890196, 0.921569, 0.933333, 1 )
 rotation = 5.45415
 scale = Vector2( 0.75, 1.5 )
 texture = ExtResource( 10 )
 
-[node name="Hours" type="Sprite" parent="InGameUI/Clock/ClockSprite"]
+[node name="Hours" type="Sprite" parent="InGame_UI/Clock/ClockSprite"]
 rotation = 0.986111
 texture = ExtResource( 10 )
 
-[node name="Subweapon" type="Node2D" parent="InGameUI"]
+[node name="Subweapon" type="Node2D" parent="InGame_UI"]
 position = Vector2( 1870, 50 )
 
-[node name="Sprite" type="Sprite" parent="InGameUI/Subweapon"]
+[node name="Sprite" type="Sprite" parent="InGame_UI/Subweapon"]
 scale = Vector2( 0.14, 0.14 )
 texture = ExtResource( 2 )
 
-[node name="Jewels" type="Node2D" parent="InGameUI/Subweapon"]
+[node name="Jewels" type="Node2D" parent="InGame_UI/Subweapon"]
 position = Vector2( -12, 36 )
 
-[node name="Jewel_count" type="RichTextLabel" parent="InGameUI/Subweapon/Jewels"]
+[node name="Jewel_count" type="RichTextLabel" parent="InGame_UI/Subweapon/Jewels"]
 margin_left = -2.0
 margin_top = 3.0
 margin_right = 44.0
@@ -1684,28 +1690,28 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="JewelIcon_Outline" type="Sprite" parent="InGameUI/Subweapon/Jewels"]
+[node name="JewelIcon_Outline" type="Sprite" parent="InGame_UI/Subweapon/Jewels"]
 modulate = Color( 0, 0, 0, 1 )
 position = Vector2( -11, 17 )
 scale = Vector2( 0.35, 0.3 )
 texture = ExtResource( 7 )
 
-[node name="JewelIcon_Front" type="Sprite" parent="InGameUI/Subweapon/Jewels"]
+[node name="JewelIcon_Front" type="Sprite" parent="InGame_UI/Subweapon/Jewels"]
 modulate = Color( 0, 0.823529, 0.729412, 1 )
 position = Vector2( -11, 17 )
 scale = Vector2( 0.25, 0.25 )
 texture = ExtResource( 7 )
 
-[node name="HP" type="Node2D" parent="InGameUI"]
+[node name="HP" type="Node2D" parent="InGame_UI"]
 position = Vector2( 50, 50 )
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="HP_Bar_Tween" type="Tween" parent="InGameUI/HP"]
+[node name="HP_Bar_Tween" type="Tween" parent="InGame_UI/HP"]
 
-[node name="HP_Empty" type="ColorRect" parent="InGameUI/HP"]
+[node name="HP_Empty" type="ColorRect" parent="InGame_UI/HP"]
 margin_left = 32.0
 margin_top = -6.0
 margin_right = 913.0
@@ -1715,7 +1721,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HP_Bar_Dark" type="ColorRect" parent="InGameUI/HP"]
+[node name="HP_Bar_Dark" type="ColorRect" parent="InGame_UI/HP"]
 margin_left = 32.0
 margin_top = -6.0
 margin_right = 913.0
@@ -1725,7 +1731,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HP_Bar_Light" type="ColorRect" parent="InGameUI/HP"]
+[node name="HP_Bar_Light" type="ColorRect" parent="InGame_UI/HP"]
 margin_left = 32.0
 margin_top = -6.0
 margin_right = 913.0
@@ -1735,7 +1741,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HP_Border" type="TextureRect" parent="InGameUI/HP"]
+[node name="HP_Border" type="TextureRect" parent="InGame_UI/HP"]
 margin_left = 31.0
 margin_top = -6.0
 margin_right = 915.0
@@ -1745,16 +1751,16 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HeartScale" type="Node2D" parent="InGameUI/HP"]
+[node name="HeartScale" type="Node2D" parent="InGame_UI/HP"]
 scale = Vector2( 0.14, 0.14 )
 
-[node name="HeartCircle" type="Sprite" parent="InGameUI/HP/HeartScale"]
+[node name="HeartCircle" type="Sprite" parent="InGame_UI/HP/HeartScale"]
 texture = ExtResource( 5 )
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Heart" type="Sprite" parent="InGameUI/HP/HeartScale"]
+[node name="Heart" type="Sprite" parent="InGame_UI/HP/HeartScale"]
 material = SubResource( 3 )
 scale = Vector2( 0.805, 0.805 )
 texture = ExtResource( 1 )
@@ -1763,38 +1769,38 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Light" type="Position2D" parent="InGameUI/HP/HeartScale/Heart"]
+[node name="Light" type="Position2D" parent="InGame_UI/HP/HeartScale/Heart"]
 position = Vector2( 39.8628, -43.7331 )
 
-[node name="HeartBeat" type="AnimationPlayer" parent="InGameUI/HP/HeartScale/Heart"]
+[node name="HeartBeat" type="AnimationPlayer" parent="InGame_UI/HP/HeartScale/Heart"]
 autoplay = "heartbeat"
 playback_speed = 0.75
 anims/heartbeat = SubResource( 4 )
 
-[node name="RoundedEdges" type="Node2D" parent="InGameUI"]
+[node name="RoundedEdges" type="Node2D" parent="InGame_UI"]
 __meta__ = {
 "_edit_group_": true,
 "_edit_lock_": true
 }
 
-[node name="upper_left" type="Sprite" parent="InGameUI/RoundedEdges"]
+[node name="upper_left" type="Sprite" parent="InGame_UI/RoundedEdges"]
 texture = ExtResource( 15 )
 centered = false
 
-[node name="upper_right" type="Sprite" parent="InGameUI/RoundedEdges"]
+[node name="upper_right" type="Sprite" parent="InGame_UI/RoundedEdges"]
 position = Vector2( 1874, 0 )
 texture = ExtResource( 15 )
 centered = false
 flip_h = true
 
-[node name="bottom_right" type="Sprite" parent="InGameUI/RoundedEdges"]
+[node name="bottom_right" type="Sprite" parent="InGame_UI/RoundedEdges"]
 position = Vector2( 1874, 1034 )
 texture = ExtResource( 15 )
 centered = false
 flip_h = true
 flip_v = true
 
-[node name="bottom_left" type="Sprite" parent="InGameUI/RoundedEdges"]
+[node name="bottom_left" type="Sprite" parent="InGame_UI/RoundedEdges"]
 position = Vector2( 0, 1034 )
 texture = ExtResource( 15 )
 centered = false

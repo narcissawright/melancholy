@@ -31,8 +31,6 @@ var custom_zoom:float = 3.2
 var mode = "auto" # "free", "first_person", "pause", "reset"
 var pause_controls_enabled = false
 
-onready var zoom_tween = $ZoomTween
-
 # Pan
 var pan:Vector3
 var pause_pan_velocity := Vector3.ZERO # used for linear interpolation..
@@ -54,6 +52,10 @@ var cam_reset_frame:float = 0.0   # stored as float to avoid integer division
 
 # Child nodes
 onready var crosshair = $Crosshair
+onready var zoom_tween = $ZoomTween
+
+# Other nodes
+onready var pause_ui = Game.ui.get_node('Pause')
 
 func _ready() -> void:
 	Events.connect("player_damaged", self, "_on_player_damaged")
@@ -178,17 +180,27 @@ func rotate_cam(dir:Vector2) -> void:
 func enable_pause_controls() -> void:
 	pause_controls_enabled = true
 
+func reset_pause_cam_state() -> void:
+	pause_pan_velocity = Vector3.ZERO
+	current_pos = saved_cam_state.pos
+	pan = saved_cam_state.pan
+	current_zoom = saved_cam_state.zoom
+	crosshair.visible = false
+
 func pause_controls() -> void:
 	if not pause_controls_enabled:
 		return
 	
-	if Input.is_action_just_pressed('L'):
+	if Input.is_action_just_pressed('B'):
+		# Cancel button
+		pause_controls_enabled = false
+		reset_pause_cam_state()
+		pause_ui.exit_free_camera()
+	
+	elif Input.is_action_just_pressed('L'):
 		# This will bring the camera back to where it was when the pause was initiated
-		pause_pan_velocity = Vector3.ZERO
-		current_pos = saved_cam_state.pos
-		pan = saved_cam_state.pan
-		current_zoom = saved_cam_state.zoom
-		crosshair.visible = false
+		reset_pause_cam_state()
+		
 	else:
 		# Pan while paused
 		# Find pan axes
