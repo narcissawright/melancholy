@@ -1,15 +1,18 @@
-extends Node2D
+extends "res://ui/MenuClass.gd"
 
-func _ready() -> void:
+enum { BUTTON_MAPPING, JOYSTICK_CALIBRATION }
+
+func _init():
+	menu_items = ["Button Mapping", "Joystick Calibration"]
+
+func _return_pressed() -> void:
+	current_menu_index = 0
 	stop()
+	Game.ui.paused.change_state("main_menu")
 	
-func stop() -> void:
-	visible = false
-	set_process(false)
-
-func start() -> void:
-	visible = true
-	set_process(true)
-	
-func _process(t:float) -> void:
-	pass
+func _menu_item_select(index):
+	match index:
+		BUTTON_MAPPING:
+			print("button_mapping")
+		JOYSTICK_CALIBRATION:
+			print("joystick_calibration")

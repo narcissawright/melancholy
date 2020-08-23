@@ -54,9 +54,6 @@ var cam_reset_frame:float = 0.0   # stored as float to avoid integer division
 onready var crosshair = $Crosshair
 onready var zoom_tween = $ZoomTween
 
-# Other nodes
-onready var pause_ui = Game.ui.get_node('Pause')
-
 func _ready() -> void:
 	Events.connect("player_damaged", self, "_on_player_damaged")
 	Events.connect("pause", self, "_on_pause_state_change")
@@ -195,7 +192,7 @@ func pause_controls() -> void:
 		# Cancel button
 		pause_controls_enabled = false
 		reset_pause_cam_state()
-		pause_ui.exit_free_camera()
+		Game.ui.paused.exit_free_camera()
 	
 	elif Input.is_action_just_pressed('L'):
 		# This will bring the camera back to where it was when the pause was initiated

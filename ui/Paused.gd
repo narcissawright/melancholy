@@ -18,6 +18,7 @@ func _ready() -> void:
 func pause_state_changed(paused:bool) -> void:
 	if paused:
 		darken.visible = true
+		main_menu.current_menu_index = 0
 		change_state("main_menu")
 	else:
 		darken.visible = false
@@ -34,8 +35,10 @@ func exit_free_camera() -> void:
 func change_state(state:String) -> void:
 	match state:
 		"main_menu":
-			main_menu.start_fresh()
+			#ingame_ui.visible = true
+			main_menu.start()
 		"customize_menu":
+			#ingame_ui.visible = false
 			customize_menu.start()
 		"free_camera":
 			Game.cam.enable_pause_controls()
