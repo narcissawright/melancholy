@@ -1,5 +1,10 @@
 extends Node2D
 
+""" 
+Parts of this need to be generalized.
+Other menus could use pieces of this.
+"""
+
 onready var pause_controller = get_parent()
 onready var menu = $menu_items
 
@@ -55,9 +60,8 @@ func _process(t:float) -> void:
 			RESUME:
 				Game.unpause()
 			CUSTOMIZE:
-				pass
-				#customize.visible = not customize.visible
-				#set_process(false)
+				pause_controller.change_state("customize_menu")
+				stop()
 			FREE_CAMERA:
 				pause_controller.change_state("free_camera")
 				stop()

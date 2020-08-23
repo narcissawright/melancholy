@@ -8,7 +8,7 @@ To do:
 
 onready var darken = $Darken
 onready var main_menu = $MainMenu
-onready var customize = $InputDisplay
+onready var customize_menu = $CustomizeMenu
 onready var ingame_ui = $"../InGame_UI"
 
 func _ready() -> void:
@@ -22,6 +22,7 @@ func pause_state_changed(paused:bool) -> void:
 	else:
 		darken.visible = false
 		main_menu.stop()
+		customize_menu.stop()
 		ingame_ui.visible = true
 
 func exit_free_camera() -> void:
@@ -34,6 +35,8 @@ func change_state(state:String) -> void:
 	match state:
 		"main_menu":
 			main_menu.start_fresh()
+		"customize_menu":
+			customize_menu.start()
 		"free_camera":
 			Game.cam.enable_pause_controls()
 			darken.visible = false

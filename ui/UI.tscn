@@ -1,4 +1,4 @@
-[gd_scene load_steps=92 format=2]
+[gd_scene load_steps=93 format=2]
 
 [ext_resource path="res://ui/img/heart_normalmap_512.png" type="Texture" id=1]
 [ext_resource path="res://ui/img/UI_circle_subweapon.png" type="Texture" id=2]
@@ -61,6 +61,7 @@
 [ext_resource path="res://ui/img/controller/joystick_calibration_linework.png" type="Texture" id=59]
 [ext_resource path="res://ui/fonts/RobotoMono-Medium.ttf" type="DynamicFontData" id=60]
 [ext_resource path="res://ui/img/controller/joystick_calibration_bgsquare.png" type="Texture" id=61]
+[ext_resource path="res://ui/CustomizeMenu.gd" type="Script" id=62]
 
 [sub_resource type="DynamicFont" id=1]
 size = 48
@@ -399,7 +400,7 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="Game Paused" type="Label" parent="Pause/MainMenu"]
+[node name="Heading" type="Label" parent="Pause/MainMenu"]
 margin_top = 375.0
 margin_right = 1920.0
 margin_bottom = 435.0
@@ -471,6 +472,64 @@ custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
 text = "Quit Game"
+align = 1
+
+[node name="CustomizeMenu" type="Node2D" parent="Pause"]
+position = Vector2( -0.702065, 0.241577 )
+script = ExtResource( 62 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Heading" type="Label" parent="Pause/CustomizeMenu"]
+margin_top = 375.0
+margin_right = 1920.0
+margin_bottom = 435.0
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Customize
+"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="menu_items" type="VBoxContainer" parent="Pause/CustomizeMenu"]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_right = 1920.0
+margin_bottom = 1080.0
+alignment = 1
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="ButtonMapping" type="Label" parent="Pause/CustomizeMenu/menu_items"]
+modulate = Color( 1, 1, 0.4, 1 )
+margin_top = 501.0
+margin_right = 1920.0
+margin_bottom = 538.0
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = ">  Button Mapping  <"
+align = 1
+
+[node name="JoystickCalibration" type="Label" parent="Pause/CustomizeMenu/menu_items"]
+modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
+margin_top = 542.0
+margin_right = 1920.0
+margin_bottom = 579.0
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Joystick Calibration"
 align = 1
 
 [node name="InputDisplay" type="Node2D" parent="Pause"]
@@ -1465,59 +1524,6 @@ bbcode_enabled = true
 bbcode_text = "[center][color=#ff8080]X +0.000[/color] | [color=#80ff80]Y +0.000[/color] | [color=#8080ff]Length 1.000[/color]"
 text = "X +0.000 | Y +0.000 | Length 1.000"
 scroll_active = false
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="CustomizeMenu\?" type="VBoxContainer" parent="Pause"]
-visible = false
-margin_left = 714.899
-margin_top = 380.109
-margin_right = 1202.9
-margin_bottom = 540.109
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ViewControls" type="Label" parent="Pause/CustomizeMenu\?"]
-margin_right = 487.0
-margin_bottom = 37.0
-custom_fonts/font = SubResource( 31 )
-text = "View Controls"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ViewControls2" type="Label" parent="Pause/CustomizeMenu\?"]
-margin_top = 41.0
-margin_right = 487.0
-margin_bottom = 78.0
-custom_fonts/font = SubResource( 31 )
-text = "Remap Buttons"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="JoystickCalibration" type="Label" parent="Pause/CustomizeMenu\?"]
-margin_top = 82.0
-margin_right = 487.0
-margin_bottom = 119.0
-custom_fonts/font = SubResource( 31 )
-text = "Joystick Calibration"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ResetAllControlstoDefault" type="Label" parent="Pause/CustomizeMenu\?"]
-margin_top = 123.0
-margin_right = 487.0
-margin_bottom = 160.0
-custom_fonts/font = SubResource( 31 )
-text = "Reset All Controls to Default"
-align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
