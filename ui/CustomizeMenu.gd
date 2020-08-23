@@ -10,9 +10,11 @@ func _return_pressed() -> void:
 	stop()
 	Game.ui.paused.change_state("main_menu")
 	
-func _menu_item_select(index):
+func _menu_item_selected(index):
 	match index:
 		BUTTON_MAPPING:
-			print("button_mapping")
+			Game.ui.paused.change_state("button_mapping")
+			stop()
 		JOYSTICK_CALIBRATION:
-			print("joystick_calibration")
+			Game.ui.paused.change_state("joystick_calibration")
+			stop()

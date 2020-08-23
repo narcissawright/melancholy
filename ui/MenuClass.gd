@@ -32,13 +32,13 @@ func update_menu_items() -> void:
 	for i in menu.get_child_count():
 		var menu_item = menu.get_child(i)
 		menu_item.text = menu_items[i]
-		menu_item.modulate = selected if i == current_menu_index else unselected
+		menu_item.self_modulate = selected if i == current_menu_index else unselected
 
 # These functions are intended to be overwritten by the script that inherits this one.
 func _return_pressed() -> void:
 	print ("the player pressed the B button.");
 
-func _menu_item_select(index:int) -> void:
+func _menu_item_selected(index:int) -> void:
 	print ("menu_item ", index, " selected.");
 
 
@@ -46,7 +46,7 @@ func _process(t:float) -> void:
 	if Input.is_action_just_pressed("B"):
 		_return_pressed()
 	elif Input.is_action_just_pressed("ui_select"):
-		_menu_item_select(current_menu_index)
+		_menu_item_selected(current_menu_index)
 	else:
 		var prior_menu_index = current_menu_index
 		if Input.is_action_just_pressed("ui_down"):
@@ -63,5 +63,5 @@ func _process(t:float) -> void:
 		if current_menu_index != prior_menu_index:
 			update_menu_items()
 		else:
-			menu.get_child(current_menu_index).modulate = selected
+			menu.get_child(current_menu_index).self_modulate = selected
 			

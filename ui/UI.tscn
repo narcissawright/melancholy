@@ -385,6 +385,8 @@ __meta__ = {
 pause_mode = 2
 script = ExtResource( 14 )
 
+[node name="Tween" type="Tween" parent="Paused"]
+
 [node name="Darken" type="ColorRect" parent="Paused"]
 margin_right = 1920.0
 margin_bottom = 1080.0
@@ -429,7 +431,6 @@ __meta__ = {
 }
 
 [node name="Resume" type="Label" parent="Paused/MainMenu/menu_items"]
-modulate = Color( 1, 1, 0.4, 1 )
 margin_top = 460.0
 margin_right = 1920.0
 margin_bottom = 497.0
@@ -441,7 +442,6 @@ text = ">  Resume  <"
 align = 1
 
 [node name="Customize" type="Label" parent="Paused/MainMenu/menu_items"]
-modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_top = 501.0
 margin_right = 1920.0
 margin_bottom = 538.0
@@ -453,7 +453,6 @@ text = "Customize"
 align = 1
 
 [node name="FreeCamera" type="Label" parent="Paused/MainMenu/menu_items"]
-modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_top = 542.0
 margin_right = 1920.0
 margin_bottom = 579.0
@@ -465,7 +464,6 @@ text = "Free Camera"
 align = 1
 
 [node name="QuitGame" type="Label" parent="Paused/MainMenu/menu_items"]
-modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_top = 583.0
 margin_right = 1920.0
 margin_bottom = 620.0
@@ -477,6 +475,7 @@ text = "Quit Game"
 align = 1
 
 [node name="CustomizeMenu" type="Node2D" parent="Paused"]
+visible = false
 position = Vector2( -0.702065, 0.241577 )
 script = ExtResource( 62 )
 __meta__ = {
@@ -511,7 +510,6 @@ __meta__ = {
 }
 
 [node name="ButtonMapping" type="Label" parent="Paused/CustomizeMenu/menu_items"]
-modulate = Color( 1, 1, 0.4, 1 )
 margin_top = 501.0
 margin_right = 1920.0
 margin_bottom = 538.0
@@ -523,7 +521,6 @@ text = ">  Button Mapping  <"
 align = 1
 
 [node name="JoystickCalibration" type="Label" parent="Paused/CustomizeMenu/menu_items"]
-modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_top = 542.0
 margin_right = 1920.0
 margin_bottom = 579.0
@@ -1122,7 +1119,6 @@ __meta__ = {
 [node name="Tween" type="Tween" parent="Paused/InputDisplay"]
 
 [node name="JoystickCalibration" type="Node2D" parent="Paused"]
-visible = false
 script = ExtResource( 56 )
 
 [node name="JoyStick Calibration" type="Label" parent="Paused/JoystickCalibration"]
@@ -1138,9 +1134,9 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Menu" type="Node2D" parent="Paused/JoystickCalibration"]
+[node name="menu_items" type="Node2D" parent="Paused/JoystickCalibration"]
 
-[node name="OuterThreshold" type="Label" parent="Paused/JoystickCalibration/Menu"]
+[node name="OuterThreshold" type="Label" parent="Paused/JoystickCalibration/menu_items"]
 self_modulate = Color( 1, 1, 0.4, 1 )
 margin_left = 222.247
 margin_top = 269.391
@@ -1152,7 +1148,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="BG" type="ColorRect" parent="Paused/JoystickCalibration/Menu/OuterThreshold"]
+[node name="BG" type="ColorRect" parent="Paused/JoystickCalibration/menu_items/OuterThreshold"]
 margin_left = 298.0
 margin_top = 3.0
 margin_right = 502.0
@@ -1162,7 +1158,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Visual" type="ColorRect" parent="Paused/JoystickCalibration/Menu/OuterThreshold"]
+[node name="Visual" type="ColorRect" parent="Paused/JoystickCalibration/menu_items/OuterThreshold"]
 margin_left = 450.0
 margin_top = 5.0
 margin_right = 500.0
@@ -1172,8 +1168,9 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Numerical" type="Label" parent="Paused/JoystickCalibration/Menu/OuterThreshold"]
-margin_right = 600.0
+[node name="Numerical" type="Label" parent="Paused/JoystickCalibration/menu_items/OuterThreshold"]
+margin_left = 2.11896
+margin_right = 602.119
 margin_bottom = 37.0
 custom_fonts/font = SubResource( 21 )
 text = "0.875"
@@ -1182,7 +1179,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Descriptor" type="Label" parent="Paused/JoystickCalibration/Menu/OuterThreshold"]
+[node name="Descriptor" type="Label" parent="Paused/JoystickCalibration/menu_items/OuterThreshold"]
 margin_left = -97.4966
 margin_top = 582.354
 margin_right = 612.503
@@ -1195,7 +1192,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="AxisDeadzone" type="Label" parent="Paused/JoystickCalibration/Menu"]
+[node name="AxisDeadzone" type="Label" parent="Paused/JoystickCalibration/menu_items"]
 self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_left = 222.247
 margin_top = 320.0
@@ -1207,7 +1204,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="BG" type="ColorRect" parent="Paused/JoystickCalibration/Menu/AxisDeadzone"]
+[node name="BG" type="ColorRect" parent="Paused/JoystickCalibration/menu_items/AxisDeadzone"]
 margin_left = 298.0
 margin_top = 3.0
 margin_right = 502.0
@@ -1217,7 +1214,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Visual" type="ColorRect" parent="Paused/JoystickCalibration/Menu/AxisDeadzone"]
+[node name="Visual" type="ColorRect" parent="Paused/JoystickCalibration/menu_items/AxisDeadzone"]
 margin_left = 300.0
 margin_top = 5.0
 margin_right = 350.0
@@ -1227,7 +1224,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Numerical" type="Label" parent="Paused/JoystickCalibration/Menu/AxisDeadzone"]
+[node name="Numerical" type="Label" parent="Paused/JoystickCalibration/menu_items/AxisDeadzone"]
 self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_right = 600.0
 margin_bottom = 37.0
@@ -1238,7 +1235,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Descriptor" type="Label" parent="Paused/JoystickCalibration/Menu/AxisDeadzone"]
+[node name="Descriptor" type="Label" parent="Paused/JoystickCalibration/menu_items/AxisDeadzone"]
 visible = false
 margin_left = -97.4961
 margin_top = 531.745
@@ -1252,7 +1249,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ResetToDefault" type="Label" parent="Paused/JoystickCalibration/Menu"]
+[node name="ResetToDefault" type="Label" parent="Paused/JoystickCalibration/menu_items"]
 margin_left = 220.003
 margin_top = 387.31
 margin_right = 708.003
@@ -1532,6 +1529,7 @@ __meta__ = {
 
 [node name="ContextHint" type="Node2D" parent="."]
 pause_mode = 2
+modulate = Color( 1, 1, 1, 0 )
 position = Vector2( 960, 1032 )
 script = ExtResource( 19 )
 __meta__ = {
@@ -1541,8 +1539,6 @@ __meta__ = {
 [node name="AnimationPlayer" type="AnimationPlayer" parent="ContextHint"]
 anims/FadeIn = SubResource( 26 )
 anims/FadeOut = SubResource( 27 )
-
-[node name="Tween" type="Tween" parent="ContextHint"]
 
 [node name="PickUp" type="Node2D" parent="ContextHint"]
 visible = false

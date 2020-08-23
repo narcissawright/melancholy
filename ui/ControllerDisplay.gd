@@ -53,6 +53,16 @@ Finally, I want to have other options:
 - Rounded screen corners ON/OFF
 """
 
+
+"""
+Final issue (minor):
+	When re-entering this screen, the initial check FLASHES the buttons instead of simply considering them pre-held.
+	It has no conception of when you initially held them.
+	
+	Could maybe run this script once the Customize menu is open, so its prepared in the correct state.
+	This is a minor visual issue and I'm going to leave it as is for now.
+"""
+
 # Tween
 onready var tween = $Tween
 onready var color_pressed = Color("597dce")
@@ -60,8 +70,7 @@ onready var color_pressed = Color("597dce")
 var controller:Dictionary
 
 func _ready() -> void:
-	visible = false
-	
+	stop()
 	controller = {
 		"ZR": {
 			"button": $ControllerButtons/ZR,
@@ -128,12 +137,10 @@ func _ready() -> void:
 			"action": $ActionLabels/R3,
 			"label":  $ActionLabels/R3/Label },
 		"left_stick": {
-			"button": $ControllerButtons/Left_Stick,
 			"action": $ActionLabels/Left_Stick,
 			"label":  $ActionLabels/Left_Stick/Label,
 			"pressed": false },
 		"right_stick": {
-			"button": $ControllerButtons/Right_Stick,
 			"action": $ActionLabels/Right_Stick,
 			"label":  $ActionLabels/Right_Stick/Label,
 			"pressed": false }
@@ -141,7 +148,7 @@ func _ready() -> void:
 
 func update_pressed(key:String, pressed:bool) -> void:
 	if pressed:
-		if key != "left_stick" and key != "right_stick":
+		if controller[key].has("button"):
 			# Only flash the control stick when clicking it.
 			controller[key].button.frame = 1
 			tween.interpolate_property(controller[key].button, 
@@ -151,17 +158,41 @@ func update_pressed(key:String, pressed:bool) -> void:
 		controller[key].action.get_node("Label").set("custom_colors/font_color", Color("ffffff"))
 		tween.start()
 	else:
-		controller[key].button.frame = 0
-		tween.stop(controller[key].button)
+		if controller[key].has("button"): # != "left_stick" and key != "right_stick":
+			controller[key].button.frame = 0
+			tween.stop(controller[key].button)
+			controller[key].button.modulate = Color(1,1,1)
 		tween.stop(controller[key].action)
 		tween.stop(controller[key].action.get_node("Label"))
-		controller[key].button.modulate = Color(1,1,1)
 		controller[key].action.self_modulate = Color("151515")
 		controller[key].action.get_node("Label").set("custom_colors/font_color", Color("a9b8b4"))
 
+func stop() -> void:
+	set_process(false)
+	visible = false
+	
+func start() -> void:
+	set_process(true)
+	visible = true
+	
+	# initial update
+	for key in controller:
+		if Input.is_action_pressed(key):
+			update_pressed(key, true)
+		else:
+			update_pressed(key, false)
+	var left_stick_pos = Game.get_stick_input("left")
+	var right_stick_pos = Game.get_stick_input("right")
+	controller["L3"].button.position = left_stick_pos * 35.0
+	controller["R3"].button.position = right_stick_pos * 35.0
+	
 func _process(_t:float) -> void:
-	if not visible: # use a better check here
-		return
+	
+	if Input.is_action_just_pressed("B"):
+		""" This should probably not be a simple press but a hold or something """
+		""" This screen is complicated in general... """
+		Game.ui.paused.change_state("customize_menu")
+		stop()
 	
 	# Check for button presses
 	for key in controller:
@@ -174,8 +205,8 @@ func _process(_t:float) -> void:
 	var left_stick_pos = Game.get_stick_input("left")
 	var right_stick_pos = Game.get_stick_input("right")
 	
-	controller["left_stick"].button.position = left_stick_pos * 35.0
-	controller["right_stick"].button.position = right_stick_pos * 35.0
+	controller["L3"].button.position = left_stick_pos * 35.0
+	controller["R3"].button.position = right_stick_pos * 35.0
 	
 	if not controller["left_stick"].pressed and left_stick_pos != Vector2.ZERO:
 		controller["left_stick"].pressed = true

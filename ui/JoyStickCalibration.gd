@@ -1,4 +1,4 @@
-extends Node2D
+extends "res://ui/MenuClass.gd"
 
 const size = 256
 const greyed_out:String = "606060"
@@ -18,6 +18,17 @@ onready var right_stick_x:Line2D = $Raw_Input/Right/X
 onready var right_stick_y:Line2D = $Raw_Input/Right/Y
 onready var right_stick_length:Line2D = $Raw_Input/Right/Length
 onready var right_stick_data:RichTextLabel = $Raw_Input/Right/Data
+
+func _init() -> void:
+	menu_items = ["Outer Threshold", "Axis Deadzone", "Reset to Default"]
+
+func _return_pressed() -> void:
+	current_menu_index = 0
+	Game.ui.paused.change_state("customize_menu")
+	stop()
+
+func _menu_item_selected(index:int) -> void:
+	print ("menu_item ", index, " selected.");
 
 func _process(_t:float) -> void:
 
