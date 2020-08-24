@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/stickpos.png-f22b996330df745d3a1713b6406c864c.stex"
+path="res://.import/joystick_calibration_bgsquare.png-028e8d3706ad1cd97a6a157d11ee6759.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/img/controller/stickpos.png"
-dest_files=[ "res://.import/stickpos.png-f22b996330df745d3a1713b6406c864c.stex" ]
+source_file="res://ui/img/joystick_configuration/joystick_calibration_bgsquare.png"
+dest_files=[ "res://.import/joystick_calibration_bgsquare.png-028e8d3706ad1cd97a6a157d11ee6759.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=false
+flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

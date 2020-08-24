@@ -57,10 +57,10 @@
 [ext_resource path="res://ui/img/controller/4buttons_A.png" type="Texture" id=55]
 [ext_resource path="res://ui/JoyStickCalibration.gd" type="Script" id=56]
 [ext_resource path="res://ui/MainMenu.gd" type="Script" id=57]
-[ext_resource path="res://ui/img/controller/stickpos.png" type="Texture" id=58]
-[ext_resource path="res://ui/img/controller/joystick_calibration_linework.png" type="Texture" id=59]
+[ext_resource path="res://ui/img/joystick_configuration/stickpos.png" type="Texture" id=58]
+[ext_resource path="res://ui/img/joystick_configuration/joystick_calibration_linework.png" type="Texture" id=59]
 [ext_resource path="res://ui/fonts/RobotoMono-Medium.ttf" type="DynamicFontData" id=60]
-[ext_resource path="res://ui/img/controller/joystick_calibration_bgsquare.png" type="Texture" id=61]
+[ext_resource path="res://ui/img/joystick_configuration/joystick_calibration_bgsquare.png" type="Texture" id=61]
 [ext_resource path="res://ui/CustomizeMenu.gd" type="Script" id=62]
 [ext_resource path="res://ui/UI.gd" type="Script" id=63]
 [ext_resource path="res://ui/img/joystick_configuration/down_arrow.png" type="Texture" id=64]
@@ -234,7 +234,6 @@ const vec3 no_mix = vec3 (0.3, 0.3, 1);
 void fragment() {
 	COLOR = vec4(0,0,0,0.2);
 	
-	// how do we determine which area it is in?
 	vec2 position = (UV - vec2(0.5, 0.5)) * 2.0;
 	if (abs(position.x) < axis_deadzone) {
 		if (abs(stick_pos.x) < axis_deadzone) {
@@ -250,45 +249,14 @@ void fragment() {
 		COLOR.rgb += vec3(0.5, 1.0, 0.4);
 	}
 	
+	// Antialiasing for the circle.
 	float len = length(position);
-	if (len > outer_threshold) {
-		COLOR.rgb += vec3(0.5, 0.5, 1);
-		if (length(stick_pos) > outer_threshold) {
-			COLOR.a = 0.5;
-		}
+	float aa_factor = fwidth(len);
+	float blend_amt = smoothstep(outer_threshold - aa_factor, outer_threshold, len);
+	COLOR.rgb += vec3(0.5, 0.5, 1) * blend_amt;
+	if (length(stick_pos) > outer_threshold) {
+		COLOR.a = 0.5;
 	}
-	
-	
-	//COLOR = vec4(position.x, position.y, 0, 1);
-	
-	
-	
-	
-	
-	
-
-	//float len = length(UV - vec2(0.5, 0.5)) * 2.0;
-	
-	//float aa_factor = fwidth(len);
-	//float blend_amt = smoothstep(outer_deadzone - aa_factor, outer_deadzone, len);
-	//COLOR.rgba = mix(vec4(0,0,0,0), full_input, blend_amt);
-	
-	
-	
-	
-	//if (len > outer_deadzone) {
-	//	COLOR.rgb = full_input;
-	//} 
-	
-	
-//	else if (len < inner_deadzone) {
-//		COLOR.rgb = no_input;
-//	}  else {
-//		COLOR.rgb = mix(no_mix, full_mix, pow(len, ramp));
-//	}
-//
-//	vec3 mix_amount = mix(no_input, full_input, len);
-	
 }"
 custom_defines = ""
 
@@ -303,14 +271,14 @@ shader_param/ramp = 2.0
 size = 12
 font_data = ExtResource( 60 )
 
-[sub_resource type="ShaderMaterial" id=31]
+[sub_resource type="ShaderMaterial" id=26]
 shader = SubResource( 23 )
 shader_param/stick_pos = Vector2( 0, 0 )
 shader_param/outer_threshold = 0.9
 shader_param/axis_deadzone = 0.1
 shader_param/ramp = 2.0
 
-[sub_resource type="Animation" id=26]
+[sub_resource type="Animation" id=27]
 length = 0.1
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:modulate")
@@ -325,7 +293,7 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
 }
 
-[sub_resource type="Animation" id=27]
+[sub_resource type="Animation" id=28]
 length = 0.1
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:modulate")
@@ -340,15 +308,15 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
 }
 
-[sub_resource type="DynamicFont" id=28]
+[sub_resource type="DynamicFont" id=29]
 size = 24
 font_data = ExtResource( 17 )
 
-[sub_resource type="ShaderMaterial" id=29]
+[sub_resource type="ShaderMaterial" id=30]
 shader = ExtResource( 8 )
 shader_param/light_vec = Vector3( 0.680179, 0.654389, 0.33035 )
 
-[sub_resource type="Animation" id=30]
+[sub_resource type="Animation" id=31]
 loop = true
 step = 0.125
 tracks/0/type = "value"
@@ -410,7 +378,6 @@ __meta__ = {
 }
 
 [node name="MainMenu" type="Node2D" parent="Paused"]
-visible = false
 position = Vector2( -0.702065, 0.241577 )
 script = ExtResource( 57 )
 __meta__ = {
@@ -1444,7 +1411,7 @@ texture = ExtResource( 59 )
 
 [node name="Deadzone" type="Sprite" parent="Paused/JoystickCalibration/Raw_Input/Right"]
 show_behind_parent = true
-material = SubResource( 31 )
+material = SubResource( 26 )
 texture = ExtResource( 61 )
 
 [node name="Length" type="Line2D" parent="Paused/JoystickCalibration/Raw_Input/Right"]
@@ -1679,7 +1646,6 @@ texture = ExtResource( 64 )
 
 [node name="ContextHint" type="Node2D" parent="."]
 pause_mode = 2
-modulate = Color( 1, 1, 1, 0 )
 position = Vector2( 960, 1032 )
 script = ExtResource( 19 )
 __meta__ = {
@@ -1687,8 +1653,8 @@ __meta__ = {
 }
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="ContextHint"]
-anims/FadeIn = SubResource( 26 )
-anims/FadeOut = SubResource( 27 )
+anims/FadeIn = SubResource( 27 )
+anims/FadeOut = SubResource( 28 )
 
 [node name="PickUp" type="Node2D" parent="ContextHint"]
 visible = false
@@ -1787,7 +1753,6 @@ scale = Vector2( 0.2, 0.2 )
 texture = ExtResource( 6 )
 
 [node name="InGame_UI" type="Node2D" parent="."]
-visible = false
 
 [node name="PowerupContainer" type="Node2D" parent="InGame_UI"]
 position = Vector2( 90, 70 )
@@ -1831,7 +1796,7 @@ margin_left = -2.0
 margin_top = 3.0
 margin_right = 44.0
 margin_bottom = 39.0
-custom_fonts/normal_font = SubResource( 28 )
+custom_fonts/normal_font = SubResource( 29 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -1916,7 +1881,7 @@ __meta__ = {
 }
 
 [node name="Heart" type="Sprite" parent="InGame_UI/HP/HeartScale"]
-material = SubResource( 29 )
+material = SubResource( 30 )
 scale = Vector2( 0.805, 0.805 )
 texture = ExtResource( 1 )
 normal_map = ExtResource( 1 )
@@ -1930,7 +1895,7 @@ position = Vector2( 39.8628, -43.7331 )
 [node name="HeartBeat" type="AnimationPlayer" parent="InGame_UI/HP/HeartScale/Heart"]
 autoplay = "heartbeat"
 playback_speed = 0.75
-anims/heartbeat = SubResource( 30 )
+anims/heartbeat = SubResource( 31 )
 
 [node name="RoundedEdges" type="Node2D" parent="InGame_UI"]
 __meta__ = {

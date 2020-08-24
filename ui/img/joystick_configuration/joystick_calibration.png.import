@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/joystick_calibration_linework.png-3a3b5396ba4afeccdefd6019dd4b06b1.stex"
+path="res://.import/joystick_calibration.png-6bbced274ce0b54b2d0937ac883f9953.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/img/controller/joystick_calibration_linework.png"
-dest_files=[ "res://.import/joystick_calibration_linework.png-3a3b5396ba4afeccdefd6019dd4b06b1.stex" ]
+source_file="res://ui/img/joystick_configuration/joystick_calibration.png"
+dest_files=[ "res://.import/joystick_calibration.png-6bbced274ce0b54b2d0937ac883f9953.stex" ]
 
 [params]
 
