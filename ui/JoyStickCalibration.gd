@@ -7,7 +7,7 @@ to be flexible... might want to avoid this class for this page. unsure.
 """
 
 const size = 256
-const greyed_out:String = "606060"
+var greyed_out:String = "505050"
 
 # Visualizer Nodes
 
@@ -25,12 +25,17 @@ onready var raw_right_stick_y:Line2D = $Raw_Input/Right/Y
 onready var raw_right_stick_length:Line2D = $Raw_Input/Right/Length
 onready var raw_right_stick_data:RichTextLabel = $Raw_Input/Right/Data
 
-#onready var final_left_shader_material = $Final_Input/Left/Deadzone.material
 onready var final_left_stick_pos:Sprite = $Final_Input/Left/StickPos
-#onready var final_left_stick_x:Line2D = $Final_Input/Left/X
-#onready var final_left_stick_y:Line2D = $Final_Input/Left/Y
+onready var final_left_stick_x:Line2D = $Final_Input/Left/X
+onready var final_left_stick_y:Line2D = $Final_Input/Left/Y
 onready var final_left_stick_length:Line2D = $Final_Input/Left/Length
 onready var final_left_stick_data:RichTextLabel = $Final_Input/Left/Data
+
+onready var final_right_stick_pos:Sprite = $Final_Input/Right/StickPos
+onready var final_right_stick_x:Line2D = $Final_Input/Right/X
+onready var final_right_stick_y:Line2D = $Final_Input/Right/Y
+onready var final_right_stick_length:Line2D = $Final_Input/Right/Length
+onready var final_right_stick_data:RichTextLabel = $Final_Input/Right/Data
 
 # Outer Threshold
 
@@ -45,7 +50,7 @@ onready var outer_threshold_value_label = $menu_items/OuterThreshold/Numerical
 
 " Game.joystick_axis_deadzone is the actual value "
 const axis_deadzone_default:float = 0.15
-const axis_deadzone_maximum:float = 0.333
+const axis_deadzone_maximum:float = 0.35
 var axis_deadzone_prior_value:float = 0.15
 onready var axis_deadzone_color_rect = $menu_items/AxisDeadzone/Visual
 onready var axis_deadzone_value_label = $menu_items/AxisDeadzone/Numerical
@@ -116,9 +121,7 @@ func _menu_item_selected(index:int) -> void:
 			set_axis_deadzone(axis_deadzone_default)
 
 func _process(_t:float) -> void:
-
 	if slider_controls_enabled:
-		
 		var slide_amount:float = 0.0
 		
 		if Input.is_action_pressed("d-left"):
@@ -185,6 +188,38 @@ func _process(_t:float) -> void:
 	# apply data string
 	raw_left_stick_data.bbcode_text = '[center][color=#' + x_color + ']X ' + x_str + '[/color] | [color=#' + y_color +']Y ' + y_str + '[/color] | [color=#' + length_color + ']Length ' + length_str + '[/color][/center]'
 	
+	# LEFT FINAL
+	
+	pos = Game.get_stick_input("left")
+	length = pos.length() # Find length
+	visual_pos = pos * 127 # Sprite position
+	final_left_stick_pos.position = visual_pos # Set sprite pos
+	
+	# set colors
+	x_color = greyed_out if pos.x == 0.0 else "ff8080"
+	y_color = greyed_out if pos.y == 0.0 else "80ff80"
+	length_color = greyed_out if length == 0.0 else "8080ff"
+	
+	# set x line properties
+	final_left_stick_x.points = PoolVector2Array([Vector2(visual_pos.x,-126), Vector2(visual_pos.x, 126)]) # set x axis line points
+	final_left_stick_x.default_color = Color(x_color)
+	
+	# set y line properties
+	final_left_stick_y.points = PoolVector2Array([Vector2(-126,visual_pos.y), Vector2(126, visual_pos.y)]) # set y axis line points
+	final_left_stick_y.default_color = Color(y_color)
+
+	# set length line properties
+	final_left_stick_length.points = PoolVector2Array([Vector2(0,0), visual_pos]) # set length line points
+	final_left_stick_length.default_color = Color(length_color)
+	
+	# create data string
+	x_str = sign_as_string(pos.x) + str(abs(pos.x)).pad_decimals(3) # format x position as string
+	y_str = sign_as_string(pos.y) + str(abs(pos.y)).pad_decimals(3) # format y position as string
+	length_str = str(length).pad_decimals(3) # format length as string
+	
+	# apply data string
+	final_left_stick_data.bbcode_text = '[center][color=#' + x_color + ']X ' + x_str + '[/color] | [color=#' + y_color +']Y ' + y_str + '[/color] | [color=#' + length_color + ']Length ' + length_str + '[/color][/center]'
+	
 	#####   ##   #####  ##  ##  ######
 	##  ##  ##  ##      ##  ##    ##
 	#####   ##  ## ###  ######    ##
@@ -222,15 +257,12 @@ func _process(_t:float) -> void:
 	# apply data string
 	raw_right_stick_data.bbcode_text = '[center][color=#' + x_color + ']X ' + x_str + '[/color] | [color=#' + y_color +']Y ' + y_str + '[/color] | [color=#' + length_color + ']Length ' + length_str + '[/color][/center]'
 	
+	# RIGHT FINAL
 	
-	
-	# LEFT FINAL
-	
-	pos = Game.get_stick_input("left")
-	#left_shader_material.set_shader_param("stick_pos", pos)
+	pos = Game.get_stick_input("right")
 	length = pos.length() # Find length
 	visual_pos = pos * 127 # Sprite position
-	final_left_stick_pos.position = visual_pos # Set sprite pos
+	final_right_stick_pos.position = visual_pos # Set sprite pos
 	
 	# set colors
 	x_color = greyed_out if pos.x == 0.0 else "ff8080"
@@ -238,16 +270,16 @@ func _process(_t:float) -> void:
 	length_color = greyed_out if length == 0.0 else "8080ff"
 	
 	# set x line properties
-	#final_left_stick_x.points = PoolVector2Array([Vector2(visual_pos.x,-126), Vector2(visual_pos.x, 126)]) # set x axis line points
-	#final_left_stick_x.default_color = Color(x_color)
+	final_right_stick_x.points = PoolVector2Array([Vector2(visual_pos.x,-126), Vector2(visual_pos.x, 126)]) # set x axis line points
+	final_right_stick_x.default_color = Color(x_color)
 	
 	# set y line properties
-	#final_left_stick_y.points = PoolVector2Array([Vector2(-126,visual_pos.y), Vector2(126, visual_pos.y)]) # set y axis line points
-	#final_left_stick_y.default_color = Color(y_color)
+	final_right_stick_y.points = PoolVector2Array([Vector2(-126,visual_pos.y), Vector2(126, visual_pos.y)]) # set y axis line points
+	final_right_stick_y.default_color = Color(y_color)
 
 	# set length line properties
-	final_left_stick_length.points = PoolVector2Array([Vector2(0,0), visual_pos]) # set length line points
-	final_left_stick_length.default_color = Color(length_color)
+	final_right_stick_length.points = PoolVector2Array([Vector2(0,0), visual_pos]) # set length line points
+	final_right_stick_length.default_color = Color(length_color)
 	
 	# create data string
 	x_str = sign_as_string(pos.x) + str(abs(pos.x)).pad_decimals(3) # format x position as string
@@ -255,12 +287,7 @@ func _process(_t:float) -> void:
 	length_str = str(length).pad_decimals(3) # format length as string
 	
 	# apply data string
-	final_left_stick_data.bbcode_text = '[center][color=#' + x_color + ']X ' + x_str + '[/color] | [color=#' + y_color +']Y ' + y_str + '[/color] | [color=#' + length_color + ']Length ' + length_str + '[/color][/center]'
-	
-	
-	
-	
-	
+	final_right_stick_data.bbcode_text = '[center][color=#' + x_color + ']X ' + x_str + '[/color] | [color=#' + y_color +']Y ' + y_str + '[/color] | [color=#' + length_color + ']Length ' + length_str + '[/color][/center]'
 	
 func sign_as_string(number:float):
 	match sign(number):
