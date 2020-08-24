@@ -60,6 +60,11 @@ enum { OUTER_THRESHOLD, AXIS_DEADZONE, RESET_TO_DEFAULT }
 var slider_controls_enabled:bool = false
 func _init() -> void:
 	menu_items = ["Outer Threshold", "Axis Deadzone", "Reset to Default"]
+	
+func _ready() -> void:
+	# initialize displays
+	set_outer_threshold(Game.joystick_outer_threshold)
+	set_axis_deadzone(Game.joystick_axis_deadzone)
 
 func _return_pressed() -> void:
 	if slider_controls_enabled:
@@ -164,21 +169,31 @@ func _process(_t:float) -> void:
 	raw_left_stick_pos.position = visual_pos # Set sprite pos
 	
 	# set colors
-	x_color = greyed_out if pos.x == 0.0 else "ff8080"
-	y_color = greyed_out if pos.y == 0.0 else "80ff80"
-	length_color = greyed_out if length == 0.0 else "8080ff"
+	if pos.x == 0.0:
+		x_color = greyed_out
+		raw_left_stick_x.default_color.a = 0.0
+	else:
+		x_color = "ff8080"
+		raw_left_stick_x.default_color.a = 1.0
 	
-	# set x line properties
+	if pos.y == 0.0:
+		y_color = greyed_out
+		raw_left_stick_y.default_color.a = 0.0
+	else:
+		y_color = "80ff80"
+		raw_left_stick_y.default_color.a = 1.0
+	
+	if length == 0.0:
+		length_color = greyed_out
+		raw_left_stick_length.default_color.a = 0.0
+	else:
+		length_color = "8080ff"
+		raw_left_stick_length.default_color.a = 1.0
+	
+	# set line properties
 	raw_left_stick_x.points = PoolVector2Array([Vector2(visual_pos.x,-126), Vector2(visual_pos.x, 126)]) # set x axis line points
-	raw_left_stick_x.default_color = Color(x_color)
-	
-	# set y line properties
 	raw_left_stick_y.points = PoolVector2Array([Vector2(-126,visual_pos.y), Vector2(126, visual_pos.y)]) # set y axis line points
-	raw_left_stick_y.default_color = Color(y_color)
-
-	# set length line properties
 	raw_left_stick_length.points = PoolVector2Array([Vector2(0,0), visual_pos]) # set length line points
-	raw_left_stick_length.default_color = Color(length_color)
 	
 	# create data string
 	x_str = sign_as_string(pos.x) + str(abs(pos.x)).pad_decimals(3) # format x position as string
@@ -196,21 +211,31 @@ func _process(_t:float) -> void:
 	final_left_stick_pos.position = visual_pos # Set sprite pos
 	
 	# set colors
-	x_color = greyed_out if pos.x == 0.0 else "ff8080"
-	y_color = greyed_out if pos.y == 0.0 else "80ff80"
-	length_color = greyed_out if length == 0.0 else "8080ff"
+	if pos.x == 0.0:
+		x_color = greyed_out
+		final_left_stick_x.default_color.a = 0.0
+	else:
+		x_color = "ff8080"
+		final_left_stick_x.default_color.a = 1.0
 	
-	# set x line properties
+	if pos.y == 0.0:
+		y_color = greyed_out
+		final_left_stick_y.default_color.a = 0.0
+	else:
+		y_color = "80ff80"
+		final_left_stick_y.default_color.a = 1.0
+	
+	if length == 0.0:
+		length_color = greyed_out
+		final_left_stick_length.default_color.a = 0.0
+	else:
+		length_color = "8080ff"
+		final_left_stick_length.default_color.a = 1.0
+	
+	# set line properties
 	final_left_stick_x.points = PoolVector2Array([Vector2(visual_pos.x,-126), Vector2(visual_pos.x, 126)]) # set x axis line points
-	final_left_stick_x.default_color = Color(x_color)
-	
-	# set y line properties
 	final_left_stick_y.points = PoolVector2Array([Vector2(-126,visual_pos.y), Vector2(126, visual_pos.y)]) # set y axis line points
-	final_left_stick_y.default_color = Color(y_color)
-
-	# set length line properties
 	final_left_stick_length.points = PoolVector2Array([Vector2(0,0), visual_pos]) # set length line points
-	final_left_stick_length.default_color = Color(length_color)
 	
 	# create data string
 	x_str = sign_as_string(pos.x) + str(abs(pos.x)).pad_decimals(3) # format x position as string
@@ -233,21 +258,31 @@ func _process(_t:float) -> void:
 	raw_right_stick_pos.position = visual_pos # Set sprite pos
 	
 	# set colors
-	x_color = greyed_out if pos.x == 0.0 else "ff8080"
-	y_color = greyed_out if pos.y == 0.0 else "80ff80"
-	length_color = greyed_out if length == 0.0 else "8080ff"
+	if pos.x == 0.0:
+		x_color = greyed_out
+		raw_right_stick_x.default_color.a = 0.0
+	else:
+		x_color = "ff8080"
+		raw_right_stick_x.default_color.a = 1.0
 	
-	# set x line properties
+	if pos.y == 0.0:
+		y_color = greyed_out
+		raw_right_stick_y.default_color.a = 0.0
+	else:
+		y_color = "80ff80"
+		raw_right_stick_y.default_color.a = 1.0
+	
+	if length == 0.0:
+		length_color = greyed_out
+		raw_right_stick_length.default_color.a = 0.0
+	else:
+		length_color = "8080ff"
+		raw_right_stick_length.default_color.a = 1.0
+	
+	# set line properties
 	raw_right_stick_x.points = PoolVector2Array([Vector2(visual_pos.x,-126), Vector2(visual_pos.x, 126)]) # set x axis line points
-	raw_right_stick_x.default_color = Color(x_color)
-	
-	# set y line properties
 	raw_right_stick_y.points = PoolVector2Array([Vector2(-126,visual_pos.y), Vector2(126, visual_pos.y)]) # set y axis line points
-	raw_right_stick_y.default_color = Color(y_color)
-
-	# set length line properties
 	raw_right_stick_length.points = PoolVector2Array([Vector2(0,0), visual_pos]) # set length line points
-	raw_right_stick_length.default_color = Color(length_color)
 	
 	# create data string
 	x_str = sign_as_string(pos.x) + str(abs(pos.x)).pad_decimals(3) # format x position as string
@@ -265,21 +300,31 @@ func _process(_t:float) -> void:
 	final_right_stick_pos.position = visual_pos # Set sprite pos
 	
 	# set colors
-	x_color = greyed_out if pos.x == 0.0 else "ff8080"
-	y_color = greyed_out if pos.y == 0.0 else "80ff80"
-	length_color = greyed_out if length == 0.0 else "8080ff"
+	if pos.x == 0.0:
+		x_color = greyed_out
+		final_right_stick_x.default_color.a = 0.0
+	else:
+		x_color = "ff8080"
+		final_right_stick_x.default_color.a = 1.0
 	
-	# set x line properties
+	if pos.y == 0.0:
+		y_color = greyed_out
+		final_right_stick_y.default_color.a = 0.0
+	else:
+		y_color = "80ff80"
+		final_right_stick_y.default_color.a = 1.0
+	
+	if length == 0.0:
+		length_color = greyed_out
+		final_right_stick_length.default_color.a = 0.0
+	else:
+		length_color = "8080ff"
+		final_right_stick_length.default_color.a = 1.0
+	
+	# set line properties
 	final_right_stick_x.points = PoolVector2Array([Vector2(visual_pos.x,-126), Vector2(visual_pos.x, 126)]) # set x axis line points
-	final_right_stick_x.default_color = Color(x_color)
-	
-	# set y line properties
 	final_right_stick_y.points = PoolVector2Array([Vector2(-126,visual_pos.y), Vector2(126, visual_pos.y)]) # set y axis line points
-	final_right_stick_y.default_color = Color(y_color)
-
-	# set length line properties
 	final_right_stick_length.points = PoolVector2Array([Vector2(0,0), visual_pos]) # set length line points
-	final_right_stick_length.default_color = Color(length_color)
 	
 	# create data string
 	x_str = sign_as_string(pos.x) + str(abs(pos.x)).pad_decimals(3) # format x position as string
