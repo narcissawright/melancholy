@@ -1,9 +1,8 @@
 extends "res://ui/MenuClass.gd"
 
 """
-This script feels like a case where the inherited class is somewhat in the way
-or rather it obscures what is going on somewhat, because I need this menu page
-to be flexible... might want to avoid this class for this page. unsure.
+Phew, lots here, might wanna offload some of it to smaller scripts on individual nodes,
+such as the node that activates the sliders and sets those colors??
 """
 
 const size = 256
@@ -43,6 +42,7 @@ onready var final_right_stick_data:RichTextLabel = $Final_Input/Right/Data
 const outer_threshold_default:float = 0.9
 const outer_threshold_minimum:float = 0.5
 var outer_threshold_prior_value:float = 0.9
+onready var outer_threshold_color_rect_bg = $menu_items/OuterThreshold/BG
 onready var outer_threshold_color_rect = $menu_items/OuterThreshold/Visual
 onready var outer_threshold_value_label = $menu_items/OuterThreshold/Numerical
 
@@ -52,12 +52,27 @@ onready var outer_threshold_value_label = $menu_items/OuterThreshold/Numerical
 const axis_deadzone_default:float = 0.15
 const axis_deadzone_maximum:float = 0.35
 var axis_deadzone_prior_value:float = 0.15
+onready var axis_deadzone_color_rect_bg = $menu_items/AxisDeadzone/BG
 onready var axis_deadzone_color_rect = $menu_items/AxisDeadzone/Visual
 onready var axis_deadzone_value_label = $menu_items/AxisDeadzone/Numerical
 
+# Easing Curve
+#" Game.joystick_easing_curve is the actual value "
+#const easing_curve_default:float = 2.0
+#const easing_curve_minimum:float = 0.125
+#const easing_curve_maximum:float = 8.0
+#var easing_curve_prior_value:float = 2.0
+#onready var easing_curve_color_rect_bg = $menu_items/EasingCurve/BG
+#onready var easing_curve_color_rect = $menu_items/EasingCurve/Visual
+#onready var easing_curve_value_label = $menu_items/EasingCurve/Numerical
+
 # Menu items
+
 enum { OUTER_THRESHOLD, AXIS_DEADZONE, RESET_TO_DEFAULT }
 var slider_controls_enabled:bool = false
+const slider_width:float = 200.0 # pixels.
+onready var descriptions = $Descriptions
+
 func _init() -> void:
 	menu_items = ["Outer Threshold", "Axis Deadzone", "Reset to Default"]
 	
@@ -68,12 +83,17 @@ func _ready() -> void:
 
 func _return_pressed() -> void:
 	if slider_controls_enabled:
-		slider_controls_enabled = false
+		# When return (or cancel, the B button) is pressed, revert to prior value.
 		match current_menu_index:
 			OUTER_THRESHOLD:
+				change_slider_state(OUTER_THRESHOLD, false)
 				set_outer_threshold(outer_threshold_prior_value)
 			AXIS_DEADZONE:
+				change_slider_state(AXIS_DEADZONE, false)
 				set_axis_deadzone(axis_deadzone_prior_value)
+#			EASING_CURVE:
+#				change_slider_state(EASING_CURVE, false)
+#				set_axis_deadzone(easing_curve_prior_value)
 	else:
 		current_menu_index = 0
 		Game.ui.paused.change_state("customize_menu")
@@ -82,45 +102,86 @@ func _return_pressed() -> void:
 # Only update the menu when appropriate
 func _up_pressed() -> void:
 	if not slider_controls_enabled:
-		menu.get_child(current_menu_index).get_node("Descriptor").visible = false
-		._up_pressed()
-		menu.get_child(current_menu_index).get_node("Descriptor").visible = true
+		descriptions.get_child(current_menu_index).visible = false
+		._up_pressed() # call MenuClass function to update the index
+		descriptions.get_child(current_menu_index).visible = true
 func _down_pressed() -> void:
 	if not slider_controls_enabled:
-		menu.get_child(current_menu_index).get_node("Descriptor").visible = false
+		descriptions.get_child(current_menu_index).visible = false
 		._down_pressed()
-		menu.get_child(current_menu_index).get_node("Descriptor").visible = true
+		descriptions.get_child(current_menu_index).visible = true
 
 func set_outer_threshold(value:float) -> void:
 	Game.joystick_outer_threshold = value
 	outer_threshold_value_label.text = str(value).pad_decimals(3)
-	# update the slider
+	outer_threshold_color_rect.rect_size.x = (1.0 - (value - outer_threshold_minimum) / (1.0 - outer_threshold_minimum)) * slider_width
+	outer_threshold_color_rect.rect_position.x = 500 - (outer_threshold_color_rect.rect_size.x)
 	raw_left_shader_material.set_shader_param("outer_threshold", value)
 	raw_right_shader_material.set_shader_param("outer_threshold", value)
 	
 func set_axis_deadzone(value:float) -> void:
 	Game.joystick_axis_deadzone = value
 	axis_deadzone_value_label.text = str(value).pad_decimals(3)
-	# update the slider
+	axis_deadzone_color_rect.rect_size.x = (value / axis_deadzone_maximum) * slider_width
 	raw_left_shader_material.set_shader_param("axis_deadzone", value)
 	raw_right_shader_material.set_shader_param("axis_deadzone", value)
+
+#func set_easing_curve(value:float) -> void:
+#	Game.joystick_easing_curve = value
+#	easing_curve_value_label.text = str(value).pad_decimals(3)
+#	easing_curve_color_rect.rect_size.x = (value / easing_curve_maximum) * slider_width
+
+func change_slider_state(index:int, state:bool) -> void:
+	slider_controls_enabled = state
+	match index:
+		OUTER_THRESHOLD:
+			if state == true:
+				outer_threshold_color_rect_bg.color = Color("808040")
+				outer_threshold_color_rect.color = Color("ffff80")
+				outer_threshold_value_label.self_modulate = Color("ffff80");
+			else:
+				outer_threshold_color_rect_bg.color = greyed_out
+				outer_threshold_color_rect.color = Color("808080")
+				outer_threshold_value_label.self_modulate = unselected;
+		AXIS_DEADZONE:
+			if state == true:
+				axis_deadzone_color_rect_bg.color = Color("808040")
+				axis_deadzone_color_rect.color = Color("ffff80")
+				axis_deadzone_value_label.self_modulate = Color("ffff80");
+			else:
+				axis_deadzone_color_rect_bg.color = greyed_out
+				axis_deadzone_color_rect.color = Color("808080")
+				axis_deadzone_value_label.self_modulate = unselected;
+#		EASING_CURVE:
+#			if state == true:
+#				easing_curve_color_rect_bg.color = Color("808040")
+#				easing_curve_color_rect.color = Color("ffff80")
+#				easing_curve_value_label.self_modulate = Color("ffff80");
+#			else:
+#				easing_curve_color_rect_bg.color = greyed_out
+#				easing_curve_color_rect.color = Color("808080")
+#				easing_curve_value_label.self_modulate = unselected;
 
 func _menu_item_selected(index:int) -> void:
 	match index:
 		OUTER_THRESHOLD:
 			if slider_controls_enabled:
-				#set_outer_threshold() get the value from the slider
-				slider_controls_enabled = false
+				change_slider_state(OUTER_THRESHOLD, false) # disable
 			else:
 				outer_threshold_prior_value = Game.joystick_outer_threshold
-				slider_controls_enabled = true
+				change_slider_state(OUTER_THRESHOLD, true) # enable
 		AXIS_DEADZONE:
 			if slider_controls_enabled:
-				#set_axis_deadzone() get the value from the slider
-				slider_controls_enabled = false
+				change_slider_state(AXIS_DEADZONE, false)
 			else:
 				axis_deadzone_prior_value = Game.joystick_axis_deadzone
-				slider_controls_enabled = true
+				change_slider_state(AXIS_DEADZONE, true)
+#		EASING_CURVE:
+#			if slider_controls_enabled:
+#				change_slider_state(EASING_CURVE, false)
+#			else:
+#				easing_curve_prior_value = Game.joystick_easing_curve
+#				change_slider_state(EASING_CURVE, true)
 		RESET_TO_DEFAULT:
 			set_outer_threshold(outer_threshold_default)
 			set_axis_deadzone(axis_deadzone_default)
@@ -145,6 +206,9 @@ func _process(_t:float) -> void:
 					set_outer_threshold(clamp(Game.joystick_outer_threshold + slide_amount, outer_threshold_minimum, 1.0))
 				AXIS_DEADZONE:
 					set_axis_deadzone(clamp(Game.joystick_axis_deadzone + slide_amount, 0.0, axis_deadzone_maximum))
+#				EASING_CURVE:
+#					set_easing_curve(clamp(Game.joystick_easing_curve + slide_amount, easing_curve_minimum, easing_curve_maximum))
+
 
 	var pos:Vector2
 	var length:float

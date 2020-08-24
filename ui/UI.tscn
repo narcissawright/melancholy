@@ -1147,14 +1147,63 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="menu_items" type="Node2D" parent="Paused/JoystickCalibration"]
+[node name="UNUSED_EasingCurve" type="Label" parent="Paused/JoystickCalibration"]
+visible = false
+self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
+margin_left = 175.0
+margin_top = 257.0
+margin_right = 835.0
+margin_bottom = 294.0
+custom_fonts/font = SubResource( 21 )
+text = "Easing Curve"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BG" type="ColorRect" parent="Paused/JoystickCalibration/UNUSED_EasingCurve"]
+margin_left = 298.0
+margin_top = 3.0
+margin_right = 502.0
+margin_bottom = 37.0
+color = Color( 0.313726, 0.313726, 0.313726, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Visual" type="ColorRect" parent="Paused/JoystickCalibration/UNUSED_EasingCurve"]
+margin_left = 300.0
+margin_top = 5.0
+margin_right = 400.0
+margin_bottom = 35.0
+color = Color( 0.501961, 0.501961, 0.501961, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Numerical" type="Label" parent="Paused/JoystickCalibration/UNUSED_EasingCurve"]
+self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
+margin_right = 600.0
+margin_bottom = 37.0
+custom_fonts/font = SubResource( 21 )
+text = "2.000"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="menu_items" type="VBoxContainer" parent="Paused/JoystickCalibration"]
+margin_left = 175.0
+margin_top = 175.0
+margin_right = 835.0
+margin_bottom = 312.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="OuterThreshold" type="Label" parent="Paused/JoystickCalibration/menu_items"]
 self_modulate = Color( 1, 1, 0.4, 1 )
-margin_left = 222.247
-margin_top = 184.391
-margin_right = 822.247
-margin_bottom = 221.391
+margin_right = 660.0
+margin_bottom = 37.0
 custom_fonts/font = SubResource( 21 )
 text = "Outer Threshold"
 __meta__ = {
@@ -1166,7 +1215,7 @@ margin_left = 298.0
 margin_top = 3.0
 margin_right = 502.0
 margin_bottom = 37.0
-color = Color( 0.501961, 0.501961, 0.25098, 1 )
+color = Color( 0.313726, 0.313726, 0.313726, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -1176,12 +1225,13 @@ margin_left = 450.0
 margin_top = 5.0
 margin_right = 500.0
 margin_bottom = 35.0
-color = Color( 1, 1, 0.501961, 1 )
+color = Color( 0.501961, 0.501961, 0.501961, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Numerical" type="Label" parent="Paused/JoystickCalibration/menu_items/OuterThreshold"]
+self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_left = 2.11896
 margin_right = 602.119
 margin_bottom = 37.0
@@ -1192,25 +1242,11 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Descriptor" type="Label" parent="Paused/JoystickCalibration/menu_items/OuterThreshold"]
-margin_left = -100.0
-margin_top = 487.0
-margin_right = 610.0
-margin_bottom = 604.0
-custom_fonts/font = SubResource( 22 )
-custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
-text = "The Outer Threshold determines how far the stick must be pushed for it to count as a maximum length input."
-autowrap = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="AxisDeadzone" type="Label" parent="Paused/JoystickCalibration/menu_items"]
 self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
-margin_left = 222.247
-margin_top = 235.0
-margin_right = 710.247
-margin_bottom = 272.0
+margin_top = 41.0
+margin_right = 660.0
+margin_bottom = 78.0
 custom_fonts/font = SubResource( 21 )
 text = "Axis Deadzone"
 __meta__ = {
@@ -1222,7 +1258,7 @@ margin_left = 298.0
 margin_top = 3.0
 margin_right = 502.0
 margin_bottom = 37.0
-color = Color( 0.376471, 0.376471, 0.376471, 1 )
+color = Color( 0.313726, 0.313726, 0.313726, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -1230,9 +1266,9 @@ __meta__ = {
 [node name="Visual" type="ColorRect" parent="Paused/JoystickCalibration/menu_items/AxisDeadzone"]
 margin_left = 300.0
 margin_top = 5.0
-margin_right = 350.0
+margin_right = 305.0
 margin_bottom = 35.0
-color = Color( 0, 0, 0, 1 )
+color = Color( 0.501961, 0.501961, 0.501961, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -1248,12 +1284,35 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Descriptor" type="Label" parent="Paused/JoystickCalibration/menu_items/AxisDeadzone"]
-visible = false
-margin_left = -100.0
-margin_top = 436.0
+[node name="ResetToDefault" type="Label" parent="Paused/JoystickCalibration/menu_items"]
+self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
+margin_top = 82.0
+margin_right = 660.0
+margin_bottom = 119.0
+custom_fonts/font = SubResource( 21 )
+text = "Reset to Default"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Descriptions" type="Node2D" parent="Paused/JoystickCalibration"]
+position = Vector2( 175, 672 )
+
+[node name="OuterThreshold" type="Label" parent="Paused/JoystickCalibration/Descriptions"]
 margin_right = 610.0
-margin_bottom = 553.0
+margin_bottom = 200.0
+custom_fonts/font = SubResource( 22 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+text = "The Outer Threshold determines how far the stick must be pushed for it to count as a maximum length input."
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AxisDeadzone" type="Label" parent="Paused/JoystickCalibration/Descriptions"]
+visible = false
+margin_right = 610.0
+margin_bottom = 200.0
 custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 text = "The Axis Deadzone determines how far the stick must be pushed on an axis for it to start counting as non-zero input."
@@ -1262,24 +1321,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ResetToDefault" type="Label" parent="Paused/JoystickCalibration/menu_items"]
-margin_left = 220.003
-margin_top = 302.31
-margin_right = 708.003
-margin_bottom = 339.31
-custom_fonts/font = SubResource( 21 )
-text = "Reset to Default"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Descriptor" type="Label" parent="Paused/JoystickCalibration/menu_items/ResetToDefault"]
+[node name="ResetToDefault" type="Label" parent="Paused/JoystickCalibration/Descriptions"]
 visible = false
-margin_left = -95.2521
-margin_top = 369.0
-margin_right = 614.748
-margin_bottom = 486.0
+margin_right = 610.0
+margin_bottom = 200.0
 custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 text = "Resets all settings to default."

@@ -14,6 +14,7 @@ const GRAVITY:float = -20.0
 
 var joystick_outer_threshold = 0.9
 var joystick_axis_deadzone = 0.15
+#var joystick_easing_curve = 2.0
 
 func _init() -> void:
 	OS.window_position = Vector2(172, 30) # so it shows up on my monitor in a comfy spot
@@ -82,27 +83,28 @@ func get_stick_input(which:String) -> Vector2:
 	"""
 	this function takes in 'left' or 'right'
 	referring to the left and right control sticks on the joypad
-	it returns an altered input that accounts for deadzones and easing
+	it returns an altered input that accounts for deadzones.
 	"""
 	# get raw input
-	var axes := Vector2()
+	var axes:Vector2
 	if which == 'left':
 		axes = Vector2(Input.get_joy_axis(0, 0), Input.get_joy_axis(0, 1))
 	elif which == 'right':
 		axes = Vector2(Input.get_joy_axis(0, 2), Input.get_joy_axis(0, 3))
 
-	# make input feel good
-#	var length:float = axes.length_squared()
-#	if length > 0.88: # upper limit
-#		return axes.normalized()
-#	elif length < 0.015: # lower limit
-#		return Vector2()
-#	axes = axes*axes.abs() # easing
-	
 	if abs(axes.x) < joystick_axis_deadzone:
 		axes.x = 0.0
 	if abs(axes.y) < joystick_axis_deadzone:
 		axes.y = 0.0
-	if axes.length() > joystick_outer_threshold:
-		return axes.normalized()
-	return axes
+		if axes.x == 0.0:
+			return Vector2.ZERO # No input.
+	
+	var length = axes.length()
+	var normalized = axes.normalized()
+	
+	if length > joystick_outer_threshold:
+		return normalized # Max input
+	
+	var percentage = inverse_lerp(joystick_axis_deadzone, joystick_outer_threshold, length)
+#	percentage = pow(percentage, joystick_easing_curve)
+	return normalized * percentage
