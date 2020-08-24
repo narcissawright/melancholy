@@ -1133,6 +1133,9 @@ __meta__ = {
 
 [node name="JoystickCalibration" type="Node2D" parent="Paused"]
 script = ExtResource( 56 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="JoyStick Calibration" type="Label" parent="Paused/JoystickCalibration"]
 margin_left = 200.0
@@ -1232,8 +1235,7 @@ __meta__ = {
 
 [node name="Numerical" type="Label" parent="Paused/JoystickCalibration/menu_items/OuterThreshold"]
 self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
-margin_left = 2.11896
-margin_right = 602.119
+margin_right = 600.0
 margin_bottom = 37.0
 custom_fonts/font = SubResource( 21 )
 text = "0.900"
@@ -1574,6 +1576,21 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="DataDesc" type="RichTextLabel" parent="Paused/JoystickCalibration/Final_Input/Left"]
+self_modulate = Color( 0.501961, 0.501961, 0.501961, 1 )
+margin_left = -128.0
+margin_top = 149.0
+margin_right = 128.0
+margin_bottom = 171.0
+custom_fonts/normal_font = SubResource( 25 )
+bbcode_enabled = true
+bbcode_text = "[center]No Input[/center]"
+text = "No Input"
+scroll_active = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Right" type="Sprite" parent="Paused/JoystickCalibration/Final_Input"]
 position = Vector2( 300, 0 )
 texture = ExtResource( 59 )
@@ -1633,7 +1650,22 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Down_Arrow" type="Sprite" parent="Paused/JoystickCalibration"]
+[node name="DataDesc" type="RichTextLabel" parent="Paused/JoystickCalibration/Final_Input/Right"]
+self_modulate = Color( 0.501961, 0.501961, 0.501961, 1 )
+margin_left = -128.0
+margin_top = 149.0
+margin_right = 128.0
+margin_bottom = 171.0
+custom_fonts/normal_font = SubResource( 25 )
+bbcode_enabled = true
+bbcode_text = "[center]No Input[/center]"
+text = "No Input"
+scroll_active = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Down_Arrow1" type="Sprite" parent="Paused/JoystickCalibration"]
 modulate = Color( 0.501961, 0.501961, 0.501961, 0.501961 )
 position = Vector2( 1280, 545 )
 scale = Vector2( 0.25, 0.25 )

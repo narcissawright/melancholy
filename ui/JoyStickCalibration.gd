@@ -29,12 +29,14 @@ onready var final_left_stick_x:Line2D = $Final_Input/Left/X
 onready var final_left_stick_y:Line2D = $Final_Input/Left/Y
 onready var final_left_stick_length:Line2D = $Final_Input/Left/Length
 onready var final_left_stick_data:RichTextLabel = $Final_Input/Left/Data
+onready var final_left_stick_datadesc:RichTextLabel = $Final_Input/Left/DataDesc
 
 onready var final_right_stick_pos:Sprite = $Final_Input/Right/StickPos
 onready var final_right_stick_x:Line2D = $Final_Input/Right/X
 onready var final_right_stick_y:Line2D = $Final_Input/Right/Y
 onready var final_right_stick_length:Line2D = $Final_Input/Right/Length
 onready var final_right_stick_data:RichTextLabel = $Final_Input/Right/Data
+onready var final_right_stick_datadesc:RichTextLabel = $Final_Input/Right/DataDesc
 
 # Outer Threshold
 
@@ -306,8 +308,11 @@ func _process(_t:float) -> void:
 	y_str = sign_as_string(pos.y) + str(abs(pos.y)).pad_decimals(3) # format y position as string
 	length_str = str(length).pad_decimals(3) # format length as string
 	
+	var description:String = get_data_desc(pos, length)
+	
 	# apply data string
 	final_left_stick_data.bbcode_text = '[center][color=#' + x_color + ']X ' + x_str + '[/color] | [color=#' + y_color +']Y ' + y_str + '[/color] | [color=#' + length_color + ']Length ' + length_str + '[/color][/center]'
+	final_left_stick_datadesc.bbcode_text = '[center]' + description + '[/center]'
 	
 	#####   ##   #####  ##  ##  ######
 	##  ##  ##  ##      ##  ##    ##
@@ -395,9 +400,40 @@ func _process(_t:float) -> void:
 	y_str = sign_as_string(pos.y) + str(abs(pos.y)).pad_decimals(3) # format y position as string
 	length_str = str(length).pad_decimals(3) # format length as string
 	
+	description = get_data_desc(pos, length)
+	
 	# apply data string
 	final_right_stick_data.bbcode_text = '[center][color=#' + x_color + ']X ' + x_str + '[/color] | [color=#' + y_color +']Y ' + y_str + '[/color] | [color=#' + length_color + ']Length ' + length_str + '[/color][/center]'
+	final_right_stick_datadesc.bbcode_text = '[center]' + description + '[/center]'
 	
+func get_data_desc(pos:Vector2, length:float) -> String:
+	if pos.x == 0.0 and pos.y == 0.0:
+		return "No Input"
+	if pos.x == 0.0:
+		if pos.y == -1.0:
+			return  "Full Input (Up)"
+		if pos.y == 1.0:
+			return "Full Input (Down)"
+		if pos.y < 0.0:
+			return "Partial Input (Up)"
+		else:
+			return "Partial Input (Down)"
+	
+	if pos.y == 0.0:
+		if pos.x == -1.0:
+			return "Full Input (Left)"
+		if pos.x == 1.0:
+			return "Full Input (Right)"
+		if pos.x < 0.0:
+			return "Partial Input (Left)"
+		else:
+			return "Partial Input (Right)"
+	
+	if is_equal_approx(length, 1.0):
+		return "Full Input"
+
+	return "Partial Input"
+
 func sign_as_string(number:float):
 	match sign(number):
 		-1.0 : return "−"
