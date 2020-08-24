@@ -1,4 +1,4 @@
-[gd_scene load_steps=94 format=2]
+[gd_scene load_steps=95 format=2]
 
 [ext_resource path="res://ui/img/heart_normalmap_512.png" type="Texture" id=1]
 [ext_resource path="res://ui/img/UI_circle_subweapon.png" type="Texture" id=2]
@@ -301,6 +301,13 @@ shader_param/ramp = 2.0
 [sub_resource type="DynamicFont" id=25]
 size = 12
 font_data = ExtResource( 60 )
+
+[sub_resource type="ShaderMaterial" id=31]
+shader = SubResource( 23 )
+shader_param/stick_pos = Vector2( 0, 0 )
+shader_param/outer_threshold = 0.9
+shader_param/axis_deadzone = 0.1
+shader_param/ramp = 2.0
 
 [sub_resource type="Animation" id=26]
 length = 0.1
@@ -1178,7 +1185,7 @@ margin_left = 2.11896
 margin_right = 602.119
 margin_bottom = 37.0
 custom_fonts/font = SubResource( 21 )
-text = "0.875"
+text = "0.900"
 align = 2
 __meta__ = {
 "_edit_use_anchors_": false
@@ -1234,7 +1241,7 @@ self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_right = 600.0
 margin_bottom = 37.0
 custom_fonts/font = SubResource( 21 )
-text = "0.125"
+text = "0.150"
 align = 2
 __meta__ = {
 "_edit_use_anchors_": false
@@ -1387,6 +1394,11 @@ __meta__ = {
 position = Vector2( 300, 0 )
 texture = ExtResource( 59 )
 
+[node name="Deadzone" type="Sprite" parent="Paused/JoystickCalibration/Raw_Input/Right"]
+show_behind_parent = true
+material = SubResource( 31 )
+texture = ExtResource( 61 )
+
 [node name="Length" type="Line2D" parent="Paused/JoystickCalibration/Raw_Input/Right"]
 width = 1.0
 default_color = Color( 0.501961, 0.501961, 1, 1 )
@@ -1443,7 +1455,6 @@ __meta__ = {
 }
 
 [node name="Final_Input" type="Node2D" parent="Paused/JoystickCalibration"]
-visible = false
 position = Vector2( 1280, 850 )
 
 [node name="Label" type="Label" parent="Paused/JoystickCalibration/Final_Input"]
@@ -1476,7 +1487,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Line2D" type="Line2D" parent="Paused/JoystickCalibration/Final_Input/Left"]
+[node name="Length" type="Line2D" parent="Paused/JoystickCalibration/Final_Input/Left"]
 width = 2.0
 default_color = Color( 1, 1, 1, 1 )
 joint_mode = 2
@@ -1485,7 +1496,6 @@ end_cap_mode = 2
 antialiased = true
 
 [node name="StickPos" type="Sprite" parent="Paused/JoystickCalibration/Final_Input/Left"]
-scale = Vector2( 4, 4 )
 texture = ExtResource( 58 )
 
 [node name="Data" type="RichTextLabel" parent="Paused/JoystickCalibration/Final_Input/Left"]
@@ -1529,7 +1539,6 @@ end_cap_mode = 2
 antialiased = true
 
 [node name="StickPos" type="Sprite" parent="Paused/JoystickCalibration/Final_Input/Right"]
-scale = Vector2( 4, 4 )
 texture = ExtResource( 58 )
 
 [node name="Data" type="RichTextLabel" parent="Paused/JoystickCalibration/Final_Input/Right"]
