@@ -221,9 +221,8 @@ code = "shader_type canvas_item;
 render_mode unshaded;
 
 uniform vec2 stick_pos = vec2(0,0);
-uniform float outer_deadzone = 0.9;
-uniform float inner_deadzone = 0.1225;
-uniform float xy_deadzone = 0.1;
+uniform float outer_threshold = 0.9;
+uniform float axis_deadzone = 0.1;
 uniform float ramp = 2.0;
 
 const vec4 full_input = vec4(0.5,0.5,1.0,0.5);
@@ -232,24 +231,31 @@ const vec3 full_mix = vec3(1, 0.3, 0.3);
 const vec3 no_mix = vec3 (0.3, 0.3, 1);
 
 void fragment() {
-	COLOR = vec4(0,0,0,0);
+	COLOR = vec4(0,0,0,0.2);
 	
 	// how do we determine which area it is in?
 	vec2 position = (UV - vec2(0.5, 0.5)) * 2.0;
-	if (abs(position.x) < xy_deadzone) {
-		COLOR += vec4(1.0, 0.5, 0.5, 0.3);
+	if (abs(position.x) < axis_deadzone) {
+		if (abs(stick_pos.x) < axis_deadzone) {
+			COLOR.a = 0.35;
+		}
+		COLOR.rgb += vec3(1.0, 0.5, 0.4);
 	}
 	
-	if (abs(position.y) < xy_deadzone) {
-		COLOR += vec4(0.5, 1.0, 0.5, 0.3);
+	if (abs(position.y) < axis_deadzone) {
+		if (abs(stick_pos.y) < axis_deadzone) {
+			COLOR.a = 0.35;
+		}
+		COLOR.rgb += vec3(0.5, 1.0, 0.4);
 	}
 	
 	float len = length(position);
-	if (len > 0.9) {
-		COLOR += vec4(0.5, 0.5, 1, 0.3);
+	if (len > outer_threshold) {
+		COLOR.rgb += vec3(0.5, 0.5, 1);
+		if (length(stick_pos) > outer_threshold) {
+			COLOR.a = 0.5;
+		}
 	}
-	
-	COLOR.a = 0.2;
 	
 	
 	//COLOR = vec4(position.x, position.y, 0, 1);
@@ -288,9 +294,8 @@ custom_defines = ""
 [sub_resource type="ShaderMaterial" id=24]
 shader = SubResource( 23 )
 shader_param/stick_pos = Vector2( 0, 0 )
-shader_param/outer_deadzone = 0.9
-shader_param/inner_deadzone = 0.1225
-shader_param/xy_deadzone = 0.1
+shader_param/outer_threshold = 0.9
+shader_param/axis_deadzone = 0.1
 shader_param/ramp = 2.0
 
 [sub_resource type="DynamicFont" id=25]
@@ -1261,6 +1266,20 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Descriptor" type="Label" parent="Paused/JoystickCalibration/menu_items/ResetToDefault"]
+visible = false
+margin_left = -95.2521
+margin_top = 464.435
+margin_right = 614.748
+margin_bottom = 581.435
+custom_fonts/font = SubResource( 22 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+text = "Resets all settings to default."
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Raw_Input" type="Node2D" parent="Paused/JoystickCalibration"]
 position = Vector2( 1280, 375 )
 
@@ -1637,6 +1656,7 @@ scale = Vector2( 0.2, 0.2 )
 texture = ExtResource( 6 )
 
 [node name="InGame_UI" type="Node2D" parent="."]
+visible = false
 
 [node name="PowerupContainer" type="Node2D" parent="InGame_UI"]
 position = Vector2( 90, 70 )

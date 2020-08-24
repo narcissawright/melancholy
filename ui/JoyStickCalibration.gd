@@ -1,11 +1,17 @@
 extends "res://ui/MenuClass.gd"
 
+"""
+This script feels like a case where the inherited class is somewhat in the way
+or rather it obscures what is going on somewhat, because I need this menu page
+to be flexible... might want to avoid this class for this page. unsure.
+"""
+
 const size = 256
 const greyed_out:String = "606060"
 
-#onready var calibration_circle = $CalibrationCircle
-#onready var stickpos_l = $CalibrationCircle/StickPos_Left
-#onready var stickpos_r = $CalibrationCircle/StickPos_Right
+# Visualizer Nodes
+
+onready var shader_material = $Raw_Input/Left/Deadzone.material
 
 onready var left_stick_pos:Sprite = $Raw_Input/Left/StickPos
 onready var left_stick_x:Line2D = $Raw_Input/Left/X
@@ -19,18 +25,109 @@ onready var right_stick_y:Line2D = $Raw_Input/Right/Y
 onready var right_stick_length:Line2D = $Raw_Input/Right/Length
 onready var right_stick_data:RichTextLabel = $Raw_Input/Right/Data
 
+# Outer Threshold
+
+const outer_threshold_default:float = 0.9
+const outer_threshold_minimum:float = 0.5
+var outer_threshold_value:float = 0.9
+var outer_threshold_prior_value:float = 0.9
+onready var outer_threshold_color_rect = $menu_items/OuterThreshold/Visual
+onready var outer_threshold_value_label = $menu_items/OuterThreshold/Numerical
+
+# Axis Deadzone
+
+const axis_deadzone_default:float = 0.15
+const axis_deadzone_maximum:float = 0.333
+var axis_deadzone_value:float = 0.15
+var axis_deadzone_prior_value:float = 0.15
+onready var axis_deadzone_color_rect = $menu_items/AxisDeadzone/Visual
+onready var axis_deadzone_value_label = $menu_items/AxisDeadzone/Numerical
+
+# Menu items
+enum { OUTER_THRESHOLD, AXIS_DEADZONE, RESET_TO_DEFAULT }
+var slider_controls_enabled:bool = false
 func _init() -> void:
 	menu_items = ["Outer Threshold", "Axis Deadzone", "Reset to Default"]
 
 func _return_pressed() -> void:
-	current_menu_index = 0
-	Game.ui.paused.change_state("customize_menu")
-	stop()
+	if slider_controls_enabled:
+		slider_controls_enabled = false
+		match current_menu_index:
+			OUTER_THRESHOLD:
+				set_outer_threshold(outer_threshold_prior_value)
+			AXIS_DEADZONE:
+				set_axis_deadzone(axis_deadzone_prior_value)
+	else:
+		current_menu_index = 0
+		Game.ui.paused.change_state("customize_menu")
+		stop()
+
+# Only update the menu when appropriate
+func _up_pressed() -> void:
+	if not slider_controls_enabled:
+		menu.get_child(current_menu_index).get_node("Descriptor").visible = false
+		._up_pressed()
+		menu.get_child(current_menu_index).get_node("Descriptor").visible = true
+func _down_pressed() -> void:
+	if not slider_controls_enabled:
+		menu.get_child(current_menu_index).get_node("Descriptor").visible = false
+		._down_pressed()
+		menu.get_child(current_menu_index).get_node("Descriptor").visible = true
+
+func set_outer_threshold(value:float) -> void:
+	outer_threshold_value = value
+	outer_threshold_value_label.text = str(value).pad_decimals(3)
+	# update the slider
+	shader_material.set_shader_param("outer_threshold", value)
+	
+func set_axis_deadzone(value:float) -> void:
+	axis_deadzone_value = value
+	axis_deadzone_value_label.text = str(value).pad_decimals(3)
+	# update the slider
+	shader_material.set_shader_param("axis_deadzone", value)
 
 func _menu_item_selected(index:int) -> void:
-	print ("menu_item ", index, " selected.");
+	match index:
+		OUTER_THRESHOLD:
+			if slider_controls_enabled:
+				#set_outer_threshold() get the value from the slider
+				slider_controls_enabled = false
+			else:
+				outer_threshold_prior_value = outer_threshold_value
+				slider_controls_enabled = true
+		AXIS_DEADZONE:
+			if slider_controls_enabled:
+				#set_axis_deadzone() get the value from the slider
+				slider_controls_enabled = false
+			else:
+				axis_deadzone_prior_value = axis_deadzone_value
+				slider_controls_enabled = true
+		RESET_TO_DEFAULT:
+			set_outer_threshold(outer_threshold_default)
+			set_axis_deadzone(axis_deadzone_default)
 
 func _process(_t:float) -> void:
+
+	if slider_controls_enabled:
+		
+		var slide_amount:float = 0.0
+		
+		if Input.is_action_pressed("d-left"):
+			slide_amount -= 0.001
+		elif Input.is_action_pressed("ui_left"):
+			slide_amount -= 0.01
+		
+		if Input.is_action_pressed("d-right"):
+			slide_amount += 0.001
+		elif Input.is_action_pressed("ui_right"):
+			slide_amount += 0.01
+			
+		if slide_amount != 0.0:
+			match current_menu_index:
+				OUTER_THRESHOLD:
+					set_outer_threshold(clamp(outer_threshold_value + slide_amount, outer_threshold_minimum, 1.0))
+				AXIS_DEADZONE:
+					set_axis_deadzone(clamp(axis_deadzone_value + slide_amount, 0.0, axis_deadzone_maximum))
 
 #	if pos.length() > 1.0:
 #		pos = pos.normalized()
@@ -57,6 +154,7 @@ func _process(_t:float) -> void:
 	######  ######  ##        ##
 	
 	pos = Vector2(Input.get_joy_axis(0, 0), Input.get_joy_axis(0, 1)) # Get data from control stick
+	shader_material.set_shader_param("stick_pos", pos)
 	length = pos.length() # Find length
 	visual_pos = pos * 127 # Sprite position
 	left_stick_pos.position = visual_pos # Set sprite pos

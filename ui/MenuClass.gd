@@ -41,6 +41,16 @@ func _return_pressed() -> void:
 func _menu_item_selected(index:int) -> void:
 	print ("menu_item ", index, " selected.");
 
+func _down_pressed() -> void:
+	# Default behavior:
+	current_menu_index = posmod(current_menu_index + 1, menu_items.size())
+
+func _up_pressed() -> void:
+	# Default behavior:
+	current_menu_index = posmod(current_menu_index - 1, menu_items.size())
+	
+
+
 
 func _process(t:float) -> void:
 	if Input.is_action_just_pressed("B"):
@@ -50,9 +60,9 @@ func _process(t:float) -> void:
 	else:
 		var prior_menu_index = current_menu_index
 		if Input.is_action_just_pressed("ui_down"):
-			current_menu_index = posmod(current_menu_index + 1, menu_items.size())
+			_down_pressed()
 		if Input.is_action_just_pressed("ui_up"):
-			current_menu_index = posmod(current_menu_index - 1, menu_items.size())
+			_up_pressed()
 		
 		# Selected color
 		time += t
