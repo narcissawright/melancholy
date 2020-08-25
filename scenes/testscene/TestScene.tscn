@@ -87,7 +87,7 @@ shape = SubResource( 6 )
 [node name="L_test" parent="Geometry" instance=ExtResource( 1 )]
 
 [node name="Flatland" parent="Geometry" instance=ExtResource( 2 )]
-transform = Transform( 100, 0, 0, 0, 100, 0, 0, 0, 100, 72.7173, -36.0295, 4.13054 )
+transform = Transform( 100, 0, 0, 0, 100, 0, 0, 0, 100, 72.717, -30, 4.131 )
 
 [node name="Box3" type="MeshInstance" parent="Geometry"]
 transform = Transform( 0.27223, -0.962232, 0, 0.962232, 0.27223, 0, 0, 0, 1, 57.9157, -30.1424, 6.26223 )

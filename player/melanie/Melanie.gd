@@ -334,10 +334,6 @@ func walk_animation() -> void:
 ##  ## ###    ##    ##      ##  ##  ##  ##  ##        ##
 ##  ##  ##    ##    ######  ##  ##  ##  ##   #####    ##
 
-"""
-Need to add UI element showing that interacting is possible.
-"""
-
 func handle_interactable():
 	if grounded and not is_locked():
 		if Input.is_action_just_pressed("X"):
@@ -348,11 +344,6 @@ func handle_interactable():
  ####   ##  ##  #####   ## ## ##  ####   ######  #####   ##  ##  ###### 
     ##  ##  ##  ##  ##  ## ## ##  ##     ##  ##  ##      ##  ##  ## ### 
 #####    ####   #####    ######   #####  ##  ##  ##       ####   ##  ## 
-
-"""
-I think it's plausible that there could be a Subweapon node that performs
-all of the processing of the subweapon state, similar to how shield works.
-"""
 
 # Subweapons
 func update_subweapon_state() -> void:
