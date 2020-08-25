@@ -1099,6 +1099,7 @@ __meta__ = {
 [node name="Tween" type="Tween" parent="Paused/InputDisplay"]
 
 [node name="JoystickCalibration" type="Node2D" parent="Paused"]
+visible = false
 script = ExtResource( 56 )
 __meta__ = {
 "_edit_group_": true
@@ -1284,7 +1285,7 @@ margin_right = 610.0
 margin_bottom = 200.0
 custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
-text = "The Axis Deadzone determines how far the stick must be pushed on an axis for it to start counting as non-zero input."
+text = "The Axis Deadzone determines how far the stick must be pushed on an axis for it to start counting as input. Some controllers have an additional deadzone built in."
 autowrap = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -1657,7 +1658,6 @@ anims/FadeIn = SubResource( 27 )
 anims/FadeOut = SubResource( 28 )
 
 [node name="PickUp" type="Node2D" parent="ContextHint"]
-visible = false
 
 [node name="Text" type="Label" parent="ContextHint/PickUp"]
 margin_left = -80.823

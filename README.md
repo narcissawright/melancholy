@@ -27,7 +27,7 @@
 #### `To Do`
 - Proper movement & physics on slopes and small ledges
 - Sword (Primary Attack). Sword draw, sword slash, heavy sword slash, air slash, put away.
-- Subweapon: Bow & Arrow. Manual aiming (1st person?), targeted aiming (3rd person). Think Link from OoT
+- Subweapon: Bow & Arrow. Manual aiming, targeted aiming. Think Link from OoT
 - Subweapon: TBD
 - Subweapon: TBD 
 - Ledge grab. Ledge movement (left or right), Ledge climb. Ledge release.
@@ -54,7 +54,7 @@
 2. Beam - big laser projectile, aimable in any direction. Some kind of teleport mechanic to travel along the beam.
 3. Airwalker - stand in mid air as if it is solid ground. Each step costs mana. Can jump from the air.
 4. Tree - summon a tree from the earth. Massive damage and knockback. Can be cut down via lightning. May spawn health apples.
-5. Vitriol - I might replace Tree with this actually. Holy water item.
+5. Vitriol - I might replace Tree with this actually. Holy water item. Maybe damages you upon use.
 - Repeatedly jumping can gain more speed. Sort of like traveling on a sine-wave, she can re-jump close to the ground w/o touching it directly and curve back upwards. Has a unique mechanic that allows her to airjump when tapping Jump at ledgegrab height.
 - Maybe the same landing mechanics as Melanie but with the ability to curb your fall dmg with a landing "jump"
 - Ledgegrab same as Melanie
@@ -86,23 +86,25 @@
 - Heart symbol, with a heart beat animation, normal map, and time of day lighting.
 - Functional HP bar
 - Jewel count
-- Current subweapon (only bombs so far)
 - Clock (Time of day)
+- Joystick Calibration screen
 
 #### `Partially done`:
+- Current subweapon (only bombs so far)
 - Powerup container (5 orbs, should look like they are energized.)
 - Contextual button hints (X to interact)
+- Button Remap screen (non functional atm but the design is partially there. has input display.)
 
 #### `To do`
 - Item selector (in between subweapon and hp bar)
 - Day/Night indicator attached to Clock.
 - Speedrun timer
 - "Score/XP System" UI
-- Pause screen UI
 - Boss health
+- Camera axis invert
+- Camera distance setting
 
 #### `Maybe`
-- Input display
 - Current camera mode indicator
 
 ## Other Mechanics and Features:
@@ -123,13 +125,6 @@
 
 ##### Items
 - Healing items. Green apples, other stuff.
-
-##### Pause Menu
-- Can change the zoom amount
-- Remap controls, set control sensitivity and axis invert
-- Pause Camera
-- Return to the Field of Falling Stars
-- Quit Game
 
 #### `Would like to add`
 
@@ -152,7 +147,7 @@
 - Unlock stuff here as you progress in the game
 - Peaceful music, a safe area
 - Could have a semi transparent hexagonal or triangular boundary at the edge of the world like you're encased in a glass dome or something.
-- you should spawn from a falling star and it should happen rather quickly
+- you should spawn from a falling star(?) and it should happen rather quickly
 - May proceed to the actual Full Game from this area.
 - Eventually unlock wardrobe. 
 - Unlock Melancholy by completing Full Game w/ Melanie.
@@ -164,6 +159,7 @@
 - Try to keep a bit of "arcade scenario" -- gameplay design focused levels, but not too arcadey. Ideally each stage is minutes (3-15) long if you know what you're doing.
 - Checkpoints exist. 
 - I want an ice level. (slippery physics)
+- would be nice to have branching / alternate exits that lead to new levels, this kind of thing is cool.
 
 ## Character Design:
 - Melanie should have shorter hair than Melancholy. Neither character will have bangs.
@@ -183,7 +179,7 @@ I wanted to make clean outlines (and inner lines) using combined depth+normals o
 
 #### Inverse Kinematics
 
-IK can be achieved though animations that are exported, but having dynamic IK in-game (for sloped ground, etc), is not plausible with the current state of SkeletonIK. I will avoid this until SkeletonIK in Godot is much improved.
+IK can be achieved though animations that are exported, but having dynamic IK in-game (for sloped ground, etc), doesn't seem plausible with the current state of SkeletonIK. I will avoid this until SkeletonIK in Godot is much improved.
 
 #### Modeling, Animations, and Importing
 

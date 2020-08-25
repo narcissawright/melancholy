@@ -409,6 +409,7 @@ func _process(_t:float) -> void:
 func get_data_desc(pos:Vector2, length:float) -> String:
 	if pos.x == 0.0 and pos.y == 0.0:
 		return "No Input"
+		
 	if pos.x == 0.0:
 		if pos.y == -1.0:
 			return  "Full Input (Up)"

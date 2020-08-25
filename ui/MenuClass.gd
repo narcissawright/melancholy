@@ -1,9 +1,5 @@
 extends Node2D
 
-""" 
-Maybe if the menu nodes were created via code instead of laid out carefully by hand it might be better.
-"""
-
 onready var menu = $menu_items
 
 var current_menu_index = 0
@@ -48,9 +44,6 @@ func _down_pressed() -> void:
 func _up_pressed() -> void:
 	# Default behavior:
 	current_menu_index = posmod(current_menu_index - 1, menu_items.size())
-	
-
-
 
 func _process(t:float) -> void:
 	if Input.is_action_just_pressed("B"):
