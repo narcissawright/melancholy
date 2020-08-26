@@ -1,7 +1,7 @@
 extends Node
 
 onready var tween = $Tween
-var timescale:float = 1.0
+const timescale:float = 1.0
 var time_of_day:float = 540.0
 var tween_duration = 5.0
 
@@ -50,7 +50,6 @@ func fast_forward(time_value:float):
 	time_of_day = fmod(time_of_day, 1440.0)
 
 func _on_Tween_completed(_object: Object, _key: NodePath) -> void:
-	timescale = 1.0
 	fast_forwarding = false
 
 func _physics_process(t:float) -> void:
@@ -58,18 +57,5 @@ func _physics_process(t:float) -> void:
 		var time_travel = t * timescale
 		time_of_day = fmod(time_of_day + time_travel, 1440.0)
 		
-#		if fastforward:
-#			target_distance -= time_travel
-#			if target_distance <= 0:
-#				time_of_day = target_time
-#				target_time = 0.0 
-#				fastforward = false
-#				timescale = 1.0
-	
-	Debug.text.write("Timescale: " + str(timescale))
 	Debug.text.write("Time of day: " + time_readable(time_of_day))
-			
-			
-			
-			
 			

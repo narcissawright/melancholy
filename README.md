@@ -90,22 +90,20 @@
 - Joystick Calibration screen
 
 #### `Partially done`:
-- Current subweapon (only bombs so far)
+- Current subweapon
 - Powerup container (5 orbs, should look like they are energized.)
 - Contextual button hints (X to interact)
 - Button Remap screen (non functional atm but the design is partially there. has input display.)
+- Items
 
 #### `To do`
-- Item selector (in between subweapon and hp bar)
-- Day/Night indicator attached to Clock.
 - Speedrun timer
-- "Score/XP System" UI
-- Boss health
-- Camera axis invert
-- Camera distance setting
+- Serendipity
+- More pause menu features: Camera axis invert, Camera distance setting.
 
 #### `Maybe`
 - Current camera mode indicator
+- Boss health
 
 ## Other Mechanics and Features:
 
@@ -120,7 +118,7 @@
 - Lose 1 stage of power upon death.
 - Melancholy will lose 1 stage of power upon Magic Meter being fully used. (Will refill immediately if not at powerup lvl 1)
 
-##### "Score / XP / RNG" system.
+##### Serendipity system.
 - Gimmick! (NES) had a score system that accounted for all drops. I want to use a system like this to avoid RNG. Essentially it is a predictable generator of numbers that are used for all "random" events. A good player could utilize this to their advantage. It must be visible or "readable" somehow while playing so you can re-sync yourself if you end up with the wrong value.
 
 ##### Items

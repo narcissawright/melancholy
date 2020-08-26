@@ -1,4 +1,4 @@
-[gd_scene load_steps=98 format=2]
+[gd_scene load_steps=101 format=2]
 
 [ext_resource path="res://ui/img/heart_normalmap_512.png" type="Texture" id=1]
 [ext_resource path="res://ui/img/UI_circle_subweapon.png" type="Texture" id=2]
@@ -9,8 +9,8 @@
 [ext_resource path="res://ui/img/jewel_icon.png" type="Texture" id=7]
 [ext_resource path="res://shaders/heart.shader" type="Shader" id=8]
 [ext_resource path="res://ui/Jewel_count.gd" type="Script" id=9]
-[ext_resource path="res://ui/img/clock_hand.png" type="Texture" id=10]
-[ext_resource path="res://ui/img/clock_v3.png" type="Texture" id=11]
+[ext_resource path="res://ui/img/clock/clock_hand.png" type="Texture" id=10]
+[ext_resource path="res://ui/img/clock/clock_v3.png" type="Texture" id=11]
 [ext_resource path="res://ui/Clock.gd" type="Script" id=12]
 [ext_resource path="res://ui/img/powerup_container_512.png" type="Texture" id=13]
 [ext_resource path="res://ui/Paused.gd" type="Script" id=14]
@@ -66,6 +66,8 @@
 [ext_resource path="res://ui/img/joystick_configuration/down_arrow.png" type="Texture" id=64]
 [ext_resource path="res://ui/img/items/suncard_ui.png" type="Texture" id=65]
 [ext_resource path="res://ui/img/items/mooncard_ui.png" type="Texture" id=66]
+[ext_resource path="res://ui/img/clock/clock_sun.png" type="Texture" id=67]
+[ext_resource path="res://ui/img/clock/clock_moon.png" type="Texture" id=68]
 
 [sub_resource type="DynamicFont" id=1]
 size = 48
@@ -310,6 +312,14 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
 }
 
+[sub_resource type="SpriteFrames" id=32]
+animations = [ {
+"frames": [ ExtResource( 67 ), ExtResource( 68 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+} ]
+
 [sub_resource type="DynamicFont" id=29]
 size = 24
 font_data = ExtResource( 17 )
@@ -340,7 +350,7 @@ layer = 3
 script = ExtResource( 63 )
 __meta__ = {
 "_edit_horizontal_guides_": [ 1063.02, 119.888, 671.698 ],
-"_edit_vertical_guides_": [ 959.515 ]
+"_edit_vertical_guides_": [ 959.515, 1903.09 ]
 }
 
 [node name="halfscreen" type="ColorRect" parent="."]
@@ -1769,6 +1779,11 @@ position = Vector2( 50, 1030 )
 scale = Vector2( 0.14, 0.14 )
 script = ExtResource( 12 )
 
+[node name="SunMoon" type="AnimatedSprite" parent="InGame_UI/Clock"]
+position = Vector2( 210, -210 )
+scale = Vector2( 4, 4 )
+frames = SubResource( 32 )
+
 [node name="ClockSprite" type="Sprite" parent="InGame_UI/Clock"]
 texture = ExtResource( 11 )
 
@@ -1836,7 +1851,7 @@ __meta__ = {
 [node name="HP_Empty" type="ColorRect" parent="InGame_UI/HP"]
 margin_left = 32.0
 margin_top = -6.0
-margin_right = 913.0
+margin_right = 432.0
 margin_bottom = 6.0
 color = Color( 0, 0, 0, 1 )
 __meta__ = {
@@ -1846,7 +1861,7 @@ __meta__ = {
 [node name="HP_Bar_Dark" type="ColorRect" parent="InGame_UI/HP"]
 margin_left = 32.0
 margin_top = -6.0
-margin_right = 913.0
+margin_right = 432.0
 margin_bottom = 6.0
 color = Color( 0.4, 0.0470588, 0.0862745, 1 )
 __meta__ = {
@@ -1856,7 +1871,7 @@ __meta__ = {
 [node name="HP_Bar_Light" type="ColorRect" parent="InGame_UI/HP"]
 margin_left = 32.0
 margin_top = -6.0
-margin_right = 913.0
+margin_right = 432.0
 margin_bottom = 6.0
 color = Color( 0.764706, 0.137255, 0.152941, 1 )
 __meta__ = {
@@ -1866,9 +1881,12 @@ __meta__ = {
 [node name="HP_Border" type="TextureRect" parent="InGame_UI/HP"]
 margin_left = 31.0
 margin_top = -6.0
-margin_right = 915.0
+margin_right = 434.0
 margin_bottom = 6.0
+grow_horizontal = 0
+rect_min_size = Vector2( 400, 0 )
 texture = ExtResource( 4 )
+expand = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -1900,6 +1918,7 @@ playback_speed = 0.75
 anims/heartbeat = SubResource( 31 )
 
 [node name="RoundedEdges" type="Node2D" parent="InGame_UI"]
+visible = false
 __meta__ = {
 "_edit_group_": true,
 "_edit_lock_": true
@@ -1929,38 +1948,63 @@ centered = false
 flip_v = true
 
 [node name="Inventory" type="Node2D" parent="InGame_UI"]
-position = Vector2( 1280, 20 )
+position = Vector2( 1505, 964 )
 scale = Vector2( 0.28, 0.28 )
 
-[node name="Sprite" type="Sprite" parent="InGame_UI/Inventory"]
+[node name="MoonCard" type="Sprite" parent="InGame_UI/Inventory"]
+position = Vector2( 200, 0 )
 texture = ExtResource( 66 )
 centered = false
 
-[node name="shadow" type="Sprite" parent="InGame_UI/Inventory/Sprite"]
+[node name="shadow" type="Sprite" parent="InGame_UI/Inventory/MoonCard"]
 modulate = Color( 0, 0, 0, 1 )
 show_behind_parent = true
 position = Vector2( 7, 7 )
 texture = ExtResource( 66 )
 centered = false
 
-[node name="Sprite2" type="Sprite" parent="InGame_UI/Inventory"]
-position = Vector2( 300, 0 )
+[node name="SunCard" type="Sprite" parent="InGame_UI/Inventory"]
+position = Vector2( 450, 0 )
 texture = ExtResource( 65 )
 centered = false
 
-[node name="Sprite5" type="Sprite" parent="InGame_UI/Inventory/Sprite2"]
+[node name="shadow" type="Sprite" parent="InGame_UI/Inventory/SunCard"]
 modulate = Color( 0, 0, 0, 1 )
 show_behind_parent = true
 position = Vector2( 7, 7 )
 texture = ExtResource( 65 )
 centered = false
 
-[node name="Sprite3" type="Sprite" parent="InGame_UI/Inventory"]
-position = Vector2( 600, 0 )
+[node name="MoonCard2" type="Sprite" parent="InGame_UI/Inventory"]
+position = Vector2( 700, 0 )
 texture = ExtResource( 66 )
 centered = false
 
-[node name="Sprite6" type="Sprite" parent="InGame_UI/Inventory/Sprite3"]
+[node name="shadow" type="Sprite" parent="InGame_UI/Inventory/MoonCard2"]
+modulate = Color( 0, 0, 0, 1 )
+show_behind_parent = true
+position = Vector2( 7, 7 )
+texture = ExtResource( 65 )
+centered = false
+
+[node name="MoonCard3" type="Sprite" parent="InGame_UI/Inventory"]
+position = Vector2( 950, 0 )
+texture = ExtResource( 66 )
+centered = false
+
+[node name="shadow" type="Sprite" parent="InGame_UI/Inventory/MoonCard3"]
+modulate = Color( 0, 0, 0, 1 )
+show_behind_parent = true
+position = Vector2( 7, 7 )
+texture = ExtResource( 65 )
+centered = false
+
+[node name="MoonCard4" type="Sprite" parent="InGame_UI/Inventory"]
+position = Vector2( 1200, 0 )
+texture = ExtResource( 66 )
+centered = false
+
+[node name="shadow" type="Sprite" parent="InGame_UI/Inventory/MoonCard4"]
 modulate = Color( 0, 0, 0, 1 )
 show_behind_parent = true
 position = Vector2( 7, 7 )

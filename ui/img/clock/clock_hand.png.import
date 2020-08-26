@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/clock_v2.png-521d556d26eea11d3ac4724cbe8f3f4d.stex"
+path="res://.import/clock_hand.png-5f4405c1db95d2c98078cd02d3263908.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/img/clock_v2.png"
-dest_files=[ "res://.import/clock_v2.png-521d556d26eea11d3ac4724cbe8f3f4d.stex" ]
+source_file="res://ui/img/clock/clock_hand.png"
+dest_files=[ "res://.import/clock_hand.png-5f4405c1db95d2c98078cd02d3263908.stex" ]
 
 [params]
 

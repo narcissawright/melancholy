@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/clock_v3.png-2155c523ee7e2ab57230ae0ed6df1c93.stex"
+path="res://.import/clock_moon.png-d383c93d0da68521b2124228d51e4ca5.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/img/clock_v3.png"
-dest_files=[ "res://.import/clock_v3.png-2155c523ee7e2ab57230ae0ed6df1c93.stex" ]
+source_file="res://ui/img/clock/clock_moon.png"
+dest_files=[ "res://.import/clock_moon.png-d383c93d0da68521b2124228d51e4ca5.stex" ]
 
 [params]
 
