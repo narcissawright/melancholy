@@ -3,12 +3,11 @@ extends Node
 onready var melanie = preload("res://player/melanie/Melanie.tscn")
 onready var cam = preload("res://camera/Camera.tscn")
 onready var ui = preload("res://ui/UI.tscn")
+onready var timekeeper = $Timekeeper
 var current_character:String = "Melanie"
 var player:Node
 
 var frame_time:float = 1.0 / 60.0
-var time_of_day:float = 540.0
-var timescale:float = 1
 
 const GRAVITY:float = -20.0
 
@@ -41,35 +40,14 @@ func _ready() -> void:
 	add_child(cam)
 	add_child(ui)
 
-func time_readable (time:float) -> String:
-	var hours:int
-	var minutes:int
-	var am:bool = true
-# warning-ignore:integer_division
-	hours = int(time) / 60
-	if hours >= 12: 
-		hours -= 12
-		am = false
-	if hours == 0: hours = 12
-	minutes = int(time) % 60
-	
-	var time_string:String = str(hours).pad_zeros(2)
-	time_string += ":"
-	time_string += str(minutes).pad_zeros(2)
-	time_string += " "
-	time_string += "AM" if am else "PM"
-	return time_string
-
-func _physics_process(t) -> void:
-	if not get_tree().paused:
-		time_of_day = fmod(time_of_day + t * timescale, 1440.0)
-		Debug.text.write("Time of day: " + time_readable(time_of_day))
-	
+func _input(_event: InputEvent) -> void:
 	if Input.is_action_just_pressed("ui_cancel"):
 		quit_game()
 	if Input.is_action_just_pressed("fullscreen"):
+		Input.action_release("fullscreen")
 		OS.window_fullscreen = !OS.window_fullscreen
 	if Input.is_action_just_pressed("pause"):
+		Input.action_release("pause")
 		unpause()
 
 func unpause() -> void:

@@ -77,6 +77,7 @@ func _ready() -> void:
 func _physics_process(_t) -> void:
 	framecount += 1
 	
+	use_item()
 	update_target_state() # ZL Targeting
 	update_horizontal_velocity() # General movement
 	update_vertical_velocity() # Jumping and gravity
@@ -92,6 +93,18 @@ func _physics_process(_t) -> void:
 	update_subweapon_state() # performed AFTER move_and_collide to correctly place projectiles.
 	respawn_check() # Check if player fell below the map
 	debug() # Write debug info onscreen
+
+##  ######  ######   ###### 
+##    ##    ##      ## ## ##
+##    ##    ####    ## ## ##
+##    ##    ##      ##    ##
+##    ##    ######  ##    ##
+
+func use_item() -> void:
+	if Input.is_action_just_pressed("select"):
+		if Game.timekeeper.can_use_card():
+			Game.timekeeper.use_card("sun")
+			lockplayer_for_frames(30)
 
 ######  ####   #####    #####  ######  ######
   ##   ##  ##  ##  ##  ##      ##        ##

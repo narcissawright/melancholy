@@ -28,7 +28,7 @@ func _ready() -> void:
 
 func _process(_t:float) -> void:
 	var light_vec = Vector3(0, -1, 0.35).normalized()
-	light_vec = light_vec.rotated(Vector3.FORWARD, -(Game.time_of_day / 1440.0) * TAU)
+	light_vec = light_vec.rotated(Vector3.FORWARD, -(Game.timekeeper.time_of_day / 1440.0) * TAU)
 	heart.material.set_shader_param("light_vec", light_vec)
 
 func _on_player_damaged():

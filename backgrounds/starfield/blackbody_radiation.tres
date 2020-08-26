@@ -7,4 +7,3 @@ colors = PoolColorArray( 1, 0.649658, 0.199219, 1, 0.976563, 0.94223, 0.952691, 
 [resource]
 gradient = SubResource( 1 )
 width = 128
-

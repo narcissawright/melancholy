@@ -94,7 +94,7 @@ func gaussian(mean, deviation):
 	return (mean + deviation * x1 * w)
 
 func _draw():
-	var rot_amount = (Game.time_of_day / 1440.0) * 360
+	var rot_amount = (Game.timekeeper.time_of_day / 1440.0) * 360
 	var cam_pos = Game.cam.global_transform.origin
 	var bounds = Rect2(-64, -64, 1920 + 128, 1080 + 128)
 	
