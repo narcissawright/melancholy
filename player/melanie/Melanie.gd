@@ -101,7 +101,7 @@ func _physics_process(_t) -> void:
 ##    ##    ######  ##    ##
 
 func use_item() -> void:
-	if Input.is_action_just_pressed("select"):
+	if Input.is_action_just_pressed("use_item"):
 		if Game.timekeeper.can_use_card():
 			Game.timekeeper.use_card("sun")
 			lockplayer_for_frames(30)

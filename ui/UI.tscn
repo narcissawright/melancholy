@@ -1,4 +1,4 @@
-[gd_scene load_steps=101 format=2]
+[gd_scene load_steps=108 format=2]
 
 [ext_resource path="res://ui/img/heart_normalmap_512.png" type="Texture" id=1]
 [ext_resource path="res://ui/img/UI_circle_subweapon.png" type="Texture" id=2]
@@ -68,6 +68,8 @@
 [ext_resource path="res://ui/img/items/mooncard_ui.png" type="Texture" id=66]
 [ext_resource path="res://ui/img/clock/clock_sun.png" type="Texture" id=67]
 [ext_resource path="res://ui/img/clock/clock_moon.png" type="Texture" id=68]
+[ext_resource path="res://shaders/inventory.shader" type="Shader" id=69]
+[ext_resource path="res://ui/Inventory.gd" type="Script" id=70]
 
 [sub_resource type="DynamicFont" id=1]
 size = 48
@@ -312,7 +314,7 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
 }
 
-[sub_resource type="SpriteFrames" id=32]
+[sub_resource type="SpriteFrames" id=29]
 animations = [ {
 "frames": [ ExtResource( 67 ), ExtResource( 68 ) ],
 "loop": true,
@@ -320,15 +322,15 @@ animations = [ {
 "speed": 5.0
 } ]
 
-[sub_resource type="DynamicFont" id=29]
+[sub_resource type="DynamicFont" id=30]
 size = 24
 font_data = ExtResource( 17 )
 
-[sub_resource type="ShaderMaterial" id=30]
+[sub_resource type="ShaderMaterial" id=31]
 shader = ExtResource( 8 )
 shader_param/light_vec = Vector3( 0.680179, 0.654389, 0.33035 )
 
-[sub_resource type="Animation" id=31]
+[sub_resource type="Animation" id=32]
 loop = true
 step = 0.125
 tracks/0/type = "value"
@@ -343,6 +345,26 @@ tracks/0/keys = {
 "update": 0,
 "values": [ Vector2( 0.9, 0.9 ), Vector2( 0.905, 0.905 ), Vector2( 0.9, 0.9 ), Vector2( 0.92, 0.92 ), Vector2( 0.88, 0.88 ), Vector2( 0.9, 0.9 ), Vector2( 0.905, 0.905 ), Vector2( 0.9, 0.9 ), Vector2( 0.9, 0.9 ) ]
 }
+
+[sub_resource type="ShaderMaterial" id=33]
+shader = ExtResource( 69 )
+shader_param/selected = false
+
+[sub_resource type="ShaderMaterial" id=34]
+shader = ExtResource( 69 )
+shader_param/selected = false
+
+[sub_resource type="ShaderMaterial" id=35]
+shader = ExtResource( 69 )
+shader_param/selected = false
+
+[sub_resource type="ShaderMaterial" id=36]
+shader = ExtResource( 69 )
+shader_param/selected = false
+
+[sub_resource type="ShaderMaterial" id=37]
+shader = ExtResource( 69 )
+shader_param/selected = false
 
 [node name="UI" type="CanvasLayer"]
 pause_mode = 1
@@ -1782,7 +1804,7 @@ script = ExtResource( 12 )
 [node name="SunMoon" type="AnimatedSprite" parent="InGame_UI/Clock"]
 position = Vector2( 210, -210 )
 scale = Vector2( 4, 4 )
-frames = SubResource( 32 )
+frames = SubResource( 29 )
 
 [node name="ClockSprite" type="Sprite" parent="InGame_UI/Clock"]
 texture = ExtResource( 11 )
@@ -1813,7 +1835,7 @@ margin_left = -2.0
 margin_top = 3.0
 margin_right = 44.0
 margin_bottom = 39.0
-custom_fonts/normal_font = SubResource( 29 )
+custom_fonts/normal_font = SubResource( 30 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -1901,7 +1923,7 @@ __meta__ = {
 }
 
 [node name="Heart" type="Sprite" parent="InGame_UI/HP/HeartScale"]
-material = SubResource( 30 )
+material = SubResource( 31 )
 scale = Vector2( 0.805, 0.805 )
 texture = ExtResource( 1 )
 normal_map = ExtResource( 1 )
@@ -1915,7 +1937,7 @@ position = Vector2( 39.8628, -43.7331 )
 [node name="HeartBeat" type="AnimationPlayer" parent="InGame_UI/HP/HeartScale/Heart"]
 autoplay = "heartbeat"
 playback_speed = 0.75
-anims/heartbeat = SubResource( 31 )
+anims/heartbeat = SubResource( 32 )
 
 [node name="RoundedEdges" type="Node2D" parent="InGame_UI"]
 visible = false
@@ -1950,63 +1972,32 @@ flip_v = true
 [node name="Inventory" type="Node2D" parent="InGame_UI"]
 position = Vector2( 1505, 964 )
 scale = Vector2( 0.28, 0.28 )
+script = ExtResource( 70 )
 
-[node name="MoonCard" type="Sprite" parent="InGame_UI/Inventory"]
+[node name="Item4" type="Sprite" parent="InGame_UI/Inventory"]
+material = SubResource( 33 )
 position = Vector2( 200, 0 )
-texture = ExtResource( 66 )
 centered = false
 
-[node name="shadow" type="Sprite" parent="InGame_UI/Inventory/MoonCard"]
-modulate = Color( 0, 0, 0, 1 )
-show_behind_parent = true
-position = Vector2( 7, 7 )
-texture = ExtResource( 66 )
-centered = false
-
-[node name="SunCard" type="Sprite" parent="InGame_UI/Inventory"]
+[node name="Item3" type="Sprite" parent="InGame_UI/Inventory"]
+material = SubResource( 34 )
 position = Vector2( 450, 0 )
 texture = ExtResource( 65 )
 centered = false
 
-[node name="shadow" type="Sprite" parent="InGame_UI/Inventory/SunCard"]
-modulate = Color( 0, 0, 0, 1 )
-show_behind_parent = true
-position = Vector2( 7, 7 )
-texture = ExtResource( 65 )
-centered = false
-
-[node name="MoonCard2" type="Sprite" parent="InGame_UI/Inventory"]
+[node name="Item2" type="Sprite" parent="InGame_UI/Inventory"]
+material = SubResource( 35 )
 position = Vector2( 700, 0 )
-texture = ExtResource( 66 )
 centered = false
 
-[node name="shadow" type="Sprite" parent="InGame_UI/Inventory/MoonCard2"]
-modulate = Color( 0, 0, 0, 1 )
-show_behind_parent = true
-position = Vector2( 7, 7 )
-texture = ExtResource( 65 )
-centered = false
-
-[node name="MoonCard3" type="Sprite" parent="InGame_UI/Inventory"]
+[node name="Item1" type="Sprite" parent="InGame_UI/Inventory"]
+material = SubResource( 36 )
 position = Vector2( 950, 0 )
 texture = ExtResource( 66 )
 centered = false
 
-[node name="shadow" type="Sprite" parent="InGame_UI/Inventory/MoonCard3"]
-modulate = Color( 0, 0, 0, 1 )
-show_behind_parent = true
-position = Vector2( 7, 7 )
-texture = ExtResource( 65 )
-centered = false
-
-[node name="MoonCard4" type="Sprite" parent="InGame_UI/Inventory"]
+[node name="Item0" type="Sprite" parent="InGame_UI/Inventory"]
+material = SubResource( 37 )
 position = Vector2( 1200, 0 )
 texture = ExtResource( 66 )
-centered = false
-
-[node name="shadow" type="Sprite" parent="InGame_UI/Inventory/MoonCard4"]
-modulate = Color( 0, 0, 0, 1 )
-show_behind_parent = true
-position = Vector2( 7, 7 )
-texture = ExtResource( 65 )
 centered = false
