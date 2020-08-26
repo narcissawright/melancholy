@@ -39,6 +39,9 @@ func _ready() -> void:
 		set_selected(i, i == selected_item)
 		set_graphic(i, inventory[i].item)
 
+func current_item() -> String:
+	return inventory[selected_item].item
+
 func set_graphic(index:int, item:String) -> void:
 	inventory[index].node.texture = gfx[item]
 
