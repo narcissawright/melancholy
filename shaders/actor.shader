@@ -26,12 +26,6 @@ uniform bool locked = false;
 const vec3 locked_lit = vec3(0.2, 0.6, 0.8);
 const vec3 locked_dim = vec3(0.0, 0.3, 0.4);
 
-void vertex() {
-	// use world space normals
-	//NORMAL = (CAMERA_MATRIX * vec4(NORMAL, 0.0)).xyz;
-	//COLOR.rgb = mix( pow((COLOR.rgb + vec3(0.055)) * (1.0 / (1.0 + 0.055)), vec3(2.4)), COLOR.rgb* (1.0 / 12.92), lessThan(COLOR.rgb,vec3(0.04045)) );
-}
-
 void fragment() {
 	
 	if (opacity_dither) {
@@ -141,23 +135,26 @@ void light() {
 		threshold = 1.0 - ALBEDO.r; // this fails to do reading it as SRGB
 	}
 	
-	if (enable_rim) {
+	if (enable_rim) { 
 		float NdotV = dot(VIEW, NORMAL);
-		
+		// this has no antialiasing right now.
 		if (NdotV < 0.3) {
-			threshold = -0.7;
+			threshold = 0.0;
 		}
 	}
 	
 	
 	if (not_shaded) { lit = 1.0; }
+	
 	if (celshaded) {
-		if (lit > threshold) { 
-			DIFFUSE_LIGHT = final_lit; 
-		} else { 
-			DIFFUSE_LIGHT = final_dim;
-		}
-	} else {
-		DIFFUSE_LIGHT = mix(final_dim, final_lit, lit);
-	}
+		float E = fwidth(lit) / 2.0;
+		if (lit > threshold - E && lit < threshold + E) {
+			lit = smoothstep(threshold - E, threshold + E, lit);
+			//lit = clamp(threshold * (lit - threshold + E) / E, 0.0, 1.0);
+		} else {
+			lit = step(threshold, lit);
+	    }
+	 }
+	
+	 DIFFUSE_LIGHT = mix(final_dim, final_lit, lit);
 }
