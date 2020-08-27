@@ -77,7 +77,7 @@ func _ready() -> void:
 func _physics_process(_t) -> void:
 	framecount += 1
 	
-	use_item()
+	check_if_use_item() # Item Usage
 	update_target_state() # ZL Targeting
 	update_horizontal_velocity() # General movement
 	update_vertical_velocity() # Jumping and gravity
@@ -100,16 +100,26 @@ func _physics_process(_t) -> void:
 ##    ##    ##      ##    ##
 ##    ##    ######  ##    ##
 
-func use_item() -> void:
+""" Prevent using items when inappropriate. """
+
+func can_use_item() -> bool:
+	if not grounded: return false
+	if is_locked(): return false
+	if Game.cam.mode == "first_person": return false 
+	return true
+
+func check_if_use_item() -> void:
 	if Input.is_action_just_pressed("use_item"):
-		match Game.ui.inventory.current_item():
-			"sun_card":
-				if Game.timekeeper.can_use_card():
-					Game.timekeeper.use_card("sun")
-					lockplayer_for_frames(30)
-			"moon_card":
-				if Game.timekeeper.can_use_card():
-					Game.timekeeper.use_card("moon")
+		if can_use_item():
+			match Game.ui.inventory.current_item():
+				"sun_card":
+					if Game.timekeeper.can_use_card():
+						Game.timekeeper.use_card("sun")
+						lockplayer_for_frames(30)
+				"moon_card":
+					if Game.timekeeper.can_use_card():
+						Game.timekeeper.use_card("moon")
+						lockplayer_for_frames(30)
 
 ######  ####   #####    #####  ######  ######
   ##   ##  ##  ##  ##  ##      ##        ##

@@ -1,21 +1,5 @@
 extends Camera
 
-""" 
-To Do:
-	- autocamera peer over ledges
-	- code organization
-	
-Maybe:
-	- maybe autocamera should rotate to a higher point while you're falling down.
-	- perhaps some context-sensitive rotation limits (such as looking from very low while targeting)
-	- pause mode improvements
-		- tilt in pause mode.
-		- smoother zoom in pause mode.
-		- allow sliding the crosshair against surfaces.
-		- a better boundary indicator
-	- maybe make the camera rotation less strong in first person mode
-"""
-
 # Collision
 var query := PhysicsShapeQueryParameters.new()
 var shape := SphereShape.new()
