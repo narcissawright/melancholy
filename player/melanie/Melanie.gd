@@ -160,23 +160,26 @@ func update_target_state() -> void:
 		
 	var head_look_target:int = TargetSystem.priority_target
 	if head_look_target != 0:
-		#var face_dir = $melanie_test/Armature/Skeleton/FaceDir
-		#face_dir.look_at(TargetSystem.list[look_target].pos, Vector3.UP)
-		
-		# tools:
-		global_transform.basis
-		forwards()
-		
 		var custom_pose = skele.get_bone_custom_pose(head_bone_idx)
-		print(custom_pose)
-		#custom_pose = custom_pose.looking_at(TargetSystem.list[look_target].pos, Vector3.FORWARD)
+		var face_dir = global_transform.basis.xform(-custom_pose.basis.z)
 		
-		custom_pose = custom_pose.basis.rotated(Vector3.FORWARD, 0.2);
+		# this is always the same bc head not translating...
+		var head_looktowards:Vector3 = (TargetSystem.list[head_look_target].pos - global_transform.origin).normalized()
+
+		var difference = (head_looktowards - face_dir)
+		var updown:float = difference.y
+		var leftright:float = atan2(difference.z, difference.x)
 		
-		#var new_transform = Transform(face_dir.transform.basis)
-		#new_transform.basis = new_transform.basis.rotated(Vector3.FORWARD, PI)
-		
-		#custom_pose.basis = custom_pose.basis.rotated(Vector3(0, 0, 1), 0.1)
+		#custom_pose.basis = Basis.IDENTITY.rotated(Vector3(0,0,1), leftright) # LEFT RIGHT
+		#custom_pose.basis = custom_pose.basis.rotated(Vector3(1,0,0), updown) # UP DOWN
+
+#		var leftright:float = Vector2(face_dir.x, face_dir.z).angle_to(Vector2(difference.x, difference.z))
+#		print(leftright)
+
+
+		custom_pose.basis = custom_pose.basis.rotated(Vector3(1,0,0), updown) # UP DOWN
+#		custom_pose.basis = custom_pose.basis.rotated(Vector3(0,1,0), 0.0) # TILT
+		#custom_pose.basis = custom_pose.basis.rotated(Vector3(0,0,1), 0.01) # LEFT/RIGHT
 		skele.set_bone_custom_pose(head_bone_idx, custom_pose)
 
 func untarget() -> void:
