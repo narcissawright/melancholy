@@ -132,6 +132,9 @@ var zl_target:int = 0 # which object are you targeting (0 for nothing)
 onready var retarget_timer:Timer = $'Timers/ReTarget'
 var retarget = 0 # which object were you just targeting
 
+onready var skele = $melanie_test/Armature/Skeleton
+onready var head_bone_idx = skele.find_bone("head")
+
 func update_target_state() -> void:
 	
 	if Input.is_action_just_pressed("L"):
@@ -155,6 +158,27 @@ func update_target_state() -> void:
 	elif Game.cam.mode != "reset":
 		untarget()
 		
+	var head_look_target:int = TargetSystem.priority_target
+	if head_look_target != 0:
+		#var face_dir = $melanie_test/Armature/Skeleton/FaceDir
+		#face_dir.look_at(TargetSystem.list[look_target].pos, Vector3.UP)
+		
+		# tools:
+		global_transform.basis
+		forwards()
+		
+		var custom_pose = skele.get_bone_custom_pose(head_bone_idx)
+		print(custom_pose)
+		#custom_pose = custom_pose.looking_at(TargetSystem.list[look_target].pos, Vector3.FORWARD)
+		
+		custom_pose = custom_pose.basis.rotated(Vector3.FORWARD, 0.2);
+		
+		#var new_transform = Transform(face_dir.transform.basis)
+		#new_transform.basis = new_transform.basis.rotated(Vector3.FORWARD, PI)
+		
+		#custom_pose.basis = custom_pose.basis.rotated(Vector3(0, 0, 1), 0.1)
+		skele.set_bone_custom_pose(head_bone_idx, custom_pose)
+
 func untarget() -> void:
 	if zl_target != 0:
 		retarget = zl_target
