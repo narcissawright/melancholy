@@ -121,6 +121,10 @@ void light() {
 		final_dim = color_dim.rgb;
 	}
 	
+	vec3 final_diff = final_lit - final_dim;
+	vec3 light_energy = min(vec3(1,1,1), ATTENUATION * LIGHT_COLOR);
+	final_diff *= light_energy; // min(final_diff, final_diff + light_energy);
+	
 	if (damaged) {
 		final_lit = damaged_lit;
 		final_dim = damaged_dim;
@@ -156,5 +160,5 @@ void light() {
 	    }
 	 }
 	
-	 DIFFUSE_LIGHT = mix(final_dim, final_lit, lit);
+	 DIFFUSE_LIGHT = max(DIFFUSE_LIGHT, mix(final_dim, final_dim + final_diff, lit));
 }

@@ -33,6 +33,7 @@ var is_ready:bool = false
 var exploding:bool = false
 
 func _ready() -> void:
+	
 	# Duplicate material per bomb
 	var material = bomb_mesh.get_surface_material(0).duplicate()
 	bomb_mesh.set_surface_material(0, material)
