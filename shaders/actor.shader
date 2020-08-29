@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode shadows_disabled, ambient_light_disabled;
+render_mode ambient_light_disabled;
 
 uniform vec3 light_vec;
 
@@ -161,4 +161,5 @@ void light() {
 	 }
 	
 	 DIFFUSE_LIGHT = max(DIFFUSE_LIGHT, mix(final_dim, final_dim + final_diff, lit));
+	 //DIFFUSE_LIGHT = ATTENUATION;
 }
