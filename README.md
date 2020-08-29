@@ -28,8 +28,7 @@
 - Proper movement & physics on slopes and small ledges
 - Sword (Primary Attack). Sword draw, sword slash, heavy sword slash, air slash, put away.
 - Subweapon: Bow & Arrow. Manual aiming, targeted aiming. Think Link from OoT
-- Subweapon: TBD
-- Subweapon: TBD 
+- Additional Subweapons.
 - Ledge grab. Ledge movement (left or right), Ledge climb. Ledge release.
 - Crouch. Crouch movement. Slidekick (crouch while running). Divekick (crouch while in air)
 - Respawn animation.
@@ -156,8 +155,11 @@
 - Aiming for ~10 main stages per character. Some fully unique, some shared, some altered.
 - Try to keep a bit of "arcade scenario" -- gameplay design focused levels, but not too arcadey. Ideally each stage is minutes (3-15) long if you know what you're doing.
 - Checkpoints exist. 
-- I want an ice level. (slippery physics)
-- would be nice to have branching / alternate exits that lead to new levels, this kind of thing is cool.
+- Secret exits exist (taking you to secret levels)
+- Secret Exit in level 1 should involve going out of your way to find bomb subweapon, then heading back to beginning to bomb boost yourself up to higher ledge. Bombs should also allow you to blow open certain breakable walls and obtain powerups etc.
+- There needs to be a level with 3 "laps" that are each somewhat different. I need to think about this level's structure more. but it is gonna happen.
+- There needs to be a typical ice level with slippery sections.
+- Some subweapons could be stage-specific. Like a level with a grappling hook that you can swing from.
 
 ## Character Design:
 - Melanie should have shorter hair than Melancholy. Neither character will have bangs.

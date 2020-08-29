@@ -158,30 +158,39 @@ func update_target_state() -> void:
 	elif Game.cam.mode != "reset":
 		untarget()
 		
+	head_rotation()
+	
+func head_rotation() -> void:
 	var head_look_target:int = TargetSystem.priority_target
 	if head_look_target != 0:
 		var custom_pose = skele.get_bone_custom_pose(head_bone_idx)
 		var face_dir = global_transform.basis.xform(-custom_pose.basis.z)
 		
-		# this is always the same bc head not translating...
-		var head_looktowards:Vector3 = (TargetSystem.list[head_look_target].pos - global_transform.origin).normalized()
+		# this line can crash.
+		var head_looktowards:Vector3 = (TargetSystem.list[head_look_target].pos - self.head_position).normalized()
 
-		var difference = (head_looktowards - face_dir)
-		var updown:float = difference.y
-		var leftright:float = atan2(difference.z, difference.x)
+		head_looktowards.y = clamp(head_looktowards.y, -0.35, 0.35)
+		face_dir.y = clamp(face_dir.y, -0.35, 0.35)
 		
-		#custom_pose.basis = Basis.IDENTITY.rotated(Vector3(0,0,1), leftright) # LEFT RIGHT
-		#custom_pose.basis = custom_pose.basis.rotated(Vector3(1,0,0), updown) # UP DOWN
+		var hlt_xz = Vector2(head_looktowards.x, head_looktowards.z).normalized()
+		var face2d = Vector2(face_dir.x, face_dir.z).normalized()
+		
+		var diff_2d = (face2d.angle_to(hlt_xz))
+		
 
-#		var leftright:float = Vector2(face_dir.x, face_dir.z).angle_to(Vector2(difference.x, difference.z))
-#		print(leftright)
-
-
-		custom_pose.basis = custom_pose.basis.rotated(Vector3(1,0,0), updown) # UP DOWN
+		var updown_rot:float = (head_looktowards.y - face_dir.y)
+		
+		"""
+		I think now the problem is that the 2nd axis i am rotating on no longer makes sense once it has already been rotated once.
+		Need to figure out a clean way to get this going.
+		"""
+		custom_pose.basis = custom_pose.basis.rotated(Vector3(1,0,0), updown_rot) # UP DOWN
 #		custom_pose.basis = custom_pose.basis.rotated(Vector3(0,1,0), 0.0) # TILT
-		#custom_pose.basis = custom_pose.basis.rotated(Vector3(0,0,1), 0.01) # LEFT/RIGHT
+		#custom_pose.basis = custom_pose.basis.rotated(custom_pose.basis.z, diff_2d) # LEFT/RIGHT
 		skele.set_bone_custom_pose(head_bone_idx, custom_pose)
-
+	else:
+		skele.set_bone_custom_pose(head_bone_idx, Transform())
+		
 func untarget() -> void:
 	if zl_target != 0:
 		retarget = zl_target

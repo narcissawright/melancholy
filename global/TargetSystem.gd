@@ -215,6 +215,10 @@ func target_lost(area: Area) -> void:
 	var id = area.get_instance_id()
 # warning-ignore:return_value_discarded
 	list.erase(id)
+	if priority_target == id:
+		priority_target = 0 
+	elif secondary_target == id:
+		secondary_target = 0
 	
 func debug() -> void:
 	Debug.text.write('Target list:')
