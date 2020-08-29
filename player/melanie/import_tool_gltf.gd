@@ -9,6 +9,7 @@ func post_import(scene):
 				if mesh is MeshInstance:
 					mesh.set_surface_material(0, preload("res://player/melanie/Melanie_Material.tres"))
 					mesh.layers = Layers.actor
+					#mesh.cast_shadow = false
 					
 			var bone_attachment = BoneAttachment.new()
 			skele.add_child(bone_attachment)

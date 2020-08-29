@@ -359,6 +359,7 @@ shape = SubResource( 4 )
 [node name="Explosion" type="MeshInstance" parent="."]
 visible = false
 layers = 2
+cast_shadow = 0
 mesh = SubResource( 5 )
 material/0 = SubResource( 7 )
 

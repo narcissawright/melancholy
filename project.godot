@@ -17,7 +17,7 @@ _global_script_class_icons={
 
 config/name="Melancholy"
 config/description="Godot 2020 project by NW"
-run/main_scene="res://scenes/testscene/TestScene.tscn"
+run/main_scene="res://scenes/level1/level1.tscn"
 config/icon="res://icon.png"
 
 [autoload]
@@ -256,6 +256,7 @@ use_item={
 3d_physics/layer_1="solid"
 3d_render/layer_2="actor"
 3d_physics/layer_2="actor"
+3d_render/layer_3="no_shadow"
 3d_physics/layer_3="target"
 3d_physics/layer_4="explosion"
 3d_physics/layer_5="interactable"

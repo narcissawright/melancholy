@@ -175,11 +175,23 @@
 
 #### Clean line shader
 
-I wanted to make clean outlines (and inner lines) using combined depth+normals of the entire scene. right now getting this in a shader requires you to do a really complicated 2nd pass where everything renders only their normals first, I guess. it's annoying and bad. so hopefully Vulkan in Godot 4 will allow this kind of stuff. BUT, actually GDQuest released an interesting technique in the "Shader secrets" project. It also uses a 2nd pass shader but the lines came out cleaner than I imagined without having the normal data. So it might still be doable now, but it's not a priority.
+I currently a modified version of GDQuest's "Pixel Perfect Outline" shader for Godot 3.2. Once Vulkan and 4.0 is out, it is confirmed that post process shader can get access to screen normals, which should be experimented with for clean line work.
+
+#### Sky
+
+I don't render a daytime scene yet, only stars and no moon. Godot 4.0 will have "Sky Shaders" which seem to suit the problem well, so I'm putting off working on this aspect until Godot 4.0 is fully released.
 
 #### Inverse Kinematics
 
 IK can be achieved though animations that are exported, but having dynamic IK in-game (for sloped ground, etc), doesn't seem plausible with the current state of SkeletonIK. I will avoid this until SkeletonIK in Godot is much improved.
+
+#### Vertex Color as Occlusion
+
+Vertex colors seem to come through already in SRGB form, so when you read COLOR in a shader, something like 0.5 red in blender will turn into ~0.23 or something. This is very awkward for "Occlusion painting" as seen in the GGXrd graphical presentation, but it can certainly be worked around. I haven't implemented this yet.
+
+#### Normal Editing
+
+Should be perfectly doable, I just need to fix up my character's face topology more beforehand.
 
 #### Modeling, Animations, and Importing
 
@@ -196,5 +208,3 @@ I feel like I need to write down some of the things I've learned after trying to
 - Writing an import script for complex models is helpful, as you can set all the needed materials, set up lighting etc. the moment the import occurs.
 
 - Currently, my animations import but the keyframes don't seem identical, and are set at a fixed interval (every tenth of a second). I don't know how to avoid this, perhaps making the animation a lot slower or spacing out the keyframes more in blender, then playing the animation faster in Godot. Currently this hasn't really resulted in a loss of animation quality though so far, so maybe this is a non-issue. 
-
-- Vertex Colors in shader. These come through already in SRGB form afaik, so when you read COLOR in a shader, something like 0.5 red in blender will turn into ~0.23 or something. This is very awkward for "Occlusion painting" as seen in the GGXrd graphical presentation, but it can certainly be worked around.
