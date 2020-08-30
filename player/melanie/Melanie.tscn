@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://shaders/actor.shader" type="Shader" id=1]
 [ext_resource path="res://player/TargetDetector.tscn" type="PackedScene" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://player/InteractArea.tscn" type="PackedScene" id=6]
 [ext_resource path="res://player/melanie/ShieldMesh.tscn" type="PackedScene" id=7]
 [ext_resource path="res://player/melanie/melanie_mesh.tscn" type="PackedScene" id=8]
+[ext_resource path="res://player/ledge_detection/LedgeGrabSystem.tscn" type="PackedScene" id=9]
 
 [sub_resource type="CapsuleMesh" id=1]
 radius = 0.2
@@ -334,6 +335,7 @@ material/0 = SubResource( 4 )
 
 [node name="BodyCollision" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0.885, 0 )
+visible = false
 shape = SubResource( 5 )
 
 [node name="RayCast" type="RayCast" parent="."]
@@ -359,9 +361,10 @@ script = ExtResource( 3 )
 visible = false
 
 [node name="Interactables" parent="." instance=ExtResource( 6 )]
+visible = false
 
 [node name="HeadPosition" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.57, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62956, 0 )
 
 [node name="BombSpawner" type="Position3D" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0 )
@@ -373,6 +376,7 @@ collision_layer = 0
 
 [node name="CollisionShape" type="CollisionShape" parent="BombSpawner/SpawnArea"]
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, -0.5, 0 )
+visible = false
 shape = SubResource( 10 )
 
 [node name="Tween" type="Tween" parent="BombSpawner"]
@@ -390,6 +394,8 @@ one_shot = true
 [node name="ReTarget" type="Timer" parent="Timers"]
 wait_time = 0.3
 one_shot = true
+
+[node name="LedgeGrabSystem" parent="." instance=ExtResource( 9 )]
 [connection signal="body_entered" from="BombSpawner/SpawnArea" to="BombSpawner" method="_on_SpawnArea_body_entered"]
 [connection signal="timeout" from="Timers/Locked" to="." method="_on_Locked_timeout"]
 [connection signal="timeout" from="Timers/AirTransition" to="." method="_on_AirTransition_timeout"]

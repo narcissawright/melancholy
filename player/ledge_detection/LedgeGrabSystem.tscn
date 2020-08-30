@@ -1,0 +1,49 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://player/ledge_detection/Forward_shape.tres" type="Shape" id=1]
+[ext_resource path="res://player/ledge_detection/LedgeGrabSystem.gd" type="Script" id=2]
+[ext_resource path="res://player/ledge_detection/LedgePos_shape.tres" type="Shape" id=3]
+[ext_resource path="res://player/ledge_detection/Vertical_shape.tres" type="Shape" id=4]
+
+[node name="LedgeGrabSystem" type="Spatial"]
+script = ExtResource( 2 )
+
+[node name="LedgeGrab" type="Area" parent="."]
+input_ray_pickable = false
+monitoring = false
+monitorable = false
+collision_layer = 0
+collision_mask = 0
+__meta__ = {
+"_editor_description_": "No level collision should be overlapping these shapes, when checking if player can ledgegrab."
+}
+
+[node name="Vertical" type="CollisionShape" parent="LedgeGrab"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.93496, 0 )
+shape = ExtResource( 4 )
+disabled = true
+
+[node name="Forward" type="CollisionShape" parent="LedgeGrab"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, -0.15 )
+shape = ExtResource( 1 )
+disabled = true
+
+[node name="LedgePos" type="Area" parent="."]
+input_ray_pickable = false
+monitoring = false
+monitorable = false
+collision_layer = 0
+collision_mask = 0
+__meta__ = {
+"_editor_description_": "Level collision _should_ be overlapping this shape, when checking if player can ledgegrab."
+}
+
+[node name="LedgePos" type="CollisionShape" parent="LedgePos"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, -0.15 )
+shape = ExtResource( 3 )
+disabled = true
+
+[node name="RayStart" type="Position3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.01, -0.3 )
+
+[node name="Tween" type="Tween" parent="."]

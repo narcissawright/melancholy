@@ -30,6 +30,10 @@ var jumping:bool = false
 var jumphold_framecount:int = 0 # Track the # of consecutive frames jump is held for (variable jump height)
 onready var air_transition_timer = $Timers/AirTransition # Used to give jumps leniency when falling off of a ledge
 
+# Ledgegrab 
+onready var ledge = $LedgeGrabSystem
+var ledgegrabbing = false
+
 # Shield
 onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shield is up or not
 
@@ -79,6 +83,8 @@ func _physics_process(_t) -> void:
 	
 	check_if_use_item() # Item Usage
 	update_target_state() # ZL Targeting
+	
+	check_ledgegrab()
 	update_horizontal_velocity() # General movement
 	update_vertical_velocity() # Jumping and gravity
 	
@@ -158,7 +164,7 @@ func update_target_state() -> void:
 	elif Game.cam.mode != "reset":
 		untarget()
 		
-	head_rotation()
+	#head_rotation()
 	
 func head_rotation() -> void:
 	var head_look_target:int = TargetSystem.priority_target
@@ -175,6 +181,7 @@ func head_rotation() -> void:
 		var hlt_xz = Vector2(head_looktowards.x, head_looktowards.z).normalized()
 		var face2d = Vector2(face_dir.x, face_dir.z).normalized()
 		
+# warning-ignore:unused_variable
 		var diff_2d = (face2d.angle_to(hlt_xz))
 		
 
@@ -208,11 +215,58 @@ func cam_reset_wall_align() -> void:
 		Game.cam.reset()
 		
 		# align with wall if relevant
-		var from = self.head_position
-		var to =   self.head_position + forwards() * 0.25
-		var result = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
-		if result.size() > 0:
-			look_at(translation - result.normal, Vector3.UP)
+		wall_align(0.25)
+
+func wall_align(dist:float) -> void:
+	var from = self.head_position
+	var to =   self.head_position + forwards() * dist
+	var result = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
+	if result.size() > 0:
+		look_at(translation - result.normal, Vector3.UP)
+
+##      ######  #####    #####  ######
+##      ##      ##  ##  ##      ##
+##      #####   ##  ##  ## ###  #####
+##      ##      ##  ##  ##  ##  ##
+######  ######  #####    ####   ######
+
+onready var ledgegrab_tween = $LedgeGrabSystem/Tween
+func check_ledgegrab():
+	if ledgegrabbing:
+		if not Input.is_action_pressed("jump"):
+			ledgegrabbing = false
+			ledgegrab_tween.stop_all()
+	else:
+		if not is_locked() and not grounded and velocity.y < 0.1:
+			if ledge.can_ledgegrab() and Input.is_action_pressed("jump"):
+				
+				# set state
+				velocity = Vector3.ZERO
+				ledgegrabbing = true
+				
+				# find wall position and normal
+				var from = self.head_position
+				var to =   self.head_position + forwards() * 1.0
+				var result = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
+				if result.size() > 0:
+					
+					# find new transform basis
+					var old_basis = global_transform.basis
+					look_at(translation - result.normal, Vector3.UP)
+					var goal_basis:Basis = global_transform.basis
+					global_transform.basis = old_basis
+					
+					# find new transform origin. this warning dumb af.
+					# warning-ignore:unassigned_variable
+					var goal_translation:Vector3
+					goal_translation.x = result.position.x + result.normal.x * 0.2
+					goal_translation.z = result.position.z + result.normal.z * 0.2
+					goal_translation.y = ledge.grab_height() - 2.0
+					
+					# interpolate to new transform.
+					ledgegrab_tween.interpolate_property(
+						self, "global_transform", global_transform, Transform(goal_basis, goal_translation), 0.1)
+					ledgegrab_tween.start()
 
 ##  ##        ##  ##  #####  ##     ####    ####  ##  ######  ##  ##
 ##  ##        ##  ##  ##     ##    ##  ##  ##     ##    ##    ##  ##
@@ -226,6 +280,9 @@ func horizontal_velocity() -> Vector3:
 	return Vector3(velocity.x, 0, velocity.z)
 
 func update_horizontal_velocity() -> void:
+	if ledgegrabbing:
+		return
+	
 	var move_vec = Vector3.ZERO # includes magnitude.
 	var horizontal_velocity = horizontal_velocity()
 	var interpolate_amt:float = 0.15
@@ -288,6 +345,9 @@ func can_sprint() -> bool:
   ##            ##    #####  #####  ####    ####  ##    ##      ##
 
 func update_vertical_velocity() -> void:
+	if ledgegrabbing:
+		return
+
 	# Apply Gravity
 	velocity.y += Game.GRAVITY * Game.frame_time
 	
@@ -576,13 +636,14 @@ func debug() -> void:
 	Debug.text.write('Grounded: ' + str(grounded), 'green' if grounded else 'red')
 	Debug.text.write('Has Jump: ' + str(has_jump), 'green' if has_jump else 'red')
 	Debug.text.write('Jumping: ' + str(jumping), 'green' if jumping else 'red')
+	Debug.text.write('Can Ledgegrab: ' + str(ledge.can_ledgegrab()))
 	Debug.text.newline()
 	Debug.text.write('Shielding: ' + str(shield.active), 'green' if shield.active else 'red')
 	Debug.text.write('Bashing: ' + str(shield.bash_str), 'green' if shield.bash_str > 0.0 else 'red')
 	Debug.text.write('Sliding: ' + str(shield.sliding), 'green' if shield.sliding else 'red')
 	Debug.text.newline()
 	Debug.text.write('Sprinting: ' + str(sprint_count) + '/180')
-#	Debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
+	#Debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
 	Debug.text.newline()
 	Debug.text.write('Interactables: ' + str(interactables.list))
 
