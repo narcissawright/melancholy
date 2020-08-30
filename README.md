@@ -23,13 +23,13 @@
 #### `Partially Done`
 - Damaged. All damage right now simply locks you for a certain amount of frames. Would like to add other kinds of damage maybe. There is no death animation or anything yet.
 - Interacting. Item pickup is functional (no animation).
+- Ledge grab. Ledge movement (left or right), Ledge climb. Ledge release.
 
 #### `To Do`
 - Proper movement & physics on slopes and small ledges
 - Sword (Primary Attack). Sword draw, sword slash, heavy sword slash, air slash, put away.
 - Subweapon: Bow & Arrow. Manual aiming, targeted aiming. Think Link from OoT
 - Additional Subweapons.
-- Ledge grab. Ledge movement (left or right), Ledge climb. Ledge release.
 - Crouch. Crouch movement. Slidekick (crouch while running). Divekick (crouch while in air)
 - Respawn animation.
 - Power up system.

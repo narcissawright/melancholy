@@ -256,7 +256,7 @@ func check_ledgegrab():
 					var goal_basis:Basis = global_transform.basis
 					global_transform.basis = old_basis
 					
-					# find new transform origin. this warning dumb af.
+					# find new transform origin.  this warning dumb af.
 					# warning-ignore:unassigned_variable
 					var goal_translation:Vector3
 					goal_translation.x = result.position.x + result.normal.x * 0.2
@@ -264,8 +264,10 @@ func check_ledgegrab():
 					goal_translation.y = ledge.grab_height() - 2.0
 					
 					# interpolate to new transform.
-					ledgegrab_tween.interpolate_property(
-						self, "global_transform", global_transform, Transform(goal_basis, goal_translation), 0.1)
+					ledgegrab_tween.interpolate_property(self, "global_transform", 
+						global_transform, Transform(goal_basis, goal_translation), 0.15,
+						Tween.TRANS_SINE, Tween.EASE_OUT)
+						
 					ledgegrab_tween.start()
 
 ##  ##        ##  ##  #####  ##     ####    ####  ##  ######  ##  ##
