@@ -46,6 +46,7 @@ func update_jewel_count(value):
 
 const max_jewels:int = 999
 onready var bombspawner = $BombSpawner
+onready var bomb_pos = $melanie_test/Armature/Skeleton/BombPos
 
 # Material
 onready var material = $melanie_test/Armature/Skeleton/Face.get_surface_material(0)
@@ -237,42 +238,54 @@ func check_ledgegrab():
 			ledgegrabbing = false
 			set_ledge_cling_anim(0.0)
 			ledgegrab_tween.stop_all()
+			return
+			
+		var _dir:Vector2 = Game.get_stick_input("left")
+		""" OH boy time for a whole new movement logic here... """
+			
 	else:
-		if not is_locked() and not grounded and velocity.y < 0.1:
-			if ledge.can_ledgegrab() and Input.is_action_pressed("jump"):
+		if grounded: return
+		if is_locked(): return
+		if velocity.y >= 0.1: return
+		if not Input.is_action_pressed("jump"): return 
+		if bombspawner.holding: return
+		if shield.active: return
+		if ledge.can_ledgegrab(): # do this check last as it's the most expensive.
+			
+			# set state
+			velocity = Vector3.ZERO
+			ledgegrabbing = true
+			
+			# find wall position and normal
+			var from = self.head_position
+			var to =   self.head_position + forwards() * 1.0
+			var result = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
+			
+			""" I'm not sure what happens if this raycast fails, seems potentially ugly """
+			if result.size() > 0:
 				
-				# set state
-				velocity = Vector3.ZERO
-				ledgegrabbing = true
+				# find new transform basis
+				var old_basis = global_transform.basis
+				look_at(translation - result.normal, Vector3.UP)
+				var goal_basis:Basis = global_transform.basis
+				global_transform.basis = old_basis
 				
-				# find wall position and normal
-				var from = self.head_position
-				var to =   self.head_position + forwards() * 1.0
-				var result = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
-				if result.size() > 0:
+				# find new transform origin.  this warning dumb af.
+				# warning-ignore:unassigned_variable
+				var goal_translation:Vector3
+				goal_translation.x = result.position.x + result.normal.x * 0.2
+				goal_translation.z = result.position.z + result.normal.z * 0.2
+				goal_translation.y = ledge.grab_height() - 2.0
+				
+				# interpolate to new transform.
+				ledgegrab_tween.interpolate_property(self, "global_transform", 
+					global_transform, Transform(goal_basis, goal_translation), 0.15,
+					Tween.TRANS_SINE, Tween.EASE_OUT)
+				ledgegrab_tween.interpolate_method(self, "set_ledge_cling_anim", 
+					0.0, 1.0, 0.15,
+					Tween.TRANS_SINE, Tween.EASE_OUT)
 					
-					# find new transform basis
-					var old_basis = global_transform.basis
-					look_at(translation - result.normal, Vector3.UP)
-					var goal_basis:Basis = global_transform.basis
-					global_transform.basis = old_basis
-					
-					# find new transform origin.  this warning dumb af.
-					# warning-ignore:unassigned_variable
-					var goal_translation:Vector3
-					goal_translation.x = result.position.x + result.normal.x * 0.2
-					goal_translation.z = result.position.z + result.normal.z * 0.2
-					goal_translation.y = ledge.grab_height() - 2.0
-					
-					# interpolate to new transform.
-					ledgegrab_tween.interpolate_property(self, "global_transform", 
-						global_transform, Transform(goal_basis, goal_translation), 0.15,
-						Tween.TRANS_SINE, Tween.EASE_OUT)
-					ledgegrab_tween.interpolate_method(self, "set_ledge_cling_anim", 
-						0.0, 1.0, 0.15,
-						Tween.TRANS_SINE, Tween.EASE_OUT)
-						
-					ledgegrab_tween.start()
+				ledgegrab_tween.start()
 
 ##  ##        ##  ##  #####  ##     ####    ####  ##  ######  ##  ##
 ##  ##        ##  ##  ##     ##    ##  ##  ##     ##    ##    ##  ##
@@ -482,7 +495,7 @@ func handle_interactable():
 func update_subweapon_state() -> void:
 	match(current_subweapon):
 		"bomb":
-			bombspawner.translation = $melanie_test/Armature/Skeleton/BombPos.translation
+			bombspawner.translation = bomb_pos.translation
 			bombspawner.process_state()
  
  ####   ####   ##     ##     ##   #####  ##   ####   ##  ##

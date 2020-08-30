@@ -13,6 +13,11 @@ var sliding = false
 func _ready() -> void:
 	Events.connect("player_damaged", self, "on_player_damaged")
 
+func can_shield() -> bool:
+	if Game.player.is_locked(): return false
+	if Game.player.ledgegrabbing: return false
+	return true
+
 func _physics_process(_t:float) -> void:
 	
 	if sliding:
@@ -23,7 +28,7 @@ func _physics_process(_t:float) -> void:
 	if shieldbash_timer > 0:
 		shieldbash_timer -= 1
 	
-	if not Game.player.is_locked():
+	if can_shield():
 		# If you just pressed shield
 		if not active and Input.is_action_pressed("shield"):
 			if can_shield_bash():

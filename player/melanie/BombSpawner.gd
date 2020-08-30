@@ -14,8 +14,6 @@ func _ready() -> void:
 	Events.connect("player_damaged", self, "on_player_damaged")
 
 func process_state() -> void:
-	#translation.y = Game.player.get_node("melanie_test/AnimationPlayer").get_animation("Walk").get_track("Spine1").translation.y
-	
 	if not Game.player.shield.active:
 		if Input.is_action_just_pressed("subweapon"):
 			
@@ -24,7 +22,7 @@ func process_state() -> void:
 				velocity += Game.player.velocity * 0.3
 				throw_bomb_asap(velocity)
 				
-			elif not Game.player.is_locked() and can_spawn_bomb(): # If a bomb can be spawned, do so.
+			elif can_spawn_bomb(): # If a bomb can be spawned, do so.
 				spawn_bomb()
 	
 	elif holding: 
@@ -32,11 +30,12 @@ func process_state() -> void:
 
 # Spawn
 func can_spawn_bomb() -> bool:
-	if Game.player.jewels >= jewel_cost:
-		if spawn_area.get_overlapping_bodies().size() == 0:
-			return true
-	return false
-	
+	if Game.player.is_locked(): return false
+	if Game.player.ledgegrabbing: return false
+	if Game.player.jewels < jewel_cost: return false
+	if spawn_area.get_overlapping_bodies().size() != 0: return false
+	return true
+
 func spawn_bomb() -> void:
 	current_bomb = bomb.instance()
 	add_child(current_bomb)
