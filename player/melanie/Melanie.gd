@@ -235,6 +235,7 @@ func check_ledgegrab():
 	if ledgegrabbing:
 		if not Input.is_action_pressed("jump"):
 			ledgegrabbing = false
+			set_ledge_cling_anim(0.0)
 			ledgegrab_tween.stop_all()
 	else:
 		if not is_locked() and not grounded and velocity.y < 0.1:
@@ -266,6 +267,9 @@ func check_ledgegrab():
 					# interpolate to new transform.
 					ledgegrab_tween.interpolate_property(self, "global_transform", 
 						global_transform, Transform(goal_basis, goal_translation), 0.15,
+						Tween.TRANS_SINE, Tween.EASE_OUT)
+					ledgegrab_tween.interpolate_method(self, "set_ledge_cling_anim", 
+						0.0, 1.0, 0.15,
 						Tween.TRANS_SINE, Tween.EASE_OUT)
 						
 					ledgegrab_tween.start()
@@ -453,6 +457,9 @@ e.g. BombSpawner or Bomb may call bomb pull or bomb throw.
 
 func walk_animation() -> void:
 	anim_tree['parameters/IdleWalk/blend_amount'] = clamp(horizontal_velocity().length() / 1.65, 0.0, 1.0)
+	
+func set_ledge_cling_anim(blend_amt:float) -> void:
+	anim_tree['parameters/is_ledge_clinging/blend_amount'] = blend_amt
 
 ##  ##  ##  ######  ######  #####    ####    #####  ######
 ##  ### ##    ##    ##      ##  ##  ##  ##  ##        ##
