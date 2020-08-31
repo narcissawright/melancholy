@@ -151,7 +151,9 @@
 - Separate time trials for each character, to be expanded upon later.
 
 ## Stages:
-#### `Progress: 0%`
+
+#### `TIP: MagicUV is a good plugin that can be used to make UVs for level geometry appropriate to their world-size. UV -> Unwrap, and then UV -> World Scale UV -> Apply Manual (and set a consistent number for every unwrap, such as 100)`
+
 - Aiming for ~10 main stages per character. Some fully unique, some shared, some altered.
 - Try to keep a bit of "arcade scenario" -- gameplay design focused levels, but not too arcadey. Ideally each stage is minutes (3-15) long if you know what you're doing.
 - Checkpoints exist. 
@@ -172,6 +174,10 @@
 
 
 ## Current Limitations
+
+#### Shadows 
+
+Waiting for Godot 4.0 for improved shadow mapping. Not a priority at the moment.
 
 #### Clean line shader
 
@@ -207,4 +213,6 @@ I feel like I need to write down some of the things I've learned after trying to
 
 - Writing an import script for complex models is helpful, as you can set all the needed materials, set up lighting etc. the moment the import occurs.
 
-- Currently, my animations import but the keyframes don't seem identical, and are set at a fixed interval (every tenth of a second). I don't know how to avoid this, perhaps making the animation a lot slower or spacing out the keyframes more in blender, then playing the animation faster in Godot. Currently this hasn't really resulted in a loss of animation quality though so far, so maybe this is a non-issue. 
+- Need to change the FPS on the import settings for the .glb file in Godot, to allow 60fps animation.
+
+- I don't know how to merge the character into a single mesh with all modifiers other than armature applied (this would be better for my shader).
