@@ -8,7 +8,8 @@
 code = "shader_type spatial;
 render_mode cull_front, unshaded;
 
-uniform float outline_width = 2.0;
+uniform float opacity = 1.0;
+uniform float outline_width = 1.75;
 uniform sampler2D tex_shaded : hint_albedo;
 
 void vertex() {
@@ -16,37 +17,72 @@ void vertex() {
 	vec3 clip_normal = mat3(PROJECTION_MATRIX) * (mat3(MODELVIEW_MATRIX) * NORMAL);
 
 	vec2 offset = normalize(clip_normal.xy) / VIEWPORT_SIZE * clip_position.w * outline_width * 2.0;
-	
+
 	clip_position.xy += offset;
-	
+
 	POSITION = clip_position;
 }
 
 void fragment() {
+	
+		// Opacity Dithering...
+	int x = int(FRAGCOORD.x / 2.0) % 4;
+	int y = int(FRAGCOORD.y / 2.0) % 4;
+	int index = x + y * 4;
+	float limit = 0.0;
+	
+	// Dither pattern
+	switch (index) {
+		case 0:  limit = 0.0625; break;
+		case 1:  limit = 0.5625; break;
+		case 2:  limit = 0.1875; break;
+		case 3:  limit = 0.6875; break;
+		case 4:  limit = 0.8125; break;
+		case 5:  limit = 0.3125; break;
+		case 6:  limit = 0.9375; break;
+		case 7:  limit = 0.4375; break;
+		case 8:  limit = 0.25;   break;
+		case 9:  limit = 0.75;   break;
+		case 10: limit = 0.125;  break;
+		case 11: limit = 0.625;  break;
+		case 12: limit = 1.0;    break;
+		case 13: limit = 0.5;    break;
+		case 14: limit = 0.875;  break;
+		case 15: limit = 0.375;  break;
+	}
+	
+	// discard rule
+	if (opacity < limit) { discard; }
+	
+	// Depth Test
+	float depth = FRAGCOORD.z;
+	vec3 ndc = vec3(SCREEN_UV, depth) * 2.0 - 1.0;
+	vec4 view = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
+	view.xyz /= view.w;
+	float linear_depth = -view.z * 2.0; // this *2 is experiment
+	
 	vec3 texture_color = texture(tex_shaded, UV).rgb;
 	if (COLOR.r == 0.0) {
 		ALPHA = 0.0;
 	} else {
-		float depth = FRAGCOORD.z;
-		vec3 ndc = vec3(SCREEN_UV, depth) * 2.0 - 1.0;
-		vec4 view = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
-		view.xyz /= view.w;
-		float linear_depth = -view.z * 2.0;
-		ALBEDO = texture_color * 0.75 - vec3(0.05, 0.05, 0.03);
-		ALPHA = 1.0 / linear_depth;
+		//ALBEDO = texture_color * 0.75 - vec3(0.05, 0.05, 0.03);
+		float inverse_depth = (1.0 / linear_depth);
+		ALBEDO = texture_color * min(inverse_depth, 0.6);
+		ALPHA = 1.0 / linear_depth * 1.5;
 	}
 }"
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = SubResource( 1 )
-shader_param/outline_width = 2.0
+shader_param/opacity = 1.0
+shader_param/outline_width = 1.75
 shader_param/tex_shaded = ExtResource( 2 )
 
 [resource]
 next_pass = SubResource( 2 )
 shader = ExtResource( 1 )
-shader_param/light_vec = Vector3( 0.57735, 0.57735, 0.57735 )
-shader_param/opacity_dither = false
+shader_param/opacity = 1.0
+shader_param/opacity_depth_calc = false
 shader_param/celshaded = true
 shader_param/enable_rim = false
 shader_param/not_shaded = false

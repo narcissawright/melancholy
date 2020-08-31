@@ -6,8 +6,8 @@
 
 [resource]
 shader = ExtResource( 3 )
-shader_param/light_vec = null
-shader_param/opacity_dither = true
+shader_param/opacity = 1.0
+shader_param/opacity_depth_calc = true
 shader_param/celshaded = true
 shader_param/enable_rim = true
 shader_param/not_shaded = false

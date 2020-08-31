@@ -5,13 +5,12 @@ func post_import(scene):
 	for child in scene.get_children():
 		if child.name == "Armature":
 			var skele = child.get_child(0)
-			for mesh in skele.get_children():
-				if mesh is MeshInstance:
-					mesh.set_surface_material(0, preload("res://player/melanie/Melanie_Material.tres"))
-					mesh.layers = Layers.actor
-					mesh.name = "Melanie"
-					#mesh.cast_shadow = false
-					
+			var mesh = skele.get_child(0) # Assumes one meshinstance for entire character.
+			mesh.set_surface_material(0, preload("res://player/melanie/Melanie_Material.tres"))
+			mesh.layers = Layers.actor
+			mesh.name = "Melanie"
+			mesh.set_script(preload("res://player/opacity_dither.gd"))
+				
 			var bone_attachment = BoneAttachment.new()
 			skele.add_child(bone_attachment)
 			bone_attachment.set_owner(scene)

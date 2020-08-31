@@ -49,7 +49,7 @@ onready var bombspawner = $BombSpawner
 onready var bomb_pos = $melanie_test/Armature/Skeleton/BombPos
 
 # Material
-onready var material = $melanie_test/Armature/Skeleton/Face_Skin.get_surface_material(0)
+onready var material = $melanie_test/Armature/Skeleton/Melanie.get_surface_material(0)
 
 # Interactables
 onready var interactables = $Interactables

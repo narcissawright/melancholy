@@ -16,7 +16,6 @@ mid_height = 1.37
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 1 )
-shader_param/light_vec = null
 shader_param/opacity_dither = true
 shader_param/celshaded = true
 shader_param/enable_rim = true
@@ -34,7 +33,6 @@ size = Vector3( 0.2, 0.2, 0.2 )
 
 [sub_resource type="ShaderMaterial" id=4]
 shader = ExtResource( 1 )
-shader_param/light_vec = null
 shader_param/opacity_dither = true
 shader_param/celshaded = true
 shader_param/enable_rim = false
