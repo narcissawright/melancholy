@@ -10,4 +10,5 @@ script = ExtResource( 1 )
 script = ExtResource( 2 )
 
 [node name="Tween" type="Tween" parent="Timekeeper"]
+pause_mode = 1
 [connection signal="tween_completed" from="Timekeeper/Tween" to="Timekeeper" method="_on_Tween_completed"]
