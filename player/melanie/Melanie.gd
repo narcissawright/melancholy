@@ -261,9 +261,8 @@ func check_ledgegrab():
 			var to =   self.head_position + forwards() * 1.0
 			var result = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
 			
-			""" I'm not sure what happens if this raycast fails, seems potentially ugly """
+			""" glitchy behavior if this raycast doesnt hit anything, fix pls. """
 			if result.size() > 0:
-				
 				# find new transform basis
 				var old_basis = global_transform.basis
 				look_at(translation - result.normal, Vector3.UP)
@@ -276,6 +275,11 @@ func check_ledgegrab():
 				goal_translation.x = result.position.x + result.normal.x * 0.2
 				goal_translation.z = result.position.z + result.normal.z * 0.2
 				goal_translation.y = ledge.grab_height() - 2.0
+				
+				""" 
+				Need to do y position separately from rotation and xz position.
+				y position should be calculated from the prior velocity. 
+				"""
 				
 				# interpolate to new transform.
 				ledgegrab_tween.interpolate_property(self, "global_transform", 

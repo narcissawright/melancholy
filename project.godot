@@ -267,6 +267,8 @@ use_item={
 [rendering]
 
 quality/filters/anisotropic_filter_level=2
+quality/shadow_atlas/size=2048
+quality/shadows/filter_mode=0
 quality/filters/msaa=1
 quality/depth/hdr=false
 environment/default_environment="res://backgrounds/default_env.tres"
