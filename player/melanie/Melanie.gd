@@ -30,10 +30,6 @@ var jumping:bool = false
 var jumphold_framecount:int = 0 # Track the # of consecutive frames jump is held for (variable jump height)
 onready var air_transition_timer = $Timers/AirTransition # Used to give jumps leniency when falling off of a ledge
 
-# Ledgegrab 
-onready var ledgesystem = $LedgeGrabSystem
-var ledgegrabbing = false
-
 # Shield
 onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shield is up or not
 
@@ -231,7 +227,15 @@ func wall_align(dist:float) -> void:
 ##      ##      ##  ##  ##  ##  ##
 ######  ######  #####    ####   ######
 
-onready var ledgegrab_tween = $LedgeGrabSystem/Tween
+onready var ledgesystem:Spatial = $LedgeGrabSystem
+onready var ledgegrab_tween:Tween = $LedgeGrabSystem/Tween
+var ledgegrabbing:bool = false
+
+""" 
+Known issues:
+	- no detection of where ledges end, which means you can move onto walls.
+	- only using one raycast for the wall normal gives unstable behavior on rotation
+"""
 
 func check_ledgegrab():
 	if ledgegrabbing:
@@ -239,37 +243,41 @@ func check_ledgegrab():
 			let_go_of_ledge()
 			return
 		
-		var dir = find_movement_direction()
-		var ledge = ledge_raycast()
-		if ledge.size() > 0:
-			if not ledgegrab_tween.is_active():
-				if not ledge.normal.is_equal_approx(transform.basis.z):
-					rotate_towards_ledge(ledge)
-			var cross = ledge.normal.cross(Vector3.UP)
-			
-			# Need to prevent movement when there is no longer a ledge.
-			velocity = cross * clamp((cross.dot(dir) * 2.0), -1, 1)
-		else:
-			let_go_of_ledge()
+		if not ledgegrab_tween.is_active():
+			var dir = find_movement_direction()
+			var hray_result = ledgesystem.horizontal_raycast(transform.origin.y + 2.0)
+			if hray_result.size() == 0:
+				let_go_of_ledge()
+			else:
+				hray_result.normal.y = 0.0
+				hray_result.normal = hray_result.normal.normalized()
+				if not hray_result.normal.is_equal_approx(transform.basis.z):
+					rotate_towards_ledge(hray_result)
+				var cross = hray_result.normal.cross(Vector3.UP)
+				
+				# Need to prevent movement when there is no longer a ledge.
+				velocity = cross * clamp((cross.dot(dir) * 2.0), -1, 1)
 	else:
+		# Check for initiate ledge grab:
 		if grounded: return
 		if is_locked(): return
 		if velocity.y >= 0.1: return
 		if not Input.is_action_pressed("jump"): return 
 		if bombspawner.holding: return
 		if shield.active: return
-		if ledgesystem.can_ledgegrab(): # do this check last as it's the most expensive.
+		
+		# check if player ledgegrab colliders are in correct position
+		var ledgegrab_result:Dictionary = ledgesystem.try_ledgegrab()
+		if ledgegrab_result.can_ledgegrab == false: return
+		
+		# find wall position and normal
+		var hray_result = ledgesystem.horizontal_raycast(ledgegrab_result.height)
+		if hray_result.size() > 0: # this should almost never be 0, but if it is 0 it simply won't grab.
 			
-			# set state
+			# initiate ledge grab. 
 			velocity = Vector3.ZERO
 			ledgegrabbing = true
-			
-			# find wall position and normal
-			var ledge = ledge_raycast()
-			
-			""" glitchy behavior if this raycast doesnt hit anything, fix pls. """
-			if ledge.size() > 0:
-				snap_to_ledge(ledge)
+			snap_to_ledge(hray_result, ledgegrab_result.height)
 
 func ledge_raycast() -> Dictionary:
 	var from = self.head_position
@@ -298,7 +306,7 @@ func rotate_towards_ledge(raycast_result:Dictionary) -> void:
 Might want to do y position separately from rotation and xz position.
 y position could be calculated from the prior velocity. 
 """
-func snap_to_ledge(raycast_result:Dictionary) -> void:
+func snap_to_ledge(raycast_result:Dictionary, height:float) -> void:
 	# find new transform basis
 	var old_basis = global_transform.basis
 	safe_look_at(-raycast_result.normal)
@@ -310,7 +318,7 @@ func snap_to_ledge(raycast_result:Dictionary) -> void:
 	var goal_translation:Vector3
 	goal_translation.x = raycast_result.position.x + raycast_result.normal.x * 0.2
 	goal_translation.z = raycast_result.position.z + raycast_result.normal.z * 0.2
-	goal_translation.y = ledgesystem.grab_height() - 2.0
+	goal_translation.y = height - 2.0
 	
 	# interpolate to new transform.
 	ledgegrab_tween.interpolate_property(self, "global_transform", 
@@ -687,6 +695,7 @@ func debug() -> void:
 #	Debug.text.write('Jewels: ' + str(jewels))
 #	Debug.text.write('can_spawn_bomb()', 'green' if bombspawner.can_spawn_bomb() else 'red')
 #	Debug.text.newline()
+	Debug.text.write('Position: ' + str(transform.origin))
 	Debug.text.write('Vertical Velocity: ' + str(velocity.y))
 	Debug.text.write('Horizontal Velocity: ' + str(horizontal_velocity().length()))
 #	Debug.text.write('Forward Direction: ' + str(forwards()))
@@ -702,7 +711,6 @@ func debug() -> void:
 	Debug.text.write('Grounded: ' + str(grounded), 'green' if grounded else 'red')
 	Debug.text.write('Has Jump: ' + str(has_jump), 'green' if has_jump else 'red')
 	Debug.text.write('Jumping: ' + str(jumping), 'green' if jumping else 'red')
-	Debug.text.write('Can Ledgegrab: ' + str(ledgesystem.can_ledgegrab()))
 	Debug.text.newline()
 	Debug.text.write('Shielding: ' + str(shield.active), 'green' if shield.active else 'red')
 	Debug.text.write('Bashing: ' + str(shield.bash_str), 'green' if shield.bash_str > 0.0 else 'red')
