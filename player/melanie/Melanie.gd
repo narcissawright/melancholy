@@ -223,7 +223,7 @@ func wall_align(dist:float) -> void:
 	var to =   self.head_position + forwards() * dist
 	var result = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
 	if result.size() > 0:
-		look_at(translation - result.normal, Vector3.UP)
+		safe_look_at(-result.normal)
 
 ##      ######  #####    #####  ######
 ##      ##      ##  ##  ##      ##
@@ -233,76 +233,22 @@ func wall_align(dist:float) -> void:
 
 onready var ledgegrab_tween = $LedgeGrabSystem/Tween
 
-func ledge_raycast() -> Dictionary:
-	var from = self.head_position
-	var to =   self.head_position + forwards() * 1.0
-	# If no intersection, this will return an empty Dictionary
-	return get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
-
-func let_go_of_ledge() -> void:
-	ledgegrabbing = false
-	set_ledge_cling_anim(0.0)
-	ledgegrab_tween.stop_all()
-
-""" I think I'll eventually use IK and two raycasts for each hand... """
-func rotate_towards_ledge(raycast_result:Dictionary) -> void:
-	var old_basis = global_transform.basis
-	look_at(translation - raycast_result.normal, Vector3.UP)
-	var goal_basis:Basis = global_transform.basis
-	global_transform.basis = old_basis
-	
-	ledgegrab_tween.interpolate_property(self, "global_transform:basis", 
-		global_transform.basis, goal_basis, 0.15,
-		Tween.TRANS_SINE, Tween.EASE_OUT)
-	ledgegrab_tween.start()
-
-""" 
-Might want to do y position separately from rotation and xz position.
-y position could be calculated from the prior velocity. 
-"""
-func snap_to_ledge(raycast_result:Dictionary) -> void:
-	# find new transform basis
-	var old_basis = global_transform.basis
-	look_at(translation - raycast_result.normal, Vector3.UP)
-	var goal_basis:Basis = global_transform.basis
-	global_transform.basis = old_basis
-	
-	# find new transform origin.  this warning dumb af.
-	# warning-ignore:unassigned_variable
-	var goal_translation:Vector3
-	goal_translation.x = raycast_result.position.x + raycast_result.normal.x * 0.2
-	goal_translation.z = raycast_result.position.z + raycast_result.normal.z * 0.2
-	goal_translation.y = ledgesystem.grab_height() - 2.0
-	
-	# interpolate to new transform.
-	ledgegrab_tween.interpolate_property(self, "global_transform", 
-		global_transform, Transform(goal_basis, goal_translation), 0.15,
-		Tween.TRANS_SINE, Tween.EASE_OUT)
-	
-	ledgegrab_tween.interpolate_method(self, "set_ledge_cling_anim", 
-		0.0, 1.0, 0.15,
-		Tween.TRANS_SINE, Tween.EASE_OUT)
-		
-	ledgegrab_tween.start()
-
 func check_ledgegrab():
 	if ledgegrabbing:
 		if not Input.is_action_pressed("jump"):
 			let_go_of_ledge()
 			return
-			
+		
 		var dir = find_movement_direction()
 		var ledge = ledge_raycast()
 		if ledge.size() > 0:
 			if not ledgegrab_tween.is_active():
 				if not ledge.normal.is_equal_approx(transform.basis.z):
 					rotate_towards_ledge(ledge)
-				
 			var cross = ledge.normal.cross(Vector3.UP)
 			
-			# This needs to approach 1 more quickly and easily
+			# Need to prevent movement when there is no longer a ledge.
 			velocity = cross * clamp((cross.dot(dir) * 2.0), -1, 1)
-			
 		else:
 			let_go_of_ledge()
 	else:
@@ -324,6 +270,58 @@ func check_ledgegrab():
 			""" glitchy behavior if this raycast doesnt hit anything, fix pls. """
 			if ledge.size() > 0:
 				snap_to_ledge(ledge)
+
+func ledge_raycast() -> Dictionary:
+	var from = self.head_position
+	var to =   self.head_position + forwards() * 1.0
+	# If no intersection, this will return an empty Dictionary
+	return get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
+
+func let_go_of_ledge() -> void:
+	ledgegrabbing = false
+	set_ledge_cling_anim(0.0)
+	ledgegrab_tween.stop_all()
+
+""" I think I'll eventually use IK and two raycasts for each hand... """
+func rotate_towards_ledge(raycast_result:Dictionary) -> void:
+	var old_basis = global_transform.basis
+	safe_look_at(-raycast_result.normal)
+	var goal_basis:Basis = global_transform.basis
+	global_transform.basis = old_basis
+	
+	ledgegrab_tween.interpolate_property(self, "global_transform:basis", 
+		global_transform.basis, goal_basis, 0.15,
+		Tween.TRANS_SINE, Tween.EASE_OUT)
+	ledgegrab_tween.start()
+
+""" 
+Might want to do y position separately from rotation and xz position.
+y position could be calculated from the prior velocity. 
+"""
+func snap_to_ledge(raycast_result:Dictionary) -> void:
+	# find new transform basis
+	var old_basis = global_transform.basis
+	safe_look_at(-raycast_result.normal)
+	var goal_basis:Basis = global_transform.basis
+	global_transform.basis = old_basis
+	
+	# find new transform origin.  this warning dumb af.
+	# warning-ignore:unassigned_variable
+	var goal_translation:Vector3
+	goal_translation.x = raycast_result.position.x + raycast_result.normal.x * 0.2
+	goal_translation.z = raycast_result.position.z + raycast_result.normal.z * 0.2
+	goal_translation.y = ledgesystem.grab_height() - 2.0
+	
+	# interpolate to new transform.
+	ledgegrab_tween.interpolate_property(self, "global_transform", 
+		global_transform, Transform(goal_basis, goal_translation), 0.15,
+		Tween.TRANS_SINE, Tween.EASE_OUT)
+	
+	ledgegrab_tween.interpolate_method(self, "set_ledge_cling_anim", 
+		0.0, 1.0, 0.15,
+		Tween.TRANS_SINE, Tween.EASE_OUT)
+		
+	ledgegrab_tween.start()
 
 ##  ##        ##  ##  #####  ##     ####    ####  ##  ######  ##  ##
 ##  ##        ##  ##  ##     ##    ##  ##  ##     ##    ##    ##  ##
@@ -591,7 +589,15 @@ func rotate_towards(look_target_2d:Vector2) -> void:
 	# If angle is close to 0, don't bother
 	if not is_equal_approx(angle, 0.0):
 		var lookdir:Vector3 = forwards().rotated(Vector3.UP, angle)
-		look_at(lookdir + translation, Vector3.UP) # rotate
+		safe_look_at(lookdir)
+
+# safe rotation, removed y component so the body will never skew weirdly.
+func safe_look_at(lookdir:Vector3) -> void:
+	lookdir.y = 0.0 
+	lookdir = lookdir.normalized()
+	if lookdir.is_equal_approx(Vector3.ZERO): return
+	look_at(lookdir + translation, Vector3.UP)
+
 
 #####   #####   ####  #####    ####   ##    ##  ##  ##
 ##  ##  ##     ##     ##  ##  ##  ##  ##    ##  ### ##
