@@ -31,7 +31,7 @@ var jumphold_framecount:int = 0 # Track the # of consecutive frames jump is held
 onready var air_transition_timer = $Timers/AirTransition # Used to give jumps leniency when falling off of a ledge
 
 # Ledgegrab 
-onready var ledge = $LedgeGrabSystem
+onready var ledgesystem = $LedgeGrabSystem
 var ledgegrabbing = false
 
 # Shield
@@ -232,17 +232,79 @@ func wall_align(dist:float) -> void:
 ######  ######  #####    ####   ######
 
 onready var ledgegrab_tween = $LedgeGrabSystem/Tween
+
+func ledge_raycast() -> Dictionary:
+	var from = self.head_position
+	var to =   self.head_position + forwards() * 1.0
+	# If no intersection, this will return an empty Dictionary
+	return get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
+
+func let_go_of_ledge() -> void:
+	ledgegrabbing = false
+	set_ledge_cling_anim(0.0)
+	ledgegrab_tween.stop_all()
+
+""" I think I'll eventually use IK and two raycasts for each hand... """
+func rotate_towards_ledge(raycast_result:Dictionary) -> void:
+	var old_basis = global_transform.basis
+	look_at(translation - raycast_result.normal, Vector3.UP)
+	var goal_basis:Basis = global_transform.basis
+	global_transform.basis = old_basis
+	
+	ledgegrab_tween.interpolate_property(self, "global_transform:basis", 
+		global_transform.basis, goal_basis, 0.15,
+		Tween.TRANS_SINE, Tween.EASE_OUT)
+	ledgegrab_tween.start()
+
+""" 
+Might want to do y position separately from rotation and xz position.
+y position could be calculated from the prior velocity. 
+"""
+func snap_to_ledge(raycast_result:Dictionary) -> void:
+	# find new transform basis
+	var old_basis = global_transform.basis
+	look_at(translation - raycast_result.normal, Vector3.UP)
+	var goal_basis:Basis = global_transform.basis
+	global_transform.basis = old_basis
+	
+	# find new transform origin.  this warning dumb af.
+	# warning-ignore:unassigned_variable
+	var goal_translation:Vector3
+	goal_translation.x = raycast_result.position.x + raycast_result.normal.x * 0.2
+	goal_translation.z = raycast_result.position.z + raycast_result.normal.z * 0.2
+	goal_translation.y = ledgesystem.grab_height() - 2.0
+	
+	# interpolate to new transform.
+	ledgegrab_tween.interpolate_property(self, "global_transform", 
+		global_transform, Transform(goal_basis, goal_translation), 0.15,
+		Tween.TRANS_SINE, Tween.EASE_OUT)
+	
+	ledgegrab_tween.interpolate_method(self, "set_ledge_cling_anim", 
+		0.0, 1.0, 0.15,
+		Tween.TRANS_SINE, Tween.EASE_OUT)
+		
+	ledgegrab_tween.start()
+
 func check_ledgegrab():
 	if ledgegrabbing:
 		if not Input.is_action_pressed("jump"):
-			ledgegrabbing = false
-			set_ledge_cling_anim(0.0)
-			ledgegrab_tween.stop_all()
+			let_go_of_ledge()
 			return
 			
-		var _dir:Vector2 = Game.get_stick_input("left")
-		""" OH boy time for a whole new movement logic here... """
+		var dir = find_movement_direction()
+		var ledge = ledge_raycast()
+		if ledge.size() > 0:
+			if not ledgegrab_tween.is_active():
+				if not ledge.normal.is_equal_approx(transform.basis.z):
+					rotate_towards_ledge(ledge)
+				
+			var cross = ledge.normal.cross(Vector3.UP)
 			
+			# This needs to approach 1 more quickly and easily
+			velocity = cross * clamp((cross.dot(dir) * 2.0), -1, 1)
+			
+		else:
+			let_go_of_ledge()
 	else:
 		if grounded: return
 		if is_locked(): return
@@ -250,46 +312,18 @@ func check_ledgegrab():
 		if not Input.is_action_pressed("jump"): return 
 		if bombspawner.holding: return
 		if shield.active: return
-		if ledge.can_ledgegrab(): # do this check last as it's the most expensive.
+		if ledgesystem.can_ledgegrab(): # do this check last as it's the most expensive.
 			
 			# set state
 			velocity = Vector3.ZERO
 			ledgegrabbing = true
 			
 			# find wall position and normal
-			var from = self.head_position
-			var to =   self.head_position + forwards() * 1.0
-			var result = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
+			var ledge = ledge_raycast()
 			
 			""" glitchy behavior if this raycast doesnt hit anything, fix pls. """
-			if result.size() > 0:
-				# find new transform basis
-				var old_basis = global_transform.basis
-				look_at(translation - result.normal, Vector3.UP)
-				var goal_basis:Basis = global_transform.basis
-				global_transform.basis = old_basis
-				
-				# find new transform origin.  this warning dumb af.
-				# warning-ignore:unassigned_variable
-				var goal_translation:Vector3
-				goal_translation.x = result.position.x + result.normal.x * 0.2
-				goal_translation.z = result.position.z + result.normal.z * 0.2
-				goal_translation.y = ledge.grab_height() - 2.0
-				
-				""" 
-				Need to do y position separately from rotation and xz position.
-				y position should be calculated from the prior velocity. 
-				"""
-				
-				# interpolate to new transform.
-				ledgegrab_tween.interpolate_property(self, "global_transform", 
-					global_transform, Transform(goal_basis, goal_translation), 0.15,
-					Tween.TRANS_SINE, Tween.EASE_OUT)
-				ledgegrab_tween.interpolate_method(self, "set_ledge_cling_anim", 
-					0.0, 1.0, 0.15,
-					Tween.TRANS_SINE, Tween.EASE_OUT)
-					
-				ledgegrab_tween.start()
+			if ledge.size() > 0:
+				snap_to_ledge(ledge)
 
 ##  ##        ##  ##  #####  ##     ####    ####  ##  ######  ##  ##
 ##  ##        ##  ##  ##     ##    ##  ##  ##     ##    ##    ##  ##
@@ -662,7 +696,7 @@ func debug() -> void:
 	Debug.text.write('Grounded: ' + str(grounded), 'green' if grounded else 'red')
 	Debug.text.write('Has Jump: ' + str(has_jump), 'green' if has_jump else 'red')
 	Debug.text.write('Jumping: ' + str(jumping), 'green' if jumping else 'red')
-	Debug.text.write('Can Ledgegrab: ' + str(ledge.can_ledgegrab()))
+	Debug.text.write('Can Ledgegrab: ' + str(ledgesystem.can_ledgegrab()))
 	Debug.text.newline()
 	Debug.text.write('Shielding: ' + str(shield.active), 'green' if shield.active else 'red')
 	Debug.text.write('Bashing: ' + str(shield.bash_str), 'green' if shield.bash_str > 0.0 else 'red')
