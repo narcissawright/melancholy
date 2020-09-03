@@ -18,15 +18,27 @@ func vertical_raycast() -> Dictionary:
 		return { "is_colliding": true, "height": result.position.y }
 	return { "is_colliding": false }
 
-"""
-This should be a series of raycasts I think.. two of them, one for each hand, returning average normal. 
-"""
 func horizontal_raycast(height:float) -> Dictionary:
 	# the goal here is to use the very small height offset to always get a collision. 
-	var from = Vector3(Game.player.transform.origin.x, height - 0.001, Game.player.transform.origin.z)
+	
+	var leftright_offset:Vector3 = Game.player.transform.basis.x * 0.1
+	
+	var from = Vector3(Game.player.transform.origin.x, height - 0.001, Game.player.transform.origin.z) + leftright_offset
 	var to   = from - Game.player.transform.basis.z
-	var result = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
-	return result
+	var result1 = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
+	
+	from = Vector3(Game.player.transform.origin.x, height - 0.001, Game.player.transform.origin.z) - leftright_offset
+	to   = from - Game.player.transform.basis.z
+	var result2 = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
+	
+	if not result1.empty() and not result2.empty():
+		return {"normal": (result1.normal + result2.normal) / 2.0, "position": (result1.position + result2.position) / 2.0}
+	elif result1.empty() and result2.empty():
+		return {}
+	elif result1.empty():
+		return {"normal": result2.normal, "position": result2.position}
+	else:
+		return {"normal": result1.normal, "position": result1.position}
 
 func try_ledgegrab() -> Dictionary:
 	var vray_result:Dictionary = vertical_raycast()

@@ -246,17 +246,26 @@ func check_ledgegrab():
 		if not ledgegrab_tween.is_active():
 			var dir = find_movement_direction()
 			var hray_result = ledgesystem.horizontal_raycast(transform.origin.y + 2.0)
-			if hray_result.size() == 0:
+			if hray_result.empty():
 				let_go_of_ledge()
 			else:
 				hray_result.normal.y = 0.0
 				hray_result.normal = hray_result.normal.normalized()
 				if not hray_result.normal.is_equal_approx(transform.basis.z):
-					rotate_towards_ledge(hray_result)
-				var cross = hray_result.normal.cross(Vector3.UP)
+					
+					rotate_towards_ledge(hray_result.normal)
+					
+					# warning-ignore:unassigned_variable
+					var goal_translation:Vector3 
+					goal_translation.x = hray_result.position.x + hray_result.normal.x * 0.2
+					goal_translation.y = translation.y
+					goal_translation.z = hray_result.position.z + hray_result.normal.z * 0.2
+					move_and_collide(goal_translation - translation)
 				
 				# Need to prevent movement when there is no longer a ledge.
+				var cross = hray_result.normal.cross(Vector3.UP)
 				velocity = cross * clamp((cross.dot(dir) * 2.0), -1, 1)
+				Debug.text.write(str(velocity))
 	else:
 		# Check for initiate ledge grab:
 		if grounded: return
@@ -272,28 +281,21 @@ func check_ledgegrab():
 		
 		# find wall position and normal
 		var hray_result = ledgesystem.horizontal_raycast(ledgegrab_result.height)
-		if hray_result.size() > 0: # this should almost never be 0, but if it is 0 it simply won't grab.
+		if not hray_result.empty():
 			
 			# initiate ledge grab. 
 			velocity = Vector3.ZERO
 			ledgegrabbing = true
 			snap_to_ledge(hray_result, ledgegrab_result.height)
 
-func ledge_raycast() -> Dictionary:
-	var from = self.head_position
-	var to =   self.head_position + forwards() * 1.0
-	# If no intersection, this will return an empty Dictionary
-	return get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
-
 func let_go_of_ledge() -> void:
 	ledgegrabbing = false
 	set_ledge_cling_anim(0.0)
 	ledgegrab_tween.stop_all()
 
-""" I think I'll eventually use IK and two raycasts for each hand... """
-func rotate_towards_ledge(raycast_result:Dictionary) -> void:
+func rotate_towards_ledge(wall_normal:Vector3) -> void:
 	var old_basis = global_transform.basis
-	safe_look_at(-raycast_result.normal)
+	safe_look_at(-wall_normal)
 	var goal_basis:Basis = global_transform.basis
 	global_transform.basis = old_basis
 	
