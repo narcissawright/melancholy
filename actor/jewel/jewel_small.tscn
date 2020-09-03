@@ -161,5 +161,6 @@ shape = SubResource( 3 )
 [node name="Small" type="MeshInstance" parent="."]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0 )
 layers = 2
+cast_shadow = 0
 mesh = SubResource( 4 )
 material/0 = SubResource( 5 )

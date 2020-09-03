@@ -65,10 +65,14 @@ func update_position() -> void:
 	if mode == "pause":
 		crosshair.global_transform = Transform(Basis(), cam_target)
 	var space_state = get_world().direct_space_state # get the space.
-	query.transform = Transform(Basis(), cam_target) # start at the cam_target
+	var ledgegrab_offset := Vector3.ZERO
+	if Game.player.ledgegrabbing:
+		# Use a different query for ledgegrabbing (check if hands visible, not player)
+		ledgegrab_offset = Vector3(0, 0.5, 0)
+	query.transform = Transform(Basis(), cam_target + ledgegrab_offset) # start at the cam_target
 	shape.radius = 0.2
 	var new_pos = current_pos * current_zoom
-	var result = space_state.cast_motion(query, new_pos) # until a collision happens
+	var result = space_state.cast_motion(query, new_pos - ledgegrab_offset) # until a collision happens
 	if result[0] > 0: # result[0] is how much to lerp
 		new_pos = cam_target.linear_interpolate(new_pos + cam_target, result[0]) # now we have final position
 		look_at_from_position(new_pos, cam_target, Vector3.UP) # look at player from final position
