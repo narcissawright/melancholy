@@ -1,8 +1,0 @@
-[gd_scene format=2]
-
-[node name="SpotLight" type="SpotLight"]
-transform = Transform( 1.33333, 0, 0, 0, -2.17228e-07, 1.33333, 0, -1.33333, -2.17228e-07, 0, 1.65369, 0 )
-light_negative = true
-light_cull_mask = 4294967293
-spot_angle = 8.0
-spot_angle_attenuation = 100.0

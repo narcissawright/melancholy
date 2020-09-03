@@ -1,6 +1,6 @@
 extends Area
 
-const amount:int = 10 # of jewels this is worth
+export var amount:int = 10
 const type:String = "pickup"
 
 func interact():

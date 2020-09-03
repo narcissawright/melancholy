@@ -252,11 +252,10 @@ func check_ledgegrab():
 				hray_result.normal.y = 0.0
 				hray_result.normal = hray_result.normal.normalized()
 				if not hray_result.normal.is_equal_approx(transform.basis.z):
-					
+					# Rotation
 					rotate_towards_ledge(hray_result.normal)
-					
-					# warning-ignore:unassigned_variable
-					var goal_translation:Vector3 
+					# Position
+					var goal_translation := Vector3()
 					goal_translation.x = hray_result.position.x + hray_result.normal.x * 0.2
 					goal_translation.y = translation.y
 					goal_translation.z = hray_result.position.z + hray_result.normal.z * 0.2
@@ -315,9 +314,8 @@ func snap_to_ledge(raycast_result:Dictionary, height:float) -> void:
 	var goal_basis:Basis = global_transform.basis
 	global_transform.basis = old_basis
 	
-	# find new transform origin.  this warning dumb af.
-	# warning-ignore:unassigned_variable
-	var goal_translation:Vector3
+	# find new transform origin.
+	var goal_translation := Vector3()
 	goal_translation.x = raycast_result.position.x + raycast_result.normal.x * 0.2
 	goal_translation.z = raycast_result.position.z + raycast_result.normal.z * 0.2
 	goal_translation.y = height - 2.0
