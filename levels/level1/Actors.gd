@@ -8,6 +8,7 @@ func _ready() -> void:
 	save_actor_state()
 
 func save_actor_state() -> void:
+	actor_list = []
 	for actor in get_children():
 		var scene = PackedScene.new()
 		scene.pack(actor)
