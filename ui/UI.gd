@@ -1,6 +1,6 @@
 extends CanvasLayer
 
-# easy node reference. Game.ui.paused
+# easy node reference. Game.ui.inventory for example
 onready var paused = $Paused 
 onready var ingame_ui = $InGame_UI
 onready var inventory = $InGame_UI/Inventory

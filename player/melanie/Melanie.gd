@@ -33,17 +33,6 @@ onready var air_transition_timer = $Timers/AirTransition # Used to give jumps le
 # Shield
 onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shield is up or not
 
-# Subweapons
-var current_subweapon:String = "bomb"
-var jewels:int = 999 setget update_jewel_count # Subweapon ammo
-func update_jewel_count(value):
-	jewels = value
-	Events.emit_signal("jewel_count_changed")
-
-const max_jewels:int = 999
-onready var bombspawner = $BombSpawner
-onready var bomb_pos = $melanie_test/Armature/Skeleton/BombPos
-
 # Material
 onready var material = $melanie_test/Armature/Skeleton/Melanie.get_surface_material(0)
 
@@ -67,6 +56,10 @@ onready var anim_tree = $melanie_test/AnimationTree
 
 func _ready() -> void:
 	process_priority = 0 # Run this before camera
+	
+	checkpoint.jewels = jewels
+	checkpoint.subweapon = current_subweapon
+	
 	lockplayer_for_frames(20) # Set locked state
 
 #####   #####    ####    #####  #####   #####   #####
@@ -93,7 +86,7 @@ func _physics_process(_t) -> void:
 	walk_animation()
 	handle_player_rotation() # Make player face the correct direction
 	handle_interactable() # Pick up jewels, read text, etc.
-	update_subweapon_state() # performed AFTER move_and_collide to correctly place projectiles.
+	process_subweapon() # performed AFTER move_and_collide to correctly place projectiles.
 	respawn_check() # Check if player fell below the map
 	debug() # Write debug info onscreen
 
@@ -246,25 +239,30 @@ func check_ledgegrab():
 		if not ledgegrab_tween.is_active():
 			var dir = find_movement_direction()
 			var hray_result = ledgesystem.horizontal_raycast(transform.origin.y + 2.0)
-			if hray_result.empty():
-				let_go_of_ledge()
-			else:
-				hray_result.normal.y = 0.0
-				hray_result.normal = hray_result.normal.normalized()
-				if not hray_result.normal.is_equal_approx(transform.basis.z):
-					# Rotation
-					rotate_towards_ledge(hray_result.normal)
-					# Position
-					var goal_translation := Vector3()
-					goal_translation.x = hray_result.position.x + hray_result.normal.x * 0.2
-					goal_translation.y = translation.y
-					goal_translation.z = hray_result.position.z + hray_result.normal.z * 0.2
-					move_and_collide(goal_translation - translation)
-				
-				# Need to prevent movement when there is no longer a ledge.
-				var cross = hray_result.normal.cross(Vector3.UP)
-				velocity = cross * clamp((cross.dot(dir) * 2.0), -1, 1)
-				Debug.text.write(str(velocity))
+			match hray_result.hits:
+				0:
+					let_go_of_ledge()
+				1:
+					let_go_of_ledge()
+				2:
+					hray_result.normal.y = 0.0
+					hray_result.normal = hray_result.normal.normalized()
+					if not hray_result.normal.is_equal_approx(transform.basis.z):
+						# Rotation
+						rotate_towards_ledge(hray_result.normal)
+						# Position
+						var goal_translation := Vector3()
+						goal_translation.x = hray_result.position.x + hray_result.normal.x * 0.2
+						goal_translation.y = translation.y
+						goal_translation.z = hray_result.position.z + hray_result.normal.z * 0.2
+						move_and_collide(goal_translation - translation)
+					
+					# Need to prevent movement when there is no longer a ledge.
+					var cross = hray_result.normal.cross(Vector3.UP)
+					velocity = cross * clamp((cross.dot(dir) * 2.0), -1, 1)
+					# I can't jut set the velocity here. I need to check if it's a valid position to go to.
+					
+					Debug.text.write(str(velocity))
 	else:
 		# Check for initiate ledge grab:
 		if grounded: return
@@ -280,7 +278,7 @@ func check_ledgegrab():
 		
 		# find wall position and normal
 		var hray_result = ledgesystem.horizontal_raycast(ledgegrab_result.height)
-		if not hray_result.empty():
+		if hray_result.hits > 0:
 			
 			# initiate ledge grab. 
 			velocity = Vector3.ZERO
@@ -535,8 +533,23 @@ func handle_interactable():
     ##  ##  ##  ##  ##  ## ## ##  ##     ##  ##  ##      ##  ##  ## ### 
 #####    ####   #####    ######   #####  ##  ##  ##       ####   ##  ## 
 
+var current_subweapon:String = "" setget new_subweapon
+func new_subweapon(what:String) -> void:
+	current_subweapon = what
+	Events.emit_signal("current_subweapon_changed")
+	# some logic here to drop the old subweapon.
+
+const max_jewels:int = 999
+var jewels:int = 0 setget update_jewel_count # Subweapon ammo
+func update_jewel_count(value):
+	jewels = value
+	Events.emit_signal("jewel_count_changed")
+
+onready var bombspawner = $BombSpawner
+onready var bomb_pos = $melanie_test/Armature/Skeleton/BombPos
+
 # Subweapons
-func update_subweapon_state() -> void:
+func process_subweapon() -> void:
 	match(current_subweapon):
 		"bomb":
 			bombspawner.translation = bomb_pos.translation
@@ -615,8 +628,8 @@ func safe_look_at(lookdir:Vector3) -> void:
 
 var checkpoint:Dictionary = {
 		"position": Vector3.ZERO,
-		"jewels": 999,
-		"subweapon": "bomb",
+		"jewels": 0,
+		"subweapon": "",
 		"y_rotation": 0.0
 	}
 
@@ -632,7 +645,7 @@ func respawn() -> void:
 	
 	translation = checkpoint.position
 	rotation = Vector3(0, checkpoint.y_rotation, 0)
-	current_subweapon = checkpoint.subweapon
+	self.current_subweapon = checkpoint.subweapon
 	self.jewels = checkpoint.jewels
 	
 	lockplayer_for_frames(20)

@@ -13,6 +13,10 @@ uniform bool vertex_color_as_occlusion = false;
 uniform vec4 color_lit : hint_color = vec4(0.5, 0.5, 0.6, 1.0);
 uniform vec4 color_dim : hint_color = vec4(0.1, 0.1, 0.12, 1.0);
 
+// not using these right now
+uniform bool use_custom_rim_color = false;
+uniform vec4 custom_rim_color : hint_color = vec4(0.0, 0.82, 0.73, 1.0);
+
 uniform bool use_texture = false;
 uniform sampler2D tex_lit : hint_albedo;
 uniform sampler2D tex_shaded : hint_albedo;
@@ -144,6 +148,9 @@ void light() {
 		// this has no antialiasing right now.
 		if (NdotV < 0.3) {
 			threshold = 0.0;
+//			if (use_custom_rim_color) {
+//				DIFFUSE_LIGHT = custom_rim_color.rgb;
+//			}
 		}
 	}
 	

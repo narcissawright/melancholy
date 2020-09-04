@@ -32,13 +32,13 @@ func horizontal_raycast(height:float) -> Dictionary:
 	var result2 = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
 	
 	if not result1.empty() and not result2.empty():
-		return {"normal": (result1.normal + result2.normal) / 2.0, "position": (result1.position + result2.position) / 2.0}
+		return {"hits": 2, "normal": (result1.normal + result2.normal) / 2.0, "position": (result1.position + result2.position) / 2.0}
 	elif result1.empty() and result2.empty():
-		return {}
+		return {"hits": 0}
 	elif result1.empty():
-		return {"normal": result2.normal, "position": result2.position}
+		return {"hits": 1, "normal": result2.normal, "position": result2.position}
 	else:
-		return {"normal": result1.normal, "position": result1.position}
+		return {"hits": 1, "normal": result1.normal, "position": result1.position}
 
 func try_ledgegrab() -> Dictionary:
 	var vray_result:Dictionary = vertical_raycast()

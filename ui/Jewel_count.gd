@@ -2,6 +2,7 @@ extends RichTextLabel
 
 func _ready() -> void:
 	Events.connect("jewel_count_changed", self, "update_jewel_count")
+	update_jewel_count()
 
 func update_jewel_count() -> void:
 	if Game.player.jewels == 0:
