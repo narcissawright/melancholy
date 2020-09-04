@@ -540,7 +540,7 @@ func new_subweapon(what:String) -> void:
 	# some logic here to drop the old subweapon.
 
 const max_jewels:int = 999
-var jewels:int = 0 setget update_jewel_count # Subweapon ammo
+var jewels:int = 50 setget update_jewel_count # Subweapon ammo
 func update_jewel_count(value):
 	jewels = value
 	Events.emit_signal("jewel_count_changed")
@@ -640,7 +640,7 @@ func respawn_check() -> void:
 
 func respawn() -> void:
 	hp = max_hp
-	Events.emit_signal("player_respawning")
+	Events.emit_signal("respawn")
 	velocity = Vector3.ZERO
 	
 	translation = checkpoint.position

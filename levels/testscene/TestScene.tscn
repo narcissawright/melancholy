@@ -9,8 +9,6 @@
 [ext_resource path="res://levels/testscene/TestScene.gd" type="Script" id=7]
 [ext_resource path="res://levels/testscene/hole_platform.tscn" type="PackedScene" id=8]
 
-
-
 [sub_resource type="CubeMesh" id=1]
 size = Vector3( 8, 0.2, 8 )
 

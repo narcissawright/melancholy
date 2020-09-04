@@ -13,8 +13,8 @@ func _ready() -> void:
 	hp_bar_light.rect_size.x = full_length
 	hp_bar_dark.rect_size.x = full_length
 	
-	Events.connect("player_damaged", self, "_on_player_damaged")
-	Events.connect("player_respawning", self, "_on_player_respawning")
+	Events.connect("player_damaged", self, "update_healthbar")
+	Events.connect("respawn", self, "update_healthbar")
 
 func _process(_t:float) -> void:
 	var light_vec = Vector3(0, -1, 0.35).normalized()

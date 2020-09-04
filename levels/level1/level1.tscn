@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://backgrounds/starfield/Starfield.tscn" type="PackedScene" id=1]
 [ext_resource path="res://levels/level1/geometry.tscn" type="PackedScene" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://actor/jewel/jewel_large.tscn" type="PackedScene" id=4]
 [ext_resource path="res://actor/jewel/jewel_small.tscn" type="PackedScene" id=5]
 [ext_resource path="res://actor/bomb/bomb_subweapon_pickup.tscn" type="PackedScene" id=6]
+[ext_resource path="res://levels/level1/Actors.gd" type="Script" id=7]
 
 [sub_resource type="CubeMesh" id=1]
 size = Vector3( 2, 4, 2 )
@@ -32,17 +33,22 @@ shape = SubResource( 2 )
 [node name="ledgegrab_test" parent="." instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.9865 )
 
-[node name="Jewel" parent="." instance=ExtResource( 5 )]
+[node name="Actors" type="Node" parent="."]
+script = ExtResource( 7 )
+
+[node name="Jewel" parent="Actors" instance=ExtResource( 5 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10 )
 
-[node name="Jewel2" parent="." instance=ExtResource( 5 )]
+[node name="Jewel2" parent="Actors" instance=ExtResource( 5 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -10 )
 
-[node name="Jewel3" parent="." instance=ExtResource( 4 )]
+[node name="Jewel3" parent="Actors" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -10 )
 
-[node name="Jewel4" parent="." instance=ExtResource( 4 )]
+[node name="Jewel4" parent="Actors" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -10 )
 
-[node name="Bomb_Pickup" parent="." instance=ExtResource( 6 )]
+[node name="Bomb_Pickup" parent="Actors" instance=ExtResource( 6 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13.5 )
+
+[editable path="Actors/Jewel4"]
