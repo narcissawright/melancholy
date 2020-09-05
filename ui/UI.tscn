@@ -1,7 +1,7 @@
 [gd_scene load_steps=110 format=2]
 
 [ext_resource path="res://ui/img/heart_normalmap_512.png" type="Texture" id=1]
-[ext_resource path="res://ui/img/UI_circle_subweapon.png" type="Texture" id=2]
+[ext_resource path="res://ui/img/UI_circle_white.png" type="Texture" id=2]
 [ext_resource path="res://ui/HP.gd" type="Script" id=3]
 [ext_resource path="res://ui/img/hp_border.png" type="Texture" id=4]
 [ext_resource path="res://ui/img/UI_circle_health.png" type="Texture" id=5]
@@ -1826,16 +1826,20 @@ texture = ExtResource( 10 )
 position = Vector2( 1870, 50 )
 script = ExtResource( 72 )
 
-[node name="BG" type="Sprite" parent="InGame_UI/Subweapon"]
+[node name="Tween" type="Tween" parent="InGame_UI/Subweapon"]
+
+[node name="Current" type="Sprite" parent="InGame_UI/Subweapon"]
+self_modulate = Color( 0, 0.823529, 0.729412, 1 )
 scale = Vector2( 0.14, 0.14 )
 texture = ExtResource( 2 )
 
-[node name="bomb" type="Sprite" parent="InGame_UI/Subweapon/BG"]
+[node name="bomb" type="Sprite" parent="InGame_UI/Subweapon/Current"]
 visible = false
 texture = ExtResource( 71 )
 
 [node name="Jewels" type="Node2D" parent="InGame_UI/Subweapon"]
 position = Vector2( -12, 36 )
+script = ExtResource( 9 )
 
 [node name="Jewel_count" type="RichTextLabel" parent="InGame_UI/Subweapon/Jewels"]
 margin_left = -2.0
@@ -1851,7 +1855,6 @@ bbcode_text = "[center]999[/center]"
 text = "999"
 fit_content_height = true
 scroll_active = false
-script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -1867,6 +1870,8 @@ modulate = Color( 0, 0.823529, 0.729412, 1 )
 position = Vector2( -11, 17 )
 scale = Vector2( 0.25, 0.25 )
 texture = ExtResource( 7 )
+
+[node name="Tween" type="Tween" parent="InGame_UI/Subweapon/Jewels"]
 
 [node name="HP" type="Node2D" parent="InGame_UI"]
 position = Vector2( 50, 50 )
@@ -2008,3 +2013,4 @@ material = SubResource( 37 )
 position = Vector2( 1200, 0 )
 texture = ExtResource( 66 )
 centered = false
+[connection signal="tween_completed" from="InGame_UI/Subweapon/Jewels/Tween" to="InGame_UI/Subweapon/Jewels" method="_insufficient_tween_completed"]

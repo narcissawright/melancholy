@@ -32,7 +32,9 @@ func process_state() -> void:
 func can_spawn_bomb() -> bool:
 	if Game.player.is_locked(): return false
 	if Game.player.ledgegrabbing: return false
-	if Game.player.jewels < jewel_cost: return false
+	if Game.player.jewels < jewel_cost: 
+		Events.emit_signal("jewel_cost_too_high")
+		return false
 	if spawn_area.get_overlapping_bodies().size() != 0: return false
 	return true
 

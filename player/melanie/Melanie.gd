@@ -540,7 +540,7 @@ func new_subweapon(what:String) -> void:
 	# some logic here to drop the old subweapon.
 
 const max_jewels:int = 999
-var jewels:int = 50 setget update_jewel_count # Subweapon ammo
+var jewels:int = 20 setget update_jewel_count # Subweapon ammo
 func update_jewel_count(value):
 	jewels = value
 	Events.emit_signal("jewel_count_changed")
@@ -551,6 +551,9 @@ onready var bomb_pos = $melanie_test/Armature/Skeleton/BombPos
 # Subweapons
 func process_subweapon() -> void:
 	match(current_subweapon):
+		"":
+			if Input.is_action_just_pressed("subweapon"):
+				Events.emit_signal("error_no_subweapon")
 		"bomb":
 			bombspawner.translation = bomb_pos.translation
 			bombspawner.process_state()

@@ -1,12 +1,42 @@
-extends RichTextLabel
+extends Node2D 
+onready var label = $Jewel_count
+onready var icon = $JewelIcon_Front
+onready var tween = $Tween
+
+var prior_jewel_string:String
 
 func _ready() -> void:
-	Events.connect("jewel_count_changed", self, "update_jewel_count")
-	update_jewel_count()
+	Events.connect("jewel_count_changed", self, "jewel_count_changed")
+	Events.connect("jewel_cost_too_high", self, "insufficient_jewels")
+	update_jewel_text()
 
-func update_jewel_count() -> void:
+func insufficient_jewels() -> void:
+	if tween.is_active():
+		tween.stop_all()
+	else:
+		prior_jewel_string = label.bbcode_text
+	tween.interpolate_method(self, "set_insufficient_color", 1.0, 0.0, 1.0, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+	tween.start()
+
+func set_insufficient_color(red_amount:float) -> void:
+	icon.modulate = Game.ui.jewel_color.linear_interpolate(Game.ui.error_color, red_amount)
+	var grey:String = Color("#808080").linear_interpolate(Game.ui.error_color, red_amount).to_html()
+	var white:String = Color("#ffffff").linear_interpolate(Game.ui.error_color, red_amount).to_html()
+	label.bbcode_text = prior_jewel_string.replace("808080", grey).replace("ffffff", white)
+
+func _insufficient_tween_completed(_object: Object, _key: NodePath) -> void:
+	icon.modulate = Game.ui.jewel_color
+	update_jewel_text()
+
+func jewel_count_changed() -> void:
+	if tween.is_active():
+		tween.stop_all()
+		icon.modulate = Game.ui.jewel_color
+	update_jewel_text()
+		
+func update_jewel_text() -> void:
 	if Game.player.jewels == 0:
-		bbcode_text = "[center][color=#808080]000[/color][/center]"
+		label.bbcode_text = "[center][color=#808080]000[/color][/center]"
 	else:
 		var jewel_string = str(Game.player.jewels)
 		var color_jewel_string = "[color=#ffffff]" + str(Game.player.jewels) + "[/color]"
@@ -16,4 +46,5 @@ func update_jewel_count() -> void:
 		elif jewel_string.length() == 2:
 			color_jewel_string = "[color=#808080]0[/color]" + color_jewel_string
 	
-		bbcode_text = "[center]" + color_jewel_string + "[/center]"
+		label.bbcode_text = "[center]" + color_jewel_string + "[/center]"
+

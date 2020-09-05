@@ -11,6 +11,3 @@ func checkpoint_reached(where:Vector3) -> void:
 	
 	# Consider passing a "checkpoint id" into here instead of position/rotation.
 	# Might be easier, although the checkpoints would have to be organized to have ids.
-	
-	# Also need to think of how to track "level state"
-	# ie. what ends up getting saved by the checkpoint and what is irrelevant.
