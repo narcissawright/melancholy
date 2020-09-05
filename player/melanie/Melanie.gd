@@ -539,7 +539,7 @@ func new_subweapon(what:String) -> void:
 	# some logic here to drop the old subweapon.
 
 const max_jewels:int = 999
-var jewels:int = 20 setget update_jewel_count # Subweapon ammo
+var jewels:int = 999 setget update_jewel_count # Subweapon ammo
 func update_jewel_count(value):
 	jewels = value
 	Events.emit_signal("jewel_count_changed")
