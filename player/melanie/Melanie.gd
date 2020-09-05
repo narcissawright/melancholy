@@ -36,9 +36,6 @@ onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shi
 # Material
 onready var material = $melanie_test/Armature/Skeleton/Melanie.get_surface_material(0)
 
-# Interactables
-onready var interactables = $Interactables
-
 # Head Position
 onready var head_position_node = $HeadPosition # Camera points at this, enemies attack this point.
 var head_position:Vector3 setget , _get_head_position  # Gets Position3D global_transform.origin
@@ -521,6 +518,8 @@ func set_ledge_cling_anim(blend_amt:float) -> void:
 ##  ######    ##    #####   #####   ######  ##        ##
 ##  ## ###    ##    ##      ##  ##  ##  ##  ##        ##
 ##  ##  ##    ##    ######  ##  ##  ##  ##   #####    ##
+
+onready var interactables = $Interactables
 
 func handle_interactable():
 	if grounded and not is_locked():

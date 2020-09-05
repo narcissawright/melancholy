@@ -13,6 +13,14 @@ func execute():
 	else:
 		var index = get_index_of_priority_interactable()
 		list[index].interact()
+		
+		"""
+		I think interact should return success or failure.
+		If failure, and there are multiple interactables, it should attempt to interact with next in list.  
+		I don't know, then, if interactables should be sorted by priority instead of returning most relevant. 
+		I guess it would be ideal if that was the case.
+		"""
+		
 
 func get_index_of_priority_interactable() -> int:
 	# Need to find smallest distance.

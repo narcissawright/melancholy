@@ -324,11 +324,8 @@ spot_angle_attenuation = 100.0
 [node name="melanie_test" parent="." instance=ExtResource( 8 )]
 transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0 )
 
-[node name="Skeleton" parent="melanie_test/Armature" index="0"]
-bones/42/bound_children = [  ]
-
 [node name="BombPos" parent="melanie_test/Armature/Skeleton" index="1"]
-transform = Transform( 1, -3.2685e-13, -7.79787e-08, 8.66862e-13, 1, 2.98023e-08, 7.79793e-08, -2.98023e-08, 1, 6.98306e-08, 1.99999, -5.7742e-07 )
+transform = Transform( 1, -3.2685e-13, -7.79787e-08, 8.66862e-13, 1, 2.98023e-08, 7.79793e-08, -2.98023e-08, 1, -2.60199e-08, 1.99999, -5.62519e-07 )
 
 [node name="body_old" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.885, 0 )

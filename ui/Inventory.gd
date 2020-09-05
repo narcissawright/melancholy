@@ -1,5 +1,10 @@
 extends Node2D
 
+"""
+Should this system really exist only in the UI? 
+Should there be a separate inventory system... 
+"""
+
 onready var item0 = $Item0
 onready var item1 = $Item1
 onready var item2 = $Item2
@@ -38,6 +43,15 @@ func _ready() -> void:
 	for i in range (inventory.size()):
 		set_selected(i, i == selected_item)
 		set_graphic(i, inventory[i].item)
+
+func is_full() -> bool:
+	for obj in inventory:
+		if obj.item == "":
+			return false 
+	return true
+
+func obtain_item(_item:String):
+	pass
 
 func current_item() -> String:
 	return inventory[selected_item].item

@@ -1,7 +1,5 @@
 [gd_resource type="ShaderMaterial" load_steps=3 format=2]
 
-[ext_resource path="res://actor/jewel/silver-glitter.jpg" type="Texture" id=1]
-
 [sub_resource type="Shader" id=1]
 code = "shader_type spatial;
 render_mode blend_mix,depth_draw_opaque,diffuse_burley,specular_schlick_ggx;
@@ -78,6 +76,10 @@ void fragment() {
 }
 "
 
+[sub_resource type="StreamTexture" id=2]
+flags = 7
+load_path = "res://.import/silver-glitter.jpg-98b1b023321ef5569e1ba7b02cd55f43.s3tc.stex"
+
 [resource]
 shader = SubResource( 1 )
 shader_param/albedo = Color( 0, 1, 0.858824, 1 )
@@ -93,4 +95,4 @@ shader_param/uv1_scale = Vector3( 1, 1, 1 )
 shader_param/uv1_offset = Vector3( 0, 0, 0 )
 shader_param/uv2_scale = Vector3( 1, 1, 1 )
 shader_param/uv2_offset = Vector3( 0, 0, 0 )
-shader_param/texture_roughness = ExtResource( 1 )
+shader_param/texture_roughness = SubResource( 2 )
