@@ -166,11 +166,10 @@
 ## Character Design:
 - Melanie should have shorter hair than Melancholy. Neither character will have bangs.
 - The hair covering Melanie's eye should not cover it much. Melancholy will have her eye more obscured.
-- Would like to include a Cardigan for Melanie but would need to figure out the state of cloth simulation in Godot, and my GPU is old right now.
-- Melancholy should have a dress or medium length skirt. Might keep same boots (I like this design, but perhaps black instead of brown). Unsure about other aspects of the outfit. Leggings/Tights probably good for both.
+- Melancholy should have a dress I think.. Might keep same boots (I like this design, but perhaps black instead of brown). Unsure about other aspects of the outfit. Leggings/Tights probably good for both.
 - Melanie will have plum colored hair, Melancholy a blue color. The eye color should be different, too.
 - Melancholy's heartbeat should be slower (seen in the UI).
-- Melancholy should have slight "raccoon eyes," and look more tired and pale.
+- Melancholy should look more tired and pale.
 
 
 ## Current Limitations
@@ -189,7 +188,7 @@ I don't render a daytime scene yet, only stars and no moon. Godot 4.0 will have 
 
 #### Inverse Kinematics
 
-IK can be achieved though animations that are exported, but having dynamic IK in-game (for sloped ground, etc), doesn't seem plausible with the current state of SkeletonIK. I will avoid this until SkeletonIK in Godot is much improved.
+IK can be achieved though animations that are exported, but having dynamic IK in-game (for sloped ground, etc), will be delayed until the next version of SkeletonIK is added to a stable release of Godot.
 
 #### Vertex Color as Occlusion
 
@@ -215,4 +214,4 @@ I feel like I need to write down some of the things I've learned after trying to
 
 - Need to change the FPS on the import settings for the .glb file in Godot, to allow 60fps animation.
 
-- I don't know how to merge the character into a single mesh with all modifiers other than armature applied (this would be better for my shader).
+- I use a blender python script to combine the mesh into a single mesh. (apply all non-armature modifiers, then join all objects). Maybe not strictly necessary.
