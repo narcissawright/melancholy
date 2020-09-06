@@ -5,6 +5,9 @@ const timescale:float = 1.0
 var time_of_day:float = 540.0
 var tween_duration = 5.0
 
+func _ready() -> void:
+	Events.connect("respawn", self, "respawn")
+
 func time_readable (time:float) -> String:
 	var hours:int
 	var minutes:int
@@ -50,6 +53,10 @@ func fast_forward(time_value:float):
 	time_of_day = fmod(time_of_day, 1440.0)
 
 func _on_Tween_completed(_object: Object, _key: NodePath) -> void:
+	fast_forwarding = false
+
+func respawn() -> void:
+	tween.stop_all()
 	fast_forwarding = false
 
 func _physics_process(t:float) -> void:

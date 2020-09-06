@@ -54,8 +54,7 @@ onready var anim_tree = $melanie_test/AnimationTree
 func _ready() -> void:
 	process_priority = 0 # Run this before camera
 	
-	checkpoint.jewels = jewels
-	checkpoint.subweapon = current_subweapon
+	initialize_checkpoint_state()
 	
 	lockplayer_for_frames(20) # Set locked state
 
@@ -93,7 +92,14 @@ func _physics_process(_t) -> void:
 ##    ##    ##      ##    ##
 ##    ##    ######  ##    ##
 
-""" Prevent using items when inappropriate. """
+var inventory = []
+
+func inventory_is_full() -> bool:
+	return inventory.size() >= 5
+
+func obtain_item(item:String) -> void:
+	inventory.append(item)
+	Game.ui.inventory.update_inventory(inventory)
 
 func can_use_item() -> bool:
 	if not grounded: return false
@@ -108,10 +114,14 @@ func check_if_use_item() -> void:
 				"sun_card":
 					if Game.timekeeper.can_use_card():
 						Game.timekeeper.use_card("sun")
+						inventory.remove(Game.ui.inventory.selected_item)
+						Game.ui.inventory.update_inventory(inventory)
 						lockplayer_for_frames(30)
 				"moon_card":
 					if Game.timekeeper.can_use_card():
 						Game.timekeeper.use_card("moon")
+						inventory.remove(Game.ui.inventory.selected_item)
+						Game.ui.inventory.update_inventory(inventory)
 						lockplayer_for_frames(30)
 
 ######  ####   #####    #####  ######  ######
@@ -539,7 +549,7 @@ func new_subweapon(what:String) -> void:
 	# some logic here to drop the old subweapon.
 
 const max_jewels:int = 999
-var jewels:int = 999 setget update_jewel_count # Subweapon ammo
+var jewels:int = 25 setget update_jewel_count # Subweapon ammo
 func update_jewel_count(value):
 	jewels = value
 	Events.emit_signal("jewel_count_changed")
@@ -629,11 +639,19 @@ func safe_look_at(lookdir:Vector3) -> void:
 ##  ##  #####  ####   ##      ##  ##   ######   ##  ##
 
 var checkpoint:Dictionary = {
+		"time_of_day": 0.0,
 		"position": Vector3.ZERO,
 		"jewels": 0,
 		"subweapon": "",
-		"y_rotation": 0.0
+		"y_rotation": 0.0, 
+		"inventory": []
 	}
+
+func initialize_checkpoint_state() -> void:
+	checkpoint.jewels = jewels
+	checkpoint.subweapon = current_subweapon
+	checkpoint.time_of_day = Game.timekeeper.time_of_day
+	checkpoint.inventory = inventory.duplicate()
 
 func respawn_check() -> void:
 	# If player fell off the map, respawn
@@ -649,6 +667,9 @@ func respawn() -> void:
 	rotation = Vector3(0, checkpoint.y_rotation, 0)
 	self.current_subweapon = checkpoint.subweapon
 	self.jewels = checkpoint.jewels
+	Game.timekeeper.time_of_day = checkpoint.time_of_day
+	inventory = checkpoint.inventory.duplicate()
+	Game.ui.inventory.update_inventory(inventory)
 	
 	lockplayer_for_frames(20)
 	Game.cam.reset()

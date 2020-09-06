@@ -19,39 +19,37 @@ var gfx:Dictionary = {
 
 var inventory:Array
 var selected_item:int = 0
-var item_total = 2
+var item_total = 0
 
-func _ready() -> void:
-	inventory = [
-		{
-			"node": item0, 
-			"item": "sun_card"
-		}, {
-			"node": item1, 
-			"item": "moon_card"
-		}, {
-			"node": item2,
-			"item": ""
-		}, {
-			"node": item3,
-			"item": ""
-		}, {
-			"node": item4,
-			"item": ""
-		}]
-		
+func update_inventory(items:Array):
+	item_total = items.size()
+	inventory[0].item = ''
+	inventory[1].item = ''
+	inventory[2].item = ''
+	inventory[3].item = ''
+	inventory[4].item = ''
+	for i in range (item_total):
+		inventory[i].item = items[i]
 	for i in range (inventory.size()):
 		set_selected(i, i == selected_item)
 		set_graphic(i, inventory[i].item)
+
+func _ready() -> void:
+	inventory = [
+		{ "node": item0 }, 
+		{ "node": item1 }, 
+		{ "node": item2 },
+		{ "node": item3 }, 
+		{ "node": item4 }
+	]
+	
+	update_inventory(Game.player.inventory)
 
 func is_full() -> bool:
 	for obj in inventory:
 		if obj.item == "":
 			return false 
 	return true
-
-func obtain_item(_item:String):
-	pass
 
 func current_item() -> String:
 	return inventory[selected_item].item
