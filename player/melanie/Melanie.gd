@@ -67,6 +67,10 @@ func _ready() -> void:
 func _physics_process(_t) -> void:
 	framecount += 1
 	
+	# None of these functions should be called outside of _physics_process
+	# They are separate functions purely for organizational purposes,
+	# but they are effectively sequential code.
+	
 	check_if_use_item() # Item Usage
 	update_target_state() # ZL Targeting
 	
@@ -115,12 +119,14 @@ func check_if_use_item() -> void:
 					if Game.timekeeper.can_use_card():
 						Game.timekeeper.use_card("sun")
 						inventory.remove(Game.ui.inventory.selected_item)
+						Game.ui.inventory.selected_item = 0
 						Game.ui.inventory.update_inventory(inventory)
 						lockplayer_for_frames(30)
 				"moon_card":
 					if Game.timekeeper.can_use_card():
 						Game.timekeeper.use_card("moon")
 						inventory.remove(Game.ui.inventory.selected_item)
+						Game.ui.inventory.selected_item = 0
 						Game.ui.inventory.update_inventory(inventory)
 						lockplayer_for_frames(30)
 
@@ -162,38 +168,6 @@ func update_target_state() -> void:
 		untarget()
 		
 	#head_rotation()
-	
-func head_rotation() -> void:
-	var head_look_target:int = TargetSystem.priority_target
-	if head_look_target != 0:
-		var custom_pose = skele.get_bone_custom_pose(head_bone_idx)
-		var face_dir = global_transform.basis.xform(-custom_pose.basis.z)
-		
-		# this line can crash.
-		var head_looktowards:Vector3 = (TargetSystem.list[head_look_target].pos - self.head_position).normalized()
-
-		head_looktowards.y = clamp(head_looktowards.y, -0.35, 0.35)
-		face_dir.y = clamp(face_dir.y, -0.35, 0.35)
-		
-		var hlt_xz = Vector2(head_looktowards.x, head_looktowards.z).normalized()
-		var face2d = Vector2(face_dir.x, face_dir.z).normalized()
-		
-# warning-ignore:unused_variable
-		var diff_2d = (face2d.angle_to(hlt_xz))
-		
-
-		var updown_rot:float = (head_looktowards.y - face_dir.y)
-		
-		"""
-		I think now the problem is that the 2nd axis i am rotating on no longer makes sense once it has already been rotated once.
-		Need to figure out a clean way to get this going.
-		"""
-		custom_pose.basis = custom_pose.basis.rotated(Vector3(1,0,0), updown_rot) # UP DOWN
-#		custom_pose.basis = custom_pose.basis.rotated(Vector3(0,1,0), 0.0) # TILT
-		#custom_pose.basis = custom_pose.basis.rotated(custom_pose.basis.z, diff_2d) # LEFT/RIGHT
-		skele.set_bone_custom_pose(head_bone_idx, custom_pose)
-	else:
-		skele.set_bone_custom_pose(head_bone_idx, Transform())
 		
 func untarget() -> void:
 	if zl_target != 0:
@@ -234,7 +208,7 @@ var ledgegrabbing:bool = false
 """ 
 Known issues:
 	- no detection of where ledges end, which means you can move onto walls.
-	- only using one raycast for the wall normal gives unstable behavior on rotation
+	- bad detection with sloped walls
 """
 
 func check_ledgegrab():
@@ -244,6 +218,7 @@ func check_ledgegrab():
 			return
 		
 		if not ledgegrab_tween.is_active():
+			""" Sometimes this is_active even when a tween isnt occuring... causing problems """
 			var dir = find_movement_direction()
 			var hray_result = ledgesystem.horizontal_raycast(transform.origin.y + 2.0)
 			match hray_result.hits:
@@ -308,10 +283,6 @@ func rotate_towards_ledge(wall_normal:Vector3) -> void:
 		Tween.TRANS_SINE, Tween.EASE_OUT)
 	ledgegrab_tween.start()
 
-""" 
-Might want to do y position separately from rotation and xz position.
-y position could be calculated from the prior velocity. 
-"""
 func snap_to_ledge(raycast_result:Dictionary, height:float) -> void:
 	# find new transform basis
 	var old_basis = global_transform.basis
@@ -523,6 +494,38 @@ func walk_animation() -> void:
 func set_ledge_cling_anim(blend_amt:float) -> void:
 	anim_tree['parameters/is_ledge_clinging/blend_amount'] = blend_amt
 
+""" 
+Head Rotation Failure.
+Waiting for IK improvements to work on this.
+"""
+func head_rotation() -> void:
+	var head_look_target:int = TargetSystem.priority_target
+	if head_look_target != 0:
+		var custom_pose = skele.get_bone_custom_pose(head_bone_idx)
+		var face_dir = global_transform.basis.xform(-custom_pose.basis.z)
+
+		# this line can crash.
+		var head_looktowards:Vector3 = (TargetSystem.list[head_look_target].pos - self.head_position).normalized()
+
+		head_looktowards.y = clamp(head_looktowards.y, -0.35, 0.35)
+		face_dir.y = clamp(face_dir.y, -0.35, 0.35)
+
+		var hlt_xz = Vector2(head_looktowards.x, head_looktowards.z).normalized()
+		var face2d = Vector2(face_dir.x, face_dir.z).normalized()
+
+		# warning-ignore:unused_variable
+		var diff_2d = (face2d.angle_to(hlt_xz))
+		var updown_rot:float = (head_looktowards.y - face_dir.y)
+
+		#I think now the problem is that the 2nd axis i am rotating on no longer makes sense once it has already been rotated once.
+		#Need to figure out a clean way to get this going.
+		custom_pose.basis = custom_pose.basis.rotated(Vector3(1,0,0), updown_rot) # UP DOWN
+		#custom_pose.basis = custom_pose.basis.rotated(Vector3(0,1,0), 0.0) # TILT
+		#custom_pose.basis = custom_pose.basis.rotated(custom_pose.basis.z, diff_2d) # LEFT/RIGHT
+		skele.set_bone_custom_pose(head_bone_idx, custom_pose)
+	else:
+		skele.set_bone_custom_pose(head_bone_idx, Transform())
+
 ##  ##  ##  ######  ######  #####    ####    #####  ######
 ##  ### ##    ##    ##      ##  ##  ##  ##  ##        ##
 ##  ######    ##    #####   #####   ######  ##        ##
@@ -669,6 +672,7 @@ func respawn() -> void:
 	self.jewels = checkpoint.jewels
 	Game.timekeeper.time_of_day = checkpoint.time_of_day
 	inventory = checkpoint.inventory.duplicate()
+	Game.ui.inventory.selected_item = 0
 	Game.ui.inventory.update_inventory(inventory)
 	
 	lockplayer_for_frames(20)
