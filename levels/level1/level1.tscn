@@ -33,7 +33,7 @@ material/0 = null
 shape = SubResource( 2 )
 
 [node name="ledgegrab_test" parent="." instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.9865 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 40.8538, 9.84111, 8.99923 )
 
 [node name="Actors" type="Node" parent="."]
 script = ExtResource( 7 )
