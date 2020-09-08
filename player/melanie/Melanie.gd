@@ -489,7 +489,9 @@ e.g. BombSpawner or Bomb may call bomb pull or bomb throw.
 """
 
 func walk_animation() -> void:
-	anim_tree['parameters/IdleWalk/blend_amount'] = clamp(horizontal_velocity().length() / 1.65, 0.0, 1.0)
+	var anim_position = min(horizontal_velocity().length(), 8.0) / 8.0
+	anim_tree['parameters/IdleWalkRun/blend_position'] = anim_position
+	anim_tree['parameters/RunScale/scale'] = (anim_position/2.0) + 1.0
 	
 func set_ledge_cling_anim(blend_amt:float) -> void:
 	anim_tree['parameters/is_ledge_clinging/blend_amount'] = blend_amt
