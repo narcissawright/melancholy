@@ -569,7 +569,9 @@ func process_subweapon() -> void:
 			if Input.is_action_just_pressed("subweapon"):
 				Events.emit_signal("error_no_subweapon")
 		"bomb":
-			bombspawner.translation = bomb_pos.translation
+			bombspawner.translation.y = bomb_pos.translation.y
+			bombspawner.translation.z = -bomb_pos.translation.z
+			bombspawner.translation.x = -bomb_pos.translation.x
 			bombspawner.process_state()
  
  ####   ####   ##     ##     ##   #####  ##   ####   ##  ##
