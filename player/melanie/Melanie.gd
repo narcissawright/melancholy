@@ -580,14 +580,27 @@ func process_subweapon() -> void:
 ##     ##  ##  ##     ##     ##      ##  ##  ##  ##  ## ###
  ####   ####   #####  #####  ##  #####   ##   ####   ##  ##
 
+var collision_locations = {}
+onready var collision_data_timer = $Timers/CollisionData
+
 func handle_collision(collision:KinematicCollision) -> void:
 	# If a collision has occured:
 	if collision:
 		var impact:float = velocity.length()
 		velocity = velocity.slide(collision.normal)
 		impact -= velocity.length()
-		if impact > 10.0:
-			apply_damage(impact)
+		if impact > 12.5:
+			apply_damage(impact * 1.5)
+		
+		# Gather location information
+		if collision_data_timer.is_stopped():
+			if velocity.length() > 5.0:
+				collision_data_timer.start()
+				# Might want to convert -0 to 0 here too.
+				if collision_locations.has(translation.round()):
+					collision_locations[translation.round()] += 1
+				else:
+					collision_locations[translation.round()] = 1
 
 #####    ####   ######   ####   ######  ##   ####   ##  ##
 ##  ##  ##  ##    ##    ##  ##    ##    ##  ##  ##  ### ##
@@ -764,7 +777,9 @@ func debug() -> void:
 	#Debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
 	Debug.text.newline()
 	Debug.text.write('Interactables: ' + str(interactables.list))
-
+	Debug.text.newline()
+	Debug.text.write("Collision Locations:")
+	Debug.text.write(str(collision_locations))
 	# Debug Draw
 #	Debug.draw.begin(Mesh.PRIMITIVE_LINES)
 #	Debug.draw.add_vertex(Game.player.head_position)
@@ -772,6 +787,3 @@ func debug() -> void:
 #	Debug.draw.add_vertex(Game.player.head_position)
 #	Debug.draw.add_vertex(Game.player.head_position + Vector3(velocity.x, 0, velocity.z).normalized())
 #	Debug.draw.end()
-
-
-
