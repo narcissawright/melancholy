@@ -596,26 +596,34 @@ func handle_collision(collision:KinematicCollision) -> void:
 		if collision_data_timer.is_stopped():
 			if velocity.length() > 5.0:
 				collision_data_timer.start()
-				# Might want to convert -0 to 0 here too.
-				if collision_locations.has(translation.round()):
-					collision_locations[translation.round()] += 1
-				else:
-					collision_locations[translation.round()] = 1
-					#print({translation.round() : 1}.hash())
-					#print(collision_locations[translation.round()])
+				var position = translation.round()
+				var diff:Vector3 = position - geometry_aabb.position
+				print(diff, " / ", geometry_aabb.size)
+				print(position, " / ", geometry_aabb.position)
+				""" INDEX OUT OF BOUNDS, pls fix """
+				var index = diff.x + (diff.y * geometry_aabb.size.x) + (diff.z * geometry_aabb.size.x * geometry_aabb.size.y)
+				print(index, " / ", geometry_aabb.size.x * geometry_aabb.size.y * geometry_aabb.size.z)
+				set_collision_img_data(index, 0xff)
+
+func set_collision_img_data(index:int, value:int) -> void:
+	var img_data = special_img.data.data
+	img_data.set(index, value)
+	special_img.data.data = img_data
+	img_texture = ImageTexture.new()
+	img_texture.create_from_image(special_img, 0)
+	$TextureRect.texture = img_texture
+	$"../../level1/Geometry".get_surface_material(0).set_shader_param("collision_data", img_texture)
 
 var geometry_aabb:AABB
 var special_img:Image
+var img_texture:ImageTexture
+
 func set_geometry_aabb(aabb:AABB) -> void:
 	geometry_aabb = aabb
-	#print (aabb)
 	var height = ceil(aabb.size.x * aabb.size.y * aabb.size.z / 1024.0)
 	special_img = Image.new()
 	special_img.create(1024, height, false, Image.FORMAT_L8)
-	var img_data = special_img.data.data
-	img_data.set(0, 116)
-	special_img.data.data = img_data
-	print(special_img.data.data.hex_encode())
+
 
 #####    ####   ######   ####   ######  ##   ####   ##  ##
 ##  ##  ##  ##    ##    ##  ##    ##    ##  ##  ##  ### ##
