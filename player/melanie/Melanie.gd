@@ -598,11 +598,14 @@ func handle_collision(collision:KinematicCollision) -> void:
 				collision_data_timer.start()
 				var position = translation.round()
 				var diff:Vector3 = position - geometry_aabb.position
-				print(diff, " / ", geometry_aabb.size)
-				print(position, " / ", geometry_aabb.position)
-				""" INDEX OUT OF BOUNDS, pls fix """
-				var index = diff.x + (diff.y * geometry_aabb.size.x) + (diff.z * geometry_aabb.size.x * geometry_aabb.size.y)
-				print(index, " / ", geometry_aabb.size.x * geometry_aabb.size.y * geometry_aabb.size.z)
+				var max_x = geometry_aabb.size.x + 1
+				var max_y = geometry_aabb.size.y + 1
+				var index = diff.x + (diff.y * max_x) + (diff.z * max_x * max_y)
+				
+				#print(diff, " / ", geometry_aabb.size)
+				#print(position, " / ", geometry_aabb.position)
+				#print(index, " / ", geometry_aabb.size.x * geometry_aabb.size.y * geometry_aabb.size.z)
+				
 				set_collision_img_data(index, 0xff)
 
 func set_collision_img_data(index:int, value:int) -> void:
