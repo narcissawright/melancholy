@@ -601,6 +601,21 @@ func handle_collision(collision:KinematicCollision) -> void:
 					collision_locations[translation.round()] += 1
 				else:
 					collision_locations[translation.round()] = 1
+					#print({translation.round() : 1}.hash())
+					#print(collision_locations[translation.round()])
+
+var geometry_aabb:AABB
+var special_img:Image
+func set_geometry_aabb(aabb:AABB) -> void:
+	geometry_aabb = aabb
+	#print (aabb)
+	var height = ceil(aabb.size.x * aabb.size.y * aabb.size.z / 1024.0)
+	special_img = Image.new()
+	special_img.create(1024, height, false, Image.FORMAT_L8)
+	var img_data = special_img.data.data
+	img_data.set(0, 116)
+	special_img.data.data = img_data
+	print(special_img.data.data.hex_encode())
 
 #####    ####   ######   ####   ######  ##   ####   ##  ##
 ##  ##  ##  ##    ##    ##  ##    ##    ##  ##  ##  ### ##
