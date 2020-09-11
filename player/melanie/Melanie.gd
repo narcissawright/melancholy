@@ -597,31 +597,45 @@ func handle_collision(collision:KinematicCollision) -> void:
 			if velocity.length() > 5.0:
 				collision_data_timer.start()
 				var position = translation.round()
-				print (position - translation)
+				var offset = translation - position
 				
+				var x_dir = sign(offset.x)
+				var y_dir = sign(offset.y)
+				var z_dir = sign(offset.z)
 				
+				var locations = [
+					position, 
+					position + Vector3(0,     0,     z_dir),
+					position + Vector3(0,     y_dir, 0    ),
+					position + Vector3(0,     y_dir, z_dir),
+					position + Vector3(x_dir, 0,     0    ),
+					position + Vector3(x_dir, 0,     z_dir),
+					position + Vector3(x_dir, y_dir, 0    ),
+					position + Vector3(x_dir, y_dir, z_dir)
+				]
 				
-				#print (fposmod(-13.75, 1.0)) #  0.25
-				#print (fmod   (-13.75, 1.0)) # -0.75
-				var diff:Vector3 = position - geometry_aabb.position
-				var max_x = geometry_aabb.size.x
-				var max_y = geometry_aabb.size.y
-				var index = int(diff.x + (diff.y * max_x) + (diff.z * max_x * max_y))
+				for i in range (locations.size()):
+					var index:int = get_collision_img_index(locations[i], geometry_aabb)
+					var distance = (translation - locations[i]).length()
+					var value:int = int((1.0 - distance) * 0xFF)
+					if value > 0:
+						set_collision_img_data(index, value)
 				
-				#print(diff, " / ", geometry_aabb.size)
-				#print(position, " / ", geometry_aabb.position)
-				#print(index, " / ", geometry_aabb.size.x * geometry_aabb.size.y * geometry_aabb.size.z)
-				
-				set_collision_img_data(index, 0xff)
+				img_texture = ImageTexture.new()
+				img_texture.create_from_image(special_img, 0)
+				$TextureRect.texture = img_texture
+				$"../../level1/Geometry".get_surface_material(0).set_shader_param("collision_data", img_texture)
+
+func get_collision_img_index(position:Vector3, aabb:AABB) -> int:
+	var diff:Vector3 = position - aabb.position
+	return int(diff.x + (diff.y * aabb.size.x) + (diff.z * aabb.size.x * aabb.size.y))
 
 func set_collision_img_data(index:int, value:int) -> void:
 	var img_data = special_img.data.data
-	img_data.set(index, value)
+	var old_value = img_data[index]
+	var new_value = min(old_value + value, 0xFF)
+	img_data.set(index, new_value)
 	special_img.data.data = img_data
-	img_texture = ImageTexture.new()
-	img_texture.create_from_image(special_img, 0)
-	$TextureRect.texture = img_texture
-	$"../../level1/Geometry".get_surface_material(0).set_shader_param("collision_data", img_texture)
 
 var geometry_aabb:AABB
 var special_img:Image
