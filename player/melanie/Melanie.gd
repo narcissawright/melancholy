@@ -597,10 +597,16 @@ func handle_collision(collision:KinematicCollision) -> void:
 			if velocity.length() > 5.0:
 				collision_data_timer.start()
 				var position = translation.round()
+				print (position - translation)
+				
+				
+				
+				#print (fposmod(-13.75, 1.0)) #  0.25
+				#print (fmod   (-13.75, 1.0)) # -0.75
 				var diff:Vector3 = position - geometry_aabb.position
-				var max_x = geometry_aabb.size.x + 1
-				var max_y = geometry_aabb.size.y + 1
-				var index = diff.x + (diff.y * max_x) + (diff.z * max_x * max_y)
+				var max_x = geometry_aabb.size.x
+				var max_y = geometry_aabb.size.y
+				var index = int(diff.x + (diff.y * max_x) + (diff.z * max_x * max_y))
 				
 				#print(diff, " / ", geometry_aabb.size)
 				#print(position, " / ", geometry_aabb.position)
@@ -623,7 +629,7 @@ var img_texture:ImageTexture
 
 func set_geometry_aabb(aabb:AABB) -> void:
 	geometry_aabb = aabb
-	var height = ceil(aabb.size.x * aabb.size.y * aabb.size.z / 1024.0)
+	var height = ceil((aabb.size.x+1) * (aabb.size.y+1) * (aabb.size.z+1) / 1024.0)
 	special_img = Image.new()
 	special_img.create(1024, height, false, Image.FORMAT_L8)
 
