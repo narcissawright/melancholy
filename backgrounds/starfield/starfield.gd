@@ -94,8 +94,8 @@ func gaussian(mean, deviation):
 	return (mean + deviation * x1 * w)
 
 func _draw():
-	var rot_amount = (Game.timekeeper.time_of_day / 1440.0) * 360
-	var cam_pos = Game.cam.global_transform.origin
+	var rot_amount = (Timekeeper.time_of_day / 1440.0) * 360
+	var cam_pos = MainCam.global_transform.origin
 	var bounds = Rect2(-64, -64, 1920 + 128, 1080 + 128)
 	
 	#var c = Color('050510')
@@ -105,8 +105,8 @@ func _draw():
 		
 	for star in star_field:
 		var world_point = cam_pos + star[POSITION_INDEX].rotated(axis_of_rotation, deg2rad(rot_amount) )
-		if Game.cam.is_position_behind(world_point):
-			var pos = Game.cam.unproject_position(world_point)
+		if MainCam.is_position_behind(world_point):
+			var pos = MainCam.unproject_position(world_point)
 			pos.x = round(pos.x)
 			pos.y = round(pos.y)
 			if bounds.has_point(pos):

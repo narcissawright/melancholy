@@ -78,7 +78,7 @@ func _physics_process(_t) -> void:
 	update_horizontal_velocity() # General movement
 	update_vertical_velocity() # Jumping and gravity
 	
-	var collision:KinematicCollision = move_and_collide(velocity * Game.frame_time) # Apply Physics
+	var collision:KinematicCollision = move_and_collide(velocity * SceneController.frame_time) # Apply Physics
 	
 	set_grounded(raycast.is_colliding()) # Check if grounded
 	handle_collision(collision) # Redirect velocity, check landing impact, etc
@@ -103,31 +103,31 @@ func inventory_is_full() -> bool:
 
 func obtain_item(item:String) -> void:
 	inventory.append(item)
-	Game.ui.inventory.update_inventory(inventory)
+	UI.inventory.update_inventory(inventory)
 
 func can_use_item() -> bool:
 	if not grounded: return false
 	if is_locked(): return false
-	if Game.cam.mode == "first_person": return false 
+	if MainCam.mode == "first_person": return false 
 	return true
 
 func check_if_use_item() -> void:
 	if Input.is_action_just_pressed("use_item"):
 		if can_use_item():
-			match Game.ui.inventory.current_item():
+			match UI.inventory.current_item():
 				"sun_card":
-					if Game.timekeeper.can_use_card():
-						Game.timekeeper.use_card("sun")
-						inventory.remove(Game.ui.inventory.selected_item)
-						Game.ui.inventory.selected_item = 0
-						Game.ui.inventory.update_inventory(inventory)
+					if Timekeeper.can_use_card():
+						Timekeeper.use_card("sun")
+						inventory.remove(UI.inventory.selected_item)
+						UI.inventory.selected_item = 0
+						UI.inventory.update_inventory(inventory)
 						lockplayer_for_frames(30)
 				"moon_card":
-					if Game.timekeeper.can_use_card():
-						Game.timekeeper.use_card("moon")
-						inventory.remove(Game.ui.inventory.selected_item)
-						Game.ui.inventory.selected_item = 0
-						Game.ui.inventory.update_inventory(inventory)
+					if Timekeeper.can_use_card():
+						Timekeeper.use_card("moon")
+						inventory.remove(UI.inventory.selected_item)
+						UI.inventory.selected_item = 0
+						UI.inventory.update_inventory(inventory)
 						lockplayer_for_frames(30)
 
 ######  ####   #####    #####  ######  ######
@@ -152,19 +152,19 @@ func update_target_state() -> void:
 	# Begin ZL Targeting:
 	if not targeting and Input.is_action_just_pressed("target"):
 		
-		if retarget == TargetSystem.priority_target and TargetSystem.secondary_target != 0:
-			zl_target = TargetSystem.secondary_target
+		if retarget == Player.TargetSystem.priority_target and Player.TargetSystem.secondary_target != 0:
+			zl_target = Player.TargetSystem.secondary_target
 		else:
-			zl_target = TargetSystem.priority_target
+			zl_target = Player.TargetSystem.priority_target
 		
 		cam_reset_wall_align()
 	
 	# Check if no longer targeting:
 	if Input.is_action_pressed("target"):
-		if not TargetSystem.target_is_valid(zl_target):
+		if not Player.TargetSystem.target_is_valid(zl_target):
 			# Target broken from distance or lost line of sight
 			untarget()
-	elif Game.cam.mode != "reset":
+	elif MainCam.mode != "reset":
 		untarget()
 		
 	#head_rotation()
@@ -183,7 +183,7 @@ func cam_reset_wall_align() -> void:
 	targeting = true
 	
 	if zl_target == 0:
-		Game.cam.reset()
+		MainCam.reset()
 		
 		# align with wall if relevant
 		wall_align(0.25)
@@ -366,8 +366,8 @@ func update_horizontal_velocity() -> void:
 	velocity = Vector3(horizontal_velocity.x, velocity.y, horizontal_velocity.z)
 
 func find_movement_direction() -> Vector3:
-	var pushdir:Vector2 = Game.get_stick_input("left")
-	var camdir:Vector3 = Game.cam.get_global_transform().basis.z
+	var pushdir:Vector2 = Player.get_stick_input("left")
+	var camdir:Vector3 = MainCam.get_global_transform().basis.z
 	camdir.y = 0.0
 	camdir = camdir.normalized()
 	return (camdir * pushdir.y) + (camdir.rotated(Vector3.UP, PI/2) * pushdir.x)
@@ -388,7 +388,7 @@ func update_vertical_velocity() -> void:
 		return
 
 	# Apply Gravity
-	velocity.y += Game.GRAVITY * Game.frame_time
+	velocity.y += SceneController.GRAVITY * SceneController.frame_time
 	
 	"""
 	I feel like my jump code is very jank and I wish to change it at some point.
@@ -432,7 +432,7 @@ func is_locked() -> bool:
 # Locked State:
 func lockplayer_for_frames(frames:int) -> void:
 	# Set Timer
-	lock_timer.wait_time = frames * Game.frame_time
+	lock_timer.wait_time = frames * SceneController.frame_time
 	lock_timer.start()
 	lockplayer("timer")
 
@@ -469,7 +469,7 @@ func set_grounded(state:bool) -> void:
 			has_jump = true
 		else:
 			# Transition to air:
-			air_transition_timer.wait_time = 5.0 * Game.frame_time
+			air_transition_timer.wait_time = 5.0 * SceneController.frame_time
 			air_transition_timer.start()
 	grounded = state
 
@@ -501,13 +501,13 @@ Head Rotation Failure.
 Waiting for IK improvements to work on this.
 """
 func head_rotation() -> void:
-	var head_look_target:int = TargetSystem.priority_target
+	var head_look_target:int = Player.TargetSystem.priority_target
 	if head_look_target != 0:
 		var custom_pose = skele.get_bone_custom_pose(head_bone_idx)
 		var face_dir = global_transform.basis.xform(-custom_pose.basis.z)
 
 		# this line can crash.
-		var head_looktowards:Vector3 = (TargetSystem.list[head_look_target].pos - self.head_position).normalized()
+		var head_looktowards:Vector3 = (Player.TargetSystem.list[head_look_target].pos - self.head_position).normalized()
 
 		head_looktowards.y = clamp(head_looktowards.y, -0.35, 0.35)
 		face_dir.y = clamp(face_dir.y, -0.35, 0.35)
@@ -650,7 +650,7 @@ func set_geometry_aabb(aabb:AABB) -> void:
 	path_collision_tex = ImageTexture.new()
 	path_collision_tex.create_from_image(path_collision_img, 0)
 	$TextureRect.texture = path_collision_tex
-	$"../../level1/Geometry".get_surface_material(0).set_shader_param("collision_data", path_collision_tex)
+	Level.get_node("level1/Geometry").get_surface_material(0).set_shader_param("collision_data", path_collision_tex)
 
 #####    ####   ######   ####   ######  ##   ####   ##  ##
 ##  ##  ##  ##    ##    ##  ##    ##    ##  ##  ##  ### ##
@@ -674,7 +674,7 @@ func handle_player_rotation() -> void:
 	# While targeting -- look towards target
 	elif targeting and zl_target != 0:
 		var look_target_2d := Vector2(translation.x, translation.z)
-		look_target_2d -= Vector2(TargetSystem.list[zl_target].pos.x, TargetSystem.list[zl_target].pos.z)
+		look_target_2d -= Vector2(Player.TargetSystem.list[zl_target].pos.x, Player.TargetSystem.list[zl_target].pos.z)
 		look_target_2d = -look_target_2d.normalized()
 		rotate_towards(look_target_2d)
 
@@ -720,7 +720,7 @@ var checkpoint:Dictionary = {
 func initialize_checkpoint_state() -> void:
 	checkpoint.jewels = jewels
 	checkpoint.subweapon = current_subweapon
-	checkpoint.time_of_day = Game.timekeeper.time_of_day
+	checkpoint.time_of_day = Timekeeper.time_of_day
 	checkpoint.inventory = inventory.duplicate()
 
 func respawn_check() -> void:
@@ -737,13 +737,13 @@ func respawn() -> void:
 	rotation = Vector3(0, checkpoint.y_rotation, 0)
 	self.current_subweapon = checkpoint.subweapon
 	self.jewels = checkpoint.jewels
-	Game.timekeeper.time_of_day = checkpoint.time_of_day
+	Timekeeper.time_of_day = checkpoint.time_of_day
 	inventory = checkpoint.inventory.duplicate()
-	Game.ui.inventory.selected_item = 0
-	Game.ui.inventory.update_inventory(inventory)
+	UI.inventory.selected_item = 0
+	UI.inventory.update_inventory(inventory)
 	
 	lockplayer_for_frames(20)
-	Game.cam.reset()
+	MainCam.reset()
 
 #####    ####    ######    ####    #####  #####
 ##  ##  ##  ##  ## ## ##  ##  ##  ##      ##

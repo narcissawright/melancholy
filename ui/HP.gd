@@ -18,7 +18,7 @@ func _ready() -> void:
 
 func _process(_t:float) -> void:
 	var light_vec = Vector3(0, -1, 0.35).normalized()
-	light_vec = light_vec.rotated(Vector3.FORWARD, -(Game.timekeeper.time_of_day / 1440.0) * TAU)
+	light_vec = light_vec.rotated(Vector3.FORWARD, -(Timekeeper.time_of_day / 1440.0) * TAU)
 	heart.material.set_shader_param("light_vec", light_vec)
 
 func _on_player_damaged():
@@ -29,9 +29,9 @@ func _on_player_respawning():
 
 func update_healthbar():
 	tween.stop_all()
-	var new_size = (Game.player.hp / Game.player.max_hp) * full_length
+	var new_size = (Player.hp / Player.max_hp) * full_length
 	var difference = hp_bar_light.rect_size.x - new_size
-	var tween_time = min(1.5, abs(difference) * Game.frame_time * 0.5)
+	var tween_time = min(1.5, abs(difference) * SceneController.frame_time * 0.5)
 	if difference > 0.0:
 		# Decrease Healthbar
 		tween.interpolate_property(hp_bar_dark, "rect_size:x", hp_bar_dark.rect_size.x, new_size, tween_time)

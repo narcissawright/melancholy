@@ -43,7 +43,7 @@ func _ready() -> void:
 		{ "node": item4 }
 	]
 	
-	update_inventory(Game.player.inventory)
+	update_inventory(Player.inventory)
 
 func is_full() -> bool:
 	for obj in inventory:

@@ -56,21 +56,21 @@ func manage_target_list() -> void:
 		
 		# Assign properties
 		target.pos = target.parent.global_transform.origin
-		target.length = (target.pos - Game.player.translation).length()
-		target.move_vector = -(Game.player.translation - target.pos).normalized()
+		target.length = (target.pos - Player.position).length()
+		target.move_vector = -(Player.position - target.pos).normalized()
 		target.aabb2d = find_aabb_2d(target.pos, target.aabb) 
 		target.on_cam = is_target_on_camera(target)
 		
 		# Check for player line of sight
 		var ss:PhysicsDirectSpaceState = target.area.get_world().direct_space_state
-		var result:Dictionary = ss.intersect_ray(Game.player.translation, target.area.global_transform.origin, [], Layers.solid)
+		var result:Dictionary = ss.intersect_ray(Player.position, target.area.global_transform.origin, [], Layers.solid)
 		var blocked = result.size() > 0 # If no line of sight, do not draw.
 		
 		target.relevance = 0.0
 		if not blocked and target.on_cam: # Assign relevance (for targeting priority)
 			
 			# The closer the target is to the middle of the screen, the higher relevance it has
-			var target_pos_2d:Vector2 = Game.cam.unproject_position(target.pos)
+			var target_pos_2d:Vector2 = MainCam.unproject_position(target.pos)
 			var midscreen:Vector2 = OS.window_size / 2.0
 			var rel_center_screen:float = max(1.0 - (midscreen - target_pos_2d).length() / (midscreen.length()), 0.0)
 			
@@ -79,8 +79,8 @@ func manage_target_list() -> void:
 			
 			# The closer the target is to the player facing direction, the higher relevance it has
 			var rel_player_facing:float = 0.0
-			var playerfacedir = Game.player.forwards()
-			var starting_point = Game.player.translation
+			var playerfacedir = Player.forwards
+			var starting_point = Player.position
 			# Height will be ignored for this calculation
 			starting_point.y = 0.0
 			var target_pos_no_height = target.pos
@@ -134,7 +134,7 @@ func find_aabb_2d(target_pos:Vector3, aabb:AABB) -> Rect2:
 	
 	# find the 2d viewport position of all 8 bounding box vertices
 	for j in range (points.size()):
-		points[j] = Game.cam.unproject_position(points[j])
+		points[j] = MainCam.unproject_position(points[j])
 		
 	# sort the eight 2d points by their x position
 	var x_sort = []
@@ -159,7 +159,7 @@ func find_aabb_2d(target_pos:Vector3, aabb:AABB) -> Rect2:
 
 func is_target_on_camera(target:Dictionary) -> bool:
 	# Rule out the stuff behind the camera.
-	if Game.cam.is_position_behind(target.pos): return false
+	if MainCam.is_position_behind(target.pos): return false
 	
 	# Check if within screen bounds
 	var window_size := Rect2(Vector2.ZERO, OS.window_size).grow(half_corner_size) # always draw the partial graphic @ screen edge
@@ -177,14 +177,14 @@ func _draw(): # update called in player
 		if not target.on_cam or target.relevance <= 0.0:
 			continue # do not draw irrelevant targets
 			
-		var distance:float = (Game.cam.global_transform.origin - target.pos).length()
+		var distance:float = (MainCam.global_transform.origin - target.pos).length()
 		var opacity:float = 1.0
 		opacity = clamp(distance - 0.5, 0.0, 1.0)
 		
 		var color = Color(0.4, 0.4, 0.4, opacity * 0.5) # grey
 		if priority_target == id:
 			color = Color(0.45, 0.5, 0.75, opacity * 0.85) # dull blue
-		if id == Game.player.zl_target:
+		if id == Player.zl_target:
 			color = Color(0.5, 0.6, 1.0, opacity) # bright blue
 		
 		# where to draw the cursor corners:

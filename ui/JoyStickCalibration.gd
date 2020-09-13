@@ -80,8 +80,8 @@ func _init() -> void:
 	
 func _ready() -> void:
 	# initialize displays
-	set_outer_threshold(Game.joystick_outer_threshold)
-	set_axis_deadzone(Game.joystick_axis_deadzone)
+	set_outer_threshold(Player.joystick_outer_threshold)
+	set_axis_deadzone(Player.joystick_axis_deadzone)
 
 func _return_pressed() -> void:
 	if slider_controls_enabled:
@@ -98,7 +98,7 @@ func _return_pressed() -> void:
 #				set_axis_deadzone(easing_curve_prior_value)
 	else:
 		current_menu_index = 0
-		Game.ui.paused.change_state("customize_menu")
+		UI.paused.change_state("customize_menu")
 		stop()
 
 # Only update the menu when appropriate
@@ -114,7 +114,7 @@ func _down_pressed() -> void:
 		descriptions.get_child(current_menu_index).visible = true
 
 func set_outer_threshold(value:float) -> void:
-	Game.joystick_outer_threshold = value
+	Player.joystick_outer_threshold = value
 	outer_threshold_value_label.text = str(value).pad_decimals(3)
 	outer_threshold_color_rect.rect_size.x = (1.0 - (value - outer_threshold_minimum) / (1.0 - outer_threshold_minimum)) * slider_width
 	outer_threshold_color_rect.rect_position.x = 500 - (outer_threshold_color_rect.rect_size.x)
@@ -122,7 +122,7 @@ func set_outer_threshold(value:float) -> void:
 	raw_right_shader_material.set_shader_param("outer_threshold", value)
 	
 func set_axis_deadzone(value:float) -> void:
-	Game.joystick_axis_deadzone = value
+	Player.joystick_axis_deadzone = value
 	axis_deadzone_value_label.text = str(value).pad_decimals(3)
 	axis_deadzone_color_rect.rect_size.x = (value / axis_deadzone_maximum) * slider_width
 	raw_left_shader_material.set_shader_param("axis_deadzone", value)
@@ -170,13 +170,13 @@ func _menu_item_selected(index:int) -> void:
 			if slider_controls_enabled:
 				change_slider_state(OUTER_THRESHOLD, false) # disable
 			else:
-				outer_threshold_prior_value = Game.joystick_outer_threshold
+				outer_threshold_prior_value = Player.joystick_outer_threshold
 				change_slider_state(OUTER_THRESHOLD, true) # enable
 		AXIS_DEADZONE:
 			if slider_controls_enabled:
 				change_slider_state(AXIS_DEADZONE, false)
 			else:
-				axis_deadzone_prior_value = Game.joystick_axis_deadzone
+				axis_deadzone_prior_value = Player.joystick_axis_deadzone
 				change_slider_state(AXIS_DEADZONE, true)
 #		EASING_CURVE:
 #			if slider_controls_enabled:
@@ -205,9 +205,9 @@ func _process(_t:float) -> void:
 		if slide_amount != 0.0:
 			match current_menu_index:
 				OUTER_THRESHOLD:
-					set_outer_threshold(clamp(Game.joystick_outer_threshold + slide_amount, outer_threshold_minimum, 1.0))
+					set_outer_threshold(clamp(Player.joystick_outer_threshold + slide_amount, outer_threshold_minimum, 1.0))
 				AXIS_DEADZONE:
-					set_axis_deadzone(clamp(Game.joystick_axis_deadzone + slide_amount, 0.0, axis_deadzone_maximum))
+					set_axis_deadzone(clamp(Player.joystick_axis_deadzone + slide_amount, 0.0, axis_deadzone_maximum))
 #				EASING_CURVE:
 #					set_easing_curve(clamp(Game.joystick_easing_curve + slide_amount, easing_curve_minimum, easing_curve_maximum))
 
@@ -271,7 +271,7 @@ func _process(_t:float) -> void:
 	
 	# LEFT FINAL
 	
-	pos = Game.get_stick_input("left")
+	pos = Player.get_stick_input("left")
 	length = pos.length() # Find length
 	visual_pos = pos * 127 # Sprite position
 	final_left_stick_pos.position = visual_pos # Set sprite pos
@@ -363,7 +363,7 @@ func _process(_t:float) -> void:
 	
 	# RIGHT FINAL
 	
-	pos = Game.get_stick_input("right")
+	pos = Player.get_stick_input("right")
 	length = pos.length() # Find length
 	visual_pos = pos * 127 # Sprite position
 	final_right_stick_pos.position = visual_pos # Set sprite pos

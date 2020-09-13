@@ -14,12 +14,12 @@ func _ready() -> void:
 	Events.connect("player_damaged", self, "on_player_damaged")
 
 func process_state() -> void:
-	if not Game.player.shield.active:
+	if not Player.shield.active:
 		if Input.is_action_just_pressed("subweapon"):
 			
 			if holding: # If you are already holding the bomb, throw it.
-				var velocity = Game.player.forwards()*10.0 + Vector3.UP*5.0
-				velocity += Game.player.velocity * 0.3
+				var velocity = Player.forwards*10.0 + Vector3.UP*5.0
+				velocity += Player.velocity * 0.3
 				throw_bomb_asap(velocity)
 				
 			elif can_spawn_bomb(): # If a bomb can be spawned, do so.
@@ -30,9 +30,9 @@ func process_state() -> void:
 
 # Spawn
 func can_spawn_bomb() -> bool:
-	if Game.player.is_locked(): return false
-	if Game.player.ledgegrabbing: return false
-	if Game.player.jewels < jewel_cost: 
+	if Player.is_locked(): return false
+	if Player.ledgegrabbing: return false
+	if Player.jewels < jewel_cost: 
 		Events.emit_signal("jewel_cost_too_high")
 		return false
 	if spawn_area.get_overlapping_bodies().size() != 0: return false
@@ -42,10 +42,10 @@ func spawn_bomb() -> void:
 	current_bomb = bomb.instance()
 	add_child(current_bomb)
 	holding = true
-	Game.player.jewels -= jewel_cost
-	Game.player.lockplayer_for_frames(10)
+	Player.jewels -= jewel_cost
+	Player.lockplayer_for_frames(10)
 	tween.stop_all()
-	tween.interpolate_property(Game.player.anim_tree, 'parameters/BombBlend/blend_amount', null, 1.0, 0.1)
+	tween.interpolate_property(Player.anim_tree, 'parameters/BombBlend/blend_amount', null, 1.0, 0.1)
 	tween.start()
 
 # Buffered Throws
@@ -68,11 +68,11 @@ func throw_bomb(velocity) -> void:
 	tween.stop_all()
 	if velocity != Vector3.ZERO:
 		# don't slow player when dropping, only throwing.
-		Game.player.lockplayer_for_frames(10)
+		Player.lockplayer_for_frames(10)
 		
-		tween.interpolate_property(Game.player.anim_tree, 'parameters/BombBlend/blend_amount', null, 0.0, 0.1)
+		tween.interpolate_property(Player.anim_tree, 'parameters/BombBlend/blend_amount', null, 0.0, 0.1)
 	else:
-		tween.interpolate_property(Game.player.anim_tree, 'parameters/BombBlend/blend_amount', null, 0.0, 0.1)
+		tween.interpolate_property(Player.anim_tree, 'parameters/BombBlend/blend_amount', null, 0.0, 0.1)
 	
 	tween.start()
 

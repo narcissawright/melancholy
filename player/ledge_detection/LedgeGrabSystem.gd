@@ -21,14 +21,15 @@ func vertical_raycast() -> Dictionary:
 func horizontal_raycast(height:float) -> Dictionary:
 	# the goal here is to use the very small height offset to always get a collision. 
 	
-	var leftright_offset:Vector3 = Game.player.transform.basis.x * 0.1
+	var xform = Player.xform
+	var leftright_offset:Vector3 = xform.basis.x * 0.1
 	
-	var from = Vector3(Game.player.transform.origin.x, height - 0.001, Game.player.transform.origin.z) + leftright_offset
-	var to   = from - Game.player.transform.basis.z
+	var from = Vector3(xform.origin.x, height - 0.001, xform.origin.z) + leftright_offset
+	var to   = from - xform.basis.z
 	var result1 = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
 	
-	from = Vector3(Game.player.transform.origin.x, height - 0.001, Game.player.transform.origin.z) - leftright_offset
-	to   = from - Game.player.transform.basis.z
+	from = Vector3(xform.origin.x, height - 0.001, xform.origin.z) - leftright_offset
+	to   = from - xform.basis.z
 	var result2 = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
 	
 	if not result1.empty() and not result2.empty():

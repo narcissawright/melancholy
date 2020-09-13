@@ -17,17 +17,20 @@ _global_script_class_icons={
 
 config/name="Melancholy"
 config/description="Godot 2020 project by NW"
-run/main_scene="res://levels/level1/level1.tscn"
+run/main_scene="res://global/SceneController/SceneController.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
-Layers="*res://global/Layers.gd"
-TargetSystem="*res://global/TargetSystem.gd"
 Debug="*res://global/debug/Debug.tscn"
+Layers="*res://global/Layers.gd"
 Events="*res://global/Events.gd"
-Projectiles="*res://global/Projectiles.tscn"
-Game="*res://global/Game.tscn"
+Timekeeper="*res://global/timekeeper/Timekeeper.tscn"
+Player="*res://player/Player.tscn"
+MainCam="*res://camera/Camera.tscn"
+UI="*res://ui/UI.tscn"
+SceneController="*res://global/SceneController/SceneController.gd"
+Level="*res://levels/Level.tscn"
 
 [debug]
 

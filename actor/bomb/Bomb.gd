@@ -41,7 +41,7 @@ func _ready() -> void:
 	explosion_mesh.set_surface_material(0, material)
 	
 	# Set up physics query
-	query.exclude = [Game.player]
+	query.exclude = [Player.kinematicbody]
 	query.collision_mask = Layers.solid | Layers.actor
 	shape.radius = 0.2
 	query.set_shape(shape)
@@ -61,7 +61,7 @@ func throw(v:Vector3) -> void:
 # Apply gravity, use shapecasting to determine collisions.
 func _physics_process(t:float) -> void:
 	rotation += throw_spin
-	velocity.y += Game.GRAVITY * t
+	velocity.y += SceneController.GRAVITY * t
 	var step = velocity * t
 	query.transform = global_transform
 	if not step.is_equal_approx(Vector3.ZERO): # If step is zero distance, cast_motion returns empty array.
@@ -73,7 +73,7 @@ func _physics_process(t:float) -> void:
 
 # Kaboom!
 func explode() -> void:
-	if Game.player.bombspawner.current_bomb == self:
+	if Player.bombspawner.current_bomb == self:
 		reparent_to_game_world()
 	exploding = true
 	anim.play("explode")
@@ -81,14 +81,14 @@ func explode() -> void:
 
 # Detach bomb from player.
 func reparent_to_game_world() -> void:
-	Game.player.bombspawner.holding = false
+	Player.bombspawner.holding = false
 	call_deferred('reparent_deferred')
 
 # Don't call this directly, use reparent_to_game_world() instead.
 func reparent_deferred() -> void:
 	var current_transform = global_transform
 	get_parent().remove_child(self)
-	Projectiles.add_child(self)
+	Level.Projectiles.add_child(self)
 	global_transform = current_transform
 
 # Signal from AnimationPlayer

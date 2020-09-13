@@ -7,9 +7,9 @@ func _ready() -> void:
 
 func _process(_t:float) -> void:
 	var length_squared = minimum_distance(
-		Game.player.translation, 
-		Game.player.translation + Vector3.UP * 1.8, 
-		Game.cam.global_transform.origin)
+		Player.position, 
+		Player.position + Vector3.UP * 1.8, 
+		MainCam.global_transform.origin)
 	
 	# close length is 0.2, far length is 0.4.
 	var opacity = clamp(inverse_lerp(0.04, 0.16, length_squared), 0.0, 1.0)

@@ -181,8 +181,8 @@ func start() -> void:
 			update_pressed(key, true)
 		else:
 			update_pressed(key, false)
-	var left_stick_pos = Game.get_stick_input("left")
-	var right_stick_pos = Game.get_stick_input("right")
+	var left_stick_pos = Player.get_stick_input("left")
+	var right_stick_pos = Player.get_stick_input("right")
 	controller["L3"].button.position = left_stick_pos * 35.0
 	controller["R3"].button.position = right_stick_pos * 35.0
 	
@@ -191,7 +191,7 @@ func _process(_t:float) -> void:
 	if Input.is_action_just_pressed("B"):
 		""" This should probably not be a simple press but a hold or something """
 		""" This screen is complicated in general... """
-		Game.ui.paused.change_state("customize_menu")
+		UI.paused.change_state("customize_menu")
 		stop()
 	
 	# Check for button presses
@@ -202,8 +202,8 @@ func _process(_t:float) -> void:
 			update_pressed(key, false)
 	
 	# Check for stick movement
-	var left_stick_pos = Game.get_stick_input("left")
-	var right_stick_pos = Game.get_stick_input("right")
+	var left_stick_pos = Player.get_stick_input("left")
+	var right_stick_pos = Player.get_stick_input("right")
 	
 	controller["L3"].button.position = left_stick_pos * 35.0
 	controller["R3"].button.position = right_stick_pos * 35.0

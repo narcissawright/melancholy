@@ -50,7 +50,7 @@ func change_state(state:String) -> void:
 			tween.start()
 			customize_menu.start()
 		"free_camera":
-			Game.cam.enable_pause_controls()
+			MainCam.enable_pause_controls()
 			# todo: display cam controls via ContextHint
 			tween.interpolate_property(darken, "modulate:a", null, 0.0, tween_time)
 			tween.interpolate_property(ingame_ui, "modulate:a", null, 0.0, tween_time)

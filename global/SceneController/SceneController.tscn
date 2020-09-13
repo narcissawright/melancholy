@@ -2,6 +2,6 @@
 
 [ext_resource path="res://global/SceneController/SceneController.gd" type="Script" id=1]
 
-
 [node name="SceneController" type="Node"]
+process_priority = -5
 script = ExtResource( 1 )

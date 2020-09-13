@@ -14,16 +14,16 @@ func _ready() -> void:
 	Events.connect("player_damaged", self, "on_player_damaged")
 
 func can_shield() -> bool:
-	if Game.player.is_locked(): return false
-	if Game.player.ledgegrabbing: return false
+	if Player.is_locked(): return false
+	if Player.ledgegrabbing: return false
 	return true
 
 func _physics_process(_t:float) -> void:
 	
 	if sliding:
-		if Game.player.horizontal_velocity().length() < 5.0:
+		if Player.horizontal_velocity().length() < 5.0:
 			sliding = false
-			Game.player.unlockplayer("shield_slide")
+			Player.unlockplayer("shield_slide")
 	
 	if shieldbash_timer > 0:
 		shieldbash_timer -= 1
@@ -50,7 +50,7 @@ func _physics_process(_t:float) -> void:
 func slide() -> void:
 	active = true
 	sliding = true
-	Game.player.lockplayer("shield_slide")
+	Player.lockplayer("shield_slide")
 	play("take_out")
 	seek(current_animation_length)
 
