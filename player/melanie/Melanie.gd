@@ -622,7 +622,7 @@ func handle_collision(collision:KinematicCollision) -> void:
 				for i in range (locations.size()):
 					var index:int = get_collision_img_index(locations[i], geometry_aabb)
 					var distance = (translation - locations[i]).length()
-					var value:int = int((1.0 - distance) * 0xFF)
+					var value:int = int((1.0 - distance) * 0x0F)
 					if value > 0:
 						set_collision_img_data(index, value)
 

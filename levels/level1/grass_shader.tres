@@ -21,14 +21,64 @@ void vertex() {
 	UV=UV*uv1_scale.xy+uv1_offset.xy;
 }
 
-
-float calc_texture(vec3 vertex) {
-	ivec3 ivertex = ivec3(round(vertex));
-	ivec3 diff = ivertex - ivec3(aabb_position);
+float get_pixel(ivec3 position) {
 	int max_x = int(aabb_size.x);
 	int max_y = int(aabb_size.y);
+	ivec3 diff = position - ivec3(aabb_position);
 	int index = diff.x + (diff.y * max_x) + (diff.z * max_x * max_y);
 	return texelFetch (collision_data, ivec2(index % 1024, index / 1024), 0).r;
+}
+
+float calc_texture(vec3 vertex) {
+	vec3 rounded_vertex = round(vertex);
+	
+	int x_sign = int(sign(vertex.x - rounded_vertex.x));
+	int y_sign = int(sign(vertex.y - rounded_vertex.y));
+	int z_sign = int(sign(vertex.z - rounded_vertex.z));
+	
+	ivec3 position1 = ivec3(rounded_vertex);
+	ivec3 position2 = position1 + ivec3(     0,      0, z_sign);
+	ivec3 position3 = position1 + ivec3(     0, y_sign,      0);
+	ivec3 position4 = position1 + ivec3(     0, y_sign, z_sign);
+	ivec3 position5 = position1 + ivec3(x_sign,      0,      0);
+	ivec3 position6 = position1 + ivec3(x_sign,      0, z_sign);
+	ivec3 position7 = position1 + ivec3(x_sign, y_sign,      0);
+	ivec3 position8 = position1 + ivec3(x_sign, y_sign, z_sign);
+	
+	float w1 = max(1.0 - length(vertex - vec3(position1)), 0.0);
+	float w2 = max(1.0 - length(vertex - vec3(position2)), 0.0);
+	float w3 = max(1.0 - length(vertex - vec3(position3)), 0.0);
+	float w4 = max(1.0 - length(vertex - vec3(position4)), 0.0);
+	float w5 = max(1.0 - length(vertex - vec3(position5)), 0.0);
+	float w6 = max(1.0 - length(vertex - vec3(position6)), 0.0);
+	float w7 = max(1.0 - length(vertex - vec3(position7)), 0.0);
+	float w8 = max(1.0 - length(vertex - vec3(position8)), 0.0);
+	
+	float weight_total = w1 + w2 + w3 + w4 + w5 + w6 + w7 + w8;
+	w1 = w1 / weight_total;
+	w2 = w2 / weight_total;
+	w3 = w3 / weight_total;
+	w4 = w4 / weight_total;
+	w5 = w5 / weight_total;
+	w6 = w6 / weight_total;
+	w7 = w7 / weight_total;
+	w8 = w8 / weight_total;
+	
+	int max_x = int(aabb_size.x);
+	int max_y = int(aabb_size.y);
+	
+	float v1 = get_pixel(position1);
+	float v2 = get_pixel(position2);
+	float v3 = get_pixel(position3);
+	float v4 = get_pixel(position4);
+	float v5 = get_pixel(position5);
+	float v6 = get_pixel(position6);
+	float v7 = get_pixel(position7);
+	float v8 = get_pixel(position8);
+	
+	float final_value = (v1 * w1) + (v2 * w2) + (v3 * w3) + (v4 * w4) + (v5 * w5) + (v6 * w6) + (v7 * w7) + (v8 * w8);
+	
+	return final_value;
 }
 
 void fragment() {
