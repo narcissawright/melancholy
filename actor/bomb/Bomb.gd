@@ -61,7 +61,7 @@ func throw(v:Vector3) -> void:
 # Apply gravity, use shapecasting to determine collisions.
 func _physics_process(t:float) -> void:
 	rotation += throw_spin
-	velocity.y += SceneController.GRAVITY * t
+	velocity.y += Level.GRAVITY * t
 	var step = velocity * t
 	query.transform = global_transform
 	if not step.is_equal_approx(Vector3.ZERO): # If step is zero distance, cast_motion returns empty array.

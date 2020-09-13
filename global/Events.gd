@@ -10,3 +10,7 @@ signal jewel_count_changed
 signal current_subweapon_changed
 signal jewel_cost_too_high
 signal error_no_subweapon
+
+# These are called from menu
+signal unpause_game
+signal quit_game

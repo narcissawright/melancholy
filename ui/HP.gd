@@ -31,7 +31,7 @@ func update_healthbar():
 	tween.stop_all()
 	var new_size = (Player.hp / Player.max_hp) * full_length
 	var difference = hp_bar_light.rect_size.x - new_size
-	var tween_time = min(1.5, abs(difference) * SceneController.frame_time * 0.5)
+	var tween_time = min(1.5, abs(difference) * (1.0 / 60.0) * 0.5)
 	if difference > 0.0:
 		# Decrease Healthbar
 		tween.interpolate_property(hp_bar_dark, "rect_size:x", hp_bar_dark.rect_size.x, new_size, tween_time)

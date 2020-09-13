@@ -8,6 +8,7 @@ extends KinematicBody
 
 # Time
 var framecount:int = 0
+var frame_time:float = 1.0 / 60.0
 
 # Health
 var hp:float = 200.0
@@ -78,7 +79,7 @@ func _physics_process(_t) -> void:
 	update_horizontal_velocity() # General movement
 	update_vertical_velocity() # Jumping and gravity
 	
-	var collision:KinematicCollision = move_and_collide(velocity * SceneController.frame_time) # Apply Physics
+	var collision:KinematicCollision = move_and_collide(velocity * frame_time) # Apply Physics
 	
 	set_grounded(raycast.is_colliding()) # Check if grounded
 	handle_collision(collision) # Redirect velocity, check landing impact, etc
@@ -388,7 +389,7 @@ func update_vertical_velocity() -> void:
 		return
 
 	# Apply Gravity
-	velocity.y += SceneController.GRAVITY * SceneController.frame_time
+	velocity.y += Level.GRAVITY * frame_time
 	
 	"""
 	I feel like my jump code is very jank and I wish to change it at some point.
@@ -432,7 +433,7 @@ func is_locked() -> bool:
 # Locked State:
 func lockplayer_for_frames(frames:int) -> void:
 	# Set Timer
-	lock_timer.wait_time = frames * SceneController.frame_time
+	lock_timer.wait_time = frames * frame_time
 	lock_timer.start()
 	lockplayer("timer")
 
@@ -469,7 +470,7 @@ func set_grounded(state:bool) -> void:
 			has_jump = true
 		else:
 			# Transition to air:
-			air_transition_timer.wait_time = 5.0 * SceneController.frame_time
+			air_transition_timer.wait_time = 5.0 * frame_time
 			air_transition_timer.start()
 	grounded = state
 

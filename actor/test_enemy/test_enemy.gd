@@ -18,7 +18,7 @@ func _physics_process(t: float) -> void:
 			material.set_shader_param("damaged", false)
 	else:
 		velocity.z = sin(time)
-		velocity.y += Game.GRAVITY * t
+		velocity.y += Level.GRAVITY * t
 		velocity.x = lerp(velocity.x, 0.0, 0.15)
 		velocity = move_and_slide(velocity, Vector3.UP)
 	
@@ -31,9 +31,9 @@ func fire() -> void:
 	fire_cooldown = 60
 	var p = projectile.instance()
 	p.translation = translation
-	p.velocity = (Game.player.head_position - translation).normalized() * 14.0
+	p.velocity = (Player.head_position - translation).normalized() * 14.0
 	p.projectile_owner = self
-	Projectiles.add_child(p)
+	Level.Projectiles.add_child(p)
 
 func hit(_collision: Dictionary) -> String:
 	material.set_shader_param("damaged", true)
@@ -44,9 +44,9 @@ func hit_by_explosion(_explosion_center:Vector3) -> void:
 	queue_free()
 
 func _on_detector_body_entered(body: Node) -> void:
-	if body == Game.player:
+	if body == Player.kinematicbody:
 		player_nearby = true
 
 func _on_detector_body_exited(body: Node) -> void:
-	if body == Game.player:
+	if body == Player.kinematicbody:
 		player_nearby = false

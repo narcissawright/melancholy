@@ -30,7 +30,7 @@ func _physics_process(t: float) -> void:
 	lifespan -= t
 	if lifespan <= 0: die()
 	
-	velocity.y += (Game.GRAVITY * 0.5 ) * t
+	velocity.y += (Level.GRAVITY * 0.5 ) * t
 	
 func die() -> void:
 	queue_free()
@@ -49,10 +49,10 @@ func hit(space_state, t):
 		"die": 
 			die()
 		"bounce":
-			query.exclude = [Game.player]
-			var reflection = velocity.bounce(Game.player.forwards())
-			var strength = Game.player.shield.bash_str + 0.2
-			var player_hvelocity = Vector3(Game.player.velocity.x, 0.0, Game.player.velocity.z)
+			query.exclude = [Player.kinematicbody]
+			var reflection = velocity.bounce(Player.forward)
+			var strength = Player.shield.bash_str + 0.2
+			var player_hvelocity = Vector3(Player.velocity.x, 0.0, Player.velocity.z)
 			#var lob_amount = -min(0.0, Game.player.forwards().dot(Game.player.velocity.normalized()))
 			velocity = reflection * strength + player_hvelocity
 			translation += velocity * t

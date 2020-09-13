@@ -29,7 +29,6 @@ Timekeeper="*res://global/timekeeper/Timekeeper.tscn"
 Player="*res://player/Player.tscn"
 MainCam="*res://camera/Camera.tscn"
 UI="*res://ui/UI.tscn"
-SceneController="*res://global/SceneController/SceneController.gd"
 Level="*res://levels/Level.tscn"
 
 [debug]

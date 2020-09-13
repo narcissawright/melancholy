@@ -1,7 +1,6 @@
 extends Node
 
 var frame_time:float = 1.0 / 60.0
-const GRAVITY:float = -20.0
 
 func _init() -> void:
 	OS.window_position = Vector2(172, 30) # so it shows up on my monitor in a comfy spot
@@ -10,6 +9,8 @@ func _init() -> void:
 
 func _ready() -> void:
 	pause_mode = Node.PAUSE_MODE_PROCESS # Run this script while paused
+	Events.connect("unpause_game", self, "unpause")
+	Events.connect("quit_game", self, "quit_game")
 
 func _input(_event: InputEvent) -> void:
 	if Input.is_action_just_pressed("ui_cancel"):

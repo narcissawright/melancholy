@@ -9,7 +9,7 @@ func _return_pressed() -> void:
 	if about_to_quit():
 		update_menu_items() # Rewrites the text (undoes the Are you sure?)
 	else:
-		SceneController.unpause()
+		Events.emit_signal("unpause_game")
 
 func about_to_quit() -> bool:
 	return menu.get_child(QUIT_GAME).text != menu_items[QUIT_GAME]
@@ -17,7 +17,7 @@ func about_to_quit() -> bool:
 func _menu_item_selected(index):
 	match index:
 		RESUME:
-			SceneController.unpause()
+			Events.emit_signal("unpause_game")
 		CUSTOMIZE:
 			UI.paused.change_state("customize_menu")
 			stop()
@@ -26,6 +26,6 @@ func _menu_item_selected(index):
 			stop()
 		QUIT_GAME:
 			if about_to_quit():
-				SceneController.quit_game()
+				Events.emit_signal("quit_game")
 			else:
 				menu.get_child(QUIT_GAME).text = "Quit Game? Are you sure?"
