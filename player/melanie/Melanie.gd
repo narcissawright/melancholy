@@ -583,6 +583,11 @@ func process_subweapon() -> void:
 var collision_locations = {}
 onready var collision_data_timer = $Timers/CollisionData
 
+# Collision Data for grass/paths
+var geometry_aabb:AABB
+var path_collision_img:Image
+var path_collision_tex:ImageTexture
+
 func handle_collision(collision:KinematicCollision) -> void:
 	# If a collision has occured:
 	if collision:
@@ -620,33 +625,32 @@ func handle_collision(collision:KinematicCollision) -> void:
 					var value:int = int((1.0 - distance) * 0xFF)
 					if value > 0:
 						set_collision_img_data(index, value)
-				
-				img_texture = ImageTexture.new()
-				img_texture.create_from_image(special_img, 0)
-				$TextureRect.texture = img_texture
-				$"../../level1/Geometry".get_surface_material(0).set_shader_param("collision_data", img_texture)
 
 func get_collision_img_index(position:Vector3, aabb:AABB) -> int:
 	var diff:Vector3 = position - aabb.position
 	return int(diff.x + (diff.y * aabb.size.x) + (diff.z * aabb.size.x * aabb.size.y))
 
 func set_collision_img_data(index:int, value:int) -> void:
-	var img_data = special_img.data.data
+	var img_data = path_collision_img.data.data
 	var old_value = img_data[index]
 	var new_value = min(old_value + value, 0xFF)
 	img_data.set(index, new_value)
-	special_img.data.data = img_data
+	path_collision_img.data.data = img_data
+	# warning-ignore:integer_division
+	var y = index / 1024
+	var x = index % 1024
+	VisualServer.texture_set_data_partial(path_collision_tex.get_rid(), path_collision_img, x, y, 1, 1, x, y, 0)
 
-var geometry_aabb:AABB
-var special_img:Image
-var img_texture:ImageTexture
-
+""" This should run once per level at the start """
 func set_geometry_aabb(aabb:AABB) -> void:
 	geometry_aabb = aabb
 	var height = ceil((aabb.size.x+1) * (aabb.size.y+1) * (aabb.size.z+1) / 1024.0)
-	special_img = Image.new()
-	special_img.create(1024, height, false, Image.FORMAT_L8)
-
+	path_collision_img = Image.new()
+	path_collision_img.create(1024, height, false, Image.FORMAT_L8)
+	path_collision_tex = ImageTexture.new()
+	path_collision_tex.create_from_image(path_collision_img, 0)
+	$TextureRect.texture = path_collision_tex
+	$"../../level1/Geometry".get_surface_material(0).set_shader_param("collision_data", path_collision_tex)
 
 #####    ####   ######   ####   ######  ##   ####   ##  ##
 ##  ##  ##  ##    ##    ##  ##    ##    ##  ##  ##  ### ##
