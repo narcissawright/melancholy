@@ -1,8 +1,11 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://actor/playable/melancholy/bubbleshield/BubbleShield.gd" type="Script" id=1]
-[ext_resource path="res://actor/playable/melancholy/bubbleshield/shield.obj" type="ArrayMesh" id=2]
-[ext_resource path="res://actor/playable/melancholy/bubbleshield/bubbleshield_resource.tres" type="Material" id=3]
+[ext_resource path="res://player/melancholy/bubbleshield/BubbleShield.gd" type="Script" id=1]
+[ext_resource path="res://player/melancholy/bubbleshield/shield.obj" type="ArrayMesh" id=2]
+[ext_resource path="res://player/melancholy/bubbleshield/bubbleshield_resource.tres" type="Material" id=3]
+
+
+
 
 
 

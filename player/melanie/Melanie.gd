@@ -35,7 +35,7 @@ onready var air_transition_timer = $Timers/AirTransition # Used to give jumps le
 onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shield is up or not
 
 # Material
-onready var material = $melanie_test/Armature/Skeleton/Melanie.get_surface_material(0)
+onready var material = $MelanieModel/Armature/Skeleton/MeshInstance.get_surface_material(0)
 
 # Head Position
 onready var head_position_node = $HeadPosition # Camera points at this, enemies attack this point.
@@ -44,7 +44,7 @@ func _get_head_position() -> Vector3:
 	return head_position_node.global_transform.origin
 
 # AnimationTree
-onready var anim_tree = $melanie_test/AnimationTree
+onready var anim_tree = $MelanieModel/AnimationTree
 
 #####   ######   ####   #####   ##  ##
 ##  ##  ##      ##  ##  ##  ##  ##  ##
@@ -53,6 +53,7 @@ onready var anim_tree = $melanie_test/AnimationTree
 ##  ##  ######  ##  ##  #####     ##
 
 func _ready() -> void:
+	set_physics_process(false)
 	process_priority = 0 # Run this before camera
 	
 	initialize_checkpoint_state()
@@ -142,7 +143,7 @@ var zl_target:int = 0 # which object are you targeting (0 for nothing)
 onready var retarget_timer:Timer = $'Timers/ReTarget'
 var retarget = 0 # which object were you just targeting
 
-onready var skele = $melanie_test/Armature/Skeleton
+onready var skele = $MelanieModel/Armature/Skeleton
 onready var head_bone_idx = skele.find_bone("head")
 
 func update_target_state() -> void:
@@ -561,7 +562,7 @@ func update_jewel_count(value):
 	Events.emit_signal("jewel_count_changed")
 
 onready var bombspawner = $BombSpawner
-onready var bomb_pos = $melanie_test/Armature/Skeleton/BombPos
+onready var bomb_pos = $MelanieModel/Armature/Skeleton/BombPos
 
 # Subweapons
 func process_subweapon() -> void:

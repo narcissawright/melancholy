@@ -8,9 +8,28 @@ sort of like an API to interact with the player.
 The generic stuff that isn't specific to Melanie should be moved into this script.
 """
 
-var character:String = "Melanie"
-onready var kinematicbody = $Melanie
+var character:String = "Melancholy"
+var kinematicbody:KinematicBody
+onready var Melanie = $Melanie
+onready var Melancholy = $Melancholy
 onready var TargetSystem = $TargetSystem
+
+func _ready() -> void:
+	
+	match character:
+		"Melanie":
+			Melanie.set_physics_process(true)
+			kinematicbody = Melanie
+			Melanie.visible = true
+		"Melancholy":
+			Melancholy.set_physics_process(true)
+			kinematicbody = Melancholy
+			Melancholy.visible = true
+			
+	shield = kinematicbody.shield
+	anim_tree = kinematicbody.anim_tree
+	bombspawner = Melanie.bombspawner
+	max_hp = kinematicbody.max_hp
 
 var position:Vector3 setget set_position, get_position
 func set_position(pos:Vector3) -> void:
@@ -41,11 +60,6 @@ var shield
 var anim_tree
 var bombspawner
 var max_hp:float
-func _ready() -> void:
-	shield = kinematicbody.shield
-	anim_tree = kinematicbody.anim_tree
-	bombspawner = kinematicbody.bombspawner
-	max_hp = kinematicbody.max_hp
 	
 var hp:float setget set_hp, get_hp
 func set_hp(value:float) -> void:

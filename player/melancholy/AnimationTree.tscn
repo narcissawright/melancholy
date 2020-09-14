@@ -1,0 +1,63 @@
+[gd_scene load_steps=12 format=2]
+
+[sub_resource type="AnimationNodeBlend2" id=1]
+filter_enabled = true
+filters = [ "Armature/Skeleton:clavicle_r", "Armature/Skeleton:elbow_l", "Armature/Skeleton:elbow_r", "Armature/Skeleton:hand_l", "Armature/Skeleton:hand_r", "Armature/Skeleton:index_1_l", "Armature/Skeleton:index_1_r", "Armature/Skeleton:index_2_l", "Armature/Skeleton:index_2_r", "Armature/Skeleton:index_3_l", "Armature/Skeleton:index_3_r", "Armature/Skeleton:lower_arm_l", "Armature/Skeleton:lower_arm_r", "Armature/Skeleton:middle_1_l", "Armature/Skeleton:middle_1_r", "Armature/Skeleton:middle_2_l", "Armature/Skeleton:middle_2_r", "Armature/Skeleton:middle_3_l", "Armature/Skeleton:middle_3_r", "Armature/Skeleton:pinky_1_l", "Armature/Skeleton:pinky_1_r", "Armature/Skeleton:pinky_2_l", "Armature/Skeleton:pinky_2_r", "Armature/Skeleton:pinky_3_l", "Armature/Skeleton:pinky_3_r", "Armature/Skeleton:ring_1_l", "Armature/Skeleton:ring_1_r", "Armature/Skeleton:ring_2_l", "Armature/Skeleton:ring_2_r", "Armature/Skeleton:ring_3_l", "Armature/Skeleton:ring_3_r", "Armature/Skeleton:shoulder_l", "Armature/Skeleton:shoulder_r", "Armature/Skeleton:thumb_1_l", "Armature/Skeleton:thumb_1_r", "Armature/Skeleton:thumb_2_l", "Armature/Skeleton:thumb_2_r", "Armature/Skeleton:thumb_3_l", "Armature/Skeleton:thumb_3_r", "Armature/Skeleton:upper_arm_l", "Armature/Skeleton:upper_arm_r", "Armature/Skeleton:wrist_l", "Armature/Skeleton:wrist_r" ]
+
+[sub_resource type="AnimationNodeAnimation" id=2]
+animation = "BombPull"
+
+[sub_resource type="AnimationNodeAnimation" id=5]
+animation = "Idle"
+
+[sub_resource type="AnimationNodeAnimation" id=6]
+animation = "Walk"
+
+[sub_resource type="AnimationNodeAnimation" id=14]
+animation = "Run"
+
+[sub_resource type="AnimationNodeBlendSpace1D" id=8]
+blend_point_0/node = SubResource( 5 )
+blend_point_0/pos = 0.0
+blend_point_1/node = SubResource( 6 )
+blend_point_1/pos = 0.2
+blend_point_2/node = SubResource( 14 )
+blend_point_2/pos = 1.0
+
+[sub_resource type="AnimationNodeAnimation" id=9]
+animation = "LedgeCling"
+
+[sub_resource type="AnimationNodeTimeScale" id=15]
+
+[sub_resource type="AnimationNodeTimeScale" id=10]
+
+[sub_resource type="AnimationNodeBlend2" id=12]
+
+[sub_resource type="AnimationNodeBlendTree" id=13]
+graph_offset = Vector2( 63, -328.75 )
+nodes/BombBlend/node = SubResource( 1 )
+nodes/BombBlend/position = Vector2( 600, -240 )
+nodes/BombPull/node = SubResource( 2 )
+nodes/BombPull/position = Vector2( 420, -140 )
+nodes/IdleWalkRun/node = SubResource( 8 )
+nodes/IdleWalkRun/position = Vector2( 160, -240 )
+nodes/LedgeCling/node = SubResource( 9 )
+nodes/LedgeCling/position = Vector2( 400, 20 )
+nodes/RunScale/node = SubResource( 15 )
+nodes/RunScale/position = Vector2( 400, -280 )
+nodes/TimeScale/node = SubResource( 10 )
+nodes/TimeScale/position = Vector2( 600, -20 )
+nodes/is_ledge_clinging/node = SubResource( 12 )
+nodes/is_ledge_clinging/position = Vector2( 780, -140 )
+nodes/output/position = Vector2( 1020, -140 )
+node_connections = [ "output", 0, "is_ledge_clinging", "is_ledge_clinging", 0, "BombBlend", "is_ledge_clinging", 1, "TimeScale", "BombBlend", 0, "RunScale", "BombBlend", 1, "BombPull", "TimeScale", 0, "LedgeCling", "RunScale", 0, "IdleWalkRun" ]
+
+[node name="AnimationTree" type="AnimationTree"]
+tree_root = SubResource( 13 )
+anim_player = NodePath("../AnimationPlayer")
+active = true
+parameters/BombBlend/blend_amount = 0.0
+parameters/IdleWalkRun/blend_position = 0.0
+parameters/RunScale/scale = 1.0
+parameters/TimeScale/scale = 0.5
+parameters/is_ledge_clinging/blend_amount = 0.0
