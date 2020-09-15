@@ -57,6 +57,7 @@ func _ready() -> void:
 	process_priority = 0 # Run this before camera
 	
 	initialize_checkpoint_state()
+	initialize_animationtree()
 	
 	lockplayer_for_frames(20) # Set locked state
 
@@ -490,8 +491,17 @@ Note that other animations may be called elsewhere.
 e.g. BombSpawner or Bomb may call bomb pull or bomb throw.
 """
 
+var anim_state_machine
+func initialize_animationtree() -> void:
+	pass
+	#anim_state_machine = anim_tree['parameters/StateMachine/playback']
+	#anim_state_machine.start("IdleWalkRun")
+
 func walk_animation() -> void:
-	var anim_position = min(horizontal_velocity().length(), 8.0) / 8.0
+	var h_velocity = horizontal_velocity()
+	var multiplier = h_velocity.normalized().dot(forwards())
+	
+	var anim_position = min(h_velocity.length() * multiplier, 8.0) / 8.0
 	anim_tree['parameters/IdleWalkRun/blend_position'] = anim_position
 	anim_tree['parameters/RunScale/scale'] = (anim_position/2.0) + 1.0
 	

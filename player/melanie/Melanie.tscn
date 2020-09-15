@@ -1,5 +1,6 @@
 [gd_scene load_steps=16 format=2]
 
+[ext_resource path="res://player/melanie/MelanieModel.tscn" type="PackedScene" id=1]
 [ext_resource path="res://player/TargetDetector.tscn" type="PackedScene" id=2]
 [ext_resource path="res://player/melanie/Shield.gd" type="Script" id=3]
 [ext_resource path="res://player/melanie/BombSpawner.gd" type="Script" id=4]
@@ -7,7 +8,6 @@
 [ext_resource path="res://player/InteractArea.tscn" type="PackedScene" id=6]
 [ext_resource path="res://player/melanie/ShieldMesh.tscn" type="PackedScene" id=7]
 [ext_resource path="res://player/ledge_detection/LedgeGrabSystem.tscn" type="PackedScene" id=9]
-[ext_resource path="res://player/melanie/melanie_wshield.tscn" type="PackedScene" id=10]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.2
@@ -281,7 +281,7 @@ light_cull_mask = 4294967293
 spot_angle = 8.0
 spot_angle_attenuation = 100.0
 
-[node name="MelanieModel" parent="." instance=ExtResource( 10 )]
+[node name="MelanieModel" parent="." instance=ExtResource( 1 )]
 transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0 )
 
 [node name="BodyCollision" type="CollisionShape" parent="."]

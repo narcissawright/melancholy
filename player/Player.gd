@@ -8,7 +8,7 @@ sort of like an API to interact with the player.
 The generic stuff that isn't specific to Melanie should be moved into this script.
 """
 
-var character:String = "Melancholy"
+var character:String = "Melanie"
 var kinematicbody:KinematicBody
 onready var Melanie = $Melanie
 onready var Melancholy = $Melancholy
