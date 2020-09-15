@@ -20,6 +20,7 @@ func post_import(scene):
 		if child.name == "AnimationPlayer":
 			child.get_animation("Idle").loop = true
 			child.get_animation("Walk").loop = true
+			child.get_animation("BackWalk").loop = true
 			child.get_animation("Run").loop = true
 			child.get_animation("LedgeCling").loop = true
 
