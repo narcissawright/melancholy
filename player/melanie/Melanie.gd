@@ -44,7 +44,7 @@ func _get_head_position() -> Vector3:
 	return head_position_node.global_transform.origin
 
 # AnimationTree
-onready var anim_tree = $MelanieModel/AnimationTree
+onready var anim_tree = $AnimationTree
 
 #####   ######   ####   #####   ##  ##
 ##  ##  ##      ##  ##  ##  ##  ##  ##

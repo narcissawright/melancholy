@@ -32,9 +32,9 @@ func post_import(scene):
 	editor_light.transform.origin = Vector3(1, 1, 1)
 	editor_light.rotation_degrees = Vector3(-34.6, 10.16, -2.37)
 	
-	var anim_tree = load("res://player/melanie/AnimationTree.tscn").instance()
-	scene.add_child(anim_tree)
-	anim_tree.set_owner(scene)
-	anim_tree.active = true
+#	var anim_tree = load("res://player/melanie/AnimationTree.tscn").instance()
+#	scene.add_child(anim_tree)
+#	anim_tree.set_owner(scene)
+#	anim_tree.active = true
 	
 	return scene
