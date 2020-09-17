@@ -1,6 +1,4 @@
-# Melancholy (not final title)
-
-- 3D game project (Godot Engine)
+- 3D game project (Godot Engine). Melancholy is not the game's final title.
 - Kind of like Castlevania N64 (structured levels) with some Zelda-ish mechanics (Z-Targeting) sprinkled in?
 
 ## Two Characters
@@ -38,14 +36,67 @@
 - Sword clank mechanic.
 - Secondary Attack. (Does Melanie need this? Melancholy does...)
 
+#### `Animation`
+
+Pretty Good:
+- Walk
+- Bomb Pull 
+
+Okay:
+- Ledge Cling
+
+Needs work:
+- Run (fix wrist/hand)
+- Idle (should be redone)
+
+To Do:
+- Bomb Throw
+- Crouch 
+- Pick Up (Crouching)
+- Pick Up (Standing)
+- Crouch walk (all directions)
+- Crouch walk
+- Walk/Run (all directions)
+- Shield take out 
+- Shield walking (all directions)
+- Shield Knockback
+- Shield Bash  
+- Shield put away 
+- Crouch Shield
+- Slide kick 
+- Dive kick 
+- Jump 
+- Fall 
+- Landing impact 
+- Landing damage 
+- Death 
+- Damage 
+- Ledge Shimmy 
+- Ledge Climb Up 
+- Pull Bow 
+- Fire Bow
+- Put Away Bow 
+- Use Card 
+- Power Up 
+- Standing on ledge (using partial control stick input at ledge)
+- Sword (many animations, haven't figured out the system yet)
+
+Maybe:
+- Ladder climb 
+- Slip and fall (Ice)
+- Sleep (easter egg?)
+- Knock down damage?
 
 ## Melancholy - Magic & Sorcery
 
-#### `Progress: 0%`
+#### `Partially Done` 
+
+- Has a bubble shield. Will be able to absorb jewels (subweapon ammo) from afar.
+
+#### `Not Done and subject to change`
 
 - Only has 1/4th the Max HP that Melanie has. Uses a magic meter instead of jewels. `Might not use a meter actually...?`
 - Immediately at her top grounded speed (slightly slower than Melanie's top grounded speed) while holding joystick fully. Glides across the ground instead of sprinting.
-- Has a bubble shield. Can absorb jewels (subweapon ammo) from afar.
 - Primary Attack - Orb (charge attack, can charge while doing any action. Lose charge upon damage). Only 1 Orb may be present at a time. Orb is a seeking projectile when charged.
 - Secondary Attack - (not fleshed out, but definitely some very weak close range attack).
 - Spells instead of subweapons. `Maybe. I guess.` Jewels get converted into mana (magic meter, exclusive mechanic)
@@ -54,12 +105,10 @@
 3. Airwalker - stand in mid air as if it is solid ground. Each step costs mana. Can jump from the air.
 4. Tree - summon a tree from the earth. Massive damage and knockback. Can be cut down via lightning. May spawn health apples.
 5. Vitriol - I might replace Tree with this actually. Holy water item. Maybe damages you upon use.
-- Repeatedly jumping can gain more speed. Sort of like traveling on a sine-wave, she can re-jump close to the ground w/o touching it directly and curve back upwards. Has a unique mechanic that allows her to airjump when tapping Jump at ledgegrab height.
+- Repeatedly jumping can gain more speed (homage to CV64; might use some magical sinewave-like movement for this idk). 
+- Has a unique mechanic that allows her to airjump when tapping Jump at ledgegrab height. (homage to CV64)
 - Maybe the same landing mechanics as Melanie but with the ability to curb your fall dmg with a landing "jump"
-- Ledgegrab same as Melanie
-- Crawl same as Melanie. Use belly slide attack instead of slide kick. No divekick from air, rather fall straight down very rapidly?
-- First person view same as Melanie.
-- Same damaged states, swimming states, interacting states, respawning state.
+- Crouch same as Melanie. Maybe use belly slide attack instead of slide kick? No divekick from air, rather fall straight down very rapidly?
 
 
 ## Camera & Targeting system:
@@ -69,7 +118,7 @@
 - Hold ZL to target stuff. While targeting, the player faces the target. The camera pans to show both yourself and the target. Sprinting is not possible while targeting, and all directions of movement other than forward become slower.
 - When there is nothing to target, pressing ZL will move the camera to the default position. If you're hugging the wall during this, your character becomes aligned with the wall normal. 
 - Retarget: If you are targeting something and release and repress, it will change to the next most relevant target.
-- Pause Mode: Press + to pause the game. Left stick pans the camera. X and A to zoom.
+- Free Camera (Pause Mode): allows panning and zooming to look around while paused.
 - Autocamera: When the player is moving left or right relative to the camera, the camera will automatically rotate towards the back of the player. This won't happen if you've used the right stick for free cam.
 - 1st person view. Press R3 to initiate. Automatically puts away shield, drops bomb. If you take damage, leaves first person.
 
@@ -93,7 +142,7 @@
 - Powerup container (5 orbs, should look like they are energized.)
 - Contextual button hints (X to interact)
 - Button Remap screen (non functional atm but the design is partially there. has input display.)
-- Items
+- Items (lacking UI animation, item names.)
 
 #### `To do`
 - Speedrun timer
@@ -123,15 +172,17 @@
 ##### Items
 - Healing items. Green apples, other stuff.
 
-#### `Would like to add`
-
-- Dynamic grass, grass trampling, desire paths saved to a file on hard drive.
+##### Desire Paths 
+- Create dirt paths by walking on the same path repeatedly.
+- Current not saving this to hard drive but I will
+- Won't affect gameplay, I think. 
+- Should determine where flora should grow too. 
 
 #### `Maybe?`
 - Swimming
 - Ladder climb
 - Stairs
-- Shop
+- Shop (shopkeeper named Esoterica?)
 - Keys
 - Status (Poisoned etc)
 - Double Jump
@@ -148,11 +199,12 @@
 - May proceed to the actual Full Game from this area.
 - Eventually unlock wardrobe. 
 - Unlock Melancholy by completing Full Game w/ Melanie.
+- Swap between Melancholy/Melanie by walking through a door in open space maybe. Could do cool-portal like effect where one side shows one character and the other shows the other.
 - Separate time trials for each character, to be expanded upon later.
 
 ## Stages:
 
-#### `TIP: MagicUV is a good plugin that can be used to make UVs for level geometry appropriate to their world-size. UV -> Unwrap, and then UV -> World Scale UV -> Apply Manual (and set a consistent number for every unwrap, such as 100)`
+TIP: MagicUV is a good plugin that can be used to make UVs for level geometry appropriate to their world-size. UV -> Unwrap, and then UV -> World Scale UV -> Apply Manual (and set a consistent number for every unwrap, such as 100)
 
 - Aiming for ~10 main stages per character. Some fully unique, some shared, some altered.
 - Try to keep a bit of "arcade scenario" -- gameplay design focused levels, but not too arcadey. Ideally each stage is minutes (3-15) long if you know what you're doing.
@@ -180,7 +232,7 @@ Waiting for Godot 4.0 for improved shadow mapping. Not a priority at the moment.
 
 #### Clean line shader
 
-I currently a modified version of GDQuest's "Pixel Perfect Outline" shader for Godot 3.2. Once Vulkan and 4.0 is out, it is confirmed that post process shader can get access to screen normals, which should be experimented with for clean line work.
+I currently a modified version of GDQuest's "Pixel Perfect Outline" shader for Godot 3.2. This works okay, but once Vulkan and 4.0 is out, it is confirmed that post process shader can get access to screen normals, which should be experimented with for clean line work.
 
 #### Sky
 
@@ -202,11 +254,11 @@ Should be perfectly doable, I just need to fix up my character's face topology m
 
 I feel like I need to write down some of the things I've learned after trying to get my 3D character working in Godot. 
 
-- You can make complex rigs with control bones, etc for animation in Blender. The animations will still come through, although the constraints and controls will not. Any kind of constraint or control (such as giving the eyes a look target, or the head a look target), needs to be created entirely in Godot (once you have confirmed that the head or eyes are cleanly capable of rotation in blender)
+- You can make complex rigs with control bones, etc for animation in Blender. The animations will still come through, although the constraints and controls will not. Any kind of constraint or control (such as giving the eyes a look target, or the head a look target), needs to be created entirely in Godot (once you have confirmed that the head or eyes are cleanly capable of rotation in blender). Future SkeletonIK improvements will help with this.
 
-- Preserve Volume in the Armature modifier does not exist in Godot; therefore all deformations will ignore this option. This means making clean deformations is more difficult, but you can still get 1:1 deformations afaik as long as you do not enable this.
+- Preserve Volume in the Armature modifier does not exist in Godot; therefore all deformations will ignore this option. This means making clean deformations is more difficult, but you can still get  (close to?) 1:1 deformations afaik as long as you do not enable this.
 
-- Inherit Rotation, under an individual bone setting, must remain on. Disabling this will be ignored in Godot, and the animations will be incorrect. I don't believe that "Bake animation" will help with these issues either. Unfortunately, forcing inherited rotation makes certain aspects of animation more difficult, like keeping a foot flat on the ground as the shin moves and rotates.
+- Inherit Rotation, under an individual bone setting, must remain on. Disabling this will be ignored in Godot, and the animations will be incorrect. I don't believe that "Bake animation" will help with these issues either. There is a workaround to copy the rotation from another bone, which works to keep a foot flat on the ground, along with a floor constraint.
 
 - GLTF works for now. I haven't explored other new options (such as the somewhat recent FBX support).
 
