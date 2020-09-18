@@ -3,6 +3,8 @@ extends "res://ui/MenuClass.gd"
 """
 Phew, lots here, might wanna offload some of it to smaller scripts on individual nodes,
 such as the node that activates the sliders and sets those colors??
+
+Also I would like to add an inner deadzone too.
 """
 
 const size = 256
@@ -40,7 +42,7 @@ onready var final_right_stick_datadesc:RichTextLabel = $Final_Input/Right/DataDe
 
 # Outer Threshold
 
-" Game.joystick_outer_threshold is the actual value "
+" Player.joystick_outer_threshold is the actual value "
 const outer_threshold_default:float = 0.9
 const outer_threshold_minimum:float = 0.5
 var outer_threshold_prior_value:float = 0.9
@@ -50,7 +52,7 @@ onready var outer_threshold_value_label = $menu_items/OuterThreshold/Numerical
 
 # Axis Deadzone
 
-" Game.joystick_axis_deadzone is the actual value "
+" Player.joystick_axis_deadzone is the actual value "
 const axis_deadzone_default:float = 0.15
 const axis_deadzone_maximum:float = 0.35
 var axis_deadzone_prior_value:float = 0.15
@@ -59,7 +61,6 @@ onready var axis_deadzone_color_rect = $menu_items/AxisDeadzone/Visual
 onready var axis_deadzone_value_label = $menu_items/AxisDeadzone/Numerical
 
 # Easing Curve
-#" Game.joystick_easing_curve is the actual value "
 #const easing_curve_default:float = 2.0
 #const easing_curve_minimum:float = 0.125
 #const easing_curve_maximum:float = 8.0

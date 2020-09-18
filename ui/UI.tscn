@@ -1,4 +1,4 @@
-[gd_scene load_steps=110 format=2]
+[gd_scene load_steps=111 format=2]
 
 [ext_resource path="res://ui/img/heart_normalmap_512.png" type="Texture" id=1]
 [ext_resource path="res://ui/img/UI_circle_white.png" type="Texture" id=2]
@@ -72,6 +72,7 @@
 [ext_resource path="res://ui/Inventory.gd" type="Script" id=70]
 [ext_resource path="res://ui/img/subweapon_bomb.png" type="Texture" id=71]
 [ext_resource path="res://ui/Subweapon.gd" type="Script" id=72]
+[ext_resource path="res://ui/CameraSettings.gd" type="Script" id=73]
 
 [sub_resource type="DynamicFont" id=1]
 size = 48
@@ -81,7 +82,11 @@ font_data = ExtResource( 17 )
 size = 31
 font_data = ExtResource( 17 )
 
-[sub_resource type="SpriteFrames" id=3]
+[sub_resource type="DynamicFont" id=3]
+size = 31
+font_data = ExtResource( 17 )
+
+[sub_resource type="SpriteFrames" id=4]
 animations = [ {
 "frames": [ ExtResource( 32 ), ExtResource( 22 ) ],
 "loop": true,
@@ -89,7 +94,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=4]
+[sub_resource type="SpriteFrames" id=5]
 animations = [ {
 "frames": [ ExtResource( 50 ), ExtResource( 20 ) ],
 "loop": true,
@@ -97,7 +102,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=5]
+[sub_resource type="SpriteFrames" id=6]
 animations = [ {
 "frames": [ ExtResource( 52 ), ExtResource( 51 ) ],
 "loop": true,
@@ -105,7 +110,7 @@ animations = [ {
 "speed": 5.0
 } ]
 
-[sub_resource type="SpriteFrames" id=6]
+[sub_resource type="SpriteFrames" id=7]
 animations = [ {
 "frames": [ ExtResource( 43 ), ExtResource( 34 ) ],
 "loop": true,
@@ -113,7 +118,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=7]
+[sub_resource type="SpriteFrames" id=8]
 animations = [ {
 "frames": [ ExtResource( 38 ), ExtResource( 45 ) ],
 "loop": false,
@@ -121,7 +126,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=8]
+[sub_resource type="SpriteFrames" id=9]
 animations = [ {
 "frames": [ ExtResource( 39 ), ExtResource( 25 ) ],
 "loop": true,
@@ -129,7 +134,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=9]
+[sub_resource type="SpriteFrames" id=10]
 animations = [ {
 "frames": [ ExtResource( 33 ), ExtResource( 46 ) ],
 "loop": true,
@@ -137,7 +142,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=10]
+[sub_resource type="SpriteFrames" id=11]
 animations = [ {
 "frames": [ ExtResource( 37 ), ExtResource( 44 ) ],
 "loop": true,
@@ -145,7 +150,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=11]
+[sub_resource type="SpriteFrames" id=12]
 animations = [ {
 "frames": [ ExtResource( 23 ), ExtResource( 47 ) ],
 "loop": true,
@@ -153,7 +158,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=12]
+[sub_resource type="SpriteFrames" id=13]
 animations = [ {
 "frames": [ ExtResource( 49 ), ExtResource( 24 ) ],
 "loop": true,
@@ -161,7 +166,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=13]
+[sub_resource type="SpriteFrames" id=14]
 animations = [ {
 "frames": [ ExtResource( 35 ), ExtResource( 28 ) ],
 "loop": true,
@@ -169,7 +174,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=14]
+[sub_resource type="SpriteFrames" id=15]
 animations = [ {
 "frames": [ ExtResource( 36 ), ExtResource( 40 ) ],
 "loop": true,
@@ -177,7 +182,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=15]
+[sub_resource type="SpriteFrames" id=16]
 animations = [ {
 "frames": [ ExtResource( 41 ), ExtResource( 48 ) ],
 "loop": true,
@@ -185,7 +190,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=16]
+[sub_resource type="SpriteFrames" id=17]
 animations = [ {
 "frames": [ ExtResource( 42 ), ExtResource( 26 ) ],
 "loop": true,
@@ -193,7 +198,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=17]
+[sub_resource type="SpriteFrames" id=18]
 animations = [ {
 "frames": [ ExtResource( 29 ), ExtResource( 21 ) ],
 "loop": true,
@@ -201,7 +206,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=18]
+[sub_resource type="SpriteFrames" id=19]
 animations = [ {
 "frames": [ ExtResource( 31 ), ExtResource( 30 ) ],
 "loop": true,
@@ -209,16 +214,12 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="DynamicFont" id=19]
+[sub_resource type="DynamicFont" id=20]
 size = 24
 font_data = ExtResource( 18 )
 
-[sub_resource type="DynamicFont" id=20]
-size = 48
-font_data = ExtResource( 17 )
-
 [sub_resource type="DynamicFont" id=21]
-size = 31
+size = 48
 font_data = ExtResource( 17 )
 
 [sub_resource type="DynamicFont" id=22]
@@ -266,7 +267,6 @@ void fragment() {
 		COLOR.a = 0.5;
 	}
 }"
-custom_defines = ""
 
 [sub_resource type="ShaderMaterial" id=24]
 shader = SubResource( 23 )
@@ -414,6 +414,7 @@ __meta__ = {
 }
 
 [node name="MainMenu" type="Node2D" parent="Paused"]
+visible = false
 position = Vector2( -0.702065, 0.241577 )
 script = ExtResource( 57 )
 __meta__ = {
@@ -526,9 +527,9 @@ __meta__ = {
 }
 
 [node name="ButtonMapping" type="Label" parent="Paused/CustomizeMenu/menu_items"]
-margin_top = 501.0
+margin_top = 480.0
 margin_right = 1920.0
-margin_bottom = 538.0
+margin_bottom = 517.0
 custom_fonts/font = SubResource( 2 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
@@ -537,15 +538,152 @@ text = ">  Button Mapping  <"
 align = 1
 
 [node name="JoystickCalibration" type="Label" parent="Paused/CustomizeMenu/menu_items"]
-margin_top = 542.0
+margin_top = 521.0
 margin_right = 1920.0
-margin_bottom = 579.0
+margin_bottom = 558.0
 custom_fonts/font = SubResource( 2 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
 text = "Joystick Calibration"
 align = 1
+
+[node name="CameraSettings" type="Label" parent="Paused/CustomizeMenu/menu_items"]
+margin_top = 562.0
+margin_right = 1920.0
+margin_bottom = 599.0
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Camera Settings"
+align = 1
+
+[node name="CameraSettings" type="Node2D" parent="Paused"]
+position = Vector2( -0.702065, 0.241577 )
+script = ExtResource( 73 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Heading" type="Label" parent="Paused/CameraSettings"]
+margin_top = 375.0
+margin_right = 1920.0
+margin_bottom = 435.0
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Camera Settings
+"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="menu_items" type="VBoxContainer" parent="Paused/CameraSettings"]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_right = 940.0
+margin_bottom = 1080.0
+alignment = 1
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="InvertXAxis" type="Label" parent="Paused/CameraSettings/menu_items"]
+margin_top = 480.0
+margin_right = 940.0
+margin_bottom = 517.0
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Invert X Axis"
+align = 2
+
+[node name="Value" type="Label" parent="Paused/CameraSettings/menu_items/InvertXAxis"]
+margin_left = 980.0
+margin_right = 1153.0
+margin_bottom = 37.0
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "False"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="InvertYAxis" type="Label" parent="Paused/CameraSettings/menu_items"]
+margin_top = 521.0
+margin_right = 940.0
+margin_bottom = 558.0
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "Invert Y Axis"
+align = 2
+
+[node name="Value" type="Label" parent="Paused/CameraSettings/menu_items/InvertYAxis"]
+margin_left = 980.0
+margin_right = 1153.0
+margin_bottom = 37.0
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "False"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CameraDistance" type="Label" parent="Paused/CameraSettings/menu_items"]
+self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
+margin_top = 562.0
+margin_right = 940.0
+margin_bottom = 599.0
+custom_fonts/font = SubResource( 3 )
+text = "Camera Distance"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BG" type="ColorRect" parent="Paused/CameraSettings/menu_items/CameraDistance"]
+margin_left = 980.0
+margin_top = 3.0
+margin_right = 1184.0
+margin_bottom = 37.0
+color = Color( 0.313726, 0.313726, 0.313726, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Visual" type="ColorRect" parent="Paused/CameraSettings/menu_items/CameraDistance"]
+margin_left = 982.0
+margin_top = 5.0
+margin_right = 1082.0
+margin_bottom = 35.0
+color = Color( 0.501961, 0.501961, 0.501961, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Numerical" type="Label" parent="Paused/CameraSettings/menu_items/CameraDistance"]
+self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
+margin_left = 980.0
+margin_right = 1280.0
+margin_bottom = 37.0
+custom_fonts/font = SubResource( 3 )
+text = "3.000"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="InputDisplay" type="Node2D" parent="Paused"]
 visible = false
@@ -559,28 +697,28 @@ __meta__ = {
 [node name="ControllerButtons" type="Node2D" parent="Paused/InputDisplay"]
 
 [node name="ZR" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
-frames = SubResource( 3 )
-centered = false
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="ZL" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 4 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="L" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="ZL" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 5 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="R" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="L" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 6 )
+centered = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="R" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+frames = SubResource( 7 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
@@ -594,84 +732,84 @@ __meta__ = {
 }
 
 [node name="A" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
-frames = SubResource( 7 )
-centered = false
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="B" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 8 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Y" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="B" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 9 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="X" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="Y" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 10 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Start" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="X" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 11 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Select" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="Start" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 12 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="D_Up" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="Select" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 13 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="D_Down" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="D_Up" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 14 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="D_Left" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="D_Down" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 15 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="D_Right" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="D_Left" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 16 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Left_Stick" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="D_Right" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 17 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Right_Stick" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="Left_Stick" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 18 )
+centered = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Right_Stick" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+frames = SubResource( 19 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
@@ -691,7 +829,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -716,7 +854,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -741,7 +879,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -766,7 +904,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -791,7 +929,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -816,7 +954,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -841,7 +979,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -866,7 +1004,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -892,7 +1030,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -918,7 +1056,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -943,7 +1081,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -968,7 +1106,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -992,7 +1130,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1017,7 +1155,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1042,7 +1180,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1067,7 +1205,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1092,7 +1230,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1117,7 +1255,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1146,7 +1284,7 @@ margin_left = 200.0
 margin_top = 75.0
 margin_right = 754.0
 margin_bottom = 132.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 21 )
 text = "Joystick Calibration"
 align = 1
 valign = 1
@@ -1161,7 +1299,7 @@ margin_left = 175.0
 margin_top = 257.0
 margin_right = 835.0
 margin_bottom = 294.0
-custom_fonts/font = SubResource( 21 )
+custom_fonts/font = SubResource( 3 )
 text = "Easing Curve"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -1191,7 +1329,7 @@ __meta__ = {
 self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_right = 600.0
 margin_bottom = 37.0
-custom_fonts/font = SubResource( 21 )
+custom_fonts/font = SubResource( 3 )
 text = "2.000"
 align = 2
 __meta__ = {
@@ -1211,7 +1349,7 @@ __meta__ = {
 self_modulate = Color( 1, 1, 0.4, 1 )
 margin_right = 660.0
 margin_bottom = 37.0
-custom_fonts/font = SubResource( 21 )
+custom_fonts/font = SubResource( 3 )
 text = "Outer Threshold"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -1241,7 +1379,7 @@ __meta__ = {
 self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_right = 600.0
 margin_bottom = 37.0
-custom_fonts/font = SubResource( 21 )
+custom_fonts/font = SubResource( 3 )
 text = "0.900"
 align = 2
 __meta__ = {
@@ -1253,7 +1391,7 @@ self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_top = 41.0
 margin_right = 660.0
 margin_bottom = 78.0
-custom_fonts/font = SubResource( 21 )
+custom_fonts/font = SubResource( 3 )
 text = "Axis Deadzone"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -1283,7 +1421,7 @@ __meta__ = {
 self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_right = 600.0
 margin_bottom = 37.0
-custom_fonts/font = SubResource( 21 )
+custom_fonts/font = SubResource( 3 )
 text = "0.150"
 align = 2
 __meta__ = {
@@ -1295,7 +1433,7 @@ self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_top = 82.0
 margin_right = 660.0
 margin_bottom = 119.0
-custom_fonts/font = SubResource( 21 )
+custom_fonts/font = SubResource( 3 )
 text = "Reset to Default"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -1347,7 +1485,7 @@ margin_left = -127.0
 margin_top = -225.0
 margin_right = 427.0
 margin_bottom = -168.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 21 )
 text = "Raw"
 align = 1
 valign = 1
@@ -1514,7 +1652,7 @@ margin_left = -127.0
 margin_top = -225.0
 margin_right = 427.0
 margin_bottom = -168.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 21 )
 text = "Final"
 align = 1
 valign = 1
@@ -1700,7 +1838,7 @@ margin_left = -80.823
 margin_top = -11.0001
 margin_right = 20.177
 margin_bottom = 17.9999
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1733,7 +1871,7 @@ margin_left = -83.0
 margin_top = -11.0
 margin_right = 18.0
 margin_bottom = 50.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1765,7 +1903,7 @@ margin_left = -100.0
 margin_top = -11.0
 margin_right = 1.0
 margin_bottom = 18.0
-custom_fonts/font = SubResource( 19 )
+custom_fonts/font = SubResource( 20 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2

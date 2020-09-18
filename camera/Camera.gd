@@ -8,6 +8,12 @@ var shape := SphereShape.new()
 var default_pos := Vector3(0, 0.316228, 0.948683) # default camera position, normalized
 var current_pos:Vector3 # current camera position, normalized
 
+# Customizable options
+var invert_x := false
+var invert_y := false
+
+""" Zoom needs to be renamed distance """
+var custom_distance:float = 3.2
 # Zoom
 var current_zoom:float = 3.2
 var custom_zoom:float = 3.2
@@ -151,6 +157,8 @@ func auto_mode() -> void:
 	update_position()
 
 func rotate_cam(dir:Vector2) -> void:
+	if invert_x: dir.x = -dir.x
+	if invert_y: dir.y = -dir.y
 	var new_pos = current_pos
 	var cross:Vector3 = new_pos.cross(Vector3.UP).normalized()
 	if cross != Vector3.ZERO:

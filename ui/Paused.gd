@@ -11,6 +11,7 @@ onready var main_menu = $MainMenu
 onready var customize_menu = $CustomizeMenu
 onready var input_display = $InputDisplay
 onready var joystick_calibration = $JoystickCalibration
+onready var camera_settings = $CameraSettings
 onready var ingame_ui = $"../InGame_UI"
 onready var tween = $Tween
 var tween_time = 0.1
@@ -59,6 +60,8 @@ func change_state(state:String) -> void:
 			input_display.start()
 		"joystick_calibration":
 			joystick_calibration.start()
+		"camera_settings":
+			camera_settings.start()
 
 func stop(state) -> void:
 	current_state = "unpaused"

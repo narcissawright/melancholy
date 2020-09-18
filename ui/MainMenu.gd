@@ -13,7 +13,7 @@ func _return_pressed() -> void:
 
 func about_to_quit() -> bool:
 	return menu.get_child(QUIT_GAME).text != menu_items[QUIT_GAME]
-		
+
 func _menu_item_selected(index):
 	match index:
 		RESUME:
