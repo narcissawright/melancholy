@@ -12,15 +12,15 @@ var current_pos:Vector3 # current camera position, normalized
 var invert_x := false
 var invert_y := false
 var custom_distance:float = 3.2 setget set_custom_distance
+var sensitivity:float = 2.4
+
+var current_distance:float = 3.2
+
 func set_custom_distance(distance) -> void:
 	custom_distance = distance
 	current_distance = distance
 	saved_cam_state.distance = distance
 	update_position()
-var sensitivity:float = 2.4
-
-
-var current_distance:float = 3.2
 
 var mode = "auto" # "free", "first_person", "pause", "reset"
 var pause_controls_enabled = false
