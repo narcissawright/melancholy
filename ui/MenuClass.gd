@@ -6,7 +6,7 @@ var current_menu_index = 0
 var time = 0.0
 
 # This will be overwritten by the script that inherits this.
-var menu_items = [] # It holds the string for the text of each label.
+var menu_items:int = 0 # how many menu items are there?
 
 var selected = Color(1, 1, 0.8, 1)
 var unselected = Color('a9b8b4')
@@ -27,7 +27,6 @@ func update_menu_items() -> void:
 	time = 0.0
 	for i in menu.get_child_count():
 		var menu_item = menu.get_child(i)
-		menu_item.text = menu_items[i]
 		menu_item.self_modulate = selected if i == current_menu_index else unselected
 
 # These functions are intended to be overwritten by the script that inherits this one.
@@ -39,11 +38,11 @@ func _menu_item_selected(index:int) -> void:
 
 func _down_pressed() -> void:
 	# Default behavior:
-	current_menu_index = posmod(current_menu_index + 1, menu_items.size())
+	current_menu_index = posmod(current_menu_index + 1, menu_items)
 
 func _up_pressed() -> void:
 	# Default behavior:
-	current_menu_index = posmod(current_menu_index - 1, menu_items.size())
+	current_menu_index = posmod(current_menu_index - 1, menu_items)
 
 func _process(t:float) -> void:
 	if Input.is_action_just_pressed("B"):

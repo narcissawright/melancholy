@@ -17,6 +17,8 @@ func set_custom_distance(distance) -> void:
 	current_distance = distance
 	saved_cam_state.distance = distance
 	update_position()
+var sensitivity:float = 2.4
+
 
 var current_distance:float = 3.2
 
@@ -34,9 +36,6 @@ var saved_cam_state: Dictionary = {
 	"pan": Vector3.ZERO,
 	"mode": "auto"
 }
-
-# Joystick Movement
-const move_speed:float = 0.04
 
 # Camera Reset
 const cam_reset_time:float = 16.0 # frames @ 60fps
@@ -164,7 +163,7 @@ func rotate_cam(dir:Vector2) -> void:
 	var new_pos = current_pos
 	var cross:Vector3 = new_pos.cross(Vector3.UP).normalized()
 	if cross != Vector3.ZERO:
-		var move_speed = 0.04
+		var move_speed = sensitivity / 60.0
 		new_pos = new_pos.rotated(Vector3.UP, -dir.x * move_speed)
 		if (dir.y > 0.0 and new_pos.y > 0.0) or (dir.y < 0.0 and new_pos.y < 0.0):
 			dir.y *= 1.0 - abs(new_pos.y)

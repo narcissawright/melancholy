@@ -3,7 +3,7 @@ extends "res://ui/MenuClass.gd"
 enum { BUTTON_MAPPING, JOYSTICK_CALIBRATION, CAMERA_SETTINGS }
 
 func _init():
-	menu_items = ["Button Mapping", "Joystick Calibration", "Camera Settings"]
+	menu_items = 3
 
 func _return_pressed() -> void:
 	current_menu_index = 0

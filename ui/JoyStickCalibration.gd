@@ -77,7 +77,7 @@ const slider_width:float = 200.0 # pixels.
 onready var descriptions = $Descriptions
 
 func _init() -> void:
-	menu_items = ["Outer Threshold", "Axis Deadzone", "Reset to Default"]
+	menu_items = 3
 	
 func _ready() -> void:
 	# initialize displays

@@ -3,7 +3,6 @@ extends Node
 var frame_time:float = 1.0 / 60.0
 
 func _init() -> void:
-	OS.window_position = Vector2(172, 30) # so it shows up on my monitor in a comfy spot
 	OS.window_size = Vector2(1280, 720)
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 
