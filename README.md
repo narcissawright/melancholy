@@ -133,12 +133,13 @@ Maybe:
 #### `Done`
 - Heart symbol, with a heart beat animation, normal map, and time of day lighting.
 - Functional HP bar
+- Current subweapon
 - Jewel count
 - Clock (Time of day)
 - Joystick Calibration screen
+- Camera customization screen
 
 #### `Partially done`:
-- Current subweapon
 - Powerup container (5 orbs, should look like they are energized.)
 - Contextual button hints (X to interact)
 - Button Remap screen (non functional atm but the design is partially there. has input display.)
@@ -147,7 +148,6 @@ Maybe:
 #### `To do`
 - Speedrun timer
 - Serendipity
-- More pause menu features: Camera axis invert, Camera distance setting.
 
 #### `Maybe`
 - Current camera mode indicator
