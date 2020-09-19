@@ -1,13 +1,13 @@
 extends "res://ui/MenuClass.gd"
 
-enum { INVERT_X, INVERT_Y, DISTANCE }
+enum { INVERT_X, INVERT_Y, DISTANCE, RESET_TO_DEFAULT }
 onready var invert_x_value = $menu_items/InvertXAxis/Value 
 onready var invert_y_value = $menu_items/InvertYAxis/Value
 
 " Camera.custom_distance is the actual value "
 const dist_default:float = 3.2
 const dist_max:float = 5.0
-const dist_min:float = 1.5
+const dist_min:float = 2.0
 var dist_prior_value:float = 3.2
 onready var custom_distance_color_rect_bg = $menu_items/CameraDistance/BG
 onready var custom_distance_color_rect = $menu_items/CameraDistance/Visual
@@ -19,7 +19,7 @@ var slider_controls_enabled:bool = false
 const slider_width:float = 200.0 # pixels.
 
 func _init():
-	menu_items = ["Invert X Axis", "Invert Y Axis", "Camera Distance"]
+	menu_items = ["Invert X Axis", "Invert Y Axis", "Camera Distance", "Reset to Default"]
 
 func _ready() -> void:
 	set_camera_distance(MainCam.custom_distance)
@@ -60,6 +60,12 @@ func _menu_item_selected(index):
 			else:
 				dist_prior_value = MainCam.custom_distance
 				change_slider_state(DISTANCE, true) # enable
+		RESET_TO_DEFAULT:
+			MainCam.invert_x = false
+			invert_x_value.text = "False"
+			MainCam.invert_y = false
+			invert_y_value.text = "False"
+			set_camera_distance(dist_default)
 
 func change_slider_state(index:int, state:bool) -> void:
 	slider_controls_enabled = state
@@ -87,8 +93,10 @@ func _process(_t:float) -> void:
 			slide_amount += 0.001
 		elif Input.is_action_pressed("ui_right"):
 			slide_amount += 0.01
-			
+		
 		if slide_amount != 0.0:
 			match current_menu_index:
 				DISTANCE:
+					slide_amount *= 2.0
 					set_camera_distance(clamp(MainCam.custom_distance + slide_amount, dist_min, dist_max))
+

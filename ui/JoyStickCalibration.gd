@@ -206,8 +206,10 @@ func _process(_t:float) -> void:
 		if slide_amount != 0.0:
 			match current_menu_index:
 				OUTER_THRESHOLD:
+					slide_amount *= 0.5
 					set_outer_threshold(clamp(Player.joystick_outer_threshold + slide_amount, outer_threshold_minimum, 1.0))
 				AXIS_DEADZONE:
+					slide_amount *= 0.35
 					set_axis_deadzone(clamp(Player.joystick_axis_deadzone + slide_amount, 0.0, axis_deadzone_maximum))
 #				EASING_CURVE:
 #					set_easing_curve(clamp(Game.joystick_easing_curve + slide_amount, easing_curve_minimum, easing_curve_maximum))

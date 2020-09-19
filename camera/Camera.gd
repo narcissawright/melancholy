@@ -11,12 +11,14 @@ var current_pos:Vector3 # current camera position, normalized
 # Customizable options
 var invert_x := false
 var invert_y := false
+var custom_distance:float = 3.2 setget set_custom_distance
+func set_custom_distance(distance) -> void:
+	custom_distance = distance
+	current_distance = distance
+	saved_cam_state.distance = distance
+	update_position()
 
-""" Zoom needs to be renamed distance """
-var custom_distance:float = 3.2
-# Zoom
-var current_zoom:float = 3.2
-var custom_zoom:float = 3.2
+var current_distance:float = 3.2
 
 var mode = "auto" # "free", "first_person", "pause", "reset"
 var pause_controls_enabled = false
@@ -28,7 +30,7 @@ var pause_pan_velocity := Vector3.ZERO # used for linear interpolation..
 # State of the camera when pause was initiated
 var saved_cam_state: Dictionary = {
 	"cam_pos": Vector3.ZERO,
-	"zoom": 0.0,
+	"distance": 0.0,
 	"pan": Vector3.ZERO,
 	"mode": "auto"
 }
@@ -77,7 +79,7 @@ func update_position() -> void:
 		ledgegrab_offset = Vector3(0, 0.5, 0)
 	query.transform = Transform(Basis(), cam_target + ledgegrab_offset) # start at the cam_target
 	shape.radius = 0.2
-	var new_pos = current_pos * current_zoom
+	var new_pos = current_pos * current_distance
 	var result = space_state.cast_motion(query, new_pos - ledgegrab_offset) # until a collision happens
 	if result[0] > 0: # result[0] is how much to lerp
 		new_pos = cam_target.linear_interpolate(new_pos + cam_target, result[0]) # now we have final position
@@ -93,7 +95,7 @@ func _on_pause_state_change(paused:bool) -> void:
 		zoom_tween.stop_all()
 		saved_cam_state.pos = current_pos
 		saved_cam_state.pan = pan
-		saved_cam_state.zoom = current_zoom
+		saved_cam_state.distance = current_distance
 		saved_cam_state.mode = mode
 		mode = "pause"
 	else:
@@ -104,7 +106,7 @@ func _on_pause_state_change(paused:bool) -> void:
 		# Recover State
 		pan = saved_cam_state.pan
 		current_pos = saved_cam_state.pos
-		current_zoom = saved_cam_state.zoom
+		current_distance = saved_cam_state.distance
 		mode = saved_cam_state.mode
 		
 func _physics_process(_t:float) -> void:
@@ -177,7 +179,7 @@ func reset_pause_cam_state() -> void:
 	pause_pan_velocity = Vector3.ZERO
 	current_pos = saved_cam_state.pos
 	pan = saved_cam_state.pan
-	current_zoom = saved_cam_state.zoom
+	current_distance = saved_cam_state.distance
 	crosshair.visible = false
 
 func pause_controls() -> void:
@@ -223,9 +225,9 @@ func pause_controls() -> void:
 			pan = pan.normalized() * 10.0
 		
 		# Zoom while paused
-		if Input.is_action_pressed("ZL"): current_zoom += 0.1
-		if Input.is_action_pressed("ZR"): current_zoom -= 0.1
-		current_zoom = clamp(current_zoom, 0.3, 10.0)
+		if Input.is_action_pressed("ZL"): current_distance += 0.1
+		if Input.is_action_pressed("ZR"): current_distance -= 0.1
+		current_distance = clamp(current_distance, 0.3, 10.0)
 		
 		# Rotate while paused
 		var rightstick = Player.get_stick_input("right")
@@ -298,7 +300,7 @@ func can_enter_first_person() -> bool:
 
 func enter_first_person() -> void:
 	mode = "first_person"
-	zoom_tween.interpolate_property(self, "current_zoom", current_zoom, 0.01, 0.15)
+	zoom_tween.interpolate_property(self, "current_distance", current_distance, 0.01, 0.15)
 	zoom_tween.interpolate_property(self, "pan", pan, Vector3.ZERO, 0.15)
 	zoom_tween.start()
 	if Player.shield.active:
@@ -330,7 +332,7 @@ func first_person() -> void:
 
 func exit_first_person() -> void:
 	Player.unlockplayer("first_person")
-	zoom_tween.interpolate_property(self, "current_zoom", current_zoom, custom_zoom, 0.15)
+	zoom_tween.interpolate_property(self, "current_distance", current_distance, custom_distance, 0.15)
 	zoom_tween.start()
 	mode = "auto"
 	current_pos = default_pos.rotated(Vector3.UP, Player.rotation.y)
@@ -344,7 +346,7 @@ func debug() -> void:
 	# Write debug info
 	Debug.text.write("Cam Mode: " + mode)
 	Debug.text.write("Cam Pos: " + str(current_pos))
-	Debug.text.write("Cam Zoom: " + str(current_zoom))
+	Debug.text.write("Cam Dist: " + str(current_distance))
 	Debug.text.write("Cam Pan: " + str(pan))
 	Debug.text.write("Cam Reset: " + str(cam_reset_frame))
 	Debug.text.newline()
