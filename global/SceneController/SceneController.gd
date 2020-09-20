@@ -8,7 +8,7 @@ func _init() -> void:
 
 func _ready() -> void:
 	pause_mode = Node.PAUSE_MODE_PROCESS # Run this script while paused
-	Events.connect("unpause_game", self, "unpause")
+	Events.connect("unpause_game", self, "unpause_game")
 	Events.connect("quit_game", self, "quit_game")
 
 func _input(_event: InputEvent) -> void:
@@ -19,9 +19,14 @@ func _input(_event: InputEvent) -> void:
 		OS.window_fullscreen = !OS.window_fullscreen
 	if Input.is_action_just_pressed("pause"):
 		Input.action_release("pause")
-		unpause()
+		toggle_pause()
 
-func unpause() -> void:
+func unpause_game() -> void:
+	if get_tree().paused:
+		get_tree().paused = false
+		Events.emit_signal("pause", false)
+
+func toggle_pause() -> void:
 	get_tree().paused = not get_tree().paused
 	Events.emit_signal("pause", get_tree().paused)
 
