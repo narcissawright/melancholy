@@ -57,7 +57,6 @@ func _ready() -> void:
 	process_priority = 0 # Run this before camera
 	
 	initialize_checkpoint_state()
-	initialize_animationtree()
 	
 	lockplayer_for_frames(20) # Set locked state
 
@@ -86,7 +85,7 @@ func _physics_process(_t) -> void:
 	set_grounded(raycast.is_colliding()) # Check if grounded
 	handle_collision(collision) # Redirect velocity, check landing impact, etc
 	if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO # If velocity is very small, make it 0
-	walk_animation()
+	else: walk_animation()
 	handle_player_rotation() # Make player face the correct direction
 	handle_interactable() # Pick up jewels, read text, etc.
 	process_subweapon() # performed AFTER move_and_collide to correctly place projectiles.
@@ -491,19 +490,21 @@ Note that other animations may be called elsewhere.
 e.g. BombSpawner or Bomb may call bomb pull or bomb throw.
 """
 
-var anim_state_machine
-func initialize_animationtree() -> void:
-	pass
-	#anim_state_machine = anim_tree['parameters/StateMachine/playback']
-	#anim_state_machine.start("IdleWalkRun")
+#var anim_state_machine
+#func initialize_animationtree() -> void:
+#	pass
+#	#anim_state_machine = anim_tree['parameters/StateMachine/playback']
+#	#anim_state_machine.start("IdleWalkRun")
 
 func walk_animation() -> void:
 	var h_velocity = horizontal_velocity()
-	var multiplier = h_velocity.normalized().dot(forwards())
+	var angle = h_velocity.normalized().dot(forwards())
 	
-	var anim_position = min(h_velocity.length() * multiplier, 8.0) / 8.0
-	anim_tree['parameters/IdleWalkRun/blend_position'] = anim_position
-	anim_tree['parameters/RunScale/scale'] = (anim_position/2.0) + 1.0
+	var x_walk = min(h_velocity.length() * (1.0 - abs(angle)), 4.0) / 4.0
+	var y_walk = min(h_velocity.length() * angle, 8.0) / 8.0
+	
+	anim_tree['parameters/BlendSpace2D/blend_position'] = Vector2(x_walk, y_walk)
+	anim_tree['parameters/RunScale/scale'] = (y_walk/2.0) + 1.0
 
 func set_ledge_cling_anim(blend_amt:float) -> void:
 	anim_tree['parameters/is_ledge_clinging/blend_amount'] = blend_amt

@@ -21,6 +21,7 @@ func post_import(scene):
 			child.get_animation("Idle").loop = true
 			child.get_animation("Walk").loop = true
 			child.get_animation("BackWalk").loop = true
+			child.get_animation("RightWalk").loop = true
 			child.get_animation("Run").loop = true
 			child.get_animation("LedgeCling").loop = true
 

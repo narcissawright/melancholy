@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=34 format=2]
 
 [ext_resource path="res://player/melanie/MelanieModel.glb" type="PackedScene" id=1]
 [ext_resource path="res://player/TargetDetector.tscn" type="PackedScene" id=2]
@@ -7,8 +7,93 @@
 [ext_resource path="res://player/melanie/Melanie.gd" type="Script" id=5]
 [ext_resource path="res://player/InteractArea.tscn" type="PackedScene" id=6]
 [ext_resource path="res://player/melanie/ShieldMesh.tscn" type="PackedScene" id=7]
-[ext_resource path="res://player/melanie/AnimationTree.tscn" type="PackedScene" id=8]
 [ext_resource path="res://player/ledge_detection/LedgeGrabSystem.tscn" type="PackedScene" id=9]
+
+[sub_resource type="AnimationNodeAnimation" id=8]
+animation = "Idle"
+
+[sub_resource type="AnimationNodeAnimation" id=9]
+animation = "Run"
+
+[sub_resource type="AnimationNodeAnimation" id=10]
+animation = "Walk"
+
+[sub_resource type="AnimationNodeAnimation" id=11]
+animation = "RightWalk"
+
+[sub_resource type="AnimationNodeAnimation" id=12]
+animation = "BackWalk"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id=13]
+blend_point_0/node = SubResource( 8 )
+blend_point_0/pos = Vector2( 0, 0 )
+blend_point_1/node = SubResource( 9 )
+blend_point_1/pos = Vector2( 0, 1 )
+blend_point_2/node = SubResource( 10 )
+blend_point_2/pos = Vector2( 0, 0.3 )
+blend_point_3/node = SubResource( 11 )
+blend_point_3/pos = Vector2( 0.2, 0 )
+blend_point_4/node = SubResource( 12 )
+blend_point_4/pos = Vector2( 0, -0.3 )
+
+[sub_resource type="AnimationNodeBlend2" id=14]
+filter_enabled = true
+filters = [ "Armature/Skeleton:clavicle_r", "Armature/Skeleton:elbow_l", "Armature/Skeleton:elbow_r", "Armature/Skeleton:hand_l", "Armature/Skeleton:hand_r", "Armature/Skeleton:index_1_l", "Armature/Skeleton:index_1_r", "Armature/Skeleton:index_2_l", "Armature/Skeleton:index_2_r", "Armature/Skeleton:index_3_l", "Armature/Skeleton:index_3_r", "Armature/Skeleton:lower_arm_l", "Armature/Skeleton:lower_arm_r", "Armature/Skeleton:middle_1_l", "Armature/Skeleton:middle_1_r", "Armature/Skeleton:middle_2_l", "Armature/Skeleton:middle_2_r", "Armature/Skeleton:middle_3_l", "Armature/Skeleton:middle_3_r", "Armature/Skeleton:pinky_1_l", "Armature/Skeleton:pinky_1_r", "Armature/Skeleton:pinky_2_l", "Armature/Skeleton:pinky_2_r", "Armature/Skeleton:pinky_3_l", "Armature/Skeleton:pinky_3_r", "Armature/Skeleton:ring_1_l", "Armature/Skeleton:ring_1_r", "Armature/Skeleton:ring_2_l", "Armature/Skeleton:ring_2_r", "Armature/Skeleton:ring_3_l", "Armature/Skeleton:ring_3_r", "Armature/Skeleton:shoulder_l", "Armature/Skeleton:shoulder_r", "Armature/Skeleton:thumb_1_l", "Armature/Skeleton:thumb_1_r", "Armature/Skeleton:thumb_2_l", "Armature/Skeleton:thumb_2_r", "Armature/Skeleton:thumb_3_l", "Armature/Skeleton:thumb_3_r", "Armature/Skeleton:upper_arm_l", "Armature/Skeleton:upper_arm_r", "Armature/Skeleton:wrist_l", "Armature/Skeleton:wrist_r" ]
+
+[sub_resource type="AnimationNodeAnimation" id=15]
+animation = "BombPull"
+
+[sub_resource type="AnimationNodeAnimation" id=16]
+animation = "Idle"
+
+[sub_resource type="AnimationNodeAnimation" id=17]
+animation = "Walk"
+
+[sub_resource type="AnimationNodeAnimation" id=18]
+animation = "Run"
+
+[sub_resource type="AnimationNodeAnimation" id=19]
+animation = "BackWalk"
+
+[sub_resource type="AnimationNodeBlendSpace1D" id=20]
+blend_point_0/node = SubResource( 16 )
+blend_point_0/pos = 0.0
+blend_point_1/node = SubResource( 17 )
+blend_point_1/pos = 0.2
+blend_point_2/node = SubResource( 18 )
+blend_point_2/pos = 1.0
+blend_point_3/node = SubResource( 19 )
+blend_point_3/pos = -0.2
+
+[sub_resource type="AnimationNodeAnimation" id=21]
+animation = "LedgeCling"
+
+[sub_resource type="AnimationNodeTimeScale" id=22]
+
+[sub_resource type="AnimationNodeTimeScale" id=23]
+
+[sub_resource type="AnimationNodeBlend2" id=24]
+
+[sub_resource type="AnimationNodeBlendTree" id=25]
+graph_offset = Vector2( -105, -361 )
+nodes/BlendSpace2D/node = SubResource( 13 )
+nodes/BlendSpace2D/position = Vector2( 180, -320 )
+nodes/BombBlend/node = SubResource( 14 )
+nodes/BombBlend/position = Vector2( 600, -240 )
+nodes/BombPull/node = SubResource( 15 )
+nodes/BombPull/position = Vector2( 420, -140 )
+nodes/IdleWalkRun/node = SubResource( 20 )
+nodes/IdleWalkRun/position = Vector2( 180, -140 )
+nodes/LedgeCling/node = SubResource( 21 )
+nodes/LedgeCling/position = Vector2( 400, 20 )
+nodes/RunScale/node = SubResource( 22 )
+nodes/RunScale/position = Vector2( 400, -280 )
+nodes/TimeScale/node = SubResource( 23 )
+nodes/TimeScale/position = Vector2( 600, -20 )
+nodes/is_ledge_clinging/node = SubResource( 24 )
+nodes/is_ledge_clinging/position = Vector2( 780, -140 )
+nodes/output/position = Vector2( 1020, -140 )
+node_connections = [ "output", 0, "is_ledge_clinging", "BombBlend", 0, "RunScale", "BombBlend", 1, "BombPull", "RunScale", 0, "BlendSpace2D", "is_ledge_clinging", 0, "BombBlend", "is_ledge_clinging", 1, "TimeScale", "TimeScale", 0, "LedgeCling" ]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.2
@@ -282,8 +367,16 @@ light_cull_mask = 4294967293
 spot_angle = 8.0
 spot_angle_attenuation = 100.0
 
-[node name="AnimationTree" parent="." instance=ExtResource( 8 )]
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource( 25 )
 anim_player = NodePath("../MelanieModel/AnimationPlayer")
+active = true
+parameters/BlendSpace2D/blend_position = Vector2( 0, 0 )
+parameters/BombBlend/blend_amount = 0.0
+parameters/IdleWalkRun/blend_position = 0.0
+parameters/RunScale/scale = 1.0
+parameters/TimeScale/scale = 0.5
+parameters/is_ledge_clinging/blend_amount = 0.0
 
 [node name="MelanieModel" parent="." instance=ExtResource( 1 )]
 transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0 )
