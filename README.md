@@ -242,14 +242,6 @@ I don't render a daytime scene yet, only stars and no moon. Godot 4.0 will have 
 
 IK can be achieved though animations that are exported, but having dynamic IK in-game (for sloped ground, etc), will be delayed until the next version of SkeletonIK is added to a stable release of Godot.
 
-#### Vertex Color as Occlusion
-
-Vertex colors seem to come through already in SRGB form, so when you read COLOR in a shader, something like 0.5 red in blender will turn into ~0.23 or something. This is very awkward for "Occlusion painting" as seen in the GGXrd graphical presentation, but it can certainly be worked around. I haven't implemented this yet.
-
-#### Normal Editing
-
-Should be perfectly doable, I just need to fix up my character's face topology more beforehand.
-
 #### Modeling, Animations, and Importing
 
 I feel like I need to write down some of the things I've learned after trying to get my 3D character working in Godot. 
@@ -266,4 +258,7 @@ I feel like I need to write down some of the things I've learned after trying to
 
 - Need to change the FPS on the import settings for the .glb file in Godot, to allow 60fps animation.
 
-- I use a blender python script to combine the mesh into a single mesh. (apply all non-armature modifiers, then join all objects). Maybe not strictly necessary.
+- I use a blender python script to combine the mesh into a single mesh. (apply all non-armature modifiers, then join all objects).
+
+- Apply Modifiers (GLTF export) will destroy custom normals, so my python script can prevent that from happening and get them to come in to Godot.
+
