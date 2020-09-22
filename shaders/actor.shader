@@ -30,7 +30,7 @@ const vec3 locked_lit = vec3(0.2, 0.6, 0.8);
 const vec3 locked_dim = vec3(0.0, 0.3, 0.4);
 
 void fragment() {
-
+	ALBEDO = COLOR.rgb;
 	// Opacity Dithering...
 	int x = int(FRAGCOORD.x / 2.0) % 4;
 	int y = int(FRAGCOORD.y / 2.0) % 4;
@@ -140,7 +140,7 @@ void light() {
 	float threshold = 0.5;
 	
 	if (vertex_color_as_occlusion) {
-		threshold = 1.0 - ALBEDO.r; // this fails to do reading it as SRGB
+		threshold = 1.0 - pow(ALBEDO.r, 0.45188); // convert from srgb
 	}
 	
 	if (enable_rim) { 
