@@ -1,8 +1,9 @@
-[gd_resource type="ShaderMaterial" load_steps=6 format=2]
+[gd_resource type="ShaderMaterial" load_steps=8 format=2]
 
-[ext_resource path="res://shaders/actor.shader" type="Shader" id=1]
+[ext_resource path="res://player/melanie/noiseTexture_shade.png" type="Texture" id=1]
 [ext_resource path="res://player/melanie/texture_shade.png" type="Texture" id=2]
 [ext_resource path="res://player/melanie/texture_lit.png" type="Texture" id=3]
+[ext_resource path="res://player/melanie/noiseTexture.png" type="Texture" id=4]
 
 [sub_resource type="Shader" id=1]
 code = "shader_type spatial;
@@ -11,6 +12,7 @@ render_mode cull_front, unshaded;
 uniform float opacity = 1.0;
 uniform float outline_width = 1.75;
 uniform sampler2D tex_shaded : hint_albedo;
+uniform sampler2D tex2_shaded : hint_albedo;
 
 void vertex() {
 	vec4 clip_position = PROJECTION_MATRIX * (MODELVIEW_MATRIX * vec4(VERTEX, 1.0));
@@ -62,6 +64,11 @@ void fragment() {
 	float linear_depth = -view.z * 2.0; // this *2 is experiment
 	
 	vec3 texture_color = texture(tex_shaded, UV).rgb;
+	
+	if (COLOR.b > 0.0) {
+		texture_color = texture(tex2_shaded, UV).rgb;
+	}
+	
 	if (COLOR.r == 0.0) {
 		ALPHA = 0.0;
 	} else {
@@ -77,23 +84,109 @@ shader = SubResource( 1 )
 shader_param/opacity = 1.0
 shader_param/outline_width = 1.75
 shader_param/tex_shaded = ExtResource( 2 )
+shader_param/tex2_shaded = ExtResource( 1 )
+
+[sub_resource type="Shader" id=3]
+code = "shader_type spatial;
+render_mode ambient_light_disabled;
+
+uniform float opacity = 1.0;
+
+uniform sampler2D tex_lit : hint_albedo;
+uniform sampler2D tex_shaded : hint_albedo;
+
+uniform sampler2D cardigan_lit : hint_albedo;
+uniform sampler2D cardigan_shaded: hint_albedo;
+
+uniform bool damaged = false;
+const vec3 damaged_lit = vec3(1.0, 0.03, 0.03);
+const vec3 damaged_dim = vec3(0.5, 0.0, 0.0);
+
+uniform bool locked = false;
+const vec3 locked_lit = vec3(0.2, 0.6, 0.8);
+const vec3 locked_dim = vec3(0.0, 0.3, 0.4);
+
+void fragment() {
+	ALBEDO = COLOR.rgb;
+	// Opacity Dithering...
+	int x = int(FRAGCOORD.x / 2.0) % 4;
+	int y = int(FRAGCOORD.y / 2.0) % 4;
+	int index = x + y * 4;
+	float limit = 0.0;
+	
+	// Dither pattern
+	switch (index) {
+		case 0:  limit = 0.0625; break;
+		case 1:  limit = 0.5625; break;
+		case 2:  limit = 0.1875; break;
+		case 3:  limit = 0.6875; break;
+		case 4:  limit = 0.8125; break;
+		case 5:  limit = 0.3125; break;
+		case 6:  limit = 0.9375; break;
+		case 7:  limit = 0.4375; break;
+		case 8:  limit = 0.25;   break;
+		case 9:  limit = 0.75;   break;
+		case 10: limit = 0.125;  break;
+		case 11: limit = 0.625;  break;
+		case 12: limit = 1.0;    break;
+		case 13: limit = 0.5;    break;
+		case 14: limit = 0.875;  break;
+		case 15: limit = 0.375;  break;
+	}
+	
+	if (opacity < limit) { discard; }
+}
+
+
+void light() {
+	// Cel Shading
+	float NdotL = dot(LIGHT, NORMAL);
+	float lit = NdotL; //clamp(NdotL, 0.0, 1.0); //smoothstep(0.0, 1.0, NdotL);
+	
+	vec3 final_lit;
+	vec3 final_dim;
+	
+	final_lit = texture(tex_lit, UV).rgb;
+	final_dim = texture(tex_shaded, UV).rgb;
+	
+	if (ALBEDO.b > 0.0) {
+		final_lit = texture(cardigan_lit, UV).rgb;
+		final_dim = texture(cardigan_shaded, UV).rgb;
+	}
+	
+	vec3 final_diff = final_lit - final_dim;
+	vec3 light_energy = min(vec3(1,1,1), ATTENUATION * LIGHT_COLOR);
+	final_diff *= light_energy; // min(final_diff, final_diff + light_energy);
+	
+	if (damaged) {
+		final_lit = damaged_lit;
+		final_dim = damaged_dim;
+	} else if (locked) {
+		final_lit = locked_lit;
+		final_dim = locked_dim;
+	}
+
+	float threshold = 1.0 - pow(ALBEDO.r, 0.45188); // convert from srgb
+	
+	float E = fwidth(lit) / 2.0;
+	if (lit > threshold - E && lit < threshold + E) {
+		lit = smoothstep(threshold - E, threshold + E, lit);
+		//lit = clamp(threshold * (lit - threshold + E) / E, 0.0, 1.0);
+	} else {
+		lit = step(threshold, lit);
+	}
+	
+	 DIFFUSE_LIGHT = max(DIFFUSE_LIGHT, mix(final_dim, final_dim + final_diff, lit));
+}
+"
 
 [resource]
 next_pass = SubResource( 2 )
-shader = ExtResource( 1 )
+shader = SubResource( 3 )
 shader_param/opacity = 1.0
-shader_param/opacity_depth_calc = false
-shader_param/celshaded = true
-shader_param/enable_rim = false
-shader_param/not_shaded = false
-shader_param/use_vertex_color = false
-shader_param/vertex_color_as_occlusion = true
-shader_param/color_lit = Color( 0.12549, 0.141176, 0.192157, 1 )
-shader_param/color_dim = Color( 0.1, 0.1, 0.12, 1 )
-shader_param/use_custom_rim_color = false
-shader_param/custom_rim_color = Color( 0, 0.82, 0.73, 1 )
-shader_param/use_texture = true
 shader_param/damaged = false
 shader_param/locked = false
 shader_param/tex_lit = ExtResource( 3 )
 shader_param/tex_shaded = ExtResource( 2 )
+shader_param/cardigan_lit = ExtResource( 4 )
+shader_param/cardigan_shaded = ExtResource( 1 )
