@@ -224,8 +224,8 @@ func pause_controls() -> void:
 			pan = pan.normalized() * 10.0
 		
 		# Zoom while paused
-		if Input.is_action_pressed("ZL"): current_distance += 0.1
-		if Input.is_action_pressed("ZR"): current_distance -= 0.1
+		if Input.is_action_pressed("ZL"): current_distance *= 1.02
+		if Input.is_action_pressed("ZR"): current_distance *= 0.98
 		current_distance = clamp(current_distance, 0.3, 10.0)
 		
 		# Rotate while paused
