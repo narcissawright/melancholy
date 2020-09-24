@@ -56,6 +56,7 @@ func _ready() -> void:
 	set_physics_process(false)
 	process_priority = 0 # Run this before camera
 	
+	initialize_animationtree()
 	initialize_checkpoint_state()
 	
 	lockplayer_for_frames(20) # Set locked state
@@ -490,11 +491,10 @@ Note that other animations may be called elsewhere.
 e.g. BombSpawner or Bomb may call bomb pull or bomb throw.
 """
 
-#var anim_state_machine
-#func initialize_animationtree() -> void:
-#	pass
-#	#anim_state_machine = anim_tree['parameters/StateMachine/playback']
-#	#anim_state_machine.start("IdleWalkRun")
+var anim_state_machine
+func initialize_animationtree() -> void:
+	anim_state_machine = anim_tree['parameters/playback']
+	anim_state_machine.start("BaseMovement")
 
 func walk_animation() -> void:
 	var h_velocity = horizontal_velocity()
@@ -503,8 +503,8 @@ func walk_animation() -> void:
 	var x_walk = min(h_velocity.length() * (1.0 - abs(angle)), 4.0) / 4.0
 	var y_walk = min(h_velocity.length() * angle, 8.0) / 8.0
 	
-	anim_tree['parameters/BlendSpace2D/blend_position'] = Vector2(x_walk, y_walk)
-	anim_tree['parameters/RunScale/scale'] = (y_walk/2.0) + 1.0
+	anim_tree['parameters/BaseMovement/BlendSpace2D/blend_position'] = Vector2(x_walk, y_walk)
+	anim_tree['parameters/BaseMovement/TimeScale/scale'] = (y_walk/2.0) + 1.0
 
 func set_ledge_cling_anim(blend_amt:float) -> void:
 	anim_tree['parameters/is_ledge_clinging/blend_amount'] = blend_amt
