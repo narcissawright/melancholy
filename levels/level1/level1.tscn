@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://backgrounds/starfield/Starfield.tscn" type="PackedScene" id=1]
 [ext_resource path="res://levels/level1/geometry.tscn" type="PackedScene" id=2]
@@ -12,12 +12,18 @@
 [ext_resource path="res://levels/level1/grass_shader.tres" type="Material" id=10]
 [ext_resource path="res://levels/level1/geometry.gd" type="Script" id=11]
 [ext_resource path="res://actor/generic_target/Target.tscn" type="PackedScene" id=12]
+[ext_resource path="res://levels/level1/texture/pink wojak suit.jpg" type="Texture" id=13]
 
 [sub_resource type="CubeMesh" id=1]
 size = Vector3( 2, 4, 2 )
 
 [sub_resource type="ConcavePolygonShape" id=2]
 data = PoolVector3Array( -1, 2, 1, 1, 2, 1, -1, -2, 1, 1, 2, 1, 1, -2, 1, -1, -2, 1, 1, 2, -1, -1, 2, -1, 1, -2, -1, -1, 2, -1, -1, -2, -1, 1, -2, -1, 1, 2, 1, 1, 2, -1, 1, -2, 1, 1, 2, -1, 1, -2, -1, 1, -2, 1, -1, 2, -1, -1, 2, 1, -1, -2, -1, -1, 2, 1, -1, -2, 1, -1, -2, -1, 1, 2, 1, -1, 2, 1, 1, 2, -1, -1, 2, 1, -1, 2, -1, 1, 2, -1, -1, -2, 1, 1, -2, 1, -1, -2, -1, 1, -2, 1, 1, -2, -1, -1, -2, -1 )
+
+[sub_resource type="QuadMesh" id=3]
+
+[sub_resource type="SpatialMaterial" id=4]
+albedo_texture = ExtResource( 13 )
 
 [node name="level1" type="Spatial"]
 
@@ -66,3 +72,8 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9.87084, 3.18995, -31.4418 )
 
 [node name="GenericTarget2" parent="Actors" instance=ExtResource( 12 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9.87084, 3.18995, -38.3211 )
+
+[node name="I am financially ruined" type="MeshInstance" parent="."]
+transform = Transform( 0.998275, 0, 0.058714, 0, 1, 0, -0.058714, 0, 0.998275, 45.5336, 7.6246, 14.8736 )
+mesh = SubResource( 3 )
+material/0 = SubResource( 4 )

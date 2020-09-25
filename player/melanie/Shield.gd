@@ -1,8 +1,8 @@
 extends AnimationPlayer
 
 """
-Animating the collider itself is kind of jank
-and I'm not totally happy w/ the results yet.
+Sorta still need this to animate the collider even though I'm offloading stuff to player now...
+??? need to solve that.
 """
 
 var active = false

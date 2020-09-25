@@ -45,6 +45,7 @@ func spawn_bomb() -> void:
 	Player.jewels -= jewel_cost
 	Player.lockplayer_for_frames(10)
 	tween.stop_all()
+	""" This needs to be cleaned up. this parameter no longer exists due to changing anim tree """
 	tween.interpolate_property(Player.anim_tree, 'parameters/BombBlend/blend_amount', null, 1.0, 0.1)
 	tween.start()
 
