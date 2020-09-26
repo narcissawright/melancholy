@@ -414,6 +414,7 @@ func update_vertical_velocity() -> void:
 		elif has_jump and Input.is_action_just_pressed('jump'):
 			has_jump = false
 			jumping = true
+			anim_state_machine.travel("Jump")
 
 ##     ####    ####  ##  ##  ######  #####
 ##    ##  ##  ##     ## ##   ##      ##  ##
@@ -470,6 +471,7 @@ func set_grounded(state:bool) -> void:
 			air_transition_timer.stop()
 			jumphold_framecount = 0
 			has_jump = true
+			anim_state_machine.travel("BaseMovement")
 		else:
 			# Transition to air:
 			air_transition_timer.wait_time = 5.0 * frame_time

@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=2]
+[gd_scene load_steps=33 format=2]
 
 [ext_resource path="res://player/melanie/MelanieModel.glb" type="PackedScene" id=1]
 [ext_resource path="res://player/TargetDetector.tscn" type="PackedScene" id=2]
@@ -20,6 +20,12 @@ nodes/TimeScale/node = SubResource( 17 )
 nodes/TimeScale/position = Vector2( 440, 120 )
 nodes/output/position = Vector2( 640, 120 )
 node_connections = [ "output", 0, "TimeScale", "TimeScale", 0, "BlendSpace2D" ]
+
+[sub_resource type="AnimationNodeAnimation" id=31]
+animation = "Jump"
+
+[sub_resource type="AnimationNodeAnimation" id=33]
+animation = "Land"
 
 [sub_resource type="AnimationNodeAnimation" id=22]
 animation = "Shield_Bash"
@@ -44,21 +50,7 @@ states/PutAway/position = Vector2( 720, 116 )
 states/TakeOut/node = SubResource( 24 )
 states/TakeOut/position = Vector2( 430, 116 )
 transitions = [ "TakeOut", "PutAway", SubResource( 25 ), "PutAway", "Bash", SubResource( 26 ), "Bash", "PutAway", SubResource( 27 ) ]
-
-[sub_resource type="AnimationNodeAnimation" id=16]
-animation = "Shield_PutAway"
-
-[sub_resource type="AnimationNodeAnimation" id=10]
-animation = "Shield_TakeOut"
-
-[sub_resource type="AnimationNodeBlendTree" id=11]
-graph_offset = Vector2( -26, 128.75 )
-nodes/PutAway/node = SubResource( 16 )
-nodes/PutAway/position = Vector2( 200, 320 )
-nodes/TakeOut/node = SubResource( 10 )
-nodes/TakeOut/position = Vector2( 200, 200 )
-nodes/output/position = Vector2( 660, 200 )
-node_connections = [ "output", 0, "TakeOut" ]
+graph_offset = Vector2( -4, 18 )
 
 [sub_resource type="AnimationNodeStateMachineTransition" id=29]
 xfade_time = 0.1
@@ -66,19 +58,29 @@ xfade_time = 0.1
 [sub_resource type="AnimationNodeStateMachineTransition" id=30]
 xfade_time = 0.1
 
+[sub_resource type="AnimationNodeStateMachineTransition" id=32]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=34]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=35]
+auto_advance = true
+xfade_time = 0.1
+
 [sub_resource type="AnimationNodeStateMachine" id=21]
 states/BaseMovement/node = SubResource( 18 )
 states/BaseMovement/position = Vector2( 297, 194 )
+states/Jump/node = SubResource( 31 )
+states/Jump/position = Vector2( 297, 364.02 )
+states/Land/node = SubResource( 33 )
+states/Land/position = Vector2( 213, 279.02 )
 states/ShieldMovement/node = SubResource( 28 )
-states/ShieldMovement/position = Vector2( 594, 103.02 )
-states/ShieldMovement_Old/node = SubResource( 11 )
-states/ShieldMovement_Old/position = Vector2( 594, 274 )
-transitions = [ "BaseMovement", "ShieldMovement", SubResource( 29 ), "ShieldMovement", "BaseMovement", SubResource( 30 ) ]
-graph_offset = Vector2( -145, -60.9798 )
+states/ShieldMovement/position = Vector2( 609, 194 )
+transitions = [ "BaseMovement", "ShieldMovement", SubResource( 29 ), "ShieldMovement", "BaseMovement", SubResource( 30 ), "BaseMovement", "Jump", SubResource( 32 ), "Jump", "Land", SubResource( 34 ), "Land", "BaseMovement", SubResource( 35 ) ]
+graph_offset = Vector2( -109, 49.0202 )
 
-[sub_resource type="AnimationNodeStateMachinePlayback" id=31]
+[sub_resource type="AnimationNodeStateMachinePlayback" id=36]
 
-[sub_resource type="AnimationNodeStateMachinePlayback" id=32]
+[sub_resource type="AnimationNodeStateMachinePlayback" id=37]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.2
@@ -114,10 +116,10 @@ spot_angle_attenuation = 100.0
 tree_root = SubResource( 21 )
 anim_player = NodePath("../MelanieModel/AnimationPlayer")
 active = true
-parameters/playback = SubResource( 31 )
+parameters/playback = SubResource( 36 )
 parameters/BaseMovement/BlendSpace2D/blend_position = Vector2( 0, 0 )
 parameters/BaseMovement/TimeScale/scale = 1.0
-parameters/ShieldMovement/playback = SubResource( 32 )
+parameters/ShieldMovement/playback = SubResource( 37 )
 
 [node name="MelanieModel" parent="." instance=ExtResource( 1 )]
 transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0 )
