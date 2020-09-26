@@ -510,9 +510,6 @@ func set_ledge_cling_anim(_blend_amt:float) -> void:
 	pass
 	#anim_tree['parameters/is_ledge_clinging/blend_amount'] = blend_amt
 	
-func anim_change_state(what:String) -> void:
-	anim_state_machine.travel(what)
-
 """ 
 Head Rotation Failure.
 Waiting for IK improvements to work on this.

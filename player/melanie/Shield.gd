@@ -1,11 +1,15 @@
 extends AnimationPlayer
 
+""" 
+There's some issues here with awkward node references and unoptimized code.
+"""
+
 var active = false
-var shieldbash_timer:int = 0 # I should try to remove this and maybe set a bool in animationplayer
+var shieldbash_timer:int = 0
 var bash_str:float setget , _get_bash_strength
 var sliding = false
 
-# Sort of ugly node references here, very frail.
+# Sort of ugly node references here, rather frail.
 onready var shield_pos = $"../MelanieModel/Armature/Skeleton/ShieldPos"
 onready var mesh = $"../ShieldMesh"
 
@@ -32,12 +36,16 @@ func _physics_process(_t:float) -> void:
 		if not active and Input.is_action_pressed("shield"):
 			if can_shield_bash():
 				# Perform shield bash
+				Player.kinematicbody.anim_tree['parameters/ShieldMovement/playback'].travel("Bash")
 				play("shield_bash")
 				seek(0)
 				active = true
-			elif not active:
+			else:
 				# Take shield out
-				Player.kinematicbody.anim_change_state("ShieldMovement")
+				
+				""" Issue here where it shouldnt start this animation from the beginning I think if the shield is currently being put away still... ?? """
+				Player.kinematicbody.anim_state_machine.travel("ShieldMovement")
+				Player.kinematicbody.anim_tree['parameters/ShieldMovement/playback'].start("TakeOut")
 				play("take_out")
 				active = true
 		
@@ -48,7 +56,13 @@ func _physics_process(_t:float) -> void:
 				shieldbash_timer = 10 # frames
 
 	if not active:
+		# Follow Bone Attachment (bobbing on Melanie's back)
 		mesh.transform = shield_pos.transform.rotated(Vector3.UP, PI)
+		
+		# This feels awkward, to check this every frame.
+		if not can_shield_bash():
+			if Player.kinematicbody.anim_state_machine.get_current_node() == "ShieldMovement":
+				Player.kinematicbody.anim_state_machine.travel("BaseMovement")
 
 func slide() -> void:
 	active = true
@@ -59,6 +73,7 @@ func slide() -> void:
 
 func put_away() -> void:
 	if not sliding:
+		Player.kinematicbody.anim_tree['parameters/ShieldMovement/playback'].travel("PutAway")
 		play("put_away")
 		active = false
 
@@ -83,7 +98,3 @@ func _get_bash_strength() -> float:
 func on_player_damaged() -> void:
 	if active:
 		put_away()
-
-func _on_ShieldAnim_animation_finished(anim_name: String) -> void:
-	if anim_name == "put_away":
-		Player.kinematicbody.anim_change_state("BaseMovement")
