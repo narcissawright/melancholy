@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://player/melanie/MelanieModel.glb" type="PackedScene" id=1]
 [ext_resource path="res://player/TargetDetector.tscn" type="PackedScene" id=2]
@@ -10,41 +10,47 @@
 [ext_resource path="res://player/ledge_detection/LedgeGrabSystem.tscn" type="PackedScene" id=9]
 [ext_resource path="res://player/melanie/base_movement_anim.tres" type="AnimationNodeBlendSpace2D" id=10]
 
-[sub_resource type="AnimationNodeTimeScale" id=8]
+[sub_resource type="AnimationNodeTimeScale" id=17]
 
-[sub_resource type="AnimationNodeBlendTree" id=9]
-graph_offset = Vector2( -77, -69 )
+[sub_resource type="AnimationNodeBlendTree" id=18]
+graph_offset = Vector2( 145, 3.75 )
 nodes/BlendSpace2D/node = ExtResource( 10 )
 nodes/BlendSpace2D/position = Vector2( 220, 120 )
-nodes/TimeScale/node = SubResource( 8 )
+nodes/TimeScale/node = SubResource( 17 )
 nodes/TimeScale/position = Vector2( 440, 120 )
-nodes/output/position = Vector2( 620, 120 )
+nodes/output/position = Vector2( 640, 120 )
 node_connections = [ "output", 0, "TimeScale", "TimeScale", 0, "BlendSpace2D" ]
+
+[sub_resource type="AnimationNodeAnimation" id=16]
+animation = "Shield_PutAway"
 
 [sub_resource type="AnimationNodeAnimation" id=10]
 animation = "Shield_TakeOut"
 
 [sub_resource type="AnimationNodeBlendTree" id=11]
-graph_offset = Vector2( 15, 137.75 )
+graph_offset = Vector2( -7, 100.75 )
+nodes/PutAway/node = SubResource( 16 )
+nodes/PutAway/position = Vector2( 200, 320 )
 nodes/TakeOut/node = SubResource( 10 )
-nodes/TakeOut/position = Vector2( 420, 220 )
-nodes/output/position = Vector2( 680, 240 )
+nodes/TakeOut/position = Vector2( 200, 200 )
+nodes/output/position = Vector2( 660, 200 )
 node_connections = [ "output", 0, "TakeOut" ]
 
-[sub_resource type="AnimationNodeStateMachineTransition" id=12]
-xfade_time = 0.2
+[sub_resource type="AnimationNodeStateMachineTransition" id=19]
+xfade_time = 0.1
 
-[sub_resource type="AnimationNodeStateMachineTransition" id=14]
+[sub_resource type="AnimationNodeStateMachineTransition" id=20]
+xfade_time = 0.1
 
-[sub_resource type="AnimationNodeStateMachine" id=13]
-states/BaseMovement/node = SubResource( 9 )
+[sub_resource type="AnimationNodeStateMachine" id=21]
+states/BaseMovement/node = SubResource( 18 )
 states/BaseMovement/position = Vector2( 295, 194 )
 states/ShieldMovement/node = SubResource( 11 )
 states/ShieldMovement/position = Vector2( 561, 194 )
-transitions = [ "BaseMovement", "ShieldMovement", SubResource( 12 ), "ShieldMovement", "BaseMovement", SubResource( 14 ) ]
-graph_offset = Vector2( -124, 84.0202 )
+transitions = [ "BaseMovement", "ShieldMovement", SubResource( 19 ), "ShieldMovement", "BaseMovement", SubResource( 20 ) ]
+graph_offset = Vector2( -169, -92.9798 )
 
-[sub_resource type="AnimationNodeStateMachinePlayback" id=15]
+[sub_resource type="AnimationNodeStateMachinePlayback" id=22]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.2
@@ -77,10 +83,10 @@ spot_angle = 8.0
 spot_angle_attenuation = 100.0
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
-tree_root = SubResource( 13 )
+tree_root = SubResource( 21 )
 anim_player = NodePath("../MelanieModel/AnimationPlayer")
 active = true
-parameters/playback = SubResource( 15 )
+parameters/playback = SubResource( 22 )
 parameters/BaseMovement/BlendSpace2D/blend_position = Vector2( 0, 0 )
 parameters/BaseMovement/TimeScale/scale = 1.0
 
@@ -102,11 +108,11 @@ shape = SubResource( 2 )
 disabled = true
 
 [node name="ShieldMesh" parent="." instance=ExtResource( 7 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0.85, 0.13 )
-visible = false
+transform = Transform( 0.375, 0, 0, 0, 0.374772, 0.0130873, 0, -0.0130873, 0.374772, 0, 0.875, 0.15 )
 layers = 2
 
 [node name="ShieldAnim" parent="." instance=ExtResource( 3 )]
+process_priority = 1
 
 [node name="TargetDetector" parent="." instance=ExtResource( 2 )]
 
@@ -160,6 +166,7 @@ texture = SubResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+[connection signal="animation_finished" from="ShieldAnim" to="ShieldAnim" method="_on_ShieldAnim_animation_finished"]
 [connection signal="body_entered" from="BombSpawner/SpawnArea" to="BombSpawner" method="_on_SpawnArea_body_entered"]
 [connection signal="timeout" from="Timers/Locked" to="." method="_on_Locked_timeout"]
 [connection signal="timeout" from="Timers/AirTransition" to="." method="_on_AirTransition_timeout"]

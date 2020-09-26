@@ -32,7 +32,7 @@ var jumphold_framecount:int = 0 # Track the # of consecutive frames jump is held
 onready var air_transition_timer = $Timers/AirTransition # Used to give jumps leniency when falling off of a ledge
 
 # Shield
-#onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shield is up or not
+onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shield is up or not
 
 # Material
 onready var material = $MelanieModel/Armature/Skeleton/MeshInstance.get_surface_material(0)
@@ -78,7 +78,6 @@ func _physics_process(_t) -> void:
 	update_target_state() # ZL Targeting
 	
 	check_ledgegrab()
-	process_shield()
 	update_horizontal_velocity() # General movement
 	update_vertical_velocity() # Jumping and gravity
 	
@@ -311,92 +310,6 @@ func snap_to_ledge(raycast_result:Dictionary, height:float) -> void:
 		
 	ledgegrab_tween.start()
 
- #####  ##   ##  ##  ######  ##      #####
-##      ##   ##  ##  ##      ##      ##  ##
- ####   #######  ##  #####   ##      ##  ##
-    ##  ##   ##  ##  ##      ##      ##  ##
-#####   ##   ##  ##  ######  ######  #####
-
-"""
-Animating the collider itself is kind of jank
-and I'm not totally happy w/ the results yet.
-"""
-
-var shield:Dictionary = {
-	"active": false,
-	"bash_timer": 0,
-	"sliding": false
-	}
-
-#var shield_bash_str:float setget , _get_bash_strength
-
-func shield_ready() -> void:
-	Events.connect("player_damaged", self, "on_player_damaged")
-
-func can_shield() -> bool:
-	if Player.is_locked(): return false
-	if Player.ledgegrabbing: return false
-	return true
-
-func process_shield() -> void:
-	
-	if shield.sliding:
-		if horizontal_velocity().length() < 5.0:
-			shield.sliding = false
-			unlockplayer("shield_slide")
-	
-	if shield.bash_timer > 0:
-		shield.bash_timer -= 1
-	
-	if can_shield():
-		# If you just pressed shield
-		if not shield.active and Input.is_action_pressed("shield"):
-			if can_shield_bash():
-				# Perform shield bash
-				#play("shield_bash")
-				#seek(0)
-				shield.active = true
-			elif not shield.active:
-				# Take shield out
-				anim_change_state("ShieldMovement")
-				shield.active = true
-		
-		# If you're NOT pressing shield...
-		elif not Input.is_action_pressed("shield"):
-			if shield.active: # and not is_playing():
-				shield_put_away()
-				shield.bash_timer = 10 # frames
-
-func shield_slide() -> void:
-	shield.active = true
-	shield.sliding = true
-	lockplayer("shield_slide")
-	#play("take_out")
-	#seek(current_animation_length)
-
-func shield_put_away() -> void:
-	if not shield.sliding:
-		anim_change_state("BaseMovement")
-		shield.active = false
-
-func can_shield_bash() -> bool:
-	if shield.bash_timer == 0: 
-		return false
-#	if is_playing():
-#		match current_animation:
-#			"put_away":
-#				seek(0, true)
-#				return true
-#			"shield_bash":
-#				if current_animation_position < current_animation_length * 0.5: 
-#					return false
-	return true
-
-#func _get_bash_strength() -> float:
-#	if current_animation == "shield_bash":
-#		return 1.0 - (current_animation_position / current_animation_length)
-#	return 0.0
-
 ##  ##        ##  ##  #####  ##     ####    ####  ##  ######  ##  ##
 ##  ##        ##  ##  ##     ##    ##  ##  ##     ##    ##    ##  ##
 ######  ####  ##  ##  ####   ##    ##  ##  ##     ##    ##     ####
@@ -593,8 +506,9 @@ func walk_animation() -> void:
 	anim_tree['parameters/BaseMovement/BlendSpace2D/blend_position'] = Vector2(x_walk, y_walk)
 	anim_tree['parameters/BaseMovement/TimeScale/scale'] = (y_walk/2.0) + 1.0
 
-func set_ledge_cling_anim(blend_amt:float) -> void:
-	anim_tree['parameters/is_ledge_clinging/blend_amount'] = blend_amt
+func set_ledge_cling_anim(_blend_amt:float) -> void:
+	pass
+	#anim_tree['parameters/is_ledge_clinging/blend_amount'] = blend_amt
 	
 func anim_change_state(what:String) -> void:
 	anim_state_machine.travel(what)
@@ -863,7 +777,7 @@ func hit_by_explosion(explosion_center:Vector3) -> void:
 		if result.shape > 0:
 			# hit shield
 			velocity += forwards() * -14.0
-			shield_slide()
+			shield.slide()
 			return
 	# Bomb did not hit your shield; apply damage.
 	velocity += travel_vector * 7.0
@@ -886,7 +800,7 @@ func apply_damage(value:float) -> void:
 		die()
 	Events.emit_signal('player_damaged')
 	if shield.active:
-		shield_put_away()
+		shield.put_away()
 		
 func die() -> void:
 	#Events.emit_signal('player_died')

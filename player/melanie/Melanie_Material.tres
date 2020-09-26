@@ -91,6 +91,7 @@ code = "shader_type spatial;
 render_mode ambient_light_disabled;
 
 uniform float opacity = 1.0;
+uniform bool soft_shading = true;
 
 uniform sampler2D tex_lit : hint_albedo;
 uniform sampler2D tex_shaded : hint_albedo;
@@ -179,7 +180,11 @@ void light() {
 	
 	float occlusion = pow(ALBEDO.r, 0.45188);
 	
-	lit = smoothstep(0.425, 0.575, lit + (occlusion - 0.5));
+	if (soft_shading) {
+		lit = smoothstep(0.425, 0.575, lit + (occlusion - 0.5));
+	} else {
+		lit = smoothstep(0.499, 0.501, lit + (occlusion - 0.5));
+	}
 	vec3 final_value = mix(final_dim, final_dim + final_diff, lit);
 	
 	 DIFFUSE_LIGHT = max(DIFFUSE_LIGHT, final_value);
@@ -190,6 +195,7 @@ void light() {
 next_pass = SubResource( 2 )
 shader = SubResource( 3 )
 shader_param/opacity = 1.0
+shader_param/soft_shading = true
 shader_param/damaged = false
 shader_param/locked = false
 shader_param/tex_lit = ExtResource( 3 )

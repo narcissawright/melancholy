@@ -1,18 +1,17 @@
 extends AnimationPlayer
 
-"""
-Sorta still need this to animate the collider even though I'm offloading stuff to player now...
-??? need to solve that.
-"""
-
 var active = false
 var shieldbash_timer:int = 0 # I should try to remove this and maybe set a bool in animationplayer
 var bash_str:float setget , _get_bash_strength
 var sliding = false
 
+# Sort of ugly node references here, very frail.
+onready var shield_pos = $"../MelanieModel/Armature/Skeleton/ShieldPos"
+onready var mesh = $"../ShieldMesh"
+
 func _ready() -> void:
 	Events.connect("player_damaged", self, "on_player_damaged")
-
+	
 func can_shield() -> bool:
 	if Player.is_locked(): return false
 	if Player.ledgegrabbing: return false
@@ -38,6 +37,7 @@ func _physics_process(_t:float) -> void:
 				active = true
 			elif not active:
 				# Take shield out
+				Player.kinematicbody.anim_change_state("ShieldMovement")
 				play("take_out")
 				active = true
 		
@@ -46,6 +46,9 @@ func _physics_process(_t:float) -> void:
 			if active and not is_playing():
 				put_away()
 				shieldbash_timer = 10 # frames
+
+	if not active:
+		mesh.transform = shield_pos.transform.rotated(Vector3.UP, PI)
 
 func slide() -> void:
 	active = true
@@ -80,3 +83,7 @@ func _get_bash_strength() -> float:
 func on_player_damaged() -> void:
 	if active:
 		put_away()
+
+func _on_ShieldAnim_animation_finished(anim_name: String) -> void:
+	if anim_name == "put_away":
+		Player.kinematicbody.anim_change_state("BaseMovement")

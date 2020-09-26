@@ -17,6 +17,12 @@ func post_import(scene):
 			bone_attachment.name = "BombPos"
 			bone_attachment.bone_name = "bomb"
 			
+			var bone_attachment2 = BoneAttachment.new()
+			skele.add_child(bone_attachment2)
+			bone_attachment2.set_owner(scene)
+			bone_attachment2.name = "ShieldPos"
+			bone_attachment2.bone_name = "shield"
+			
 		if child.name == "AnimationPlayer":
 			child.get_animation("Idle").loop = true
 			child.get_animation("Walk").loop = true
