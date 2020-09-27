@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=2]
+[gd_scene load_steps=41 format=2]
 
 [ext_resource path="res://player/melanie/MelanieModel.glb" type="PackedScene" id=1]
 [ext_resource path="res://player/TargetDetector.tscn" type="PackedScene" id=2]
@@ -10,98 +10,105 @@
 [ext_resource path="res://player/ledge_detection/LedgeGrabSystem.tscn" type="PackedScene" id=9]
 [ext_resource path="res://player/melanie/base_movement_anim.tres" type="AnimationNodeBlendSpace2D" id=10]
 
-[sub_resource type="AnimationNodeTimeScale" id=17]
+[sub_resource type="AnimationNodeTimeScale" id=1]
 
-[sub_resource type="AnimationNodeBlendTree" id=18]
+[sub_resource type="AnimationNodeBlendTree" id=2]
 graph_offset = Vector2( 145, 3.75 )
 nodes/BlendSpace2D/node = ExtResource( 10 )
 nodes/BlendSpace2D/position = Vector2( 220, 120 )
-nodes/TimeScale/node = SubResource( 17 )
+nodes/TimeScale/node = SubResource( 1 )
 nodes/TimeScale/position = Vector2( 440, 120 )
 nodes/output/position = Vector2( 640, 120 )
 node_connections = [ "output", 0, "TimeScale", "TimeScale", 0, "BlendSpace2D" ]
 
-[sub_resource type="AnimationNodeAnimation" id=31]
+[sub_resource type="AnimationNodeAnimation" id=3]
+animation = "Falling"
+
+[sub_resource type="AnimationNodeAnimation" id=4]
 animation = "Jump"
 
-[sub_resource type="AnimationNodeAnimation" id=36]
+[sub_resource type="AnimationNodeAnimation" id=5]
 animation = "Jumpsquat"
 
-[sub_resource type="AnimationNodeAnimation" id=33]
+[sub_resource type="AnimationNodeAnimation" id=6]
 animation = "Jumpsquat"
 
-[sub_resource type="AnimationNodeAnimation" id=22]
+[sub_resource type="AnimationNodeAnimation" id=7]
 animation = "Shield_Bash"
 
-[sub_resource type="AnimationNodeAnimation" id=23]
+[sub_resource type="AnimationNodeAnimation" id=8]
 animation = "Shield_PutAway"
 
-[sub_resource type="AnimationNodeAnimation" id=24]
+[sub_resource type="AnimationNodeAnimation" id=9]
 animation = "Shield_TakeOut"
 
-[sub_resource type="AnimationNodeStateMachineTransition" id=25]
+[sub_resource type="AnimationNodeStateMachineTransition" id=10]
 
-[sub_resource type="AnimationNodeStateMachineTransition" id=26]
+[sub_resource type="AnimationNodeStateMachineTransition" id=11]
 
-[sub_resource type="AnimationNodeStateMachineTransition" id=27]
+[sub_resource type="AnimationNodeStateMachineTransition" id=12]
 
-[sub_resource type="AnimationNodeStateMachine" id=28]
-states/Bash/node = SubResource( 22 )
+[sub_resource type="AnimationNodeStateMachine" id=13]
+states/Bash/node = SubResource( 7 )
 states/Bash/position = Vector2( 720, 209 )
-states/PutAway/node = SubResource( 23 )
+states/PutAway/node = SubResource( 8 )
 states/PutAway/position = Vector2( 720, 116 )
-states/TakeOut/node = SubResource( 24 )
+states/TakeOut/node = SubResource( 9 )
 states/TakeOut/position = Vector2( 430, 116 )
-transitions = [ "TakeOut", "PutAway", SubResource( 25 ), "PutAway", "Bash", SubResource( 26 ), "Bash", "PutAway", SubResource( 27 ) ]
+transitions = [ "TakeOut", "PutAway", SubResource( 10 ), "PutAway", "Bash", SubResource( 11 ), "Bash", "PutAway", SubResource( 12 ) ]
 graph_offset = Vector2( -4, 18 )
 
-[sub_resource type="AnimationNodeStateMachineTransition" id=29]
+[sub_resource type="AnimationNodeStateMachineTransition" id=14]
 xfade_time = 0.1
 
-[sub_resource type="AnimationNodeStateMachineTransition" id=30]
+[sub_resource type="AnimationNodeStateMachineTransition" id=15]
 xfade_time = 0.1
 
-[sub_resource type="AnimationNodeStateMachineTransition" id=34]
-xfade_time = 0.1
-
-[sub_resource type="AnimationNodeStateMachineTransition" id=35]
+[sub_resource type="AnimationNodeStateMachineTransition" id=16]
 auto_advance = true
 xfade_time = 0.1
 
-[sub_resource type="AnimationNodeStateMachineTransition" id=37]
+[sub_resource type="AnimationNodeStateMachineTransition" id=17]
 xfade_time = 0.07
 
-[sub_resource type="AnimationNodeStateMachineTransition" id=38]
+[sub_resource type="AnimationNodeStateMachineTransition" id=18]
 auto_advance = true
-xfade_time = 0.07
 
-[sub_resource type="AnimationNodeStateMachine" id=21]
-states/BaseMovement/node = SubResource( 18 )
+[sub_resource type="AnimationNodeStateMachineTransition" id=19]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=20]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=21]
+auto_advance = true
+
+[sub_resource type="AnimationNodeStateMachine" id=22]
+states/BaseMovement/node = SubResource( 2 )
 states/BaseMovement/position = Vector2( 297, 194 )
-states/Jump/node = SubResource( 31 )
+states/Falling/node = SubResource( 3 )
+states/Falling/position = Vector2( 68, 267 )
+states/Jump/node = SubResource( 4 )
 states/Jump/position = Vector2( 297, 364.02 )
-states/Jumpsquat/node = SubResource( 36 )
+states/Jumpsquat/node = SubResource( 5 )
 states/Jumpsquat/position = Vector2( 417, 279.02 )
-states/Land/node = SubResource( 33 )
-states/Land/position = Vector2( 183, 279.02 )
-states/ShieldMovement/node = SubResource( 28 )
+states/Land/node = SubResource( 6 )
+states/Land/position = Vector2( 245, 261.02 )
+states/ShieldMovement/node = SubResource( 13 )
 states/ShieldMovement/position = Vector2( 609, 194 )
-transitions = [ "BaseMovement", "ShieldMovement", SubResource( 29 ), "ShieldMovement", "BaseMovement", SubResource( 30 ), "Jump", "Land", SubResource( 34 ), "Land", "BaseMovement", SubResource( 35 ), "BaseMovement", "Jumpsquat", SubResource( 37 ), "Jumpsquat", "Jump", SubResource( 38 ) ]
-graph_offset = Vector2( -20, 173.02 )
+transitions = [ "BaseMovement", "ShieldMovement", SubResource( 14 ), "ShieldMovement", "BaseMovement", SubResource( 15 ), "Land", "BaseMovement", SubResource( 16 ), "BaseMovement", "Jumpsquat", SubResource( 17 ), "Jumpsquat", "Jump", SubResource( 18 ), "BaseMovement", "Falling", SubResource( 19 ), "Falling", "Land", SubResource( 20 ), "Jump", "Falling", SubResource( 21 ) ]
+graph_offset = Vector2( -58, 83.1241 )
 
-[sub_resource type="AnimationNodeStateMachinePlayback" id=39]
+[sub_resource type="AnimationNodeStateMachinePlayback" id=23]
 
-[sub_resource type="AnimationNodeStateMachinePlayback" id=40]
+[sub_resource type="AnimationNodeStateMachinePlayback" id=24]
 
-[sub_resource type="CapsuleShape" id=1]
+[sub_resource type="CapsuleShape" id=25]
 radius = 0.2
 height = 1.37
 
-[sub_resource type="BoxShape" id=2]
+[sub_resource type="BoxShape" id=26]
 extents = Vector3( 0.1, 0.2, 0.05 )
 
-[sub_resource type="Animation" id=41]
-resource_name = "put_away"
+[sub_resource type="Animation" id=27]
 length = 0.266667
 step = 0.0166667
 tracks/0/type = "value"
@@ -215,8 +222,7 @@ tracks/8/keys = {
 } ]
 }
 
-[sub_resource type="Animation" id=42]
-resource_name = "shield_bash"
+[sub_resource type="Animation" id=28]
 length = 0.233333
 step = 0.0166667
 tracks/0/type = "value"
@@ -256,8 +262,7 @@ tracks/2/keys = {
 "values": [ 0.2, 0.25, 0.2 ]
 }
 
-[sub_resource type="Animation" id=43]
-resource_name = "take_out"
+[sub_resource type="Animation" id=29]
 length = 0.133333
 step = 0.0166667
 tracks/0/type = "value"
@@ -357,10 +362,10 @@ tracks/7/keys = {
 "values": [ 0.0500002, 0.2 ]
 }
 
-[sub_resource type="CapsuleShape" id=6]
+[sub_resource type="CapsuleShape" id=30]
 radius = 0.15
 
-[sub_resource type="ImageTexture" id=7]
+[sub_resource type="ImageTexture" id=31]
 
 [node name="Melanie" type="KinematicBody"]
 pause_mode = 1
@@ -381,20 +386,20 @@ spot_angle = 8.0
 spot_angle_attenuation = 100.0
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
-tree_root = SubResource( 21 )
+tree_root = SubResource( 22 )
 anim_player = NodePath("../MelanieModel/AnimationPlayer")
 active = true
-parameters/playback = SubResource( 39 )
+parameters/playback = SubResource( 23 )
 parameters/BaseMovement/BlendSpace2D/blend_position = Vector2( 0, 0 )
 parameters/BaseMovement/TimeScale/scale = 1.0
-parameters/ShieldMovement/playback = SubResource( 40 )
+parameters/ShieldMovement/playback = SubResource( 24 )
 
 [node name="MelanieModel" parent="." instance=ExtResource( 1 )]
 transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0 )
 
 [node name="BodyCollision" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0.885, 0 )
-shape = SubResource( 1 )
+shape = SubResource( 25 )
 
 [node name="RayCast" type="RayCast" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0 )
@@ -403,7 +408,7 @@ cast_to = Vector3( 0, -0.11, 0 )
 
 [node name="ShieldCollision" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0 )
-shape = SubResource( 2 )
+shape = SubResource( 26 )
 disabled = true
 
 [node name="ShieldMesh" parent="." instance=ExtResource( 7 )]
@@ -412,9 +417,9 @@ layers = 2
 
 [node name="ShieldAnim" type="AnimationPlayer" parent="."]
 process_priority = 1
-anims/put_away = SubResource( 41 )
-anims/shield_bash = SubResource( 42 )
-anims/take_out = SubResource( 43 )
+anims/put_away = SubResource( 27 )
+anims/shield_bash = SubResource( 28 )
+anims/take_out = SubResource( 29 )
 script = ExtResource( 3 )
 
 [node name="TargetDetector" parent="." instance=ExtResource( 2 )]
@@ -434,18 +439,15 @@ collision_layer = 0
 
 [node name="CollisionShape" type="CollisionShape" parent="BombSpawner/SpawnArea"]
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, -0.5, 0 )
-shape = SubResource( 6 )
+shape = SubResource( 30 )
 
 [node name="Tween" type="Tween" parent="BombSpawner"]
 
 [node name="Timers" type="Node" parent="."]
 
-[node name="Locked" type="Timer" parent="Timers"]
-process_mode = 0
-one_shot = true
-
 [node name="AirTransition" type="Timer" parent="Timers"]
 process_mode = 0
+wait_time = 0.1
 one_shot = true
 
 [node name="ReTarget" type="Timer" parent="Timers"]
@@ -457,6 +459,10 @@ process_mode = 0
 wait_time = 0.1
 one_shot = true
 
+[node name="BufferJump" type="Timer" parent="Timers"]
+wait_time = 0.1
+one_shot = true
+
 [node name="LedgeGrabSystem" parent="." instance=ExtResource( 9 )]
 
 [node name="TextureRect" type="TextureRect" parent="."]
@@ -465,11 +471,10 @@ margin_left = 300.0
 margin_top = 100.0
 margin_right = 340.0
 margin_bottom = 140.0
-texture = SubResource( 7 )
+texture = SubResource( 31 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 [connection signal="body_entered" from="BombSpawner/SpawnArea" to="BombSpawner" method="_on_SpawnArea_body_entered"]
-[connection signal="timeout" from="Timers/Locked" to="." method="_on_Locked_timeout"]
 [connection signal="timeout" from="Timers/AirTransition" to="." method="_on_AirTransition_timeout"]
 [connection signal="timeout" from="Timers/ReTarget" to="." method="_on_ReTarget_timeout"]

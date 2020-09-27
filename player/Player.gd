@@ -8,6 +8,7 @@ sort of like an API to interact with the player.
 The generic stuff that isn't specific to Melanie should be moved into this script.
 """
 
+var frame_time:float = 1.0 / 60.0
 var character:String = "Melanie"
 var kinematicbody:KinematicBody
 onready var Melanie = $Melanie
@@ -15,21 +16,60 @@ onready var Melancholy = $Melancholy
 onready var TargetSystem = $TargetSystem
 
 func _ready() -> void:
-	
 	match character:
 		"Melanie":
-			Melanie.set_physics_process(true)
 			kinematicbody = Melanie
-			Melanie.visible = true
+			Melanie.initialize()
 		"Melancholy":
-			Melancholy.set_physics_process(true)
 			kinematicbody = Melancholy
-			Melancholy.visible = true
+			Melancholy.initialize()
 			
 	shield = kinematicbody.shield
 	anim_tree = kinematicbody.anim_tree
-	bombspawner = Melanie.bombspawner
+	bombspawner = Melanie.bombspawner # melancholy should have this too, fix later
 	max_hp = kinematicbody.max_hp
+
+##     ####    ####  ##  ##  ######  #####
+##    ##  ##  ##     ## ##   ##      ##  ##
+##    ##  ##  ##     ####    #####   ##  ##
+##    ##  ##  ##     ## ##   ##      ##  ##
+#####  ####    ####  ##  ##  ######  #####
+
+var lock_list:Array = []
+onready var lock_timer = $Timers/LockPlayer
+
+func is_locked() -> bool:
+	return lock_list.size() > 0
+
+func lockplayer_for_frames(frames:int, overwrite:bool = false) -> void:
+	# Set Timer
+	lock_timer.wait_time = (frames * frame_time)
+	if not overwrite:
+		lock_timer.wait_time += lock_timer.time_left
+	lock_timer.start()
+	lockplayer("timer")
+
+func lockplayer(reason) -> void:
+	if not lock_list.has(reason):
+		lock_list.append(reason)
+	kinematicbody.material.set_shader_param("locked", true)
+
+func _on_LockPlayer_timeout() -> void:
+	unlockplayer("timer")
+	
+func unlockplayer(reason) -> void:
+	lock_list.erase(reason)
+	if not is_locked():
+		kinematicbody.material.set_shader_param("locked", false)
+		kinematicbody.material.set_shader_param("damaged", false)
+
+
+
+
+
+
+
+# TODO: CLEAN UP
 
 var position:Vector3 setget set_position, get_position
 func set_position(pos:Vector3) -> void:
@@ -39,8 +79,9 @@ func get_position() -> Vector3:
 
 var forwards:Vector3 setget , get_forwards
 func get_forwards() -> Vector3:
-	return -kinematicbody.global_transform.basis.z
+	return -kinematicbody.transform.basis.z
 
+# test_enemy.gd, Camera.gd
 var head_position setget , get_head_position
 func get_head_position() -> Vector3:
 	return kinematicbody.head_position
@@ -84,14 +125,14 @@ func untarget() -> void:
 func obtain_item(what:String) -> void:
 	kinematicbody.obtain_item(what)
 
-func lockplayer(reason:String) -> void:
-	kinematicbody.lockplayer(reason)
-	
-func unlockplayer(reason:String) -> void:
-	kinematicbody.unlockplayer(reason)
-
-func lockplayer_for_frames(frames:int) -> void:
-	kinematicbody.lockplayer_for_frames(frames)
+#func lockplayer(reason:String) -> void:
+#	kinematicbody.lockplayer(reason)
+#
+#func unlockplayer(reason:String) -> void:
+#	kinematicbody.unlockplayer(reason)
+#
+#func lockplayer_for_frames(frames:int) -> void:
+#	kinematicbody.lockplayer_for_frames(frames)
 
 var current_subweapon:String setget set_current_subweapon, get_current_subweapon
 func set_current_subweapon(subweapon:String) -> void:
@@ -109,8 +150,8 @@ func inventory_is_full() -> bool:
 func set_geometry_aabb(aabb:AABB) -> void:
 	kinematicbody.set_geometry_aabb(aabb)
 
-func is_locked() -> bool:
-	return kinematicbody.is_locked()
+#func is_locked() -> bool:
+#	return kinematicbody.is_locked()
 
 var velocity:Vector3 setget set_velocity, get_velocity
 func set_velocity(value:Vector3):
@@ -172,3 +213,5 @@ func get_stick_input(which:String) -> Vector2:
 	var percentage = inverse_lerp(joystick_axis_deadzone, joystick_outer_threshold, length)
 #	percentage = pow(percentage, joystick_easing_curve)
 	return normalized * percentage
+
+

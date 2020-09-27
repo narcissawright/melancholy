@@ -1,5 +1,7 @@
 extends Camera
 
+""" Something about entering and exiting first person seems buggy right now, fix soon """
+
 # Collision
 var query := PhysicsShapeQueryParameters.new()
 var shape := SphereShape.new()
@@ -302,11 +304,11 @@ func enter_first_person() -> void:
 	zoom_tween.interpolate_property(self, "current_distance", current_distance, 0.01, 0.15)
 	zoom_tween.interpolate_property(self, "pan", pan, Vector3.ZERO, 0.15)
 	zoom_tween.start()
+	current_pos = -Player.forwards
 	if Player.shield.active:
 		Player.shield.put_away()
 	if Player.bombspawner.holding:
 		Player.bombspawner.drop_bomb()
-	current_pos = -Player.forwards
 	Player.untarget()
 	Player.lockplayer("first_person")
 

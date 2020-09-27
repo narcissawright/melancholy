@@ -14,10 +14,6 @@ var frame_time:float = 1.0 / 60.0
 var hp:float = 200.0
 var max_hp:float = 200.0
 
-# Grounded State
-var grounded:bool = true
-onready var raycast = $RayCast # Determines if the player is grounded or not
-
 # Movement
 var velocity := Vector3.ZERO
 var sprint_count:int = 0 # Track the # of consecutive frames the left joystick is fully pressed (for acceleration)
@@ -48,12 +44,13 @@ onready var anim_tree = $AnimationTree
 
 func _ready() -> void:
 	set_physics_process(false)
-	process_priority = 0 # Run this before camera
-	
+
+func initialize() -> void:
+	visible = true
+	set_physics_process(true)
 	initialize_animationtree()
 	initialize_checkpoint_state()
-	
-	lockplayer_for_frames(20) # Set locked state
+	Player.lockplayer_for_frames(20)
 
 #####   #####    ####    #####  #####   #####   #####
 ##  ##  ##  ##  ##  ##  ##      ##     ##      ##
@@ -73,7 +70,7 @@ func _physics_process(_t) -> void:
 	
 	check_ledgegrab()
 	update_horizontal_velocity() # General movement
-	update_vertical_velocity() # Jumping and gravity
+	jumping_and_falling()
 	
 	var collision:KinematicCollision = move_and_collide(velocity * frame_time) # Apply Physics
 	
@@ -86,46 +83,6 @@ func _physics_process(_t) -> void:
 	process_subweapon() # performed AFTER move_and_collide to correctly place projectiles.
 	respawn_check() # Check if player fell below the map
 	debug() # Write debug info onscreen
-
-##     ####    ####  ##  ##  ######  #####
-##    ##  ##  ##     ## ##   ##      ##  ##
-##    ##  ##  ##     ####    #####   ##  ##
-##    ##  ##  ##     ## ##   ##      ##  ##
-#####  ####    ####  ##  ##  ######  #####
-
-"""
-note: the damage lock overwrites the timer when you take dmg instead of adding more time.
-I may want to change this later... maybe
-"""
-
-var lock_list:Array = []
-onready var lock_timer = $Timers/Locked
-
-func is_locked() -> bool:
-	return lock_list.size() > 0
-
-# Locked State:
-func lockplayer_for_frames(frames:int) -> void:
-	# Set Timer
-	lock_timer.wait_time = frames * frame_time
-	lock_timer.start()
-	lockplayer("timer")
-
-func lockplayer(reason) -> void:
-	if not lock_list.has(reason):
-		lock_list.append(reason)
-	#jumping = false
-	sprint_count = 0
-	#material.set_shader_param("locked", true)
-
-func _on_Locked_timeout() -> void:
-	unlockplayer("timer")
-	
-func unlockplayer(reason) -> void:
-	lock_list.erase(reason)
-	if not is_locked():
-		material.set_shader_param("locked", false)
-		material.set_shader_param("damaged", false)
 
 ##  ######  ######   ###### 
 ##    ##    ##      ## ## ##
@@ -144,7 +101,7 @@ func obtain_item(item:String) -> void:
 
 func can_use_item() -> bool:
 	if not grounded: return false
-	if is_locked(): return false
+	if Player.is_locked(): return false
 	if MainCam.mode == "first_person": return false 
 	return true
 
@@ -158,14 +115,14 @@ func check_if_use_item() -> void:
 						inventory.remove(UI.inventory.selected_item)
 						UI.inventory.selected_item = 0
 						UI.inventory.update_inventory(inventory)
-						lockplayer_for_frames(30)
+						Player.lockplayer_for_frames(30)
 				"moon_card":
 					if Timekeeper.can_use_card():
 						Timekeeper.use_card("moon")
 						inventory.remove(UI.inventory.selected_item)
 						UI.inventory.selected_item = 0
 						UI.inventory.update_inventory(inventory)
-						lockplayer_for_frames(30)
+						Player.lockplayer_for_frames(30)
 
 ######  ####   #####    #####  ######  ######
   ##   ##  ##  ##  ##  ##      ##        ##
@@ -285,7 +242,7 @@ func check_ledgegrab():
 	else:
 		# Check for initiate ledge grab:
 		if grounded: return
-		if is_locked(): return
+		if Player.is_locked(): return
 		if velocity.y >= 0.1: return
 		if not Input.is_action_pressed("jump"): return 
 		if bombspawner.holding: return
@@ -328,6 +285,12 @@ func snap_to_ledge(raycast_result:Dictionary, height:float) -> void:
 	global_transform.basis = old_basis
 	
 	# find new transform origin.
+	""" 
+	WARNING
+	clipping glitch on low slope ledge
+	needs to be fixed
+	"""
+
 	var goal_translation := Vector3()
 	goal_translation.x = raycast_result.position.x + raycast_result.normal.x * 0.2
 	goal_translation.z = raycast_result.position.z + raycast_result.normal.z * 0.2
@@ -373,7 +336,9 @@ func update_horizontal_velocity() -> void:
 	if shield.sliding:
 		interpolate_amt = 0.025
 	
-	if not is_locked():
+	if Player.is_locked():
+		sprint_count = 0
+	else:
 		# Left Stick Movement
 		var direction:Vector3 = find_movement_direction()
 		look_target = look_target.linear_interpolate(direction, 0.15) # Used for player rotation later
@@ -396,9 +361,6 @@ func update_horizontal_velocity() -> void:
 				speed += 2.0 * (float(sprint_count) / 180.0)
 			else: sprint_count = 0
 		else: sprint_count = 0
-		
-		if jump_state == "standing_jump":
-			speed *= 0.5
 		
 		move_vec = direction * speed
 	
@@ -424,14 +386,20 @@ func can_sprint() -> bool:
    ##  ##  ##  ##   ##  ##
 ####    ####   ##   ##  ##
 
-var jump_state:String = "has_jump" # "falling" "jump_squat" "standing_jump" "landing" # etc
-
-var jumphold_framecount:int = 0 # Track the # of consecutive frames jump is held for (variable jump height)
-onready var air_transition_timer = $Timers/AirTransition # Used to give jumps leniency when falling off of a ledge
+var jump_state:String = "has_jump" # "falling" "jump_squat" "landing" # etc
+var shorthop:bool = false
+var buffer_jump:bool = false
 var jumpsquat_framecount:int = 0
 var floor_normal:Vector3
+onready var buffer_jump_timer = $Timers/BufferJump
 
-func update_vertical_velocity() -> void:
+func check_buffer_jump() -> void:
+	if Input.is_action_just_pressed("jump"):
+		buffer_jump_timer.start(0.1)
+
+func jumping_and_falling() -> void:
+	check_buffer_jump()
+	
 	if ledgegrabbing:
 		return
 	
@@ -439,88 +407,73 @@ func update_vertical_velocity() -> void:
 	velocity.y += Level.GRAVITY * frame_time
 	
 	# Check for jumping
-	if not is_locked():
+	if not Player.is_locked():
 		match jump_state:
 			"has_jump":
-				if Input.is_action_just_pressed('jump'):
-					jump_state = "jump_squat"
-					jumpsquat_framecount = 0
-					floor_normal = raycast.get_collision_normal()
-					print(floor_normal)
-					anim_state_machine.travel("Jump")
+				if not buffer_jump_timer.is_stopped():
+					initiate_jump()
 			"jump_squat":
 				jumpsquat_framecount += 1
-				if jumpsquat_framecount >= 4:
-					# determine which jump type it is here.
-					""" 
-					TO DO: 
-						- floor normal in the jump type calc
-						- find which frame you left the ground during jumpsquat, for more horizontal ledge jumps
-						- blend all of these jumps together
-					"""
+				
+				if not Input.is_action_pressed('jump'):
+					shorthop = true
 					
-					# I am converting these vectors to 2D in order to get a SIGNED angle_to
-					# to determine if sidehop is left or right.
+				if jumpsquat_framecount >= 4: # time's up!
+					# determine which jump type it is here.
+					
+					var late:bool = false
+					if not air_transition_timer.is_stopped():
+						late = true # Jump initiated while airbourne
+					
 					var movedir:Vector3 = find_movement_direction()
-					var movedir_2D:Vector2 = Vector2(movedir.x, movedir.z)
-					var forwards = forwards()
-					var forwards_2D:Vector2 = Vector2(forwards.x, forwards.z)
-					if movedir.length() < 0.5:
-						jump_state = "standing_jump"
+					var standing_vs_running:float = (movedir.length() + min(horizontal_velocity().length() / 8.0, 1.0)) / 2.0
+					
+					if not targeting:
+						# not targeting, so do a normal jump.
+						normal_jump(standing_vs_running, late)
 					else:
-						var angle:float = forwards_2D.angle_to(movedir_2D)
+						var movedir_2D:Vector2 = Vector2(movedir.x, movedir.z)
+						var forwards = forwards()
+						var forwards_2D:Vector2 = Vector2(forwards.x, forwards.z)
+						
+						# Approach forward if the stick isn't being held all the way.
+						var movedir_len = movedir_2D.length()
+						var inverse = 1.0 - movedir_len
+						var check_angle = (forwards_2D * inverse) + (movedir_2D)
+						var angle:float = forwards_2D.angle_to(check_angle)
+						
 						if abs(angle) < PI/4:
-							if horizontal_velocity().length() < 4.0:
-								jump_state = "standing_jump"
-							else:
-								jump_state = "running_jump"
-						elif abs(angle) > 3*PI/4:
-							jump_state = "back_hop"
+							normal_jump(standing_vs_running, late)
 						else:
-							if angle > 0:
-								jump_state = "side_hop_left"
-							else:
-								jump_state = "side_hop_right"
-			"standing_jump":
-				velocity.y = 7.8 - (float(jumphold_framecount) * 0.1)
-				if shield.active: velocity.y *= 0.5
-				if jumphold_framecount >= 10 or not Input.is_action_pressed("jump"):
-					jump_state = "falling"
-				else:
-					jumphold_framecount += 1
-			"running_jump":
-				velocity.y = 7.4 - (float(jumphold_framecount) * 0.1)
-				if shield.active: velocity.y *= 0.5
-				if jumphold_framecount >= 10 or not Input.is_action_pressed("jump"):
-					jump_state = "falling"
-				else:
-					jumphold_framecount += 1
-			"side_hop_right":
-				velocity = (forwards().rotated(Vector3.UP, PI/2) * 8.0) + (Vector3.UP * 3.0)
-				if shield.active: 
-					velocity.y *= 0.5
-					velocity.x *= 0.75
-					velocity.z *= 0.75
-				jump_state = "falling"
-			"side_hop_left":
-				velocity = (forwards().rotated(Vector3.UP, -PI/2) * 8.0) + (Vector3.UP * 3.0)
-				if shield.active: 
-					velocity.y *= 0.5
-					velocity.x *= 0.75
-					velocity.z *= 0.75
-				jump_state = "falling"
-			"back_hop":
-				velocity = (-forwards() * 4.5) + (Vector3.UP * 4.5)
-				if shield.active: 
-					velocity.y *= 0.5
-					velocity.x *= 0.75
-					velocity.z *= 0.75
-				jump_state = "falling"
-			"falling":
-				pass
-			"landing":
-				# should probably have something going on here.
-				jump_state = "has_jump"
+							# side/back hop
+							var jump_velocity:Vector3 = (forwards().rotated(Vector3.UP, -angle) * 4.0) + (floor_normal * 4.0)
+							if shield.active: jump_velocity *= 0.5
+							velocity += jump_velocity
+							jump_state = "falling"
+
+func initiate_jump() -> void:
+	jump_state = "jump_squat"
+	jumpsquat_framecount = 0
+	shorthop = false
+	floor_normal = raycast.get_collision_normal()
+	if floor_normal != Vector3.UP:
+		floor_normal = floor_normal.linear_interpolate(Vector3.UP, 0.5)
+	anim_state_machine.travel("Jump")
+
+func normal_jump(stand_vs_run:float, late:bool) -> void:
+	var jump_velocity:Vector3 = floor_normal * (9.0 + 2.0 * (1.0 - (stand_vs_run)))
+	if late:
+		jump_velocity += forwards()
+		jump_velocity.y *= 0.9
+		
+		
+		#jump_velocity *= 1.5
+		#jump_velocity.y *= 0.625
+		
+	if shorthop: jump_velocity *= 0.66667
+	if shield.active: jump_velocity *= 0.5
+	velocity += jump_velocity
+	jump_state = "falling"
 	
 
  #####  #####    ####   ##  ##  ##  ##  #####   ######  #####
@@ -529,19 +482,22 @@ func update_vertical_velocity() -> void:
 ##  ##  ##  ##  ##  ##  ##  ##  ## ###  ##  ##  ##      ##  ##
  ####   ##  ##   ####    ####   ##  ##  #####   ######  #####
 
+var grounded:bool = true
+onready var raycast = $RayCast # Determines if the player is grounded or not
+onready var air_transition_timer = $Timers/AirTransition # Used to give jumps leniency when falling off of a ledge
+
 # Grounded State:
 func set_grounded(state:bool) -> void:
 	if grounded != state:
 		if state == true:
 			# Transition to ground:
 			air_transition_timer.stop()
-			jumphold_framecount = 0
-			jump_state = "landing"
+			jump_state = "has_jump"
 			anim_state_machine.travel("BaseMovement")
 		else:
 			# Transition to air:
-			air_transition_timer.wait_time = 5.0 * frame_time
 			air_transition_timer.start()
+			anim_state_machine.travel("Falling")
 	grounded = state
 
 # Jump leniency when falling off ledges
@@ -565,6 +521,11 @@ func initialize_animationtree() -> void:
 	anim_state_machine.start("BaseMovement")
 
 func walk_animation() -> void:
+	if jump_state == 'landing':
+		anim_tree['parameters/BaseMovement/BlendSpace2D/blend_position'] = Vector2.ZERO
+		anim_tree['parameters/BaseMovement/TimeScale/scale'] = 1.0
+		return
+	
 	var h_velocity = horizontal_velocity()
 	var angle = h_velocity.normalized().dot(forwards())
 	
@@ -619,7 +580,7 @@ func head_rotation() -> void:
 onready var interactables = $Interactables
 
 func handle_interactable():
-	if grounded and not is_locked():
+	if grounded and not Player.is_locked():
 		if Input.is_action_just_pressed("X"):
 			interactables.execute()
 
@@ -679,41 +640,50 @@ func handle_collision(collision:KinematicCollision) -> void:
 		impact -= velocity.length()
 		if impact > 12.5:
 			apply_damage(impact * 1.5)
-			
-		print ("colnormal", collision.normal)
 		
 		if gather_collision_data:
-			gather_collision_data()
+			_gather_collision_data()
+
+""" 
+The code below here is for making dirt paths by running on grass.
+This code was neat to make but I actually have been perhaps convinced
+that a cleaner solution is to set vertex color data for grass mesh
+instead of storing this 3d image for the entire level AABB
+which is wasteful.
+
+Having the code here in the player script is maybe weird too,
+it could live elsewhere.
+"""
+
+func _gather_collision_data():
+	# Gather location information
+	if collision_data_timer.is_stopped():
+		if velocity.length() > 5.0:
+			collision_data_timer.start()
+			var position = translation.round()
+			var offset = translation - position
 			
-func gather_collision_data():
-			# Gather location information
-			if collision_data_timer.is_stopped():
-				if velocity.length() > 5.0:
-					collision_data_timer.start()
-					var position = translation.round()
-					var offset = translation - position
-					
-					var x_dir = sign(offset.x)
-					var y_dir = sign(offset.y)
-					var z_dir = sign(offset.z)
-					
-					var locations = [
-						position, 
-						position + Vector3(0,     0,     z_dir),
-						position + Vector3(0,     y_dir, 0    ),
-						position + Vector3(0,     y_dir, z_dir),
-						position + Vector3(x_dir, 0,     0    ),
-						position + Vector3(x_dir, 0,     z_dir),
-						position + Vector3(x_dir, y_dir, 0    ),
-						position + Vector3(x_dir, y_dir, z_dir)
-					]
-					
-					for i in range (locations.size()):
-						var index:int = get_collision_img_index(locations[i], geometry_aabb)
-						var distance = (translation - locations[i]).length()
-						var value:int = int((1.0 - distance) * 0x0F)
-						if value > 0:
-							set_collision_img_data(index, value)
+			var x_dir = sign(offset.x)
+			var y_dir = sign(offset.y)
+			var z_dir = sign(offset.z)
+			
+			var locations = [
+				position, 
+				position + Vector3(0,     0,     z_dir),
+				position + Vector3(0,     y_dir, 0    ),
+				position + Vector3(0,     y_dir, z_dir),
+				position + Vector3(x_dir, 0,     0    ),
+				position + Vector3(x_dir, 0,     z_dir),
+				position + Vector3(x_dir, y_dir, 0    ),
+				position + Vector3(x_dir, y_dir, z_dir)
+			]
+			
+			for i in range (locations.size()):
+				var index:int = get_collision_img_index(locations[i], geometry_aabb)
+				var distance = (translation - locations[i]).length()
+				var value:int = int((1.0 - distance) * 0x0F)
+				if value > 0:
+					set_collision_img_data(index, value)
 
 func get_collision_img_index(position:Vector3, aabb:AABB) -> int:
 	var diff:Vector3 = position - aabb.position
@@ -752,7 +722,7 @@ func forwards() -> Vector3:
 	return -transform.basis.z
 
 func handle_player_rotation() -> void:
-	if is_locked() or not grounded:
+	if Player.is_locked() or not grounded:
 		return
 
 	# While not targeting: Look towards movement direction
@@ -832,7 +802,7 @@ func respawn() -> void:
 	UI.inventory.selected_item = 0
 	UI.inventory.update_inventory(inventory)
 	
-	lockplayer_for_frames(20)
+	Player.lockplayer_for_frames(20, true) # Overwrite the timer
 	MainCam.reset()
 
 #####    ####    ######    ####    #####  #####
@@ -865,7 +835,7 @@ func hit(collision:Dictionary) -> String:
 		return "die"
 
 func apply_damage(value:float) -> void:
-	lockplayer_for_frames(int(value))
+	Player.lockplayer_for_frames(int(value))
 	material.set_shader_param("damaged", true)
 	hp -= value
 	if hp <= 0:
@@ -910,10 +880,10 @@ func debug() -> void:
 	else:
 		Debug.text.write("ZL Target: " + str(zl_target), 'blue')
 	Debug.text.newline()
-	Debug.text.write('Locked: ' + str(lock_list), 'green' if is_locked() else 'red')
+	Debug.text.write('Locked: ' + str(Player.lock_list), 'green' if Player.is_locked() else 'red')
 	Debug.text.write('Grounded: ' + str(grounded), 'green' if grounded else 'red')
 	Debug.text.write('Jump State: ' + str(jump_state))
-	Debug.text.write('Floor Normal: ' + str(raycast.get_collision_normal()))
+	Debug.text.write('Jump Buffered: ' + str(!buffer_jump_timer.is_stopped()), 'green' if !buffer_jump_timer.is_stopped() else 'red')
 	#Debug.text.write('Jumping: ' + str(jumping), 'green' if jumping else 'red')
 	Debug.text.newline()
 	Debug.text.write('Shielding: ' + str(shield.active), 'green' if shield.active else 'red')
@@ -934,3 +904,4 @@ func debug() -> void:
 #	Debug.draw.add_vertex(Game.player.head_position)
 #	Debug.draw.add_vertex(Game.player.head_position + Vector3(velocity.x, 0, velocity.z).normalized())
 #	Debug.draw.end()
+

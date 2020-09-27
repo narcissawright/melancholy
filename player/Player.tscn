@@ -6,6 +6,7 @@
 [ext_resource path="res://player/melancholy/Melancholy.tscn" type="PackedScene" id=4]
 
 [node name="Player" type="Node"]
+process_priority = -1
 script = ExtResource( 2 )
 
 [node name="Melanie" parent="." instance=ExtResource( 1 )]
@@ -21,3 +22,10 @@ script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Timers" type="Node" parent="."]
+
+[node name="LockPlayer" type="Timer" parent="Timers"]
+process_mode = 0
+one_shot = true
+[connection signal="timeout" from="Timers/LockPlayer" to="." method="_on_LockPlayer_timeout"]
