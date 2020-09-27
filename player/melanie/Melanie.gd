@@ -25,12 +25,6 @@ var sprint_count:int = 0 # Track the # of consecutive frames the left joystick i
 # Rotation
 var look_target:Vector3 # used for Rotation
 
-# Jumping
-var has_jump:bool = true
-var jumping:bool = false
-var jumphold_framecount:int = 0 # Track the # of consecutive frames jump is held for (variable jump height)
-onready var air_transition_timer = $Timers/AirTransition # Used to give jumps leniency when falling off of a ledge
-
 # Shield
 onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shield is up or not
 
@@ -86,12 +80,52 @@ func _physics_process(_t) -> void:
 	set_grounded(raycast.is_colliding()) # Check if grounded
 	handle_collision(collision) # Redirect velocity, check landing impact, etc
 	if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO # If velocity is very small, make it 0
-	else: walk_animation()
+	walk_animation()
 	handle_player_rotation() # Make player face the correct direction
 	handle_interactable() # Pick up jewels, read text, etc.
 	process_subweapon() # performed AFTER move_and_collide to correctly place projectiles.
 	respawn_check() # Check if player fell below the map
 	debug() # Write debug info onscreen
+
+##     ####    ####  ##  ##  ######  #####
+##    ##  ##  ##     ## ##   ##      ##  ##
+##    ##  ##  ##     ####    #####   ##  ##
+##    ##  ##  ##     ## ##   ##      ##  ##
+#####  ####    ####  ##  ##  ######  #####
+
+"""
+note: the damage lock overwrites the timer when you take dmg instead of adding more time.
+I may want to change this later... maybe
+"""
+
+var lock_list:Array = []
+onready var lock_timer = $Timers/Locked
+
+func is_locked() -> bool:
+	return lock_list.size() > 0
+
+# Locked State:
+func lockplayer_for_frames(frames:int) -> void:
+	# Set Timer
+	lock_timer.wait_time = frames * frame_time
+	lock_timer.start()
+	lockplayer("timer")
+
+func lockplayer(reason) -> void:
+	if not lock_list.has(reason):
+		lock_list.append(reason)
+	#jumping = false
+	sprint_count = 0
+	#material.set_shader_param("locked", true)
+
+func _on_Locked_timeout() -> void:
+	unlockplayer("timer")
+	
+func unlockplayer(reason) -> void:
+	lock_list.erase(reason)
+	if not is_locked():
+		material.set_shader_param("locked", false)
+		material.set_shader_param("damaged", false)
 
 ##  ######  ######   ###### 
 ##    ##    ##      ## ## ##
@@ -324,6 +358,8 @@ func horizontal_velocity() -> Vector3:
 func update_horizontal_velocity() -> void:
 	if ledgegrabbing:
 		return
+	if jump_state == "jump_squat":
+		return
 	
 	var move_vec = Vector3.ZERO # includes magnitude.
 	var horizontal_velocity = horizontal_velocity()
@@ -361,7 +397,9 @@ func update_horizontal_velocity() -> void:
 			else: sprint_count = 0
 		else: sprint_count = 0
 		
-		#speed = 1.709286 # test for walk animation
+		if jump_state == "standing_jump":
+			speed *= 0.5
+		
 		move_vec = direction * speed
 	
 	# Interpolate horizontal movement
@@ -380,81 +418,109 @@ func can_sprint() -> bool:
 		return true
 	return false
 
-##  ##        ##  ##  #####  ##     ####    ####  ##  ######  ##  ##
-##  ##        ##  ##  ##     ##    ##  ##  ##     ##    ##    ##  ##
-##  ##  ####  ##  ##  ####   ##    ##  ##  ##     ##    ##     ####
- ####          ####   ##     ##    ##  ##  ##     ##    ##      ##
-  ##            ##    #####  #####  ####    ####  ##    ##      ##
+   ##  ##  ##   #####   #####
+   ##  ##  ##  ## # ##  ##  ##
+   ##  ##  ##  ## # ##  #####
+   ##  ##  ##  ##   ##  ##
+####    ####   ##   ##  ##
+
+var jump_state:String = "has_jump" # "falling" "jump_squat" "standing_jump" "landing" # etc
+
+var jumphold_framecount:int = 0 # Track the # of consecutive frames jump is held for (variable jump height)
+onready var air_transition_timer = $Timers/AirTransition # Used to give jumps leniency when falling off of a ledge
+var jumpsquat_framecount:int = 0
+var floor_normal:Vector3
 
 func update_vertical_velocity() -> void:
 	if ledgegrabbing:
 		return
-
+	
 	# Apply Gravity
 	velocity.y += Level.GRAVITY * frame_time
 	
-	"""
-	I feel like my jump code is very jank and I wish to change it at some point.
-	I also need to add the other types of jumps.
-	- Standing Jump
-	- Running Jump
-	- Backhop
-	- Sidehop
-	"""
-	
 	# Check for jumping
 	if not is_locked():
-		if jumping:
-			velocity.y = 7.0 - (float(jumphold_framecount) * 0.1)
-			if shield.active: velocity.y /= 2.0
-			if jumphold_framecount >= 10 or not Input.is_action_pressed("jump"):
-				jumping = false
-			else:
-				jumphold_framecount += 1
-		elif has_jump and Input.is_action_just_pressed('jump'):
-			has_jump = false
-			jumping = true
-			anim_state_machine.travel("Jump")
-
-##     ####    ####  ##  ##  ######  #####
-##    ##  ##  ##     ## ##   ##      ##  ##
-##    ##  ##  ##     ####    #####   ##  ##
-##    ##  ##  ##     ## ##   ##      ##  ##
-#####  ####    ####  ##  ##  ######  #####
-
-"""
-note: the damage lock overwrites the timer when you take dmg instead of adding more time.
-I may want to change this later... maybe
-"""
-
-var lock_list:Array = []
-onready var lock_timer = $Timers/Locked
-
-func is_locked() -> bool:
-	return lock_list.size() > 0
-
-# Locked State:
-func lockplayer_for_frames(frames:int) -> void:
-	# Set Timer
-	lock_timer.wait_time = frames * frame_time
-	lock_timer.start()
-	lockplayer("timer")
-
-func lockplayer(reason) -> void:
-	if not lock_list.has(reason):
-		lock_list.append(reason)
-	jumping = false
-	sprint_count = 0
-	#material.set_shader_param("locked", true)
-
-func _on_Locked_timeout() -> void:
-	unlockplayer("timer")
-	
-func unlockplayer(reason) -> void:
-	lock_list.erase(reason)
-	if not is_locked():
-		material.set_shader_param("locked", false)
-		material.set_shader_param("damaged", false)
+		match jump_state:
+			"has_jump":
+				if Input.is_action_just_pressed('jump'):
+					jump_state = "jump_squat"
+					jumpsquat_framecount = 0
+					floor_normal = raycast.get_collision_normal()
+					print(floor_normal)
+					anim_state_machine.travel("Jump")
+			"jump_squat":
+				jumpsquat_framecount += 1
+				if jumpsquat_framecount >= 4:
+					# determine which jump type it is here.
+					""" 
+					TO DO: 
+						- floor normal in the jump type calc
+						- find which frame you left the ground during jumpsquat, for more horizontal ledge jumps
+						- blend all of these jumps together
+					"""
+					
+					# I am converting these vectors to 2D in order to get a SIGNED angle_to
+					# to determine if sidehop is left or right.
+					var movedir:Vector3 = find_movement_direction()
+					var movedir_2D:Vector2 = Vector2(movedir.x, movedir.z)
+					var forwards = forwards()
+					var forwards_2D:Vector2 = Vector2(forwards.x, forwards.z)
+					if movedir.length() < 0.5:
+						jump_state = "standing_jump"
+					else:
+						var angle:float = forwards_2D.angle_to(movedir_2D)
+						if abs(angle) < PI/4:
+							if horizontal_velocity().length() < 4.0:
+								jump_state = "standing_jump"
+							else:
+								jump_state = "running_jump"
+						elif abs(angle) > 3*PI/4:
+							jump_state = "back_hop"
+						else:
+							if angle > 0:
+								jump_state = "side_hop_left"
+							else:
+								jump_state = "side_hop_right"
+			"standing_jump":
+				velocity.y = 7.8 - (float(jumphold_framecount) * 0.1)
+				if shield.active: velocity.y *= 0.5
+				if jumphold_framecount >= 10 or not Input.is_action_pressed("jump"):
+					jump_state = "falling"
+				else:
+					jumphold_framecount += 1
+			"running_jump":
+				velocity.y = 7.4 - (float(jumphold_framecount) * 0.1)
+				if shield.active: velocity.y *= 0.5
+				if jumphold_framecount >= 10 or not Input.is_action_pressed("jump"):
+					jump_state = "falling"
+				else:
+					jumphold_framecount += 1
+			"side_hop_right":
+				velocity = (forwards().rotated(Vector3.UP, PI/2) * 8.0) + (Vector3.UP * 3.0)
+				if shield.active: 
+					velocity.y *= 0.5
+					velocity.x *= 0.75
+					velocity.z *= 0.75
+				jump_state = "falling"
+			"side_hop_left":
+				velocity = (forwards().rotated(Vector3.UP, -PI/2) * 8.0) + (Vector3.UP * 3.0)
+				if shield.active: 
+					velocity.y *= 0.5
+					velocity.x *= 0.75
+					velocity.z *= 0.75
+				jump_state = "falling"
+			"back_hop":
+				velocity = (-forwards() * 4.5) + (Vector3.UP * 4.5)
+				if shield.active: 
+					velocity.y *= 0.5
+					velocity.x *= 0.75
+					velocity.z *= 0.75
+				jump_state = "falling"
+			"falling":
+				pass
+			"landing":
+				# should probably have something going on here.
+				jump_state = "has_jump"
 	
 
  #####  #####    ####   ##  ##  ##  ##  #####   ######  #####
@@ -470,7 +536,7 @@ func set_grounded(state:bool) -> void:
 			# Transition to ground:
 			air_transition_timer.stop()
 			jumphold_framecount = 0
-			has_jump = true
+			jump_state = "landing"
 			anim_state_machine.travel("BaseMovement")
 		else:
 			# Transition to air:
@@ -480,7 +546,7 @@ func set_grounded(state:bool) -> void:
 
 # Jump leniency when falling off ledges
 func _on_AirTransition_timeout() -> void:
-	has_jump = false
+	jump_state = "falling"
 
  ####   ##  ##  ##   ######
 ##  ##  ### ##  ##  ## ## ##
@@ -596,6 +662,7 @@ func process_subweapon() -> void:
 ##     ##  ##  ##     ##     ##      ##  ##  ##  ##  ## ###
  ####   ####   #####  #####  ##  #####   ##   ####   ##  ##
 
+var gather_collision_data = false
 var collision_locations = {}
 onready var collision_data_timer = $Timers/CollisionData
 
@@ -612,35 +679,41 @@ func handle_collision(collision:KinematicCollision) -> void:
 		impact -= velocity.length()
 		if impact > 12.5:
 			apply_damage(impact * 1.5)
+			
+		print ("colnormal", collision.normal)
 		
-		# Gather location information
-		if collision_data_timer.is_stopped():
-			if velocity.length() > 5.0:
-				collision_data_timer.start()
-				var position = translation.round()
-				var offset = translation - position
-				
-				var x_dir = sign(offset.x)
-				var y_dir = sign(offset.y)
-				var z_dir = sign(offset.z)
-				
-				var locations = [
-					position, 
-					position + Vector3(0,     0,     z_dir),
-					position + Vector3(0,     y_dir, 0    ),
-					position + Vector3(0,     y_dir, z_dir),
-					position + Vector3(x_dir, 0,     0    ),
-					position + Vector3(x_dir, 0,     z_dir),
-					position + Vector3(x_dir, y_dir, 0    ),
-					position + Vector3(x_dir, y_dir, z_dir)
-				]
-				
-				for i in range (locations.size()):
-					var index:int = get_collision_img_index(locations[i], geometry_aabb)
-					var distance = (translation - locations[i]).length()
-					var value:int = int((1.0 - distance) * 0x0F)
-					if value > 0:
-						set_collision_img_data(index, value)
+		if gather_collision_data:
+			gather_collision_data()
+			
+func gather_collision_data():
+			# Gather location information
+			if collision_data_timer.is_stopped():
+				if velocity.length() > 5.0:
+					collision_data_timer.start()
+					var position = translation.round()
+					var offset = translation - position
+					
+					var x_dir = sign(offset.x)
+					var y_dir = sign(offset.y)
+					var z_dir = sign(offset.z)
+					
+					var locations = [
+						position, 
+						position + Vector3(0,     0,     z_dir),
+						position + Vector3(0,     y_dir, 0    ),
+						position + Vector3(0,     y_dir, z_dir),
+						position + Vector3(x_dir, 0,     0    ),
+						position + Vector3(x_dir, 0,     z_dir),
+						position + Vector3(x_dir, y_dir, 0    ),
+						position + Vector3(x_dir, y_dir, z_dir)
+					]
+					
+					for i in range (locations.size()):
+						var index:int = get_collision_img_index(locations[i], geometry_aabb)
+						var distance = (translation - locations[i]).length()
+						var value:int = int((1.0 - distance) * 0x0F)
+						if value > 0:
+							set_collision_img_data(index, value)
 
 func get_collision_img_index(position:Vector3, aabb:AABB) -> int:
 	var diff:Vector3 = position - aabb.position
@@ -659,6 +732,7 @@ func set_collision_img_data(index:int, value:int) -> void:
 
 """ This should run once per level at the start """
 func set_geometry_aabb(aabb:AABB) -> void:
+	gather_collision_data = true
 	geometry_aabb = aabb
 	var height = ceil((aabb.size.x+1) * (aabb.size.y+1) * (aabb.size.z+1) / 1024.0)
 	path_collision_img = Image.new()
@@ -680,7 +754,7 @@ func forwards() -> Vector3:
 func handle_player_rotation() -> void:
 	if is_locked() or not grounded:
 		return
-		
+
 	# While not targeting: Look towards movement direction
 	if not targeting:
 		var look_target_2d = Vector2(look_target.x, look_target.z).normalized()
@@ -815,6 +889,10 @@ func debug() -> void:
 	# Debug Text
 	Debug.text.write('Frame: ' + str(framecount))
 	Debug.text.newline()
+	
+	Debug.text.write('Current Animation: ' + anim_state_machine.get_current_node())
+	Debug.text.newline()
+	
 #	Debug.text.write('HP: ' + str(hp))
 #	Debug.text.write('Subweapon: ' + str(current_subweapon))
 #	Debug.text.write('Jewels: ' + str(jewels))
@@ -834,8 +912,9 @@ func debug() -> void:
 	Debug.text.newline()
 	Debug.text.write('Locked: ' + str(lock_list), 'green' if is_locked() else 'red')
 	Debug.text.write('Grounded: ' + str(grounded), 'green' if grounded else 'red')
-	Debug.text.write('Has Jump: ' + str(has_jump), 'green' if has_jump else 'red')
-	Debug.text.write('Jumping: ' + str(jumping), 'green' if jumping else 'red')
+	Debug.text.write('Jump State: ' + str(jump_state))
+	Debug.text.write('Floor Normal: ' + str(raycast.get_collision_normal()))
+	#Debug.text.write('Jumping: ' + str(jumping), 'green' if jumping else 'red')
 	Debug.text.newline()
 	Debug.text.write('Shielding: ' + str(shield.active), 'green' if shield.active else 'red')
 	#Debug.text.write('Bashing: ' + str(shield.bash_str), 'green' if shield.bash_str > 0.0 else 'red')

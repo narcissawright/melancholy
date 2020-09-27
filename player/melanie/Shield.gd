@@ -58,11 +58,10 @@ func _physics_process(_t:float) -> void:
 	if not active:
 		# Follow Bone Attachment (bobbing on Melanie's back)
 		mesh.transform = shield_pos.transform.rotated(Vector3.UP, PI)
-		
-		# This feels awkward, to check this every frame.
-		if not can_shield_bash():
-			if Player.kinematicbody.anim_state_machine.get_current_node() == "ShieldMovement":
-				Player.kinematicbody.anim_state_machine.travel("BaseMovement")
+
+func exit_shield_state() -> void:
+	if Player.kinematicbody.anim_state_machine.get_current_node() == "ShieldMovement":
+		Player.kinematicbody.anim_state_machine.travel("BaseMovement")
 
 func slide() -> void:
 	active = true
