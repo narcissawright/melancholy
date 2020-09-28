@@ -18,9 +18,6 @@ var max_hp:float = 200.0
 var velocity := Vector3.ZERO
 var sprint_count:int = 0 # Track the # of consecutive frames the left joystick is fully pressed (for acceleration)
 
-# Rotation
-var look_target:Vector3 # used for Rotation
-
 # Shield
 onready var shield = $ShieldAnim  # contains shield.active, a bool saying if shield is up or not
 
@@ -47,7 +44,7 @@ func _ready() -> void:
 
 func initialize() -> void:
 	visible = true
-	set_physics_process(true)
+	#set_physics_process(true)
 	initialize_animationtree()
 	initialize_checkpoint_state()
 	Player.lockplayer_for_frames(20)
@@ -58,7 +55,7 @@ func initialize() -> void:
 ##      ##  ##  ##  ##  ##      ##         ##      ##
 ##      ##  ##   ####    #####  #####  #####   ##### 
 
-func _physics_process(_t) -> void:
+func process_frame(_t) -> void:
 	framecount += 1
 	
 	# None of these functions should be called outside of _physics_process
@@ -78,7 +75,7 @@ func _physics_process(_t) -> void:
 	handle_collision(collision) # Redirect velocity, check landing impact, etc
 	if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO # If velocity is very small, make it 0
 	walk_animation()
-	handle_player_rotation() # Make player face the correct direction
+	Player.handle_player_rotation() # Make player face the correct direction
 	handle_interactable() # Pick up jewels, read text, etc.
 	process_subweapon() # performed AFTER move_and_collide to correctly place projectiles.
 	respawn_check() # Check if player fell below the map
@@ -184,10 +181,10 @@ func cam_reset_wall_align() -> void:
 
 func wall_align(dist:float) -> void:
 	var from = self.head_position
-	var to =   self.head_position + forwards() * dist
+	var to =   self.head_position + Player.forwards() * dist
 	var result = get_world().direct_space_state.intersect_ray(from, to, [], Layers.solid)
 	if result.size() > 0:
-		safe_look_at(-result.normal)
+		Player.safe_look_at(-result.normal)
 
 ##      ######  #####    #####  ######
 ##      ##      ##  ##  ##      ##
@@ -213,7 +210,7 @@ func check_ledgegrab():
 		
 		if not ledgegrab_tween.is_active():
 			""" Sometimes this is_active even when a tween isnt occuring... causing problems """
-			var dir = find_movement_direction()
+			var dir = Player.find_movement_direction()
 			var hray_result = ledgesystem.horizontal_raycast(transform.origin.y + 2.0)
 			match hray_result.hits:
 				0:
@@ -268,7 +265,7 @@ func let_go_of_ledge() -> void:
 
 func rotate_towards_ledge(wall_normal:Vector3) -> void:
 	var old_basis = global_transform.basis
-	safe_look_at(-wall_normal)
+	Player.safe_look_at(-wall_normal)
 	var goal_basis:Basis = global_transform.basis
 	global_transform.basis = old_basis
 	
@@ -280,7 +277,7 @@ func rotate_towards_ledge(wall_normal:Vector3) -> void:
 func snap_to_ledge(raycast_result:Dictionary, height:float) -> void:
 	# find new transform basis
 	var old_basis = global_transform.basis
-	safe_look_at(-raycast_result.normal)
+	Player.safe_look_at(-raycast_result.normal)
 	var goal_basis:Basis = global_transform.basis
 	global_transform.basis = old_basis
 	
@@ -340,16 +337,15 @@ func update_horizontal_velocity() -> void:
 		sprint_count = 0
 	else:
 		# Left Stick Movement
-		var direction:Vector3 = find_movement_direction()
-		look_target = look_target.linear_interpolate(direction, 0.15) # Used for player rotation later
-		
+		var direction:Vector3 = Player.find_movement_direction()
+
 		var speed:float = 8.0
 		if shield.active: speed = 2.0
 		
 		# Targeted movement
 		if targeting and not shield.active:
 			# Forward movement is not impeded much, while sideways or backwards is slower
-			var diff = direction.angle_to(forwards())
+			var diff = direction.angle_to(Player.forwards())
 			if diff > PI * 0.5:
 				diff = PI * 0.5
 			speed -= (speed / 2.0) * (diff / (PI * 0.5))
@@ -367,13 +363,6 @@ func update_horizontal_velocity() -> void:
 	# Interpolate horizontal movement
 	horizontal_velocity = horizontal_velocity.linear_interpolate(move_vec, interpolate_amt)
 	velocity = Vector3(horizontal_velocity.x, velocity.y, horizontal_velocity.z)
-
-func find_movement_direction() -> Vector3:
-	var pushdir:Vector2 = Player.get_stick_input("left")
-	var camdir:Vector3 = MainCam.get_global_transform().basis.z
-	camdir.y = 0.0
-	camdir = camdir.normalized()
-	return (camdir * pushdir.y) + (camdir.rotated(Vector3.UP, PI/2) * pushdir.x)
 
 func can_sprint() -> bool:
 	if grounded and not shield.active and not targeting and not bombspawner.holding:
@@ -425,7 +414,7 @@ func jumping_and_falling() -> void:
 					if not air_transition_timer.is_stopped():
 						late = true # Jump initiated while airbourne
 					
-					var movedir:Vector3 = find_movement_direction()
+					var movedir:Vector3 = Player.find_movement_direction()
 					var standing_vs_running:float = (movedir.length() + min(horizontal_velocity().length() / 8.0, 1.0)) / 2.0
 					
 					if not targeting:
@@ -433,8 +422,7 @@ func jumping_and_falling() -> void:
 						normal_jump(standing_vs_running, late)
 					else:
 						var movedir_2D:Vector2 = Vector2(movedir.x, movedir.z)
-						var forwards = forwards()
-						var forwards_2D:Vector2 = Vector2(forwards.x, forwards.z)
+						var forwards_2D:Vector2 = Vector2(Player.forwards().x, Player.forwards().z)
 						
 						# Approach forward if the stick isn't being held all the way.
 						var movedir_len = movedir_2D.length()
@@ -446,7 +434,7 @@ func jumping_and_falling() -> void:
 							normal_jump(standing_vs_running, late)
 						else:
 							# side/back hop
-							var jump_velocity:Vector3 = (forwards().rotated(Vector3.UP, -angle) * 4.0) + (floor_normal * 4.0)
+							var jump_velocity:Vector3 = (Player.forwards().rotated(Vector3.UP, -angle) * 4.0) + (floor_normal * 4.0)
 							if shield.active: jump_velocity *= 0.5
 							velocity += jump_velocity
 							jump_state = "falling"
@@ -455,26 +443,23 @@ func initiate_jump() -> void:
 	jump_state = "jump_squat"
 	jumpsquat_framecount = 0
 	shorthop = false
-	floor_normal = raycast.get_collision_normal()
-	if floor_normal != Vector3.UP:
-		floor_normal = floor_normal.linear_interpolate(Vector3.UP, 0.5)
+	if raycast.is_colliding():
+		floor_normal = raycast.get_collision_normal()
+		if floor_normal != Vector3.UP:
+			floor_normal = floor_normal.linear_interpolate(Vector3.UP, 0.5)
+	else:
+		floor_normal = Vector3.UP
 	anim_state_machine.travel("Jump")
 
 func normal_jump(stand_vs_run:float, late:bool) -> void:
 	var jump_velocity:Vector3 = floor_normal * (9.0 + 2.0 * (1.0 - (stand_vs_run)))
 	if late:
-		jump_velocity += forwards()
+		jump_velocity += Player.forwards()
 		jump_velocity.y *= 0.9
-		
-		
-		#jump_velocity *= 1.5
-		#jump_velocity.y *= 0.625
-		
 	if shorthop: jump_velocity *= 0.66667
 	if shield.active: jump_velocity *= 0.5
 	velocity += jump_velocity
 	jump_state = "falling"
-	
 
  #####  #####    ####   ##  ##  ##  ##  #####   ######  #####
 ##      ##  ##  ##  ##  ##  ##  ### ##  ##  ##  ##      ##  ##
@@ -527,7 +512,7 @@ func walk_animation() -> void:
 		return
 	
 	var h_velocity = horizontal_velocity()
-	var angle = h_velocity.normalized().dot(forwards())
+	var angle = h_velocity.normalized().dot(Player.forwards())
 	
 	var x_walk = min(h_velocity.length() * (1.0 - abs(angle)), 4.0) / 4.0
 	var y_walk = min(h_velocity.length() * angle, 8.0) / 8.0
@@ -718,48 +703,52 @@ func set_geometry_aabb(aabb:AABB) -> void:
 ##  ##  ##  ##    ##    ##  ##    ##    ##  ##  ##  ## ###
 ##  ##   ####     ##    ##  ##    ##    ##   ####   ##  ##
 
-func forwards() -> Vector3:
-	return -transform.basis.z
-
-func handle_player_rotation() -> void:
-	if Player.is_locked() or not grounded:
-		return
-
-	# While not targeting: Look towards movement direction
-	if not targeting:
-		var look_target_2d = Vector2(look_target.x, look_target.z).normalized()
-		if not look_target_2d.is_equal_approx(Vector2.ZERO): # If not moving, don't rotate
-			rotate_towards(look_target_2d)
-
-	# While targeting -- look towards target
-	elif targeting and zl_target != 0:
-		var look_target_2d := Vector2(translation.x, translation.z)
-		look_target_2d -= Vector2(Player.TargetSystem.list[zl_target].pos.x, Player.TargetSystem.list[zl_target].pos.z)
-		look_target_2d = -look_target_2d.normalized()
-		rotate_towards(look_target_2d)
-
-func rotate_towards(look_target_2d:Vector2) -> void:
-	# find the amount of radians needed to face target direction
-	var angle = -Vector2(forwards().x, forwards().z).angle_to(look_target_2d)
-	
-	# Takes in a rotation amount in radians, and clamps it to the maximum allowed rotation amount
-	if shield.active: angle = clamp(angle, -PI/80.0, PI/80.0)  # Slow rotation while shielding
-	else:             angle = clamp(angle, -PI/8.0,  PI/8.0)   # Fast rotation while not shielding
-	
-	# If you are not targeting, have the rotation amount be very small when moving slowly
-	if not targeting: angle *= clamp(Vector3(velocity.x, 0, velocity.z).length_squared(), 0.0, 1.0)
-	
-	# If angle is close to 0, don't bother
-	if not is_equal_approx(angle, 0.0):
-		var lookdir:Vector3 = forwards().rotated(Vector3.UP, angle)
-		safe_look_at(lookdir)
-
-# safe rotation, removed y component so the body will never skew weirdly.
-func safe_look_at(lookdir:Vector3) -> void:
-	lookdir.y = 0.0 
-	lookdir = lookdir.normalized()
-	if lookdir.is_equal_approx(Vector3.ZERO): return
-	look_at(lookdir + translation, Vector3.UP)
+#var look_target := Vector3.ZERO # used for Rotation
+#
+#func forwards() -> Vector3:
+#	return -global_transform.basis.z
+#
+#func handle_player_rotation() -> void:
+#	print (Player.is_locked(), MainCam.mode, look_target)
+#
+#	if Player.is_locked() or not grounded:
+#		return
+#
+#	# While not targeting: Look towards movement direction
+#	if not targeting:
+#		var look_target_2d = Vector2(look_target.x, look_target.z).normalized()
+#		if not look_target_2d.is_equal_approx(Vector2.ZERO): # If not moving, don't rotate
+#			rotate_towards(look_target_2d)
+#
+#	# While targeting -- look towards target
+#	elif targeting and zl_target != 0:
+#		var look_target_2d := Vector2(translation.x, translation.z)
+#		look_target_2d -= Vector2(Player.TargetSystem.list[zl_target].pos.x, Player.TargetSystem.list[zl_target].pos.z)
+#		look_target_2d = -look_target_2d.normalized()
+#		rotate_towards(look_target_2d)
+#
+#func rotate_towards(look_target_2d:Vector2) -> void:
+#	# find the amount of radians needed to face target direction
+#	var angle = -Vector2(forwards().x, forwards().z).angle_to(look_target_2d)
+#
+#	# Takes in a rotation amount in radians, and clamps it to the maximum allowed rotation amount
+#	if shield.active: angle = clamp(angle, -PI/80.0, PI/80.0)  # Slow rotation while shielding
+#	else:             angle = clamp(angle, -PI/8.0,  PI/8.0)   # Fast rotation while not shielding
+#
+#	# If you are not targeting, have the rotation amount be very small when moving slowly
+#	if not targeting: angle *= clamp(Vector3(velocity.x, 0, velocity.z).length_squared(), 0.0, 1.0)
+#
+#	# If angle is close to 0, don't bother
+#	if not is_equal_approx(angle, 0.0):
+#		var lookdir:Vector3 = forwards().rotated(Vector3.UP, angle)
+#		safe_look_at(lookdir)
+#
+## safe rotation, removed y component so the body will never skew weirdly.
+#func safe_look_at(lookdir:Vector3) -> void:
+#	lookdir.y = 0.0 
+#	lookdir = lookdir.normalized()
+#	if lookdir.is_equal_approx(Vector3.ZERO): return
+#	look_at(lookdir + translation, Vector3.UP)
 
 
 #####   #####   ####  #####    ####   ##    ##  ##  ##
@@ -819,7 +808,7 @@ func hit_by_explosion(explosion_center:Vector3) -> void:
 	if result.size() > 0:
 		if result.shape > 0:
 			# hit shield
-			velocity += forwards() * -14.0
+			velocity += Player.forwards() * -14.0
 			shield.slide()
 			return
 	# Bomb did not hit your shield; apply damage.

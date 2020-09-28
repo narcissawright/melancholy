@@ -201,7 +201,7 @@ func pause_controls() -> void:
 		# Pan while paused
 		# Find pan axes
 		var h_axis = current_pos.cross(Vector3.DOWN)
-		var v_axis = -h_axis.rotated(current_pos, PI/2.0)
+		var v_axis = -h_axis.rotated(current_pos.normalized(), PI/2.0)
 		
 		# Find pan velocity
 		var pan_dir = Player.get_stick_input("left")
@@ -301,16 +301,11 @@ func can_enter_first_person() -> bool:
 
 func enter_first_person() -> void:
 	mode = "first_person"
+	zoom_tween.interpolate_property(self, "current_pos", current_pos, -Player.forwards(), 0.15)
 	zoom_tween.interpolate_property(self, "current_distance", current_distance, 0.01, 0.15)
 	zoom_tween.interpolate_property(self, "pan", pan, Vector3.ZERO, 0.15)
 	zoom_tween.start()
-	current_pos = -Player.forwards
-	if Player.shield.active:
-		Player.shield.put_away()
-	if Player.bombspawner.holding:
-		Player.bombspawner.drop_bomb()
-	Player.untarget()
-	Player.lockplayer("first_person")
+	Player.enter_first_person()
 
 func first_person() -> void:
 	var exiting = false
@@ -320,7 +315,8 @@ func first_person() -> void:
 	elif Input.is_action_just_pressed("X"): exiting = true
 	elif Input.is_action_just_pressed("Y"): exiting = true
 	elif Input.is_action_just_pressed("R3"): exiting = true
-	if exiting: exit_first_person()
+	if exiting: 
+		exit_first_person()
 	else:
 		var dir = Player.get_stick_input("left")
 		if dir.length_squared() > 0.0:
@@ -332,16 +328,11 @@ func first_person() -> void:
 		update_position()
 
 func exit_first_person() -> void:
-	Player.unlockplayer("first_person")
+	Player.exit_first_person()
 	zoom_tween.interpolate_property(self, "current_distance", current_distance, custom_distance, 0.15)
 	zoom_tween.start()
 	mode = "auto"
 	current_pos = default_pos.rotated(Vector3.UP, Player.rotation.y)
-	Player.visible = true
-
-func _on_ZoomTween_tween_completed(_object: Object, _key: NodePath) -> void:
-	if mode == "first_person":
-		Player.visible = false
 
 func debug() -> void:
 	# Write debug info
@@ -351,23 +342,3 @@ func debug() -> void:
 	Debug.text.write("Cam Pan: " + str(pan))
 	Debug.text.write("Cam Reset: " + str(cam_reset_frame))
 	Debug.text.newline()
-	
-func zoom_change_unused() -> void:
-	pass
-#	if Input.is_action_just_pressed('R3'):
-#		match zoom_mode:
-#			"medium": zoom_mode = 'near'
-#			"near": zoom_mode = 'far'
-#			"far": zoom_mode = 'medium'
-#	if zoom_amt != zoom_levels[zoom_mode]:
-#		zoom_amt = lerp(zoom_amt, zoom_levels[zoom_mode], zoom_lerp_amt)
-#		if abs(zoom_amt - zoom_levels[zoom_mode]) < 0.05:
-#			zoom_amt = zoom_levels[zoom_mode]
-			
-#	if Input.is_action_just_pressed('R3'):
-#		zoom_amt = 0.0
-#	if zoom_amt == 0.0: # 1st person
-#		look_at_from_position(Game.player.head_position, Game.player.head_position + Game.player.forwards(), Vector3.UP)
-#	else: # 3rd person
-
-
