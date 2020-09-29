@@ -506,20 +506,16 @@ func jumping_and_falling() -> void:
 						# not targeting, so do a normal jump.
 						normal_jump(standing_vs_running, late)
 					else:
-						var movedir_2D:Vector2 = Vector2(movedir.x, movedir.z)
-						var forwards_2D:Vector2 = Vector2(Player.forwards().x, Player.forwards().z)
-						
 						# Approach forward if the stick isn't being held all the way.
-						var movedir_len = movedir_2D.length()
-						var inverse = 1.0 - movedir_len
-						var check_angle = (forwards_2D * inverse) + (movedir_2D)
-						var angle:float = forwards_2D.angle_to(check_angle)
+						var inverse = 1.0 - movedir.length()
+						var check_angle = (forwards() * inverse) + (movedir)
+						var angle:float = angle_to_flattened(forwards(), check_angle)
 						
 						if abs(angle) < PI/4:
 							normal_jump(standing_vs_running, late)
 						else:
 							# side/back hop
-							var jump_velocity:Vector3 = (Player.forwards().rotated(Vector3.UP, -angle) * 4.0) + (floor_normal * 4.0)
+							var jump_velocity:Vector3 = (forwards().rotated(Vector3.UP, -angle) * 4.0) + (floor_normal * 4.0)
 							if shield.active: jump_velocity *= 0.5
 							velocity += jump_velocity
 							jump_state = "falling"
@@ -597,14 +593,22 @@ func walk_animation() -> void:
 		return
 	
 	var h_velocity = horizontal_velocity()
-	var angle = h_velocity.normalized().dot(Player.forwards())
+	var angle = angle_to_flattened(h_velocity, forwards())
+	var walk_length = min(h_velocity.length() / 8.0, 1.0)
+	var blend_pos:Vector2 = Vector2(sin(angle), 1.0 - abs(sin(angle))) * walk_length
 	
-	var x_walk = min(h_velocity.length() * (1.0 - abs(angle)), 4.0) / 4.0
-	var y_walk = min(h_velocity.length() * angle, 8.0) / 8.0
+	Debug.text.write("ANGLE: " + str(angle))
+	Debug.text.write("BLEND_POS: " + str(blend_pos))
+	Debug.text.write("WALK_LEN: " + str(walk_length))
 	
-	anim_tree['parameters/BaseMovement/BlendSpace2D/blend_position'] = Vector2(x_walk, y_walk)
-	anim_tree['parameters/BaseMovement/TimeScale/scale'] = (y_walk/2.0) + 1.0
-
+	
+#
+#	var x_walk = sign(angle) * min(h_velocity.length() * (1.0 - abs(angle/PI)), 4.0) / 4.0
+#	var y_walk = min(h_velocity.length() * abs(angle/PI), 8.0) / 8.0
+	
+	anim_tree['parameters/BaseMovement/BlendSpace2D/blend_position'] = blend_pos
+	anim_tree['parameters/BaseMovement/TimeScale/scale'] = 1.0 + abs(blend_pos.y/2.0)
+	
 func set_ledge_cling_anim(_blend_amt:float) -> void:
 	pass
 	#anim_tree['parameters/is_ledge_clinging/blend_amount'] = blend_amt
@@ -847,7 +851,7 @@ func enter_first_person() -> void:
 	lockplayer("first_person")
 
 func exit_first_person() -> void:
-	buffer_jump_timer.stop()# - I want to prevent jump from firing if you use A to exit first person.
+	buffer_jump_timer.stop() # prevent jump from firing if you use A to exit first person.
 	safe_look_at(-MainCam.current_pos)
 	unlockplayer("first_person")
 
@@ -901,6 +905,12 @@ func respawn() -> void:
 ##  ##  ##  ##  ##    ##  ##  ##  ##  ##  ##
 #####   ##  ##  ##    ##  ##  ##   ####   #####
 
+""" 
+I might want to prevent accumulating speed from multiple explosions,
+as it stands now the timing window is really rough to get a high jump from 2.
+Just an awkward 'mechanic' right now.
+"""
+
 func hit_by_explosion(explosion_center:Vector3) -> void:
 	# Check if bomb hit your shield
 	var travel_vector = (self.head_position - explosion_center).normalized()
@@ -938,6 +948,17 @@ func apply_damage(value:float) -> void:
 func die() -> void:
 	#Events.emit_signal('player_died')
 	respawn()
+
+ ######   ##   #####   #####
+## ## ##  ##  ##      ##
+## ## ##  ##   ####   ##
+##    ##  ##      ##  ##
+##    ##  ##  #####    #####
+
+func angle_to_flattened(a:Vector3, b:Vector3) -> float:
+	# Flattens vector3 on the global y axis and returns rotational diff in signed radians
+	return Vector2(a.x, a.z).angle_to(Vector2(b.x, b.z))
+
 
 #####   #####  #####   ##  ##   #####
 ##  ##  ##     ##  ##  ##  ##  ## 

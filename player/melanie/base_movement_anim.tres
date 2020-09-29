@@ -1,4 +1,4 @@
-[gd_resource type="AnimationNodeBlendSpace2D" load_steps=6 format=2]
+[gd_resource type="AnimationNodeBlendSpace2D" load_steps=7 format=2]
 
 [sub_resource type="AnimationNodeAnimation" id=1]
 animation = "Idle"
@@ -15,6 +15,9 @@ animation = "RightWalk"
 [sub_resource type="AnimationNodeAnimation" id=5]
 animation = "BackWalk"
 
+[sub_resource type="AnimationNodeAnimation" id=6]
+animation = "LeftWalk"
+
 [resource]
 blend_point_0/node = SubResource( 1 )
 blend_point_0/pos = Vector2( 0, 0 )
@@ -26,3 +29,5 @@ blend_point_3/node = SubResource( 4 )
 blend_point_3/pos = Vector2( 0.2, 0 )
 blend_point_4/node = SubResource( 5 )
 blend_point_4/pos = Vector2( 0, -0.3 )
+blend_point_5/node = SubResource( 6 )
+blend_point_5/pos = Vector2( -0.2, 0 )
