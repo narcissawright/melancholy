@@ -7,7 +7,7 @@ extends KinematicBody
 ##      ######  ##  ##    ##    ######  ##  ##
 
 """
-New plan. handle both (all) characters from this script.
+New plan. Handle both characters from this script.
 """
 
 # Current Character
@@ -33,7 +33,7 @@ onready var material = $MelanieModel/Armature/Skeleton/MeshInstance.get_surface_
 
 # Head Position
 onready var head_position_node = $HeadPosition # Camera points at this, enemies attack this point.
-var head_position:Vector3 setget , _get_head_position  # Gets Position3D global_transform.origin
+var head_position:Vector3 setget , _get_head_position
 func _get_head_position() -> Vector3:
 	return head_position_node.global_transform.origin
 
@@ -847,6 +847,7 @@ func enter_first_person() -> void:
 	lockplayer("first_person")
 
 func exit_first_person() -> void:
+	buffer_jump_timer.stop()# - I want to prevent jump from firing if you use A to exit first person.
 	safe_look_at(-MainCam.current_pos)
 	unlockplayer("first_person")
 
