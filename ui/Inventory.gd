@@ -61,14 +61,15 @@ func set_selected(index:int, state:bool) -> void:
 	inventory[index].node.material.set_shader_param("selected", state)
 
 func _input(_event: InputEvent) -> void:
-	if Input.is_action_just_pressed("scroll_inventory_left"):
-		Input.action_release("scroll_inventory_left")
-		set_selected(selected_item, false)
-		selected_item = posmod(selected_item + 1, item_total)
-		set_selected(selected_item, true)
+	if item_total > 0:
+		if Input.is_action_just_pressed("scroll_inventory_left"):
+			Input.action_release("scroll_inventory_left")
+			set_selected(selected_item, false)
+			selected_item = posmod(selected_item + 1, item_total)
+			set_selected(selected_item, true)
 		
-	if Input.is_action_just_pressed("scroll_inventory_right"):
-		Input.action_release("scroll_inventory_right")
-		set_selected(selected_item, false)
-		selected_item = posmod(selected_item - 1, item_total)
-		set_selected(selected_item, true)
+		if Input.is_action_just_pressed("scroll_inventory_right"):
+			Input.action_release("scroll_inventory_right")
+			set_selected(selected_item, false)
+			selected_item = posmod(selected_item - 1, item_total)
+			set_selected(selected_item, true)

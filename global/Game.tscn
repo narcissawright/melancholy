@@ -2,6 +2,5 @@
 
 [ext_resource path="res://global/SceneController/SceneController.gd" type="Script" id=1]
 
-
 [node name="SceneController" type="Node"]
 script = ExtResource( 1 )

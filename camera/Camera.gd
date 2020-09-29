@@ -88,7 +88,7 @@ func update_position() -> void:
 	current_pos = (self.global_transform.origin - cam_target).normalized() # update current position
 	if mode == "first_person":
 		var lookdir = Vector3(-current_pos.x, 0, -current_pos.z)
-		Player.safe_look_at(lookdir + Player.position)
+		Player.safe_look_at(lookdir)
 
 func _on_pause_state_change(paused:bool) -> void:
 	if paused:

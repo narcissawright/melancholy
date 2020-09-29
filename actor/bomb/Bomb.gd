@@ -41,7 +41,7 @@ func _ready() -> void:
 	explosion_mesh.set_surface_material(0, material)
 	
 	# Set up physics query
-	query.exclude = [Player.kinematicbody]
+	query.exclude = [Player]
 	query.collision_mask = Layers.solid | Layers.actor
 	shape.radius = 0.2
 	query.set_shape(shape)

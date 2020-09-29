@@ -44,9 +44,9 @@ func hit_by_explosion(_explosion_center:Vector3) -> void:
 	queue_free()
 
 func _on_detector_body_entered(body: Node) -> void:
-	if body == Player.kinematicbody:
+	if body == Player:
 		player_nearby = true
 
 func _on_detector_body_exited(body: Node) -> void:
-	if body == Player.kinematicbody:
+	if body == Player:
 		player_nearby = false

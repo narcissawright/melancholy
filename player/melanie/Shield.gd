@@ -36,7 +36,7 @@ func _physics_process(_t:float) -> void:
 		if not active and Input.is_action_pressed("shield"):
 			if can_shield_bash():
 				# Perform shield bash
-				Player.kinematicbody.anim_tree['parameters/ShieldMovement/playback'].travel("Bash")
+				Player.anim_tree['parameters/ShieldMovement/playback'].travel("Bash")
 				play("shield_bash")
 				seek(0)
 				active = true
@@ -44,8 +44,8 @@ func _physics_process(_t:float) -> void:
 				# Take shield out
 				
 				""" Issue here where it shouldnt start this animation from the beginning I think if the shield is currently being put away still... ?? """
-				Player.kinematicbody.anim_state_machine.travel("ShieldMovement")
-				Player.kinematicbody.anim_tree['parameters/ShieldMovement/playback'].start("TakeOut")
+				Player.anim_state_machine.travel("ShieldMovement")
+				Player.anim_tree['parameters/ShieldMovement/playback'].start("TakeOut")
 				play("take_out")
 				active = true
 		
@@ -60,8 +60,8 @@ func _physics_process(_t:float) -> void:
 		mesh.transform = shield_pos.transform.rotated(Vector3.UP, PI)
 
 func exit_shield_state() -> void:
-	if Player.kinematicbody.anim_state_machine.get_current_node() == "ShieldMovement":
-		Player.kinematicbody.anim_state_machine.travel("BaseMovement")
+	if Player.anim_state_machine.get_current_node() == "ShieldMovement":
+		Player.anim_state_machine.travel("BaseMovement")
 
 func slide() -> void:
 	active = true
@@ -72,7 +72,7 @@ func slide() -> void:
 
 func put_away() -> void:
 	if not sliding:
-		Player.kinematicbody.anim_tree['parameters/ShieldMovement/playback'].travel("PutAway")
+		Player.anim_tree['parameters/ShieldMovement/playback'].travel("PutAway")
 		play("put_away")
 		active = false
 

@@ -28,7 +28,7 @@ Events="*res://global/Events.gd"
 Timekeeper="*res://global/timekeeper/Timekeeper.tscn"
 Player="*res://player/Player.tscn"
 MainCam="*res://camera/Camera.tscn"
-UI="*res://UI.tscn"
+UI="*res://ui/UI.tscn"
 Level="*res://levels/Level.tscn"
 
 [debug]

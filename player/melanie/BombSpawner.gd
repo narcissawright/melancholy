@@ -1,5 +1,10 @@
 extends Position3D
 
+""" 
+!fix 
+Broken animation tween, as I am redoing the animation tree.
+"""
+
 onready var spawn_area = $SpawnArea
 onready var bomb = preload("res://actor/bomb/Bomb.tscn")
 
@@ -12,13 +17,14 @@ onready var tween = $Tween
 
 func _ready() -> void:
 	Events.connect("player_damaged", self, "on_player_damaged")
+	Events.connect("respawn", self, "on_player_respawning")
 
 func process_state() -> void:
 	if not Player.shield.active:
 		if Input.is_action_just_pressed("subweapon"):
 			
 			if holding: # If you are already holding the bomb, throw it.
-				var velocity = Player.forwards*10.0 + Vector3.UP*5.0
+				var velocity = Player.forwards()*10.0 + Vector3.UP*5.0
 				velocity += Player.velocity * 0.3
 				throw_bomb_asap(velocity)
 				
@@ -90,3 +96,8 @@ func _on_SpawnArea_body_entered(_body: Node) -> void:
 func on_player_damaged() -> void:
 	if holding:
 		drop_bomb()
+
+func on_player_respawning() -> void:
+	if holding:
+		holding = false
+		current_bomb.queue_free()

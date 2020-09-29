@@ -79,8 +79,8 @@ func manage_target_list() -> void:
 			
 			# The closer the target is to the player facing direction, the higher relevance it has
 			var rel_player_facing:float = 0.0
-			var playerfacedir = Player.forwards
-			var starting_point = Player.position
+			var playerfacedir = Player.forwards()
+			var starting_point = Player.global_transform.origin
 			# Height will be ignored for this calculation
 			starting_point.y = 0.0
 			var target_pos_no_height = target.pos

@@ -7,8 +7,8 @@ func _ready() -> void:
 
 func _process(_t:float) -> void:
 	var length_squared = minimum_distance(
-		Player.position, 
-		Player.position + Vector3.UP * 1.8, 
+		Player.global_transform.origin, 
+		Player.global_transform.origin + Vector3.UP * 1.8, 
 		MainCam.global_transform.origin)
 	
 	# close length is 0.2, far length is 0.4.

@@ -49,11 +49,11 @@ func hit(space_state, t):
 		"die": 
 			die()
 		"bounce":
-			query.exclude = [Player.kinematicbody]
+			query.exclude = [Player]
 			var reflection = velocity.bounce(Player.forward)
 			var strength = Player.shield.bash_str + 0.2
 			var player_hvelocity = Vector3(Player.velocity.x, 0.0, Player.velocity.z)
-			#var lob_amount = -min(0.0, Game.player.forwards().dot(Game.player.velocity.normalized()))
+			#var lob_amount = -min(0.0, Player.forwards().dot(Game.player.velocity.normalized()))
 			velocity = reflection * strength + player_hvelocity
 			translation += velocity * t
 	
