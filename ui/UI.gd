@@ -4,6 +4,7 @@ extends CanvasLayer
 onready var paused = $Paused 
 onready var ingame_ui = $InGame_UI
 onready var inventory = $InGame_UI/Inventory
+onready var speedtimer = $InGame_UI/SpeedTimer/Label
 
 const jewel_color = Color("#00d2ba")
 const error_color = Color("#ff1010")

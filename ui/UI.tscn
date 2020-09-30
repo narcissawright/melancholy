@@ -2007,6 +2007,23 @@ texture = ExtResource( 22 )
 rotation = 0.986111
 texture = ExtResource( 22 )
 
+[node name="SpeedTimer" type="Node2D" parent="InGame_UI"]
+
+[node name="Label" type="Label" parent="InGame_UI/SpeedTimer"]
+margin_left = 125.0
+margin_top = 1021.0
+margin_right = 244.0
+margin_bottom = 1050.0
+custom_fonts/font = SubResource( 20 )
+custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+text = "00:00.00"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Subweapon" type="Node2D" parent="InGame_UI"]
 position = Vector2( 1870, 50 )
 script = ExtResource( 16 )

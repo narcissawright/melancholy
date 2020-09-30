@@ -21,7 +21,7 @@ func vertical_raycast() -> Dictionary:
 func horizontal_raycast(height:float) -> Dictionary:
 	# the goal here is to use the very small height offset to always get a collision. 
 	
-	var xform = Player.xform
+	var xform = Player.transform
 	var leftright_offset:Vector3 = xform.basis.x * 0.1
 	
 	var from = Vector3(xform.origin.x, height - 0.001, xform.origin.z) + leftright_offset

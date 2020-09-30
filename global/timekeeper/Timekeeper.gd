@@ -1,12 +1,15 @@
 extends Node
 
-onready var tween = $Tween
+onready var tween = $TimeOfDayTween
+onready var playtime_tween = $PlaytimeTween
 const timescale:float = 1.0
 var time_of_day:float = 540.0
-var tween_duration = 5.0
+var tween_duration:float = 5.0
+var playtime:float = 0.0
 
 func _ready() -> void:
 	Events.connect("respawn", self, "respawn")
+	Events.connect("pause", self, "pause_state_changed")
 
 func time_readable (time:float) -> String:
 	var hours:int
@@ -59,10 +62,28 @@ func respawn() -> void:
 	tween.stop_all()
 	fast_forwarding = false
 
+func format_time(time:float) -> String:
+	var seconds = fmod(time, 60.0)
+	# warning-ignore:integer_division
+	var minutes = int(time) / 60
+	return str(minutes).pad_zeros(2) + ":" + str(seconds).pad_zeros(2).pad_decimals(2)
+
+var playtime_multiplier = 1.0
+func pause_state_changed(value:bool) -> void:
+	if value == true:
+		playtime_tween.interpolate_property(self, "playtime_multiplier", null, 0.001, 1.0)
+		playtime_tween.start()
+	else:
+		playtime_tween.stop_all()
+		playtime_multiplier = 1.0
+
 func _physics_process(t:float) -> void:
-	if not get_tree().paused and not fast_forwarding:
-		var time_travel = t * timescale
-		time_of_day = fmod(time_of_day + time_travel, 1440.0)
-		
+	playtime += (t * playtime_multiplier)
+	UI.speedtimer.text = format_time(playtime)
+	
+	if not get_tree().paused:
+		if not fast_forwarding:
+			var time_travel = t * timescale
+			time_of_day = fmod(time_of_day + time_travel, 1440.0)
 	Debug.text.write("Time of day: " + time_readable(time_of_day))
-			
+	
