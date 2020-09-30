@@ -595,7 +595,7 @@ func walk_animation() -> void:
 	var h_velocity = horizontal_velocity()
 	var angle = angle_to_flattened(h_velocity, forwards())
 	var walk_length = min(h_velocity.length() / 8.0, 1.0)
-	var blend_pos:Vector2 = Vector2(sin(angle), 1.0 - abs(sin(angle))) * walk_length
+	var blend_pos:Vector2 = Vector2(sin(-angle), 1.0 - abs(sin(angle))) * walk_length
 	
 	Debug.text.write("ANGLE: " + str(angle))
 	Debug.text.write("BLEND_POS: " + str(blend_pos))
