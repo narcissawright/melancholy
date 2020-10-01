@@ -158,7 +158,17 @@ func get_stick_input(which:String) -> Vector2:
 
 # Converts joystick input to world space, using Camera as the basis
 func find_movement_direction() -> Vector3:
-	var pushdir:Vector2 = get_stick_input("left")
+	var pushdir := Vector2.ZERO
+	if Input.is_action_pressed("move_up"):
+		pushdir.y -= 1
+	if Input.is_action_pressed("move_down"):
+		pushdir.y += 1
+	if Input.is_action_pressed("move_left"):
+		pushdir.x -= 1
+	if Input.is_action_pressed("move_right"):
+		pushdir.x += 1
+	if pushdir == Vector2.ZERO:
+		pushdir = get_stick_input("left")
 	var camdir:Vector3 = MainCam.global_transform.basis.z
 	camdir.y = 0.0
 	camdir = camdir.normalized()

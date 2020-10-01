@@ -12,8 +12,6 @@ func _ready() -> void:
 	Events.connect("quit_game", self, "quit_game")
 
 func _input(_event: InputEvent) -> void:
-	if Input.is_action_just_pressed("ui_cancel"):
-		quit_game()
 	if Input.is_action_just_pressed("fullscreen"):
 		Input.action_release("fullscreen")
 		OS.window_fullscreen = !OS.window_fullscreen
