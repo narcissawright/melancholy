@@ -3,7 +3,6 @@
 [ext_resource path="res://levels/riverbridges/texture/grass_seamless_1.jpg" type="Texture" id=1]
 [ext_resource path="res://levels/riverbridges/texture/earthrocks_albedo.png" type="Texture" id=2]
 
-
 [sub_resource type="Shader" id=1]
 code = "shader_type spatial;
 render_mode blend_mix,depth_draw_opaque,cull_disabled,diffuse_burley,specular_schlick_ggx;
