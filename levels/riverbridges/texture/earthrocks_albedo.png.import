@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/grass_seamless_1.jpg-47b8834cccf621998eee19be11bc5248.s3tc.stex"
-path.etc2="res://.import/grass_seamless_1.jpg-47b8834cccf621998eee19be11bc5248.etc2.stex"
+path.s3tc="res://.import/earthrocks_albedo.png-0b5c940d447cce1c742374d20e944fab.s3tc.stex"
+path.etc2="res://.import/earthrocks_albedo.png-0b5c940d447cce1c742374d20e944fab.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://levels/level1/texture/grass_seamless_1.jpg"
-dest_files=[ "res://.import/grass_seamless_1.jpg-47b8834cccf621998eee19be11bc5248.s3tc.stex", "res://.import/grass_seamless_1.jpg-47b8834cccf621998eee19be11bc5248.etc2.stex" ]
+source_file="res://levels/riverbridges/texture/earthrocks_albedo.png"
+dest_files=[ "res://.import/earthrocks_albedo.png-0b5c940d447cce1c742374d20e944fab.s3tc.stex", "res://.import/earthrocks_albedo.png-0b5c940d447cce1c742374d20e944fab.etc2.stex" ]
 
 [params]
 

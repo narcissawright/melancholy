@@ -2,12 +2,12 @@
 
 importer="scene"
 type="PackedScene"
-path="res://.import/ledgegrab_test.glb-2599bed0ffc0bf61c91937fd4ddab286.scn"
+path="res://.import/ledgegrab_test.glb-fb73a65b45c1e85c1e9c36b8889123ff.scn"
 
 [deps]
 
-source_file="res://levels/level1/ledgegrab_test.glb"
-dest_files=[ "res://.import/ledgegrab_test.glb-2599bed0ffc0bf61c91937fd4ddab286.scn" ]
+source_file="res://levels/riverbridges/ledgegrab_test.glb"
+dest_files=[ "res://.import/ledgegrab_test.glb-fb73a65b45c1e85c1e9c36b8889123ff.scn" ]
 
 [params]
 

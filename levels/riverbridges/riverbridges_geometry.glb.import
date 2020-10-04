@@ -2,12 +2,12 @@
 
 importer="scene"
 type="PackedScene"
-path="res://.import/level1_geometry.glb-238ac5ba99c5a4dffcbf70c2f64898e1.scn"
+path="res://.import/riverbridges_geometry.glb-7d66104ca670c79f84e48d2611fdddeb.scn"
 
 [deps]
 
-source_file="res://levels/level1/level1_geometry.glb"
-dest_files=[ "res://.import/level1_geometry.glb-238ac5ba99c5a4dffcbf70c2f64898e1.scn" ]
+source_file="res://levels/riverbridges/riverbridges_geometry.glb"
+dest_files=[ "res://.import/riverbridges_geometry.glb-7d66104ca670c79f84e48d2611fdddeb.scn" ]
 
 [params]
 

@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/pink wojak suit.jpg-65ec5db229bcace3959e18af9e7c0cff.s3tc.stex"
-path.etc2="res://.import/pink wojak suit.jpg-65ec5db229bcace3959e18af9e7c0cff.etc2.stex"
+path.s3tc="res://.import/grass_seamless_1.jpg-1af1c62beb65567bfbee05d075505616.s3tc.stex"
+path.etc2="res://.import/grass_seamless_1.jpg-1af1c62beb65567bfbee05d075505616.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://levels/level1/texture/pink wojak suit.jpg"
-dest_files=[ "res://.import/pink wojak suit.jpg-65ec5db229bcace3959e18af9e7c0cff.s3tc.stex", "res://.import/pink wojak suit.jpg-65ec5db229bcace3959e18af9e7c0cff.etc2.stex" ]
+source_file="res://levels/riverbridges/texture/grass_seamless_1.jpg"
+dest_files=[ "res://.import/grass_seamless_1.jpg-1af1c62beb65567bfbee05d075505616.s3tc.stex", "res://.import/grass_seamless_1.jpg-1af1c62beb65567bfbee05d075505616.etc2.stex" ]
 
 [params]
 

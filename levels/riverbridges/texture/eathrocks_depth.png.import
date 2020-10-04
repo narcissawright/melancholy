@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/eathrocks_normal.png-377a10064ad88b41e530655847680adc.stex"
+path="res://.import/eathrocks_depth.png-95e4830610bb0fc7a39651a26e278d39.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://levels/level1/texture/eathrocks_normal.png"
-dest_files=[ "res://.import/eathrocks_normal.png-377a10064ad88b41e530655847680adc.stex" ]
+source_file="res://levels/riverbridges/texture/eathrocks_depth.png"
+dest_files=[ "res://.import/eathrocks_depth.png-95e4830610bb0fc7a39651a26e278d39.stex" ]
 
 [params]
 

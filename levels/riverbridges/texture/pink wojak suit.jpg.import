@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/earthrocks_albedo.png-16436b77f4f5ec73dff959f0395cd47d.s3tc.stex"
-path.etc2="res://.import/earthrocks_albedo.png-16436b77f4f5ec73dff959f0395cd47d.etc2.stex"
+path.s3tc="res://.import/pink wojak suit.jpg-9ace8a16e3cc28a9ac279406b0a5f005.s3tc.stex"
+path.etc2="res://.import/pink wojak suit.jpg-9ace8a16e3cc28a9ac279406b0a5f005.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://levels/level1/texture/earthrocks_albedo.png"
-dest_files=[ "res://.import/earthrocks_albedo.png-16436b77f4f5ec73dff959f0395cd47d.s3tc.stex", "res://.import/earthrocks_albedo.png-16436b77f4f5ec73dff959f0395cd47d.etc2.stex" ]
+source_file="res://levels/riverbridges/texture/pink wojak suit.jpg"
+dest_files=[ "res://.import/pink wojak suit.jpg-9ace8a16e3cc28a9ac279406b0a5f005.s3tc.stex", "res://.import/pink wojak suit.jpg-9ace8a16e3cc28a9ac279406b0a5f005.etc2.stex" ]
 
 [params]
 

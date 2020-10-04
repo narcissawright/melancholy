@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/earthrocks_roughness.png-ff08f35557a14d4749233a9aaee35968.stex"
+path="res://.import/earthrocks_roughness.png-e42bff3eed41861706fde0c9365e267d.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://levels/level1/texture/earthrocks_roughness.png"
-dest_files=[ "res://.import/earthrocks_roughness.png-ff08f35557a14d4749233a9aaee35968.stex" ]
+source_file="res://levels/riverbridges/texture/earthrocks_roughness.png"
+dest_files=[ "res://.import/earthrocks_roughness.png-e42bff3eed41861706fde0c9365e267d.stex" ]
 
 [params]
 
