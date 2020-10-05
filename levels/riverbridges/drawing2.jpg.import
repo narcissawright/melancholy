@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/16017428472885746796872932184309.jpg-b5e71d9b9fbbf53ae8a0ea07a64aeed3.stex"
+path="res://.import/drawing2.jpg-db71a9170b8a1112ffe61e890209ee13.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://levels/riverbridges/16017428472885746796872932184309.jpg"
-dest_files=[ "res://.import/16017428472885746796872932184309.jpg-b5e71d9b9fbbf53ae8a0ea07a64aeed3.stex" ]
+source_file="res://levels/riverbridges/drawing2.jpg"
+dest_files=[ "res://.import/drawing2.jpg-db71a9170b8a1112ffe61e890209ee13.stex" ]
 
 [params]
 

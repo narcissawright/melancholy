@@ -56,14 +56,14 @@ func manage_target_list() -> void:
 		
 		# Assign properties
 		target.pos = target.parent.global_transform.origin
-		target.length = (target.pos - Player.position).length()
-		target.move_vector = -(Player.position - target.pos).normalized()
+		target.length = (target.pos - Player.global_transform.origin).length()
+		target.move_vector = -(Player.global_transform.origin - target.pos).normalized()
 		target.aabb2d = find_aabb_2d(target.pos, target.aabb) 
 		target.on_cam = is_target_on_camera(target)
 		
 		# Check for player line of sight
 		var ss:PhysicsDirectSpaceState = target.area.get_world().direct_space_state
-		var result:Dictionary = ss.intersect_ray(Player.position, target.area.global_transform.origin, [], Layers.solid)
+		var result:Dictionary = ss.intersect_ray(Player.global_transform.origin, target.area.global_transform.origin, [], Layers.solid)
 		var blocked = result.size() > 0 # If no line of sight, do not draw.
 		
 		target.relevance = 0.0

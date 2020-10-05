@@ -2,12 +2,15 @@
 
 [ext_resource path="res://levels/Projectiles.gd" type="Script" id=1]
 [ext_resource path="res://levels/Level.gd" type="Script" id=2]
-[ext_resource path="res://levels/another_test_scene/another_test_scene.tscn" type="PackedScene" id=3]
+[ext_resource path="res://levels/riverbridges/riverbridges.tscn" type="PackedScene" id=3]
 
-[node name="Level" type="Spatial"]
+[node name="Level" type="Node"]
 script = ExtResource( 2 )
 
 [node name="Projectiles" type="Spatial" parent="."]
 script = ExtResource( 1 )
+__meta__ = {
+"_editor_description_": "A space for temporary projectiles to reside in."
+}
 
-[node name="another_test_scene" parent="." instance=ExtResource( 3 )]
+[node name="RiverBridges" parent="." instance=ExtResource( 3 )]
