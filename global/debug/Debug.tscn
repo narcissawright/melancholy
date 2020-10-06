@@ -6,7 +6,11 @@
 
 [sub_resource type="SpatialMaterial" id=1]
 flags_unshaded = true
+flags_do_not_receive_shadows = true
+flags_disable_ambient_light = true
 vertex_color_use_as_albedo = true
+params_diffuse_mode = 1
+params_specular_mode = 4
 
 [node name="Debug" type="Control"]
 pause_mode = 2
@@ -28,5 +32,7 @@ __meta__ = {
 }
 
 [node name="Draw" type="ImmediateGeometry" parent="."]
+layers = 4
 material_override = SubResource( 1 )
+cast_shadow = 0
 script = ExtResource( 3 )

@@ -721,13 +721,14 @@ func handle_collision(collision:KinematicCollision) -> void:
 	if collision:
 		var impact:float = velocity.length()
 		velocity = velocity.slide(collision.normal)
-		impact -= velocity.length()
+		var v_length = velocity.length()
+		impact -= v_length
 		if impact > 12.5:
 			apply_damage(impact * 1.5)
 		
-		if gather_collision_data:
-			pass
-			#_gather_collision_data()
+		if collision_data_timer.is_stopped() and v_length > 5.0:
+			collision_data_timer.start()
+			Events.emit_signal("path_collision", collision.position, v_length) # emit collision info to environment
 
 """ 
 The code below here is for making dirt paths by running on grass.

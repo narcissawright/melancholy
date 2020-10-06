@@ -4,26 +4,24 @@ var vertex_data_octree:Dictionary
 var grass_surface:Array
 
 func _ready() -> void:
+	Events.connect("path_collision", self, "_on_path_collision")
 	var grass_idx = -1
 	for i in range (geometry.mesh.get_surface_count()):
 		if (geometry.mesh.get("surface_" + str(i+1) + "/name")) == "Grass":
 			grass_idx = i
-	print ("Grass index is ", grass_idx)
 	grass_surface = geometry.mesh.surface_get_arrays(grass_idx)
-	print (grass_surface[ArrayMesh.ARRAY_VERTEX].size())
-	print ("---")
-	print (grass_surface[ArrayMesh.ARRAY_COLOR].size())
-	print ("---")
-	print (grass_surface[ArrayMesh.ARRAY_INDEX].size())
+	print ("Vertices: ", grass_surface[ArrayMesh.ARRAY_VERTEX].size())
+	print ("Colors: ", grass_surface[ArrayMesh.ARRAY_COLOR].size())
+	print ("Indices: ", grass_surface[ArrayMesh.ARRAY_INDEX].size())
 	
 	
 	create_octree_root_cube()
 	
 	for i in range (grass_surface[ArrayMesh.ARRAY_VERTEX].size()):
 		add_to_tree(vertex_data_octree, i, grass_surface[ArrayMesh.ARRAY_VERTEX][i])
-		
-	#print (vertex_data_octree)
+	
 	draw_octree(vertex_data_octree)
+	print("Draw_Count: ", draw_count)
 
 func create_octree_root_cube(): # big box covers entire level. the root of the octree.
 	var aabb = geometry.get_aabb()
@@ -97,6 +95,7 @@ func compartmentalize(octree):
 	for child in octree.children: # handles rare cases of a compartmentalized box still holding too many indices
 		compartmentalize(child)
 
+var draw_count = 0
 func draw_octree(octree) -> void:
 	draw_aabb(octree.box)
 	for i in range (octree.objects.size()):
@@ -104,6 +103,7 @@ func draw_octree(octree) -> void:
 		Debug.draw.set_color(Color(0.6, 1, 0.3, 1))
 		Debug.draw.add_vertex(octree.objects[i].pos)
 		Debug.draw.add_vertex(octree.objects[i].pos + (Vector3.UP * 0.1))
+		draw_count += 2
 		Debug.draw.end()
 	for i in range (octree.children.size()):
 		draw_octree(octree.children[i])
@@ -148,5 +148,44 @@ func draw_aabb(aabb):
 	
 	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(1,0,1)))
 	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(1,1,1)))
-	
+	draw_count += 24
 	Debug.draw.end()
+
+const GRASS_HURT_DIST = 0.3
+func _on_path_collision(pos:Vector3, impact:float):
+	var node = search_octree(pos, vertex_data_octree)
+	#print("path collision, ", pos, impact)
+	var axis_aligned_checks = PoolVector3Array() # we check 6 axis aligned points to find nearby grass containers.
+	axis_aligned_checks.push_back(Vector3(-GRASS_HURT_DIST, 0, 0))
+	axis_aligned_checks.push_back(Vector3( GRASS_HURT_DIST, 0, 0)) 
+	axis_aligned_checks.push_back(Vector3(0, -GRASS_HURT_DIST/2.5, 0)) 
+	axis_aligned_checks.push_back(Vector3(0,  GRASS_HURT_DIST/2.5, 0))
+	axis_aligned_checks.push_back(Vector3(0, 0, -GRASS_HURT_DIST))
+	axis_aligned_checks.push_back(Vector3(0, 0,  GRASS_HURT_DIST))
+	var grass = find_grass_vertices(pos, axis_aligned_checks, node) # finds adjacent grass
+	if grass.size() > 0:
+		write_dirt_path(pos, grass, impact)
+		
+func write_dirt_path(pos:Vector3, grass:Array, impact:float) -> void:
+	print(pos, " ", grass, " ", impact)
+
+func find_grass_vertices(pos, axis_aligned_checks, node):
+	var boxes = []
+	boxes.push_back(node.objects) # push the collision point box grass into the array
+	
+	for i in range (axis_aligned_checks.size()): # for each axis aligned check
+		if !node.box.has_point(pos + axis_aligned_checks[i]): # if the new point to check isn't in the collision point box
+			var box = search_octree(pos + axis_aligned_checks[i], vertex_data_octree) # find where it is
+			# if the box ends up out of bounds entirely, typeof(box) won't be > 0
+			if typeof(box) > 0:
+				if boxes.find(box.objects) == -1 and box.objects.size() > 0: # if it isn't already in the boxes array, and has size
+					boxes.push_back(box.objects) # add it
+	return flatten(boxes) # return all the grass indices in a single array
+	
+# 2D array -> 1D array
+static func flatten(arr):
+	var result = []
+	for a in arr:
+		for x in a:
+			result.append(x)
+	return result
