@@ -5,6 +5,7 @@ var grass_index:int = -1
 var grass_surface:Array
 
 func _ready() -> void:
+	Events.connect("debug_view", self, "toggle_debug_view")
 	Events.connect("path_collision", self, "_on_path_collision")
 	for i in range (geometry.mesh.get_surface_count()):
 		if (geometry.mesh.get("surface_" + str(i+1) + "/name")) == "Grass":
@@ -21,6 +22,9 @@ func _ready() -> void:
 		add_to_tree(vertex_data_octree, i, grass_surface[ArrayMesh.ARRAY_VERTEX][i])
 	
 	visualize_octree() # DEBUG
+
+func toggle_debug_view(state:bool) -> void:
+	$OctreeViz.visible = state
 
 # debug viz
 var debug_verts:PoolVector3Array
@@ -151,7 +155,7 @@ func compartmentalize(octree):
 	for child in octree.children: # handles rare cases of a compartmentalized box still holding too many indices
 		compartmentalize(child)
 
-const GRASS_HURT_DIST = 0.3
+const GRASS_HURT_DIST = 1.0
 func _on_path_collision(pos:Vector3, impact:float):
 	var node = search_octree(pos, vertex_data_octree)
 	var axis_aligned_checks = PoolVector3Array() # we check 6 axis aligned points to find nearby grass containers.
@@ -170,12 +174,12 @@ func write_dirt_path(pos:Vector3, grass:Array, impact:float) -> void:
 		var dist = pos.distance_to(grass[i].pos) # find dist from collision point to grass vertex
 		if dist < GRASS_HURT_DIST: # if dist is within radius, write dirt
 			
-			var dmg = 0.0
-			
-			var value = clamp(grass_surface[ArrayMesh.ARRAY_COLOR][grass[i].index].g - 0.5, 0.0, 1.0)
+			var dmg = 1.0 - (dist / GRASS_HURT_DIST)
+			dmg = (dmg / 100.0) * impact
+			var value = clamp(grass_surface[ArrayMesh.ARRAY_COLOR][grass[i].index].g - dmg, 0.0, 1.0)
 			grass_surface[ArrayMesh.ARRAY_COLOR][grass[i].index].g = value
 	
-	# This is so obnoxious
+	# Update Surface. This is so obnoxious (removing and adding instead of modifying)
 	var dupe = geometry.mesh.duplicate()
 	var mat = geometry.mesh.surface_get_material(grass_index)
 	dupe.surface_remove(grass_index)
@@ -183,6 +187,9 @@ func write_dirt_path(pos:Vector3, grass:Array, impact:float) -> void:
 	grass_index = dupe.get_surface_count() - 1
 	dupe.surface_set_material(grass_index, mat)
 	geometry.mesh = dupe
+
+func heal_random_grass() -> void:
+	pass
 
 func find_grass_vertices(pos, axis_aligned_checks, node):
 	var boxes = []

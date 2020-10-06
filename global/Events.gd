@@ -11,6 +11,7 @@ signal current_subweapon_changed
 signal jewel_cost_too_high
 signal error_no_subweapon
 signal path_collision # position:Vector3, velocity_length:float
+signal debug_view # true/false
 
 # These are called from menu
 signal unpause_game

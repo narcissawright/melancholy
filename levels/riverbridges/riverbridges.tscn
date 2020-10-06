@@ -31,6 +31,7 @@ albedo_texture = ExtResource( 13 )
 script = ExtResource( 14 )
 
 [node name="OctreeViz" type="MeshInstance" parent="GrassLogic"]
+visible = false
 material_override = ExtResource( 10 )
 cast_shadow = 0
 __meta__ = {
