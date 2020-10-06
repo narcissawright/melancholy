@@ -1,27 +1,83 @@
 extends Node
 onready var geometry = $'../Geometry'
 var vertex_data_octree:Dictionary
+var grass_index:int = -1
 var grass_surface:Array
 
 func _ready() -> void:
 	Events.connect("path_collision", self, "_on_path_collision")
-	var grass_idx = -1
 	for i in range (geometry.mesh.get_surface_count()):
 		if (geometry.mesh.get("surface_" + str(i+1) + "/name")) == "Grass":
-			grass_idx = i
-	grass_surface = geometry.mesh.surface_get_arrays(grass_idx)
-	print ("Vertices: ", grass_surface[ArrayMesh.ARRAY_VERTEX].size())
-	print ("Colors: ", grass_surface[ArrayMesh.ARRAY_COLOR].size())
-	print ("Indices: ", grass_surface[ArrayMesh.ARRAY_INDEX].size())
+			grass_index = i
+	grass_surface = geometry.mesh.surface_get_arrays(grass_index)
+#	print ("Vertices: ", grass_surface[ArrayMesh.ARRAY_VERTEX].size())
+#	print ("Colors: ", grass_surface[ArrayMesh.ARRAY_COLOR].size())
+#	print ("Indices: ", grass_surface[ArrayMesh.ARRAY_INDEX].size())
 	
+	create_octree_root_cube() # Initialize Octree
 	
-	create_octree_root_cube()
-	
+	# Populate Octree
 	for i in range (grass_surface[ArrayMesh.ARRAY_VERTEX].size()):
 		add_to_tree(vertex_data_octree, i, grass_surface[ArrayMesh.ARRAY_VERTEX][i])
 	
-	draw_octree(vertex_data_octree)
-	print("Draw_Count: ", draw_count)
+	visualize_octree() # DEBUG
+
+# debug viz
+var debug_verts:PoolVector3Array
+var debug_colors:PoolColorArray
+func visualize_octree() -> void:
+	var octree_viz:Array = []
+	octree_viz.resize(Mesh.ARRAY_MAX)
+
+	populate_arraymesh(vertex_data_octree)
+	
+	octree_viz[Mesh.ARRAY_VERTEX] = debug_verts
+	octree_viz[Mesh.ARRAY_COLOR] = debug_colors
+	var arr_mesh = ArrayMesh.new()
+	arr_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES, octree_viz)
+	$OctreeViz.mesh = arr_mesh
+
+# for debug viz
+func populate_arraymesh(octree:Dictionary) -> void:
+	debug_verts.append_array(get_aabb_vertices(octree.box))
+	for _i in range (24):
+		debug_colors.append(Color(0.6, 0.4, 1, 1))
+	for i in range (octree.objects.size()):
+		debug_verts.append(octree.objects[i].pos)
+		debug_verts.append(octree.objects[i].pos + (Vector3.UP * 0.1))
+		debug_colors.append(Color(0.6, 1, 0.3, 1))
+		debug_colors.append(Color(0.6, 1, 0.3, 1))
+	for i in range (octree.children.size()):
+		populate_arraymesh(octree.children[i])
+
+# for debug viz
+func get_aabb_vertices(aabb:AABB) -> PoolVector3Array:
+	var verts := PoolVector3Array() # 12 lines to make a cube. 24 vertices.
+	verts.append(aabb.position + (aabb.size * Vector3(0,0,0)))
+	verts.append(aabb.position + (aabb.size * Vector3(1,0,0)))
+	verts.append(aabb.position + (aabb.size * Vector3(1,0,0)))
+	verts.append(aabb.position + (aabb.size * Vector3(1,1,0)))
+	verts.append(aabb.position + (aabb.size * Vector3(1,0,0)))
+	verts.append(aabb.position + (aabb.size * Vector3(1,0,1)))
+	verts.append(aabb.position + (aabb.size * Vector3(0,0,0)))
+	verts.append(aabb.position + (aabb.size * Vector3(0,1,0)))
+	verts.append(aabb.position + (aabb.size * Vector3(0,1,0)))
+	verts.append(aabb.position + (aabb.size * Vector3(1,1,0)))
+	verts.append(aabb.position + (aabb.size * Vector3(0,1,0)))
+	verts.append(aabb.position + (aabb.size * Vector3(0,1,1)))
+	verts.append(aabb.position + (aabb.size * Vector3(0,0,0)))
+	verts.append(aabb.position + (aabb.size * Vector3(0,0,1)))
+	verts.append(aabb.position + (aabb.size * Vector3(0,0,1)))
+	verts.append(aabb.position + (aabb.size * Vector3(1,0,1)))
+	verts.append(aabb.position + (aabb.size * Vector3(0,0,1)))
+	verts.append(aabb.position + (aabb.size * Vector3(0,1,1)))
+	verts.append(aabb.position + (aabb.size * Vector3(0,1,1)))
+	verts.append(aabb.position + (aabb.size * Vector3(1,1,1)))
+	verts.append(aabb.position + (aabb.size * Vector3(1,1,0)))
+	verts.append(aabb.position + (aabb.size * Vector3(1,1,1)))
+	verts.append(aabb.position + (aabb.size * Vector3(1,0,1)))
+	verts.append(aabb.position + (aabb.size * Vector3(1,1,1)))
+	return verts
 
 func create_octree_root_cube(): # big box covers entire level. the root of the octree.
 	var aabb = geometry.get_aabb()
@@ -95,66 +151,9 @@ func compartmentalize(octree):
 	for child in octree.children: # handles rare cases of a compartmentalized box still holding too many indices
 		compartmentalize(child)
 
-var draw_count = 0
-func draw_octree(octree) -> void:
-	draw_aabb(octree.box)
-	for i in range (octree.objects.size()):
-		Debug.draw.begin(Mesh.PRIMITIVE_LINES, null)
-		Debug.draw.set_color(Color(0.6, 1, 0.3, 1))
-		Debug.draw.add_vertex(octree.objects[i].pos)
-		Debug.draw.add_vertex(octree.objects[i].pos + (Vector3.UP * 0.1))
-		draw_count += 2
-		Debug.draw.end()
-	for i in range (octree.children.size()):
-		draw_octree(octree.children[i])
-
-# Draw Axis-Aligned Bounding Box (debug function)
-func draw_aabb(aabb):
-	Debug.draw.begin(Mesh.PRIMITIVE_LINES, null) # begin ImmediateGeometry creation
-	Debug.draw.set_color(Color(0.6, 0.4, 1, 1))
-	# 12 lines create a cube wireframe.
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(0,0,0)))
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(1,0,0)))
-	
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(1,0,0)))
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(1,1,0)))
-	
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(1,0,0)))
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(1,0,1)))
-	
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(0,0,0)))
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(0,1,0)))
-	
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(0,1,0)))
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(1,1,0)))
-	
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(0,1,0)))
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(0,1,1)))
-	
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(0,0,0)))
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(0,0,1)))
-	
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(0,0,1)))
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(1,0,1)))
-	
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(0,0,1)))
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(0,1,1)))
-	
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(0,1,1)))
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(1,1,1)))
-	
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(1,1,0)))
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(1,1,1)))
-	
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(1,0,1)))
-	Debug.draw.add_vertex(aabb.position + (aabb.size * Vector3(1,1,1)))
-	draw_count += 24
-	Debug.draw.end()
-
 const GRASS_HURT_DIST = 0.3
 func _on_path_collision(pos:Vector3, impact:float):
 	var node = search_octree(pos, vertex_data_octree)
-	#print("path collision, ", pos, impact)
 	var axis_aligned_checks = PoolVector3Array() # we check 6 axis aligned points to find nearby grass containers.
 	axis_aligned_checks.push_back(Vector3(-GRASS_HURT_DIST, 0, 0))
 	axis_aligned_checks.push_back(Vector3( GRASS_HURT_DIST, 0, 0)) 
@@ -167,7 +166,23 @@ func _on_path_collision(pos:Vector3, impact:float):
 		write_dirt_path(pos, grass, impact)
 		
 func write_dirt_path(pos:Vector3, grass:Array, impact:float) -> void:
-	print(pos, " ", grass, " ", impact)
+	for i in range (0, grass.size()): # for each grass vertex
+		var dist = pos.distance_to(grass[i].pos) # find dist from collision point to grass vertex
+		if dist < GRASS_HURT_DIST: # if dist is within radius, write dirt
+			
+			var dmg = 0.0
+			
+			var value = clamp(grass_surface[ArrayMesh.ARRAY_COLOR][grass[i].index].g - 0.5, 0.0, 1.0)
+			grass_surface[ArrayMesh.ARRAY_COLOR][grass[i].index].g = value
+	
+	# This is so obnoxious
+	var dupe = geometry.mesh.duplicate()
+	var mat = geometry.mesh.surface_get_material(grass_index)
+	dupe.surface_remove(grass_index)
+	dupe.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, grass_surface)
+	grass_index = dupe.get_surface_count() - 1
+	dupe.surface_set_material(grass_index, mat)
+	geometry.mesh = dupe
 
 func find_grass_vertices(pos, axis_aligned_checks, node):
 	var boxes = []

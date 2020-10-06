@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://levels/riverbridges/Grass.material" type="Material" id=1]
+[ext_resource path="res://levels/riverbridges/grassdirt_color_mat.tres" type="Material" id=1]
 [ext_resource path="res://levels/riverbridges/Wall.material" type="Material" id=2]
 
 [sub_resource type="ArrayMesh" id=1]

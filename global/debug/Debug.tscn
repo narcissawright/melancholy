@@ -3,14 +3,7 @@
 [ext_resource path="res://global/debug/Text.gd" type="Script" id=1]
 [ext_resource path="res://global/debug/Debug.gd" type="Script" id=2]
 [ext_resource path="res://global/debug/Draw.gd" type="Script" id=3]
-
-[sub_resource type="SpatialMaterial" id=1]
-flags_unshaded = true
-flags_do_not_receive_shadows = true
-flags_disable_ambient_light = true
-vertex_color_use_as_albedo = true
-params_diffuse_mode = 1
-params_specular_mode = 4
+[ext_resource path="res://global/debug/DebugDrawMaterial.tres" type="Material" id=4]
 
 [node name="Debug" type="Control"]
 pause_mode = 2
@@ -33,6 +26,6 @@ __meta__ = {
 
 [node name="Draw" type="ImmediateGeometry" parent="."]
 layers = 4
-material_override = SubResource( 1 )
+material_override = ExtResource( 4 )
 cast_shadow = 0
 script = ExtResource( 3 )

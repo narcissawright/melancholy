@@ -1,0 +1,28 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=2]
+
+[ext_resource path="res://levels/riverbridges/texture/earthrocks_albedo.png" type="Texture" id=1]
+[ext_resource path="res://levels/riverbridges/texture/grass_seamless_1.jpg" type="Texture" id=2]
+
+[sub_resource type="Shader" id=5]
+code = "shader_type spatial;
+render_mode blend_mix;
+
+uniform sampler2D grass_texture : hint_albedo;
+uniform sampler2D dirt_texture : hint_albedo;
+
+void fragment() {
+	float textureblend = COLOR.g;
+	vec4 albedo_grass = texture(grass_texture, UV);
+	vec4 albedo_dirt = texture(dirt_texture, UV);
+	
+	ALBEDO = mix(albedo_dirt.rgb, albedo_grass.rgb, textureblend);
+	METALLIC = 0.0;
+	ROUGHNESS = 1.0;
+	SPECULAR = 0.5;
+}
+"
+
+[resource]
+shader = SubResource( 5 )
+shader_param/grass_texture = ExtResource( 2 )
+shader_param/dirt_texture = ExtResource( 1 )
