@@ -1,12 +1,17 @@
 extends Node
 onready var geometry = $'../Geometry'
+onready var aabbs = $AABBs
 var vertex_data_octree:Dictionary
 var grass_index:int = -1
 var grass_surface:Array
 
 func _ready() -> void:
 	Events.connect("debug_view", self, "toggle_debug_view")
-	Events.connect("path_collision", self, "_on_path_collision")
+	aabbs.visible = false
+	# Disable this for now.
+	#Events.connect("path_collision", self, "_on_path_collision")
+	
+	
 	for i in range (geometry.mesh.get_surface_count()):
 		if (geometry.mesh.get("surface_" + str(i+1) + "/name")) == "Grass":
 			grass_index = i
@@ -25,6 +30,7 @@ func _ready() -> void:
 
 func toggle_debug_view(state:bool) -> void:
 	$OctreeViz.visible = state
+	aabbs.visible = state
 
 # debug viz
 var debug_verts:PoolVector3Array

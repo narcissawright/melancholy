@@ -287,6 +287,7 @@ move_right={
 3d_physics/layer_1="solid"
 3d_render/layer_2="actor"
 3d_physics/layer_2="actor"
+3d_render/layer_3="debug"
 3d_physics/layer_3="target"
 3d_physics/layer_4="explosion"
 3d_physics/layer_5="interactable"

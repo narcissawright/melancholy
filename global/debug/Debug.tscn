@@ -3,7 +3,7 @@
 [ext_resource path="res://global/debug/Text.gd" type="Script" id=1]
 [ext_resource path="res://global/debug/Debug.gd" type="Script" id=2]
 [ext_resource path="res://global/debug/Draw.gd" type="Script" id=3]
-[ext_resource path="res://global/debug/DebugDrawMaterial.tres" type="Material" id=4]
+[ext_resource path="res://global/debug/DebugLinesMaterial.tres" type="Material" id=4]
 
 [node name="Debug" type="Control"]
 pause_mode = 2
