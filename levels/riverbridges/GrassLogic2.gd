@@ -2,30 +2,51 @@ extends Node
 onready var aabbs = $AABBs
 
 func _ready() -> void:
-	Events.connect("debug_view", self, "toggle_debug_view")
+	# Initialize
 	aabbs.visible = false
+	Events.connect("debug_view", self, "toggle_debug_view")
+	Events.connect("path_collision", self, "_on_path_collision")
 	
+	# Obtain data from AABBs
 	var aabb_array = []
 	for child in aabbs.get_children():
-		aabb_array.append(child.position)
-		aabb_array.append(child.size)
+		var aabb = AABB(child.position, child.size)
+		aabb_array.append(aabb)
+	print (aabb_array)
 	
-	var aabb_data_img = Image.new()
-	aabb_data_img.create(2, aabb_array.size() / 2, false, Image.FORMAT_RGBH) # 16 bits per channel
+	# Transform data into signed 16bit ints
+	var data = PoolByteArray()
+	for i in range (aabb_array.size()):
+		var values = [
+			aabb_array[i].position.x, 
+			aabb_array[i].position.y, 
+			aabb_array[i].position.z, 
+			aabb_array[i].size.x, 
+			aabb_array[i].size.y, 
+			aabb_array[i].size.z
+		]
+		for j in range (values.size()):
+			# warning-ignore:integer_division
+			var left_byte = int(values[j]) / 256
+			if sign(values[j]) == -1:
+				left_byte |= 0b10000000
+			var right_byte = int(abs(values[j])) % 256
+			data.append(left_byte)
+			data.append(right_byte)
+
+	print (data.hex_encode())
+	
+	# Create image from data
+	var aabb_data_img = Image.new()                             # 16 bits per channel
+	aabb_data_img.create_from_data(2, aabb_array.size(), false, Image.FORMAT_RGBH, data)
 	var aabb_data_tex = ImageTexture.new()
 	aabb_data_tex.create_from_image(aabb_data_img, 0)
 	
-	print (aabb_array)
-	#Events.connect("path_collision", self, "_on_path_collision")
+	$AABB_TEXTURE.get_surface_material(0).albedo_texture = aabb_data_tex
+
 
 func toggle_debug_view(state:bool) -> void:
 	aabbs.visible = state
 
-#	var height = ceil((aabb.size.x+1) * (aabb.size.y+1) * (aabb.size.z+1) / 1024.0)
-#	path_collision_img = Image.new()
-#	path_collision_img.create(1024, height, false, Image.FORMAT_L8)
-#	path_collision_tex = ImageTexture.new()
-#	path_collision_tex.create_from_image(path_collision_img, 0)
-#	$TextureRect.texture = path_collision_tex
-#	Level.get_node("level1/Geometry").get_surface_material(0).set_shader_param("collision_data", path_collision_tex)
-
+func _on_path_collision(_position:Vector3, _velocity_length:float) -> void:
+	pass
