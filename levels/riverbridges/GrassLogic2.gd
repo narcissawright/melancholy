@@ -43,7 +43,14 @@ func _ready() -> void:
 	aabb_data_tex.create_from_image(aabb_data_img, 0)
 	
 	$AABB_TEXTURE.get_surface_material(0).albedo_texture = aabb_data_tex
-
+	# I'm assuming I did this correctly.
+	# Next step.......
+	# - Create the path image
+	# - Find a way to calculate which bounding box contains a 3d position (in the shader)
+	# - Try edge cases like the position not existing in any of the bounding boxes (in the shader AND in gdscript)
+	# - Add a check that none of the AABBs are overlapping before I initialize the aabb array
+	# - Write image data
+	# - Draw dirt from shader
 
 func toggle_debug_view(state:bool) -> void:
 	aabbs.visible = state
