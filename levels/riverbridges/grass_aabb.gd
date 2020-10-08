@@ -16,16 +16,33 @@ export var size := Vector3.ONE setget set_size
 #		#print( "Transform Changed")
 #		set_pos(translation)
 
-func set_pos(pos:Vector3) -> void:
-	position = pos.round()
-	update_mesh()
+func is_overlapping(test_pos:Vector3, test_size:Vector3) -> bool:
+	if not is_inside_tree():
+		# prevent editor from throwing errors
+		# when an instanced scene's tool script first runs
+		# (runs because it populates the export vars)
+		return false
+	for child in get_parent().get_children():
+		if child != self:
+			if AABB(test_pos, test_size).intersects(AABB(child.position, child.size)):
+				print ("AABBs overlap.")
+				return true
+	return false
+
+func set_pos(new_pos:Vector3) -> void:
+	new_pos = new_pos.round()
+	if not is_overlapping(new_pos, size):
+		position = new_pos
+		update_mesh()
 	
 func set_size(new_size:Vector3) -> void:
 	if new_size.x < 1: new_size.x = 1
 	if new_size.y < 1: new_size.y = 1
 	if new_size.z < 1: new_size.z = 1
-	size = new_size.round()
-	update_mesh()
+	new_size = new_size.round()
+	if not is_overlapping(position, new_size):
+		size = new_size.round()
+		update_mesh()
 	
 func update_mesh() -> void:
 	
