@@ -15,13 +15,35 @@ func _ready() -> void:
 	print (aabb_array)
 
 	var mat = $AABB_TEXTURE2.get_surface_material(0)
-	mat.set_shader_param("aabb1pos",  aabb_array[0].position)
-	mat.set_shader_param("aabb1size", aabb_array[0].size)
-	mat.set_shader_param("aabb2pos",  aabb_array[1].position)
-	mat.set_shader_param("aabb2size", aabb_array[1].size)
-	mat.set_shader_param("aabb3pos",  aabb_array[2].position)
-	mat.set_shader_param("aabb3size", aabb_array[2].size)
+	var cubic_meters:int = 0
+	for i in range(aabb_array.size()):
+		mat.set_shader_param("aabb" + str(i+1) + "pos",  aabb_array[i].position)
+		mat.set_shader_param("aabb" + str(i+1) + "size", aabb_array[i].size)
+		cubic_meters += aabb_array[i].size.x * aabb_array[i].size.y * aabb_array[i].size.z
+		
+	print(cubic_meters * 64)
+	var path_collision_img = Image.new()
+	path_collision_img.create(1024, 1024, false, Image.FORMAT_RGBA5551)
+	
+	var path_collision_img2 = Image.new()
+	path_collision_img2.create(512, 512, false, Image.FORMAT_RGBA5551)
+	
+	var tex_array = TextureArray.new()
+	tex_array.set_layer_data(path_collision_img, 0)
+	tex_array.set_layer_data(path_collision_img2, 0)
+	#path_collision_img.create(8192, height, false, Image.FORMAT_RGBA5551)
 
+#	var height = ceil((aabb.size.x+1) * (aabb.size.y+1) * (aabb.size.z+1) / 1024.0)
+#	path_collision_img = Image.new()
+#	path_collision_img.create(1024, height, false, Image.FORMAT_L8)
+#	path_collision_tex = ImageTexture.new()
+#	path_collision_tex.create_from_image(path_collision_img, 0)
+#	$TextureRect.texture = path_collision_tex
+#	Level.get_node("level1/Geometry").get_surface_material(0).set_shader_param("collision_data", path_collision_tex)
+
+
+
+# painful failure to convert AABB data into an image and have it read from the shader
 
 	# Transform data into signed 16bit ints
 #	var data = PoolByteArray()
