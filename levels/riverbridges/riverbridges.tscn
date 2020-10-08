@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://backgrounds/starfield/Starfield.tscn" type="PackedScene" id=1]
 [ext_resource path="res://levels/riverbridges/geometry.tscn" type="PackedScene" id=2]
@@ -15,6 +15,7 @@
 [ext_resource path="res://levels/riverbridges/texture/pink wojak suit.jpg" type="Texture" id=13]
 [ext_resource path="res://levels/riverbridges/GrassLogic2.gd" type="Script" id=14]
 [ext_resource path="res://global/debug/DebugFillMaterial.tres" type="Material" id=15]
+[ext_resource path="res://levels/riverbridges/texture/aabb_data_tex.tres" type="Texture" id=16]
 
 [sub_resource type="ArrayMesh" id=15]
 surfaces/0 = {
@@ -98,6 +99,41 @@ surfaces/1 = {
 
 [sub_resource type="SpatialMaterial" id=14]
 flags_unshaded = true
+albedo_texture = ExtResource( 16 )
+
+[sub_resource type="Shader" id=18]
+code = "shader_type spatial;
+render_mode unshaded;
+
+uniform vec3 aabb1pos;
+uniform vec3 aabb1size;
+uniform vec3 aabb2pos;
+uniform vec3 aabb2size;
+uniform vec3 aabb3pos;
+uniform vec3 aabb3size;
+
+void fragment() {
+	ALBEDO = vec3(0,0,0);
+	if (int(aabb1pos.x) == -16) {
+		ALBEDO = vec3(1,1,1);
+	}
+//	ivec2 uv = ivec2(1,0);
+//	vec3 value = texelFetch(aabb_data, uv, 0).rgb;
+//	ALBEDO = value;
+	
+	//if (value.g == int(0x39000000)) {
+	//	ALBEDO = vec3(1,1,1);
+	//}
+}"
+
+[sub_resource type="ShaderMaterial" id=19]
+shader = SubResource( 18 )
+shader_param/aabb1pos = null
+shader_param/aabb1size = null
+shader_param/aabb2pos = null
+shader_param/aabb2size = null
+shader_param/aabb3pos = null
+shader_param/aabb3size = null
 
 [sub_resource type="CubeMesh" id=7]
 size = Vector3( 2, 4, 2 )
@@ -121,6 +157,7 @@ material_override = ExtResource( 10 )
 cast_shadow = 0
 
 [node name="AABBs" type="Spatial" parent="GrassLogic"]
+visible = false
 
 [node name="GrassBounds" parent="GrassLogic/AABBs" instance=ExtResource( 11 )]
 layers = 4
@@ -143,6 +180,11 @@ size = Vector3( 140, 7, 65 )
 transform = Transform( -4.37114e-08, -1, 4.37114e-08, 0, -4.37114e-08, -1, 1, -4.37114e-08, 1.91069e-15, 9.94036, 2.45553, -3 )
 mesh = SubResource( 13 )
 material/0 = SubResource( 14 )
+
+[node name="AABB_TEXTURE2" type="MeshInstance" parent="GrassLogic"]
+transform = Transform( -4.37114e-08, -1, 4.37114e-08, 0, -4.37114e-08, -1, 1, -4.37114e-08, 1.91069e-15, 9.94036, 2.45553, -5.19949 )
+mesh = SubResource( 13 )
+material/0 = SubResource( 19 )
 
 [node name="Environment" parent="." instance=ExtResource( 1 )]
 
