@@ -1,6 +1,9 @@
 extends Node
 onready var aabb_container = $AABBs
 
+# Materials
+var grass_material
+
 # AABB Data
 var aabb_array:Array
 var aabb_offsets:Array # how far do you jump to reach the data (in path_collision_img) for the AABB
@@ -15,18 +18,22 @@ func _ready() -> void:
 	Events.connect("debug_view", self, "toggle_debug_view")
 	Events.connect("path_collision", self, "_on_path_collision")
 	
+	# Get grass material
+	var geometry = $"../Geometry"
+	for i in range (geometry.mesh.get_surface_count()):
+		if (geometry.mesh.get("surface_" + str(i+1) + "/name")) == "Grass":
+			grass_material = geometry.mesh.surface_get_material(i)
+	
 	# Obtain data from AABBs
 	for child in aabb_container.get_children():
 		aabb_array.append(AABB(child.position, child.size))
 	print (aabb_array)
 
-	var mat = $AABB_TEXTURE2.get_surface_material(0)
-	
 	var cubic_meters:float = 0
 	for i in range(aabb_array.size()):
 		aabb_offsets.append(cubic_meters * 64)
-		mat.set_shader_param("aabb" + str(i+1) + "pos",  aabb_array[i].position)
-		mat.set_shader_param("aabb" + str(i+1) + "size", aabb_array[i].size)
+		grass_material.set_shader_param("aabb" + str(i+1) + "pos",  aabb_array[i].position)
+		grass_material.set_shader_param("aabb" + str(i+1) + "size", aabb_array[i].size)
 		cubic_meters += aabb_array[i].size.x * aabb_array[i].size.y * aabb_array[i].size.z
 		
 	var height := int(ceil(((cubic_meters * 64.0) / 8192.0) / 3.0))
@@ -39,7 +46,10 @@ func _ready() -> void:
 	
 	path_collision_tex = ImageTexture.new()
 	path_collision_tex.create_from_image(path_collision_img, 0)
-	$AABB_TEXTURE.get_surface_material(0).albedo_texture = path_collision_tex
+	
+	var display_material = $AABB_TEXTURE.get_surface_material(0)
+	display_material.albedo_texture = path_collision_tex
+	grass_material.set_shader_param('collision_data', path_collision_tex)
 	
 #	var height = ceil((aabb.size.x+1) * (aabb.size.y+1) * (aabb.size.z+1) / 1024.0)
 #	path_collision_img = Image.new()
@@ -104,7 +114,7 @@ func determine_relevant_aabb(point:Vector3) -> int:
 			return i
 	return -1
 
-func _on_path_collision(position:Vector3, velocity_length:float) -> void:
+func _on_path_collision(position:Vector3, _velocity_length:float) -> void:
 	# Find the 8 nearest quarter meter blocks to this position
 	
 	var quarter_pos = (position * 4).round() / 4.0 # nearest 
@@ -148,7 +158,7 @@ func set_collision_img_data(index:int, value:int) -> void:
 		1: # GREEN
 			var old_value = (full_pixel_data & 0b0000011111000000) >> 6
 			var new_value = min(old_value + value, 31)
-			full_pixel_data &= 0b111110000011111
+			full_pixel_data &= 0b1111100000111110
 			full_pixel_data |= new_value << 6
 		2: # BLUE
 			var old_value = (full_pixel_data & 0b0000000000111110) >> 1
@@ -162,7 +172,7 @@ func set_collision_img_data(index:int, value:int) -> void:
 	path_collision_img.data.data = img_data
 	var y = pixel_index / 8192
 	var x = pixel_index % 8192
-	VisualServer.texture_set_data_partial(path_collision_tex.get_rid(), path_collision_img, x, y, 2, 1, x, y, 0)
+	VisualServer.texture_set_data_partial(path_collision_tex.get_rid(), path_collision_img, x, y, 1, 1, x, y, 0)
 
 
 

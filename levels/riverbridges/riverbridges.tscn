@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=2]
+[gd_scene load_steps=27 format=2]
 
 [ext_resource path="res://backgrounds/starfield/Starfield.tscn" type="PackedScene" id=1]
 [ext_resource path="res://levels/riverbridges/geometry.tscn" type="PackedScene" id=2]
@@ -15,7 +15,6 @@
 [ext_resource path="res://levels/riverbridges/texture/pink wojak suit.jpg" type="Texture" id=13]
 [ext_resource path="res://levels/riverbridges/GrassLogic2.gd" type="Script" id=14]
 [ext_resource path="res://global/debug/DebugFillMaterial.tres" type="Material" id=15]
-[ext_resource path="res://levels/riverbridges/texture/aabb_data_tex.tres" type="Texture" id=16]
 
 [sub_resource type="ArrayMesh" id=20]
 surfaces/0 = {
@@ -99,7 +98,6 @@ surfaces/1 = {
 
 [sub_resource type="SpatialMaterial" id=14]
 flags_unshaded = true
-albedo_texture = ExtResource( 16 )
 
 [sub_resource type="Shader" id=18]
 code = "shader_type spatial;
@@ -177,12 +175,12 @@ position = Vector3( -18, 4, -18 )
 size = Vector3( 140, 7, 65 )
 
 [node name="AABB_TEXTURE" type="MeshInstance" parent="GrassLogic"]
-transform = Transform( -4.37114e-08, -1, 4.37114e-08, 0, -4.37114e-08, -1, 1, -4.37114e-08, 1.91069e-15, 9.94036, 2.45553, -3 )
+transform = Transform( -2.44381e-06, 1, -1.31134e-07, 0, -4.37114e-08, -3, -15, -1.62921e-07, 2.13645e-14, -9.97431, 3.20568, -32.1425 )
 mesh = SubResource( 13 )
 material/0 = SubResource( 14 )
 
 [node name="AABB_TEXTURE2" type="MeshInstance" parent="GrassLogic"]
-transform = Transform( -4.37114e-08, -1, 4.37114e-08, 0, -4.37114e-08, -1, 1, -4.37114e-08, 1.91069e-15, 9.94036, 2.45553, -5.19949 )
+transform = Transform( -4.37114e-08, -1, 4.37114e-08, 0, -4.37114e-08, -1, 1, -4.37114e-08, 1.91069e-15, -14.3739, 2.14206, -32.7423 )
 mesh = SubResource( 13 )
 material/0 = SubResource( 19 )
 
