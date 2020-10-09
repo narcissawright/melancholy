@@ -1,34 +1,45 @@
 extends Node
-onready var aabbs = $AABBs
+onready var aabb_container = $AABBs
+
+# AABB Data
+var aabb_array:Array
+var aabb_offsets:Array # how far do you jump to reach the data (in path_collision_img) for the AABB
+
+# Image Data
+var path_collision_img:Image
+var path_collision_tex:ImageTexture
 
 func _ready() -> void:
 	# Initialize
-	aabbs.visible = false
+	aabb_container.visible = false
 	Events.connect("debug_view", self, "toggle_debug_view")
 	Events.connect("path_collision", self, "_on_path_collision")
 	
 	# Obtain data from AABBs
-	var aabb_array = []
-	for child in aabbs.get_children():
-		var aabb = AABB(child.position, child.size)
-		aabb_array.append(aabb)
+	for child in aabb_container.get_children():
+		aabb_array.append(AABB(child.position, child.size))
 	print (aabb_array)
 
 	var mat = $AABB_TEXTURE2.get_surface_material(0)
+	
 	var cubic_meters:float = 0
 	for i in range(aabb_array.size()):
+		aabb_offsets.append(cubic_meters * 64)
 		mat.set_shader_param("aabb" + str(i+1) + "pos",  aabb_array[i].position)
 		mat.set_shader_param("aabb" + str(i+1) + "size", aabb_array[i].size)
 		cubic_meters += aabb_array[i].size.x * aabb_array[i].size.y * aabb_array[i].size.z
 		
 	var height := int(ceil(((cubic_meters * 64.0) / 8192.0) / 3.0))
-	var path_collision_img = Image.new()
+	path_collision_img = Image.new()
 	path_collision_img.create(8192, height, false, Image.FORMAT_RGBA5551)
 	
 	print(8192, " ", height)
+	print(aabb_offsets)
+	print(cubic_meters * 64)
 	
-	var tex = ImageTexture.new()
-	tex.create_from_image(path_collision_img, 0)
+	path_collision_tex = ImageTexture.new()
+	path_collision_tex.create_from_image(path_collision_img, 0)
+	$AABB_TEXTURE.get_surface_material(0).albedo_texture = path_collision_tex
 	
 #	var height = ceil((aabb.size.x+1) * (aabb.size.y+1) * (aabb.size.z+1) / 1024.0)
 #	path_collision_img = Image.new()
@@ -85,13 +96,75 @@ func _ready() -> void:
 	# - Draw dirt from shader
 
 func toggle_debug_view(state:bool) -> void:
-	aabbs.visible = state
+	aabb_container.visible = state
+
+func determine_relevant_aabb(point:Vector3) -> int:
+	for i in range (aabb_array.size()):
+		if aabb_array[i].has_point(point):
+			return i
+	return -1
 
 func _on_path_collision(position:Vector3, velocity_length:float) -> void:
 	# Find the 8 nearest quarter meter blocks to this position
-	# 4x4x4
-	print ((position * 4).round() / 4.0)
 	
+	var quarter_pos = (position * 4).round() / 4.0 # nearest 
+	
+	var aabb_index = determine_relevant_aabb(quarter_pos)
+	if aabb_index == -1:
+		return # No relevant AABB found, stop here.
+	
+	var index:int = get_collision_img_index(quarter_pos, aabb_index)
+	var distance = (position - quarter_pos).length()
+	var value:int = int((0.25 - distance) * 0x0F)
+	if value > 0:
+		#print ("Setting value ", value, " at index ", index)
+		set_collision_img_data(index, value)
+
+func get_collision_img_index(position:Vector3, aabb_index:int) -> int:
+	var aabb = aabb_array[aabb_index]
+	var diff:Vector3 = position - aabb.position
+	return int(diff.x + (diff.y * aabb.size.x) + (diff.z * aabb.size.x * aabb.size.y)) + aabb_offsets[aabb_index]
+
+func set_collision_img_data(index:int, value:int) -> void:
+	# In this case, index is the index of the block data
+	# Block data is stored 3 per pixel
+	# Each pixel is 2 bytes
+	# The green channel is spread between the two bytes
+	# I need to grab the relevant pixel (two bytes).
+	
+	var img_data = path_collision_img.data.data
+	# warning-ignore:integer_division
+	var pixel_index = index / 3
+	var pixel_data_left  = img_data[pixel_index * 2]
+	var pixel_data_right = img_data[pixel_index * 2 + 1]
+	var full_pixel_data = pixel_data_left * 256 + pixel_data_right
+	var channel = index % 3
+	match channel:
+		0: # RED
+			var old_value = (full_pixel_data & 0b1111100000000000) >> 11
+			var new_value = min(old_value + value, 31)
+			full_pixel_data &= 0b0000011111111110
+			full_pixel_data |= new_value << 11 
+		1: # GREEN
+			var old_value = (full_pixel_data & 0b0000011111000000) >> 6
+			var new_value = min(old_value + value, 31)
+			full_pixel_data &= 0b111110000011111
+			full_pixel_data |= new_value << 6
+		2: # BLUE
+			var old_value = (full_pixel_data & 0b0000000000111110) >> 1
+			var new_value = min(old_value + value, 31)
+			full_pixel_data &= 0b1111111111000000
+			full_pixel_data |= new_value << 1
+	pixel_data_left = full_pixel_data >> 8
+	pixel_data_right = full_pixel_data % 256
+	img_data.set(pixel_index * 2,     pixel_data_left)
+	img_data.set(pixel_index * 2 + 1, pixel_data_right)
+	path_collision_img.data.data = img_data
+	var y = pixel_index / 8192
+	var x = pixel_index % 8192
+	VisualServer.texture_set_data_partial(path_collision_tex.get_rid(), path_collision_img, x, y, 2, 1, x, y, 0)
+
+
 
 	
 #	position = position.round() # I dont wanna round this now that im not using integer blocks
@@ -119,18 +192,3 @@ func _on_path_collision(position:Vector3, velocity_length:float) -> void:
 #		if value > 0:
 #			set_collision_img_data(index, value)
 
-func get_collision_img_index(position:Vector3, aabb:AABB) -> int:
-	var diff:Vector3 = position - aabb.position
-	return int(diff.x + (diff.y * aabb.size.x) + (diff.z * aabb.size.x * aabb.size.y))
-
-func set_collision_img_data(index:int, value:int) -> void:
-	pass
-#	var img_data = path_collision_img.data.data
-#	var old_value = img_data[index]
-#	var new_value = min(old_value + value, 0xFF)
-#	img_data.set(index, new_value)
-#	path_collision_img.data.data = img_data
-#	# warning-ignore:integer_division
-#	var y = index / 1024
-#	var x = index % 1024
-#	VisualServer.texture_set_data_partial(path_collision_tex.get_rid(), path_collision_img, x, y, 1, 1, x, y, 0)

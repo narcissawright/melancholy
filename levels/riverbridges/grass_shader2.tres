@@ -15,16 +15,8 @@ uniform vec3 aabb3pos;
 uniform vec3 aabb3size;
 
 uniform sampler2D collision_data : hint_albedo;
-
 uniform sampler2D grass_texture : hint_albedo;
 uniform sampler2D dirt_texture : hint_albedo;
-
-uniform vec3 uv1_scale;
-uniform vec3 uv1_offset;
-
-void vertex() {
-	UV=UV*uv1_scale.xy+uv1_offset.xy;
-}
 
 bool is_point_in_aabb(ivec3 point, ivec3 box_pos, ivec3 box_size) {
 	return (point.x >= box_pos.x && point.x <= box_pos.x + box_size.x) &&
@@ -54,6 +46,7 @@ float get_pixel(ivec3 position) {
 }
 
 float calc_texture(vec3 vertex) {
+	
 	vec3 rounded_vertex = round(vertex);
 	
 	int x_sign = int(sign(vertex.x - rounded_vertex.x));
@@ -105,10 +98,9 @@ float calc_texture(vec3 vertex) {
 void fragment() {
 	vec3 wrld_vertex = (CAMERA_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	float textureblend = calc_texture(wrld_vertex);
-	
-	vec2 base_uv = UV;
-	vec4 albedo_grass = texture(grass_texture,base_uv);
-	vec4 albedo_dirt = texture(dirt_texture,base_uv);
+	textureblend = 0.5;
+	vec4 albedo_grass = texture(grass_texture,UV);
+	vec4 albedo_dirt = texture(dirt_texture,UV);
 	
 	ALBEDO = mix(albedo_grass.rgb, albedo_dirt.rgb, textureblend);
 	METALLIC = 0.0;
@@ -125,7 +117,5 @@ shader_param/aabb2pos = null
 shader_param/aabb2size = null
 shader_param/aabb3pos = null
 shader_param/aabb3size = null
-shader_param/uv1_scale = Vector3( 1, 1, 1 )
-shader_param/uv1_offset = Vector3( 0, 0, 0 )
 shader_param/grass_texture = ExtResource( 1 )
 shader_param/dirt_texture = ExtResource( 2 )
