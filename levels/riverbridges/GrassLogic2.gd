@@ -12,11 +12,6 @@ var aabb_offsets:Array # how far do you jump to reach the data (in path_collisio
 var path_collision_img:Image
 var path_collision_tex:ImageTexture
 
-func sort_by_volume(a:AABB, b:AABB) -> bool:
-	if a.get_area() > b.get_area():
-		return true
-	return false
-
 func _ready() -> void:
 	# Initialize
 	aabb_container.visible = false
@@ -32,33 +27,90 @@ func _ready() -> void:
 	# Obtain data from AABBs
 	for child in aabb_container.get_children():
 		aabb_array.append(AABB(child.position, child.size))
-
-	print (aabb_array)
-	aabb_array.sort_custom(self, "sort_by_volume")
-	print (aabb_array)
-
-	var cubic_meters:float = 0
-	for i in range(aabb_array.size()):
-		aabb_offsets.append(cubic_meters * 64)
-		grass_material.set_shader_param("aabb" + str(i+1) + "pos",  aabb_array[i].position)
-		grass_material.set_shader_param("aabb" + str(i+1) + "size", aabb_array[i].size)
-		cubic_meters += aabb_array[i].size.x * aabb_array[i].size.y * aabb_array[i].size.z
 		
+	# Sort AABBs by volume to do less containment checks on average
+	aabb_array.sort_custom(self, "sort_by_volume")
+	print(aabb_array)
+	
+	# Calculate offsets, and pass data to shader
+	# This is where I want to once again attempt to use an image to hold the data.
+	
+	var cubic_meters:float = 0
+	var aabb_data_img = Image.new()
+	var data := PoolByteArray()
+	for i in range (aabb_array.size()):
+		aabb_offsets.append(cubic_meters * 64)
+		
+		var relevant_data:Array = []
+		relevant_data.append(aabb_array[i].position.x)
+		relevant_data.append(aabb_array[i].position.y)
+		relevant_data.append(aabb_array[i].position.z)
+		relevant_data.append(aabb_array[i].size.x)
+		relevant_data.append(aabb_array[i].size.y)
+		relevant_data.append(aabb_array[i].size.z)
+		
+		# add the AABB position and size data to the img
+		for j in range (relevant_data.size()):
+			var is_negative:int = 0
+			if sign(relevant_data[j]) == -1:
+				is_negative = 1
+			# 4 bytes per color
+			data.append(is_negative)
+			data.append(0)
+			data.append(int(abs(relevant_data[j])) >> 8)
+			data.append(int(abs(relevant_data[j])) % 256)
+			
+		# add the offset
+		var offset = int(cubic_meters * 64)
+		data.append(0)
+		data.append(0)
+		data.append(0)
+		data.append(0)
+		data.append(0)
+		data.append(0)
+		data.append(0)
+		data.append(0)
+		data.append( offset >> 24)
+		data.append((offset & 0b00000000111111110000000000000000) >> 16)
+		data.append((offset & 0b00000000000000001111111100000000) >> 8)
+		data.append( offset & 0b00000000000000000000000011111111)
+		
+		cubic_meters += aabb_array[i].get_area()
+	print(data.hex_encode())
+	aabb_data_img.create_from_data(3, aabb_array.size(), false, Image.FORMAT_RGBF, data)
+	var aabb_data_tex = ImageTexture.new()
+	aabb_data_tex.create_from_image(aabb_data_img, 0)
+	$AABB_TEXTURE2.get_surface_material(0).albedo_texture = aabb_data_tex
+	grass_material.set_shader_param("aabb_data", aabb_data_tex)
+
+#	for i in range(aabb_array.size()):
+#		aabb_offsets.append(cubic_meters * 64)
+#		grass_material.set_shader_param("aabb" + str(i+1) + "pos",  aabb_array[i].position)
+#		grass_material.set_shader_param("aabb" + str(i+1) + "size", aabb_array[i].size)
+#		cubic_meters += aabb_array[i].size.x * aabb_array[i].size.y * aabb_array[i].size.z
+#
+	# Calculate image size, create image
 	var height := int(ceil(((cubic_meters * 64.0) / 8192.0) / 3.0))
 	path_collision_img = Image.new()
 	path_collision_img.create(8192, height, false, Image.FORMAT_RGBA5551)
+#	print(8192, " ", height)
+#	print(aabb_offsets)
+#	print(cubic_meters * 64)
 	
-	print(8192, " ", height)
-	print(aabb_offsets)
-	print(cubic_meters * 64)
-	
+	# Create texture.
 	path_collision_tex = ImageTexture.new()
 	path_collision_tex.create_from_image(path_collision_img, 0)
 	
+	# Set shader params
 	var display_material = $AABB_TEXTURE.get_surface_material(0)
 	display_material.albedo_texture = path_collision_tex
 	grass_material.set_shader_param('collision_data', path_collision_tex)
-	
+
+static func sort_by_volume(a:AABB, b:AABB) -> bool:
+	if a.get_area() > b.get_area():
+		return true
+	return false
+
 #	var height = ceil((aabb.size.x+1) * (aabb.size.y+1) * (aabb.size.z+1) / 1024.0)
 #	path_collision_img = Image.new()
 #	path_collision_img.create(1024, height, false, Image.FORMAT_L8)
