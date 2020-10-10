@@ -32,7 +32,7 @@ func _ready() -> void:
 	aabb_array.sort_custom(self, "sort_by_volume")
 	print(aabb_array)
 	
-	# Calculate offsets, and pass data to shader
+	# Calculate offsets
 	var cubic_meters:float = 0
 	var aabb_data_img = Image.new()
 	var data := PoolByteArray()
@@ -55,13 +55,12 @@ func _ready() -> void:
 			data.append(stored_value % 256) # G x
 			
 		var offset = int(cubic_meters * 64)
-		print(offset)
 		data.append((offset / 16777216) % 256) # R 7
 		data.append((offset / 65536) % 256)    # G 7
 		data.append((offset / 256) % 256)      # R 8
 		data.append( offset % 256)             # G 8
-
 		cubic_meters += aabb_array[i].get_area()
+		
 	print(data.hex_encode())
 	aabb_data_img.create_from_data(8, aabb_array.size(), false, Image.FORMAT_RG8, data)
 	# Image.FORMAT_RG8 does not do an sRGB conversion, so the data that goes in can be 
@@ -106,23 +105,62 @@ func determine_relevant_aabb(point:Vector3) -> int:
 func _on_path_collision(position:Vector3, _velocity_length:float) -> void:
 	# Find the 8 nearest quarter meter blocks to this position
 	
-	var quarter_pos = (position * 4).round() / 4.0 # nearest 
+	var quarter_pos:Vector3 = (position * 4).round() / 4.0 # nearest 
+
+	var x_sign:int = sign(position.x - quarter_pos.x);
+	var y_sign:int = sign(position.y - quarter_pos.y);
+	var z_sign:int = sign(position.z - quarter_pos.z);
+	if x_sign == 0: x_sign = 1 # Sometimes, the quarter pos (rounded)
+	if y_sign == 0: y_sign = 1 # and the position share the same value on an axis.
+	if z_sign == 0: z_sign = 1 # This ensures I always get 8 different blocks.
+	# Another (probably better) solution would be to not append to array if sign is 0.
 	
-	var aabb_index = determine_relevant_aabb(quarter_pos)
-	if aabb_index == -1:
-		return # No relevant AABB found, stop here.
+	var positions:Array = [quarter_pos]
+	positions.append(quarter_pos + Vector3(     0,      0, z_sign) * 0.25)
+	positions.append(quarter_pos + Vector3(     0, y_sign,      0) * 0.25)
+	positions.append(quarter_pos + Vector3(     0, y_sign, z_sign) * 0.25)
+	positions.append(quarter_pos + Vector3(x_sign,      0,      0) * 0.25)
+	positions.append(quarter_pos + Vector3(x_sign,      0, z_sign) * 0.25)
+	positions.append(quarter_pos + Vector3(x_sign, y_sign,      0) * 0.25)
+	positions.append(quarter_pos + Vector3(x_sign, y_sign, z_sign) * 0.25)
 	
-	var index:int = get_collision_img_index(quarter_pos, aabb_index)
-	var distance = (position - quarter_pos).length()
-	var value:int = int((0.25 - distance) * 0x0F)
-	if value > 0:
-		#print ("Setting value ", value, " at index ", index)
-		set_collision_img_data(index, value)
+	#print (positions)
+	for i in range (positions.size()):
+		var aabb_index = determine_relevant_aabb(positions[i])
+		if aabb_index == -1:
+			continue # No relevant AABB found, stop here.
+		
+		var index:int = get_collision_img_index(positions[i], aabb_index)
+		var distance = (position - positions[i]).length()
+		var value:int = int((0.25 - distance) * 0xFF)
+		if value > 0:
+			#print ("Setting value ", value, " at index ", index)
+			set_collision_img_data(index, value)
 
 func get_collision_img_index(position:Vector3, aabb_index:int) -> int:
-	var aabb = aabb_array[aabb_index]
+	# index is data index, so 3 of those per pixel
+	var aabb:AABB = aabb_array[aabb_index]
 	var diff:Vector3 = position - aabb.position
-	return int(diff.x + (diff.y * aabb.size.x) + (diff.z * aabb.size.x * aabb.size.y)) + aabb_offsets[aabb_index]
+	
+	var max_x = aabb.size.x / 0.25
+	var max_y = aabb.size.y / 0.25
+	#var max_z = aabb.size.z / 0.25
+	
+	var x_component = diff.x / 0.25
+	var y_component = diff.y / 0.25
+	var z_component = diff.z / 0.25
+	
+	var index = x_component + (y_component * max_x) + (z_component * max_y)
+	index += aabb_offsets[aabb_index]
+
+#	print("Pos: ", position)
+#	print("AABB: ", aabb)
+#	print("Diff: ", diff)
+#	print(x_component, ' ', y_component, ' ', z_component)
+#	print(max_x, ' ', max_y, ' ', max_z)
+#	print("Index: ", index)
+	
+	return index
 
 func set_collision_img_data(index:int, value:int) -> void:
 	# In this case, index is the index of the block data
@@ -132,7 +170,6 @@ func set_collision_img_data(index:int, value:int) -> void:
 	# I need to grab the relevant pixel (two bytes).
 	
 	var img_data = path_collision_img.data.data
-	# warning-ignore:integer_division
 	var pixel_index = index / 3
 	var pixel_data_left  = img_data[pixel_index * 2]
 	var pixel_data_right = img_data[pixel_index * 2 + 1]
