@@ -33,102 +33,45 @@ func _ready() -> void:
 	print(aabb_array)
 	
 	# Calculate offsets, and pass data to shader
-	# This is where I want to once again attempt to use an image to hold the data.
-	
 	var cubic_meters:float = 0
 	var aabb_data_img = Image.new()
 	var data := PoolByteArray()
-#	for i in range (aabb_array.size()):
-#		aabb_offsets.append(cubic_meters * 64)
-#
-#		var relevant_data:Array = []
-#		relevant_data.append(aabb_array[i].position.x)
-#		relevant_data.append(aabb_array[i].position.y)
-#		relevant_data.append(aabb_array[i].position.z)
-#		relevant_data.append(aabb_array[i].size.x)
-#		relevant_data.append(aabb_array[i].size.y)
-#		relevant_data.append(aabb_array[i].size.z)
-#
-#		# add the AABB position and size data to the img
-#		for j in range (relevant_data.size()):
-#			var is_negative:int = 0
-#			if sign(relevant_data[j]) == -1:
-#				is_negative = 1
-#			# 4 bytes per color
-#			data.append(is_negative)
-#			data.append(0)
-#			data.append(int(abs(relevant_data[j])) >> 8)
-#			data.append(int(abs(relevant_data[j])) % 256)
-#
-#		# add the offset
-#		var offset = int(cubic_meters * 64)
-#		data.append(0)
-#		data.append(0)
-#		data.append(0)
-#		data.append(0)
-#		data.append(0)
-#		data.append(0)
-#		data.append(0)
-#		data.append(0)
-#		data.append( offset >> 24)
-#		data.append((offset & 0b00000000111111110000000000000000) >> 16)
-#		data.append((offset & 0b00000000000000001111111100000000) >> 8)
-#		data.append( offset & 0b00000000000000000000000011111111)
-#
-#		cubic_meters += aabb_array[i].get_area()
-#	print(data.hex_encode())
-#	aabb_data_img.create_from_data(3, aabb_array.size(), false, Image.FORMAT_RGBF, data)
-
-
 	for i in range (aabb_array.size()):
 		aabb_offsets.append(cubic_meters * 64)
 		
 		var relevant_data:Array = []
 		relevant_data.append(aabb_array[i].position.x) #RG 1
-		relevant_data.append(aabb_array[i].position.y) #BA 1
-		relevant_data.append(aabb_array[i].position.z) #RG 2
-		relevant_data.append(aabb_array[i].size.x)     #BA 2
-		relevant_data.append(aabb_array[i].size.y)     #RG 3
-		relevant_data.append(aabb_array[i].size.z)     #BA 3
+		relevant_data.append(aabb_array[i].position.y) #RG 2
+		relevant_data.append(aabb_array[i].position.z) #RG 3
+		relevant_data.append(aabb_array[i].size.x)     #RG 4
+		relevant_data.append(aabb_array[i].size.y)     #RG 5
+		relevant_data.append(aabb_array[i].size.z)     #RG 6
 		
 		# add the AABB position and size data to the img
 		for j in range (relevant_data.size()):
 			# Add 32768 so I don't have to store negative 16bit numbers (headache)
 			var stored_value := int(relevant_data[j]) + 32768
-			data.append(stored_value / 256)
-			data.append(stored_value % 256)
+			data.append(stored_value / 256) # R x
+			data.append(stored_value % 256) # G x
 			
 		var offset = int(cubic_meters * 64)
-		data.append((offset / 16777216) % 256) # R
-		data.append((offset / 65536) % 256)    # G
-		data.append((offset / 256) % 256)      # B
-		data.append( offset % 256)             # A
+		print(offset)
+		data.append((offset / 16777216) % 256) # R 7
+		data.append((offset / 65536) % 256)    # G 7
+		data.append((offset / 256) % 256)      # R 8
+		data.append( offset % 256)             # G 8
 
 		cubic_meters += aabb_array[i].get_area()
 	print(data.hex_encode())
-	aabb_data_img.create_from_data(4, aabb_array.size(), false, Image.FORMAT_RGBA8, data)
+	aabb_data_img.create_from_data(8, aabb_array.size(), false, Image.FORMAT_RG8, data)
+	# Image.FORMAT_RG8 does not do an sRGB conversion, so the data that goes in can be 
+	# safely converted back into bytes in the shader (with a little math).
 
 	var aabb_data_tex = ImageTexture.new()
 	aabb_data_tex.create_from_image(aabb_data_img, 0)
 	$AABB_TEXTURE2.get_surface_material(0).albedo_texture = aabb_data_tex
 	grass_material.set_shader_param("aabb_data", aabb_data_tex)
 
-
-
-
-
-
-
-
-
-
-
-#	for i in range(aabb_array.size()):
-#		aabb_offsets.append(cubic_meters * 64)
-#		grass_material.set_shader_param("aabb" + str(i+1) + "pos",  aabb_array[i].position)
-#		grass_material.set_shader_param("aabb" + str(i+1) + "size", aabb_array[i].size)
-#		cubic_meters += aabb_array[i].size.x * aabb_array[i].size.y * aabb_array[i].size.z
-#
 	# Calculate image size, create image
 	var height := int(ceil(((cubic_meters * 64.0) / 8192.0) / 3.0))
 	path_collision_img = Image.new()
@@ -150,60 +93,6 @@ static func sort_by_volume(a:AABB, b:AABB) -> bool:
 	if a.get_area() > b.get_area():
 		return true
 	return false
-
-#	var height = ceil((aabb.size.x+1) * (aabb.size.y+1) * (aabb.size.z+1) / 1024.0)
-#	path_collision_img = Image.new()
-#	path_collision_img.create(1024, height, false, Image.FORMAT_L8)
-#	path_collision_tex = ImageTexture.new()
-#	path_collision_tex.create_from_image(path_collision_img, 0)
-
-
-# painful failure to convert AABB data into an image and have it read from the shader
-
-	# Transform data into signed 16bit ints
-#	var data = PoolByteArray()
-#	for i in range (aabb_array.size()):
-#		var values = [
-#			aabb_array[i].position.x, 
-#			aabb_array[i].position.y, 
-#			aabb_array[i].position.z, 
-#			aabb_array[i].size.x, 
-#			aabb_array[i].size.y, 
-#			aabb_array[i].size.z
-#		]
-#
-#		for j in range (values.size()):
-#
-		
-#		for j in range (values.size()):
-#			var sixteenbit = int(abs(values[j]))
-#			if sign(values[j]) == -1:
-#				sixteenbit = ~sixteenbit + 1
-#			data.append(sixteenbit >> 8)
-#			data.append(sixteenbit & 0b0000000011111111)
-#
-#	print (data.hex_encode())
-#
-#	# Create image from data
-#	var aabb_data_img = Image.new()                             # 16 bits per channel
-#	aabb_data_img.create_from_data(2, aabb_array.size(), false, Image.FORMAT_RGBH, data)
-#	var aabb_data_tex = ImageTexture.new()
-#	aabb_data_tex.create_from_image(aabb_data_img, 0)
-#
-#	assert (ResourceSaver.save("res://levels/riverbridges/texture/aabb_data_tex.tres", aabb_data_tex) == OK)
-	
-	#print (aabb_data_tex.get_data().data.data.hex_encode())
-	
-	#var error = aabb_data_img.save_png("res://levels/riverbridges/texture/aabb_data_img.png")
-	#assert (error == 0)
-#
-#	$AABB_TEXTURE.get_surface_material(0).albedo_texture = aabb_data_tex
-#	$AABB_TEXTURE2.get_surface_material(0).set_shader_param("aabb_data", aabb_data_tex)
-
-	# - Find a way to calculate which bounding box contains a 3d position (in the shader)
-	# - Try edge cases like the position not existing in any of the bounding boxes (in the shader AND in gdscript)
-	# - Write image data
-	# - Draw dirt from shader
 
 func toggle_debug_view(state:bool) -> void:
 	aabb_container.visible = state
