@@ -38,50 +38,90 @@ func _ready() -> void:
 	var cubic_meters:float = 0
 	var aabb_data_img = Image.new()
 	var data := PoolByteArray()
+#	for i in range (aabb_array.size()):
+#		aabb_offsets.append(cubic_meters * 64)
+#
+#		var relevant_data:Array = []
+#		relevant_data.append(aabb_array[i].position.x)
+#		relevant_data.append(aabb_array[i].position.y)
+#		relevant_data.append(aabb_array[i].position.z)
+#		relevant_data.append(aabb_array[i].size.x)
+#		relevant_data.append(aabb_array[i].size.y)
+#		relevant_data.append(aabb_array[i].size.z)
+#
+#		# add the AABB position and size data to the img
+#		for j in range (relevant_data.size()):
+#			var is_negative:int = 0
+#			if sign(relevant_data[j]) == -1:
+#				is_negative = 1
+#			# 4 bytes per color
+#			data.append(is_negative)
+#			data.append(0)
+#			data.append(int(abs(relevant_data[j])) >> 8)
+#			data.append(int(abs(relevant_data[j])) % 256)
+#
+#		# add the offset
+#		var offset = int(cubic_meters * 64)
+#		data.append(0)
+#		data.append(0)
+#		data.append(0)
+#		data.append(0)
+#		data.append(0)
+#		data.append(0)
+#		data.append(0)
+#		data.append(0)
+#		data.append( offset >> 24)
+#		data.append((offset & 0b00000000111111110000000000000000) >> 16)
+#		data.append((offset & 0b00000000000000001111111100000000) >> 8)
+#		data.append( offset & 0b00000000000000000000000011111111)
+#
+#		cubic_meters += aabb_array[i].get_area()
+#	print(data.hex_encode())
+#	aabb_data_img.create_from_data(3, aabb_array.size(), false, Image.FORMAT_RGBF, data)
+
+
 	for i in range (aabb_array.size()):
 		aabb_offsets.append(cubic_meters * 64)
 		
 		var relevant_data:Array = []
-		relevant_data.append(aabb_array[i].position.x)
-		relevant_data.append(aabb_array[i].position.y)
-		relevant_data.append(aabb_array[i].position.z)
-		relevant_data.append(aabb_array[i].size.x)
-		relevant_data.append(aabb_array[i].size.y)
-		relevant_data.append(aabb_array[i].size.z)
+		relevant_data.append(aabb_array[i].position.x) #RG 1
+		relevant_data.append(aabb_array[i].position.y) #BA 1
+		relevant_data.append(aabb_array[i].position.z) #RG 2
+		relevant_data.append(aabb_array[i].size.x)     #BA 2
+		relevant_data.append(aabb_array[i].size.y)     #RG 3
+		relevant_data.append(aabb_array[i].size.z)     #BA 3
 		
 		# add the AABB position and size data to the img
 		for j in range (relevant_data.size()):
-			var is_negative:int = 0
-			if sign(relevant_data[j]) == -1:
-				is_negative = 1
-			# 4 bytes per color
-			data.append(is_negative)
-			data.append(0)
-			data.append(int(abs(relevant_data[j])) >> 8)
-			data.append(int(abs(relevant_data[j])) % 256)
+			# Add 32768 so I don't have to store negative 16bit numbers (headache)
+			var stored_value := int(relevant_data[j]) + 32768
+			data.append(stored_value / 256)
+			data.append(stored_value % 256)
 			
-		# add the offset
 		var offset = int(cubic_meters * 64)
-		data.append(0)
-		data.append(0)
-		data.append(0)
-		data.append(0)
-		data.append(0)
-		data.append(0)
-		data.append(0)
-		data.append(0)
-		data.append( offset >> 24)
-		data.append((offset & 0b00000000111111110000000000000000) >> 16)
-		data.append((offset & 0b00000000000000001111111100000000) >> 8)
-		data.append( offset & 0b00000000000000000000000011111111)
-		
+		data.append((offset / 16777216) % 256) # R
+		data.append((offset / 65536) % 256)    # G
+		data.append((offset / 256) % 256)      # B
+		data.append( offset % 256)             # A
+
 		cubic_meters += aabb_array[i].get_area()
 	print(data.hex_encode())
-	aabb_data_img.create_from_data(3, aabb_array.size(), false, Image.FORMAT_RGBF, data)
+	aabb_data_img.create_from_data(4, aabb_array.size(), false, Image.FORMAT_RGBA8, data)
+
 	var aabb_data_tex = ImageTexture.new()
 	aabb_data_tex.create_from_image(aabb_data_img, 0)
 	$AABB_TEXTURE2.get_surface_material(0).albedo_texture = aabb_data_tex
 	grass_material.set_shader_param("aabb_data", aabb_data_tex)
+
+
+
+
+
+
+
+
+
+
 
 #	for i in range(aabb_array.size()):
 #		aabb_offsets.append(cubic_meters * 64)

@@ -14,7 +14,7 @@ uniform vec3 aabb2size;
 uniform vec3 aabb3pos;
 uniform vec3 aabb3size;
 
-uniform sampler2D aabb_data : hint_albedo;
+uniform usampler2D aabb_data : hint_albedo;
 uniform sampler2D collision_data : hint_albedo;
 uniform sampler2D grass_texture : hint_albedo;
 uniform sampler2D dirt_texture : hint_albedo;
@@ -100,17 +100,14 @@ void fragment() {
 	vec3 wrld_vertex = (CAMERA_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	//float textureblend = calc_texture(wrld_vertex);
 	float textureblend = 0.0;
-	float value = texelFetch(aabb_data, ivec2(0,0), 0).g;
-	int int_value = floatBitsToInt(value);
-	
-	
-	if (value > 0.9999999) {
+	uint value = texelFetch(aabb_data, ivec2(0,0), 0).r;
+	if (value == uint(127)) {
 		textureblend = 1.0;
 	}
 	//textureblend = int_value;
 	
 	vec4 albedo_grass = texture(grass_texture,UV);
-	vec4 albedo_dirt = texture(aabb_data,UV);
+	vec4 albedo_dirt = texture(dirt_texture,UV);
 	
 	ALBEDO = mix(albedo_grass.rgb, albedo_dirt.rgb, textureblend);
 	METALLIC = 0.0;
