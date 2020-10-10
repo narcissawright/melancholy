@@ -107,9 +107,9 @@ func _on_path_collision(position:Vector3, _velocity_length:float) -> void:
 	
 	var quarter_pos:Vector3 = (position * 4).round() / 4.0 # nearest 
 
-	var x_sign:int = sign(position.x - quarter_pos.x);
-	var y_sign:int = sign(position.y - quarter_pos.y);
-	var z_sign:int = sign(position.z - quarter_pos.z);
+	var x_sign := int(sign(position.x - quarter_pos.x));
+	var y_sign := int(sign(position.y - quarter_pos.y));
+	var z_sign := int(sign(position.z - quarter_pos.z));
 	if x_sign == 0: x_sign = 1 # Sometimes, the quarter pos (rounded)
 	if y_sign == 0: y_sign = 1 # and the position share the same value on an axis.
 	if z_sign == 0: z_sign = 1 # This ensures I always get 8 different blocks.
@@ -150,7 +150,7 @@ func get_collision_img_index(position:Vector3, aabb_index:int) -> int:
 	var y_component = diff.y / 0.25
 	var z_component = diff.z / 0.25
 	
-	var index = x_component + (y_component * max_x) + (z_component * max_y)
+	var index = x_component + (y_component * max_x) + (z_component * max_x * max_y)
 	index += aabb_offsets[aabb_index]
 
 #	print("Pos: ", position)
@@ -199,7 +199,9 @@ func set_collision_img_data(index:int, value:int) -> void:
 	var y = pixel_index / 8192
 	var x = pixel_index % 8192
 	VisualServer.texture_set_data_partial(path_collision_tex.get_rid(), path_collision_img, x, y, 1, 1, x, y, 0)
-
+	# considering that I am writing to individual channels and i might be writing twice to the same pixel
+	# i should store the pixel index and a list of writes to do after all data has been set.
+	
 
 
 	

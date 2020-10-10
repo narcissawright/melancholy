@@ -726,6 +726,9 @@ func handle_collision(collision:KinematicCollision) -> void:
 		if impact > 12.5:
 			apply_damage(impact * 1.5)
 		
+#		if v_length > 5.0:
+#			Events.emit_signal("path_collision", collision.position, v_length)
+#
 		if collision_data_timer.is_stopped() and v_length > 5.0:
 			collision_data_timer.start()
 			Events.emit_signal("path_collision", collision.position, v_length) # emit collision info to environment

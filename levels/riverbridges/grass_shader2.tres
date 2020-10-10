@@ -48,17 +48,17 @@ float get_pixel(vec3 position) {
 		y = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(4,i), 0));
 		z = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(5,i), 0));
 		box_size = vec3(ivec3(x.r*256+x.g, y.r*256+y.g, z.r*256+z.g) - value_offset); // store size as vec3
-		if ( // check if point is inside of the bounding box, if so, return index
+		if ( // check if point is inside of the bounding box
 			(position.x >= box_pos.x && position.x <= box_pos.x + box_size.x) &&
 			(position.y >= box_pos.y && position.y <= box_pos.y + box_size.y) &&
 			(position.z >= box_pos.z && position.z <= box_pos.z + box_size.z)) 
 		{ 
 			relevant_aabb = i;
-			break; 
+			break; // relevant aabb was found, so break out of the for loop.
 		}
 	}
 	if (relevant_aabb == -1) {
-		return 0.5;
+		return 0.0;
 	}
 	
 	// obtain data offset
@@ -66,57 +66,58 @@ float get_pixel(vec3 position) {
 	ivec4 right = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(7,relevant_aabb), 0));
 	int data_offset = right.g + right.r*256 + left.g*65536 + left.r*16777216;
 	
+	// it's time to find the data index
 	vec3 diff = position - box_pos;
-	
 	float max_x = box_size.x / 0.25;
 	float max_y = box_size.y / 0.25;
-	//float max_z = box_size.z / 0.25;
-	
 	float x_component = diff.x / 0.25;
 	float y_component = diff.y / 0.25;
 	float z_component = diff.z / 0.25;
 	
-	int index = int(x_component + (y_component * max_x) + (z_component * max_y));
+	int index = int(x_component + y_component * max_x + z_component * max_x * max_y);
 	index += data_offset;
 	
+	// now find the pixel index and channel
 	int channel = index % 3;
-	index /= 3; // round down
+	int pixel_index = index / 3;
+	
+	// and get data
 	if (channel == 0) {
-		return texelFetch (collision_data, ivec2(index % 8192, index / 8192), 0).r;
+		return texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).r;
 	} else if (channel == 1) {
-		return texelFetch (collision_data, ivec2(index % 8192, index / 8192), 0).g;
+		return texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).g;
 	} else {
-		return texelFetch (collision_data, ivec2(index % 8192, index / 8192), 0).b;
+		return texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).b;
 	}
 }
 
 float calc_texture(vec3 vertex) {
-	vec3 rounded_vertex = round(vertex * 4.0) / 4.0;
+	vec3 quarter_pos = round(vertex * 4.0) / 4.0;
 	
-	float x_sign = sign(vertex.x - rounded_vertex.x);
-	float y_sign = sign(vertex.y - rounded_vertex.y);
-	float z_sign = sign(vertex.z - rounded_vertex.z);
+	float x_sign = sign(vertex.x - quarter_pos.x);
+	float y_sign = sign(vertex.y - quarter_pos.y);
+	float z_sign = sign(vertex.z - quarter_pos.z);
 	if (x_sign == 0.0) { x_sign = 1.0; }
 	if (y_sign == 0.0) { y_sign = 1.0; }
 	if (z_sign == 0.0) { z_sign = 1.0; }
 	
-	vec3 position1 = rounded_vertex;
-	vec3 position2 = position1 + vec3(   0.0,    0.0, z_sign) * 0.25;
-	vec3 position3 = position1 + vec3(     0, y_sign,      0) * 0.25;
-	vec3 position4 = position1 + vec3(     0, y_sign, z_sign) * 0.25;
-	vec3 position5 = position1 + vec3(x_sign,      0,      0) * 0.25;
-	vec3 position6 = position1 + vec3(x_sign,      0, z_sign) * 0.25;
-	vec3 position7 = position1 + vec3(x_sign, y_sign,      0) * 0.25;
-	vec3 position8 = position1 + vec3(x_sign, y_sign, z_sign) * 0.25;
+	vec3 position1 = quarter_pos;
+	vec3 position2 = quarter_pos + vec3(   0.0,    0.0, z_sign) * 0.25;
+	vec3 position3 = quarter_pos + vec3(     0, y_sign,      0) * 0.25;
+	vec3 position4 = quarter_pos + vec3(     0, y_sign, z_sign) * 0.25;
+	vec3 position5 = quarter_pos + vec3(x_sign,      0,      0) * 0.25;
+	vec3 position6 = quarter_pos + vec3(x_sign,      0, z_sign) * 0.25;
+	vec3 position7 = quarter_pos + vec3(x_sign, y_sign,      0) * 0.25;
+	vec3 position8 = quarter_pos + vec3(x_sign, y_sign, z_sign) * 0.25;
 	
-	float w1 = max(1.0 - length(vertex - position1), 0.0);
-	float w2 = max(1.0 - length(vertex - position2), 0.0);
-	float w3 = max(1.0 - length(vertex - position3), 0.0);
-	float w4 = max(1.0 - length(vertex - position4), 0.0);
-	float w5 = max(1.0 - length(vertex - position5), 0.0);
-	float w6 = max(1.0 - length(vertex - position6), 0.0);
-	float w7 = max(1.0 - length(vertex - position7), 0.0);
-	float w8 = max(1.0 - length(vertex - position8), 0.0);
+	float w1 = max(0.25 - length(vertex - position1), 0.0);
+	float w2 = max(0.25 - length(vertex - position2), 0.0);
+	float w3 = max(0.25 - length(vertex - position3), 0.0);
+	float w4 = max(0.25 - length(vertex - position4), 0.0);
+	float w5 = max(0.25 - length(vertex - position5), 0.0);
+	float w6 = max(0.25 - length(vertex - position6), 0.0);
+	float w7 = max(0.25 - length(vertex - position7), 0.0);
+	float w8 = max(0.25 - length(vertex - position8), 0.0);
 	
 	float weight_total = w1 + w2 + w3 + w4 + w5 + w6 + w7 + w8;
 	w1 = w1 / weight_total;
