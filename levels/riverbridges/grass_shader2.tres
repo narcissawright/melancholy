@@ -14,6 +14,7 @@ uniform vec3 aabb2size;
 uniform vec3 aabb3pos;
 uniform vec3 aabb3size;
 
+uniform sampler2D aabb_data : hint_albedo;
 uniform sampler2D collision_data : hint_albedo;
 uniform sampler2D grass_texture : hint_albedo;
 uniform sampler2D dirt_texture : hint_albedo;

@@ -25,6 +25,7 @@ surfaces/1 = {
 "format": 97559,
 "index_count": 504,
 "material": ExtResource( 1 ),
+"name": "Grass",
 "primitive": 4,
 "skeleton_aabb": [  ],
 "vertex_count": 176

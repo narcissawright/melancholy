@@ -12,6 +12,11 @@ var aabb_offsets:Array # how far do you jump to reach the data (in path_collisio
 var path_collision_img:Image
 var path_collision_tex:ImageTexture
 
+func sort_by_volume(a:AABB, b:AABB) -> bool:
+	if a.get_area() > b.get_area():
+		return true
+	return false
+
 func _ready() -> void:
 	# Initialize
 	aabb_container.visible = false
@@ -27,6 +32,9 @@ func _ready() -> void:
 	# Obtain data from AABBs
 	for child in aabb_container.get_children():
 		aabb_array.append(AABB(child.position, child.size))
+
+	print (aabb_array)
+	aabb_array.sort_custom(self, "sort_by_volume")
 	print (aabb_array)
 
 	var cubic_meters:float = 0
