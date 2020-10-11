@@ -69,18 +69,18 @@ float get_pixel(vec3 position) {
 	
 	// it's time to find the data index
 	vec3 diff = position - box_pos;
-	float max_x = box_size.x / block_size;
-	float max_y = box_size.y / block_size;
-	float x_component = diff.x / block_size;
-	float y_component = diff.y / block_size;
-	float z_component = diff.z / block_size;
+	int max_x = int(box_size.x / block_size);
+	int max_y = int(box_size.y / block_size);
+	int x_component = int(diff.x / block_size);
+	int y_component = int(diff.y / block_size);
+	int z_component = int(diff.z / block_size);
 	
-	int index = int(x_component + y_component * max_x + z_component * max_x * max_y);
+	int index = x_component + (y_component * max_x) + (z_component * max_x * max_y);
 	index += data_offset;
 	
 	// now find the pixel index and channel
-	int channel = index % 3;
 	int pixel_index = index / 3;
+	int channel = index % 3;
 	
 	// and get data
 	if (channel == 0) {
@@ -93,15 +93,16 @@ float get_pixel(vec3 position) {
 }
 
 float calc_texture(vec3 vertex) {
+	//vec3 rounded_pos = vertex + (vec3(block_size, block_size, block_size) * 0.5);
 	vec3 rounded_pos = round(vertex / block_size) * block_size;
-	rounded_pos += (vec3(block_size, block_size, block_size) * 0.5);
+	//#rounded_pos -= (vec3(block_size, block_size, block_size) * 0.5);
+	
 	float x_sign = sign(vertex.x - rounded_pos.x);
 	float y_sign = sign(vertex.y - rounded_pos.y);
 	float z_sign = sign(vertex.z - rounded_pos.z);
-	if (x_sign == 0.0) { x_sign = 1.0; }
-	if (y_sign == 0.0) { y_sign = 1.0; }
-	if (z_sign == 0.0) { z_sign = 1.0; }
+	// maybe I should reduce the # of positons if sign is 0, like on CPU
 	
+	// get positions
 	vec3 position1 = rounded_pos;
 	vec3 position2 = rounded_pos + vec3(   0.0,    0.0, z_sign) * block_size;
 	vec3 position3 = rounded_pos + vec3(     0, y_sign,      0) * block_size;
@@ -111,6 +112,7 @@ float calc_texture(vec3 vertex) {
 	vec3 position7 = rounded_pos + vec3(x_sign, y_sign,      0) * block_size;
 	vec3 position8 = rounded_pos + vec3(x_sign, y_sign, z_sign) * block_size;
 	
+	// get weights by distance
 	float w1 = max(block_size - length(vertex - position1), 0.0);
 	float w2 = max(block_size - length(vertex - position2), 0.0);
 	float w3 = max(block_size - length(vertex - position3), 0.0);
@@ -120,16 +122,18 @@ float calc_texture(vec3 vertex) {
 	float w7 = max(block_size - length(vertex - position7), 0.0);
 	float w8 = max(block_size - length(vertex - position8), 0.0);
 	
+	// normalize the weights
 	float weight_total = w1 + w2 + w3 + w4 + w5 + w6 + w7 + w8;
-	w1 = w1 / weight_total;
-	w2 = w2 / weight_total;
-	w3 = w3 / weight_total;
-	w4 = w4 / weight_total;
-	w5 = w5 / weight_total;
-	w6 = w6 / weight_total;
-	w7 = w7 / weight_total;
-	w8 = w8 / weight_total;
+	w1 /= weight_total;
+	w2 /= weight_total;
+	w3 /= weight_total;
+	w4 /= weight_total;
+	w5 /= weight_total;
+	w6 /= weight_total;
+	w7 /= weight_total;
+	w8 /= weight_total;
 	
+	// get data
 	float v1 = get_pixel(position1);
 	float v2 = get_pixel(position2);
 	float v3 = get_pixel(position3);
@@ -164,7 +168,6 @@ void fragment() {
 	
 	vec4 albedo_grass = texture(grass_texture,UV);
 	vec4 albedo_dirt = texture(dirt_texture,UV);
-	
 	ALBEDO = mix(albedo_grass.rgb, albedo_dirt.rgb, textureblend);
 	METALLIC = 0.0;
 	ROUGHNESS = 1.0;

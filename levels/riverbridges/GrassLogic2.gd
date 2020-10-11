@@ -108,8 +108,12 @@ func determine_relevant_aabb(point:Vector3) -> int:
 func _on_path_collision(position:Vector3, _velocity_length:float) -> void:
 	# Find the 8 nearest blocks to this position
 	
+	#var rounded_pos:Vector3 = position + (Vector3(block_size, block_size, block_size) * 0.5)
 	var rounded_pos:Vector3 = (position / block_size).round() * block_size # nearest 
-	#rounded_pos += (Vector3(block_size, block_size, block_size) * 0.5)
+	#rounded_pos -= (Vector3(block_size, block_size, block_size) * 0.5)
+	
+	print (rounded_pos)
+	
 	var x_sign := int(sign(position.x - rounded_pos.x));
 	var y_sign := int(sign(position.y - rounded_pos.y));
 	var z_sign := int(sign(position.z - rounded_pos.z));
@@ -125,7 +129,7 @@ func _on_path_collision(position:Vector3, _velocity_length:float) -> void:
 	]
 	
 	# I check if we already have these positions, which happens when
-	# the x_sign, y_sign, or z_sign are zero. This will happepn on
+	# the x_sign, y_sign, or z_sign are zero. This will happen on
 	# surfaces that have integer coordinates.
 	var positions:Array = [rounded_pos]
 	for i in range (try_positions.size()):
@@ -135,18 +139,19 @@ func _on_path_collision(position:Vector3, _velocity_length:float) -> void:
 	$DebugView.draw_positions(positions, block_size)
 	
 	var pixel_positions := []
-	
+	#print("---")
 	for i in range (positions.size()):
 		var aabb_index = determine_relevant_aabb(positions[i])
 		if aabb_index == -1:
 			continue # No relevant AABB found, stop here.
 		
-		var index:int = get_collision_img_index(positions[i], aabb_index)
+		var index:int = get_data_index(positions[i], aabb_index)
 		var distance = (position - positions[i]).length()
-		var value:int = int((block_size - distance) * 0xFF)
+		#var value:int = int((block_size - distance) * 0xFF)
+		var value:int = 31
 		if value > 0:
 			#print ("Setting value ", value, " at index ", index)
-			var pixel = set_collision_img_data(index, value)
+			var pixel:Vector2 = set_collision_img_data(index, value)
 			if not pixel_positions.has(pixel):
 				pixel_positions.append(pixel)
 	
@@ -155,18 +160,13 @@ func _on_path_collision(position:Vector3, _velocity_length:float) -> void:
 		# but I want to know if that would increase performance
 		VisualServer.texture_set_data_partial(path_collision_tex.get_rid(), path_collision_img, pixel_positions[i].x, pixel_positions[i].y, 1, 1, pixel_positions[i].x, pixel_positions[i].y, 0)
 
-func get_collision_img_index(position:Vector3, aabb_index:int) -> int:
+func get_data_index(position:Vector3, aabb_index:int) -> int:
 	var aabb:AABB = aabb_array[aabb_index]
 	var diff:Vector3 = position - aabb.position
-	
-	var max_x = aabb.size.x / block_size
-	var max_y = aabb.size.y / block_size
-	
-	var x_component = diff.x / block_size
-	var y_component = diff.y / block_size
-	var z_component = diff.z / block_size
-	
-	var index = x_component + (y_component * max_x) + (z_component * max_x * max_y)
+	var max_x := int(aabb.size.x / block_size)
+	var max_y := int(aabb.size.y / block_size)
+	diff /= block_size
+	var index := int(diff.x + (diff.y * max_x) + (diff.z * max_x * max_y))
 	index += aabb_offsets[aabb_index]
 	return index
 	
@@ -187,11 +187,14 @@ and returns the pixel position.
 """
 func set_collision_img_data(index:int, value:int) -> Vector2:
 	var img_data = path_collision_img.data.data
+	
 	var pixel_index = index / 3
 	var channel = index % 3
+	
 	var pixel_data_left  = img_data[pixel_index * 2]
 	var pixel_data_right = img_data[pixel_index * 2 + 1]
 	var full_pixel_data = pixel_data_left * 256 + pixel_data_right
+	
 	match channel:
 		0: # RED
 			var old_value = (full_pixel_data & 0b1111100000000000) >> 11
