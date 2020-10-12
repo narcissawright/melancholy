@@ -70,7 +70,6 @@ func _ready() -> void:
 		data.append( offset % 256)             # G 8
 		cubic_meters += aabb_array[i].get_area()
 	
-	print (aabb_offsets)
 	aabb_data_img.create_from_data(8, aabb_array.size(), false, Image.FORMAT_RG8, data)
 	# Image.FORMAT_RG8 does not do an sRGB conversion, so the data that goes in can be 
 	# safely converted back into bytes in the shader (with a little math).
@@ -157,9 +156,8 @@ func _on_path_collision(position:Vector3, velocity_length:float) -> void:
 		
 		# Use distance and velocity to determine how much to change the grass/dirt value
 		var distance = (position - positions[i]).length()
-		var value:int = int((1.0 - distance) * velocity_length * 3.0)
+		var value:int = int((1.0 - distance) * velocity_length)
 		if value > 0:
-			#print ("Setting value ", value, " at index ", index)
 			var pixel:Vector2 = set_collision_img_data(index, value)
 			if not pixel_positions.has(pixel):
 				# Some writes will be writing to different channels of the same pixel, as they store different block data.
