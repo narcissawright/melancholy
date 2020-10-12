@@ -25,48 +25,14 @@ float srgb_to_linear(float value) {
 	}
 }
 
-float get_pixel(vec3 position, vec3 box_pos, vec3 box_size, int data_offset) {
-//	vec3 box_pos;
-//	vec3 box_size;
-//	int aabb_count = textureSize(aabb_data, 0).y;
-//	int relevant_aabb = -1;
-//	ivec3 value_offset = ivec3(32768,32768,32768); // added offset from gdscript
-//	for (int i = 0; i < aabb_count; i++) {   // loop over each bounding box
-//		ivec4 x = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(0,i), 0)); // grab position
-//		ivec4 y = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(1,i), 0));
-//		ivec4 z = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(2,i), 0));
-//		box_pos = vec3(ivec3(x.r*256+x.g, y.r*256+y.g, z.r*256+z.g) - value_offset); // store position as vec3
-//		x = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(3,i), 0)); // grab size
-//		y = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(4,i), 0));
-//		z = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(5,i), 0));
-//		box_size = vec3(ivec3(x.r*256+x.g, y.r*256+y.g, z.r*256+z.g) - value_offset); // store size as vec3
-//		if ( // check if point is inside of the bounding box
-//			(position.x >= box_pos.x && position.x <= box_pos.x + box_size.x) &&
-//			(position.y >= box_pos.y && position.y <= box_pos.y + box_size.y) &&
-//			(position.z >= box_pos.z && position.z <= box_pos.z + box_size.z)) 
-//		{ 
-//			relevant_aabb = i;
-//			break; // relevant aabb was found, so break out of the for loop.
-//		}
-//	}
-//	if (relevant_aabb == -1) {
-//		return 0.0;
-//	}
-//
-//	// obtain data offset
-//	ivec4 left  = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(6,relevant_aabb), 0));
-//	ivec4 right = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(7,relevant_aabb), 0));
-//	int data_offset = right.g + right.r*256 + left.g*65536 + left.r*16777216;
-
-
+float get_collision_data(vec3 position, vec3 box_pos, vec3 box_size, int data_offset) {
 	// it's time to find the data index
-	vec3 diff = position - round(box_pos);
-	int max_x = int(round(box_size.x) / block_size);
-	int max_y = int(round(box_size.y) / block_size);
+	vec3 diff = position - box_pos;
+	int max_x = int(box_size.x / block_size);
+	int max_y = int(box_size.y / block_size);
 	int x_component = int(diff.x / block_size);
 	int y_component = int(diff.y / block_size);
 	int z_component = int(diff.z / block_size);
-	
 	int index = x_component + (y_component * max_x) + (z_component * max_x * max_y);
 	index += data_offset;
 	
@@ -92,7 +58,7 @@ float get_pixel(vec3 position, vec3 box_pos, vec3 box_size, int data_offset) {
 	}
 }
 
-float calc_texture(vec3 vertex, vec3 box_pos, vec3 box_size, int data_offset) {
+float calc_textureblend(vec3 vertex, vec3 box_pos, vec3 box_size, int data_offset) {
 	
 	vec3 rounded_pos = round(vertex / block_size) * block_size;
 	float x_sign = sign(vertex.x - rounded_pos.x);
@@ -131,14 +97,14 @@ float calc_texture(vec3 vertex, vec3 box_pos, vec3 box_size, int data_offset) {
 	w8 /= weight_total;
 	
 	// get data
-	float v1 = get_pixel(position1, box_pos, box_size, data_offset);
-	float v2 = get_pixel(position2, box_pos, box_size, data_offset);
-	float v3 = get_pixel(position3, box_pos, box_size, data_offset);
-	float v4 = get_pixel(position4, box_pos, box_size, data_offset);
-	float v5 = get_pixel(position5, box_pos, box_size, data_offset);
-	float v6 = get_pixel(position6, box_pos, box_size, data_offset);
-	float v7 = get_pixel(position7, box_pos, box_size, data_offset);
-	float v8 = get_pixel(position8, box_pos, box_size, data_offset);
+	float v1 = get_collision_data(position1, box_pos, box_size, data_offset);
+	float v2 = get_collision_data(position2, box_pos, box_size, data_offset);
+	float v3 = get_collision_data(position3, box_pos, box_size, data_offset);
+	float v4 = get_collision_data(position4, box_pos, box_size, data_offset);
+	float v5 = get_collision_data(position5, box_pos, box_size, data_offset);
+	float v6 = get_collision_data(position6, box_pos, box_size, data_offset);
+	float v7 = get_collision_data(position7, box_pos, box_size, data_offset);
+	float v8 = get_collision_data(position8, box_pos, box_size, data_offset);
 	
 	float final_value = (v1 * w1) + (v2 * w2) + (v3 * w3) + (v4 * w4) + (v5 * w5) + (v6 * w6) + (v7 * w7) + (v8 * w8);
 	return final_value;
@@ -168,64 +134,27 @@ void vertex() {
 		}
 	}
 	if (relevant_aabb == -1) {
-		aabb_pos = vec3(0,-1024.0,0);
-		aabb_size = vec3(0,0,0);
+		aabb_pos =  vec3(0, -1024.0, 0);
+		aabb_size = vec3(0, 0, 0);
 	}
 
 	// obtain data offset
-	vec4 left = (0.5 + 255.0 * texelFetch(aabb_data, ivec2(6,relevant_aabb), 0));
+	vec4 left =  (0.5 + 255.0 * texelFetch(aabb_data, ivec2(6,relevant_aabb), 0));
 	vec4 right = (0.5 + 255.0 * texelFetch(aabb_data, ivec2(7,relevant_aabb), 0));
 	data_offset_vec4 = vec4(left.r, left.g, right.r, right.g);
 }
 
 void fragment() {
-//	vec3 position = (CAMERA_MATRIX * vec4(VERTEX, 1.0)).xyz;
-//	int aabb_count = textureSize(aabb_data, 0).y;
-//	int relevant_aabb = -1;
-//	vec3 fragment_aabb_pos;
-//	vec3 fragment_aabb_size;
-//	ivec3 value_offset = ivec3(32768,32768,32768); // added offset from gdscript
-//	for (int i = 0; i < aabb_count; i++) {   // loop over each bounding box
-//		ivec4 x = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(0,i), 0)); // grab position
-//		ivec4 y = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(1,i), 0));
-//		ivec4 z = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(2,i), 0));
-//		fragment_aabb_pos = vec3(ivec3(x.r*256+x.g, y.r*256+y.g, z.r*256+z.g) - value_offset); // store position as vec3
-//		x = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(3,i), 0)); // grab size
-//		y = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(4,i), 0));
-//		z = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(5,i), 0));
-//		fragment_aabb_size = vec3(ivec3(x.r*256+x.g, y.r*256+y.g, z.r*256+z.g) - value_offset); // store size as vec3
-//		if ( // check if point is inside of the bounding box
-//			(position.x >= fragment_aabb_pos.x && position.x <= fragment_aabb_pos.x + fragment_aabb_size.x) &&
-//			(position.y >= fragment_aabb_pos.y && position.y <= fragment_aabb_pos.y + fragment_aabb_size.y) &&
-//			(position.z >= fragment_aabb_pos.z && position.z <= fragment_aabb_pos.z + fragment_aabb_size.z)) 
-//		{ 
-//			relevant_aabb = i;
-//			break; // relevant aabb was found, so break out of the for loop.
-//		}
-//	}
-//	if (relevant_aabb == -1) {
-//		fragment_aabb_pos = vec3(0,-1024.0,0);
-//		fragment_aabb_size = vec3(0,0,0);
-//	}
-
-	// obtain data offset
-//	vec4 left = (0.5 + 255.0 * texelFetch(aabb_data, ivec2(6,relevant_aabb), 0));
-//	vec4 right = (0.5 + 255.0 * texelFetch(aabb_data, ivec2(7,relevant_aabb), 0));
-//	vec4 fragment_data_offset_vec4 = vec4(left.r, left.g, right.r, right.g);
-
 	ivec4 data_offset_ivec4 = ivec4(data_offset_vec4);
 	int data_offset = data_offset_ivec4.a + data_offset_ivec4.b*256 + data_offset_ivec4.g*65536 + data_offset_ivec4.r*16777216;
 	
 	float textureblend = 0.0; // 0.0 for grass, 1.0 for dirt
 	vec3 world_vertex = (CAMERA_MATRIX * vec4(VERTEX, 1.0)).xyz;
-	textureblend = calc_texture(world_vertex, aabb_pos, aabb_size, data_offset);
+	textureblend = calc_textureblend(world_vertex, round(aabb_pos), round(aabb_size), data_offset);
 	
 	vec4 albedo_grass = texture(grass_texture,UV);
 	vec4 albedo_dirt = texture(dirt_texture,UV);
 	ALBEDO = mix(albedo_grass.rgb, albedo_dirt.rgb, textureblend);
-	METALLIC = 0.0;
-	ROUGHNESS = 1.0;
-	SPECULAR = 0.5;
 }
 "
 
