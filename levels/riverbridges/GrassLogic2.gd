@@ -112,7 +112,7 @@ func _on_path_collision(position:Vector3, _velocity_length:float) -> void:
 	var rounded_pos:Vector3 = (position / block_size).round() * block_size # nearest 
 	#rounded_pos -= (Vector3(block_size, block_size, block_size) * 0.5)
 	
-	print (rounded_pos)
+	#print (rounded_pos)
 	
 	var x_sign := int(sign(position.x - rounded_pos.x));
 	var y_sign := int(sign(position.y - rounded_pos.y));
@@ -136,10 +136,9 @@ func _on_path_collision(position:Vector3, _velocity_length:float) -> void:
 		if not positions.has(try_positions[i]):
 			positions.append(try_positions[i])
 	
-	$DebugView.draw_positions(positions, block_size)
+	#$DebugView.draw_positions(positions, block_size)
 	
 	var pixel_positions := []
-	#print("---")
 	for i in range (positions.size()):
 		var aabb_index = determine_relevant_aabb(positions[i])
 		if aabb_index == -1:
@@ -147,8 +146,8 @@ func _on_path_collision(position:Vector3, _velocity_length:float) -> void:
 		
 		var index:int = get_data_index(positions[i], aabb_index)
 		var distance = (position - positions[i]).length()
-		#var value:int = int((block_size - distance) * 0xFF)
-		var value:int = 31
+		#var value:int = int((block_size - distance) * 5)
+		var value:int = 1
 		if value > 0:
 			#print ("Setting value ", value, " at index ", index)
 			var pixel:Vector2 = set_collision_img_data(index, value)
@@ -168,6 +167,7 @@ func get_data_index(position:Vector3, aabb_index:int) -> int:
 	diff /= block_size
 	var index := int(diff.x + (diff.y * max_x) + (diff.z * max_x * max_y))
 	index += aabb_offsets[aabb_index]
+	#print(index)
 	return index
 	
 #	print("Pos: ", position)
@@ -186,29 +186,29 @@ This function updates path_collision_img.data.data (PoolByteArray),
 and returns the pixel position.
 """
 func set_collision_img_data(index:int, value:int) -> Vector2:
-	var img_data = path_collision_img.data.data
+	var img_data:PoolByteArray = path_collision_img.data.data
 	
-	var pixel_index = index / 3
-	var channel = index % 3
+	var pixel_index:int = index / 3
+	var channel:int = index % 3
 	
-	var pixel_data_left  = img_data[pixel_index * 2]
-	var pixel_data_right = img_data[pixel_index * 2 + 1]
-	var full_pixel_data = pixel_data_left * 256 + pixel_data_right
+	var pixel_data_left:int  = img_data[pixel_index * 2]
+	var pixel_data_right:int = img_data[pixel_index * 2 + 1]
+	var full_pixel_data:int = pixel_data_left * 256 + pixel_data_right
 	
 	match channel:
 		0: # RED
 			var old_value = (full_pixel_data & 0b1111100000000000) >> 11
-			var new_value = min(old_value + value, 31)
+			var new_value = min(old_value + value, 1) # replace with 31
 			full_pixel_data &= 0b0000011111111110
 			full_pixel_data |= new_value << 11 
 		1: # GREEN
 			var old_value = (full_pixel_data & 0b0000011111000000) >> 6
-			var new_value = min(old_value + value, 31)
+			var new_value = min(old_value + value, 1)
 			full_pixel_data &= 0b1111100000111110
 			full_pixel_data |= new_value << 6
 		2: # BLUE
 			var old_value = (full_pixel_data & 0b0000000000111110) >> 1
-			var new_value = min(old_value + value, 31)
+			var new_value = min(old_value + value, 1)
 			full_pixel_data &= 0b1111111111000000
 			full_pixel_data |= new_value << 1
 	pixel_data_left = full_pixel_data >> 8
@@ -216,6 +216,6 @@ func set_collision_img_data(index:int, value:int) -> Vector2:
 	img_data.set(pixel_index * 2,     pixel_data_left)
 	img_data.set(pixel_index * 2 + 1, pixel_data_right)
 	path_collision_img.data.data = img_data
-	var y = pixel_index / 8192
-	var x = pixel_index % 8192
+	var y:int = pixel_index / 8192
+	var x:int = pixel_index % 8192
 	return Vector2(x,y)
