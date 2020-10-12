@@ -13,26 +13,13 @@ uniform sampler2D collision_data : hint_albedo;
 uniform sampler2D grass_texture : hint_albedo;
 uniform sampler2D dirt_texture : hint_albedo;
 
-//int get_relevant_aabb(vec3 point) {
-//	int aabb_count = textureSize(aabb_data, 0).y;
-//	ivec3 offset = ivec3(32768,32768,32768); // added offset from gdscript
-//	for (int i = 0; i < aabb_count; i++) {   // loop over each bounding box
-//		ivec4 x = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(0,i), 0)); // grab position
-//		ivec4 y = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(1,i), 0));
-//		ivec4 z = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(2,i), 0));
-//		vec3 box_pos = vec3(ivec3(x.r*256+x.g, y.r*256+y.g, z.r*256+z.g) - offset); // store position as vec3
-//		x = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(3,i), 0)); // grab size
-//		y = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(4,i), 0));
-//		z = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(5,i), 0));
-//		vec3 box_size = vec3(ivec3(x.r*256+x.g, y.r*256+y.g, z.r*256+z.g) - offset); // store size as vec3
-//		if ( // check if point is inside of the bounding box, if so, return index
-//			(point.x >= box_pos.x && point.x <= box_pos.x + box_size.x) &&
-//			(point.y >= box_pos.y && point.y <= box_pos.y + box_size.y) &&
-//			(point.z >= box_pos.z && point.z <= box_pos.z + box_size.z)
-//		) { return i; }
-//	}
-//	return -1; // no relevant aabb found
-//}
+float srgb_to_linear(float value) {
+	if (value <= 0.0031308) {
+		return value * 12.92;
+	} else {
+		return pow(value, 1.0 / 2.4) * 1.055 - 0.055;
+	}
+}
 
 float get_pixel(vec3 position) {
 	vec3 box_pos;
@@ -79,29 +66,34 @@ float get_pixel(vec3 position) {
 	index += data_offset;
 	
 	// now find the pixel index and channel
-	int pixel_index = index / 3;
-	int channel = index % 3;
+	int pixel_index = index / 4;
+	int channel = index % 4;
 	
-	// and get data
-	if (channel == 1) {
-		return texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).r;
-	} else if (channel == 2) {
-		return texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).g;
-	} else {
-		return texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).b;
+	// and get value
+	float value = 0.0;
+	switch (channel) {
+		case 0:
+			value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).r;
+			return srgb_to_linear(value);
+		case 1:
+			value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).g;
+			return srgb_to_linear(value);
+		case 2:
+			value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).b;
+			return srgb_to_linear(value);
+		case 3:
+			value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).a;
+			return value; // alpha is already linear
 	}
 }
 
 float calc_texture(vec3 vertex) {
-	//vec3 rounded_pos = vertex + (vec3(block_size, block_size, block_size) * 0.5);
-	vec3 rounded_pos = round(vertex / block_size) * block_size;
-	//#rounded_pos -= (vec3(block_size, block_size, block_size) * 0.5);
 	
+	vec3 rounded_pos = round(vertex / block_size) * block_size;
 	float x_sign = sign(vertex.x - rounded_pos.x);
 	float y_sign = sign(vertex.y - rounded_pos.y);
 	float z_sign = sign(vertex.z - rounded_pos.z);
-	// maybe I should reduce the # of positons if sign is 0, like on CPU
-	
+
 	// get positions
 	vec3 position1 = rounded_pos;
 	vec3 position2 = rounded_pos + vec3(   0.0,    0.0, z_sign) * block_size;
@@ -143,12 +135,7 @@ float calc_texture(vec3 vertex) {
 	float v7 = get_pixel(position7);
 	float v8 = get_pixel(position8);
 	
-	if (v1 > 0.2) {
-		return 1.0;
-	}
-	
 	float final_value = (v1 * w1) + (v2 * w2) + (v3 * w3) + (v4 * w4) + (v5 * w5) + (v6 * w6) + (v7 * w7) + (v8 * w8);
-	
 	return final_value;
 }
 
@@ -156,20 +143,6 @@ void fragment() {
 	float textureblend = 0.0; // 0.0 for grass, 1.0 for dirt
 	vec3 world_vertex = (CAMERA_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	textureblend = calc_texture(world_vertex);
-
-//	if (offset == 6636800) {
-//		textureblend = 0.333;
-//	}
-//	if (relevant_aabb == -1) {
-//		textureblend = 0.0;
-//	} else if (relevant_aabb == 0) {
-//		textureblend = 0.3333;
-//	} else if (relevant_aabb == 1) {
-//		textureblend = 0.6666;
-//	} else if (relevant_aabb == 2) {
-//		textureblend = 1.0
-//	}
-	
 	vec4 albedo_grass = texture(grass_texture,UV);
 	vec4 albedo_dirt = texture(dirt_texture,UV);
 	ALBEDO = mix(albedo_grass.rgb, albedo_dirt.rgb, textureblend);
