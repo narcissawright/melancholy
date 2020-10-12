@@ -69,7 +69,8 @@ func _ready() -> void:
 		data.append((offset / 256) % 256)      # R 8
 		data.append( offset % 256)             # G 8
 		cubic_meters += aabb_array[i].get_area()
-		
+	
+	print (aabb_offsets)
 	aabb_data_img.create_from_data(8, aabb_array.size(), false, Image.FORMAT_RG8, data)
 	# Image.FORMAT_RG8 does not do an sRGB conversion, so the data that goes in can be 
 	# safely converted back into bytes in the shader (with a little math).
