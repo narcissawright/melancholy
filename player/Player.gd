@@ -47,7 +47,7 @@ onready var anim_tree = $AnimationTree
 ##  ##  ######  ##  ##  #####     ##
 
 func _ready() -> void:
-	initialize_animationtree()
+	anim_state_machine = anim_tree['parameters/playback']
 	initialize_checkpoint_state()
 	lockplayer_for_frames(20)
 
@@ -592,9 +592,6 @@ e.g. BombSpawner or Bomb may call bomb pull or bomb throw.
 """
 
 var anim_state_machine
-func initialize_animationtree() -> void:
-	anim_state_machine = anim_tree['parameters/playback']
-	anim_state_machine.start("BaseMovement")
 
 func walk_animation() -> void:
 	if jump_state == 'landing':

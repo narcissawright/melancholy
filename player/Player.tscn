@@ -96,6 +96,7 @@ states/Land/position = Vector2( 245, 261.02 )
 states/ShieldMovement/node = SubResource( 13 )
 states/ShieldMovement/position = Vector2( 609, 194 )
 transitions = [ "BaseMovement", "ShieldMovement", SubResource( 14 ), "ShieldMovement", "BaseMovement", SubResource( 15 ), "Land", "BaseMovement", SubResource( 16 ), "BaseMovement", "Jumpsquat", SubResource( 17 ), "Jumpsquat", "Jump", SubResource( 18 ), "BaseMovement", "Falling", SubResource( 19 ), "Falling", "Land", SubResource( 20 ), "Jump", "Falling", SubResource( 21 ) ]
+start_node = "BaseMovement"
 graph_offset = Vector2( -58, 83.1241 )
 
 [sub_resource type="AnimationNodeStateMachinePlayback" id=23]

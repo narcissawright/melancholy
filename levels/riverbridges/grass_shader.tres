@@ -5,102 +5,161 @@
 
 [sub_resource type="Shader" id=1]
 code = "shader_type spatial;
-render_mode blend_mix,depth_draw_opaque,cull_disabled,diffuse_burley,specular_schlick_ggx;
+render_mode blend_mix;
 
-uniform vec3 aabb_position;
-uniform vec3 aabb_size;
+uniform float block_size;
+uniform sampler2D aabb_data : hint_albedo;
 uniform sampler2D collision_data : hint_albedo;
-
 uniform sampler2D grass_texture : hint_albedo;
 uniform sampler2D dirt_texture : hint_albedo;
 
-uniform vec3 uv1_scale;
-uniform vec3 uv1_offset;
+varying vec3 aabb_pos;
+varying vec3 aabb_size;
+varying vec4 data_offset_vec4;
 
-void vertex() {
-	UV=UV*uv1_scale.xy+uv1_offset.xy;
+float srgb_to_linear(float value) {
+	if (value <= 0.0031308) {
+		return value * 12.92;
+	} else {
+		return pow(value, 1.0 / 2.4) * 1.055 - 0.055;
+	}
 }
 
-float get_pixel(ivec3 position) {
-	int max_x = int(aabb_size.x);
-	int max_y = int(aabb_size.y);
-	ivec3 diff = position - ivec3(aabb_position);
-	int index = diff.x + (diff.y * max_x) + (diff.z * max_x * max_y);
-	return texelFetch (collision_data, ivec2(index % 1024, index / 1024), 0).r;
+float get_collision_data(vec3 position, vec3 box_pos, vec3 box_size, int data_offset) {
+	// it's time to find the data index
+	vec3 diff = position - box_pos;
+	int max_x = int(box_size.x / block_size);
+	int max_y = int(box_size.y / block_size);
+	int x_component = int(diff.x / block_size);
+	int y_component = int(diff.y / block_size);
+	int z_component = int(diff.z / block_size);
+	int index = x_component + (y_component * max_x) + (z_component * max_x * max_y);
+	index += data_offset;
+	
+	// now find the pixel index and channel
+	int pixel_index = index / 4;
+	int channel = index % 4;
+	
+	// and get value
+	float value = 0.0;
+	switch (channel) {
+		case 0:
+			value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).r;
+			return srgb_to_linear(value);
+		case 1:
+			value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).g;
+			return srgb_to_linear(value);
+		case 2:
+			value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).b;
+			return srgb_to_linear(value);
+		case 3:
+			value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).a;
+			return value; // alpha is already linear
+	}
 }
 
-float calc_texture(vec3 vertex) {
-	vec3 rounded_vertex = round(vertex);
+float calc_textureblend(vec3 vertex, vec3 box_pos, vec3 box_size, int data_offset) {
 	
-	int x_sign = int(sign(vertex.x - rounded_vertex.x));
-	int y_sign = int(sign(vertex.y - rounded_vertex.y));
-	int z_sign = int(sign(vertex.z - rounded_vertex.z));
+	vec3 rounded_pos = round(vertex / block_size) * block_size;
+	float x_sign = sign(vertex.x - rounded_pos.x);
+	float y_sign = sign(vertex.y - rounded_pos.y);
+	float z_sign = sign(vertex.z - rounded_pos.z);
+
+	// get positions
+	vec3 position1 = rounded_pos;
+	vec3 position2 = rounded_pos + vec3(   0.0,    0.0, z_sign) * block_size;
+	vec3 position3 = rounded_pos + vec3(     0, y_sign,      0) * block_size;
+	vec3 position4 = rounded_pos + vec3(     0, y_sign, z_sign) * block_size;
+	vec3 position5 = rounded_pos + vec3(x_sign,      0,      0) * block_size;
+	vec3 position6 = rounded_pos + vec3(x_sign,      0, z_sign) * block_size;
+	vec3 position7 = rounded_pos + vec3(x_sign, y_sign,      0) * block_size;
+	vec3 position8 = rounded_pos + vec3(x_sign, y_sign, z_sign) * block_size;
 	
-	ivec3 position1 = ivec3(rounded_vertex);
-	ivec3 position2 = position1 + ivec3(     0,      0, z_sign);
-	ivec3 position3 = position1 + ivec3(     0, y_sign,      0);
-	ivec3 position4 = position1 + ivec3(     0, y_sign, z_sign);
-	ivec3 position5 = position1 + ivec3(x_sign,      0,      0);
-	ivec3 position6 = position1 + ivec3(x_sign,      0, z_sign);
-	ivec3 position7 = position1 + ivec3(x_sign, y_sign,      0);
-	ivec3 position8 = position1 + ivec3(x_sign, y_sign, z_sign);
+	// get weights by distance
+	float w1 = max(block_size - length(vertex - position1), 0.0);
+	float w2 = max(block_size - length(vertex - position2), 0.0);
+	float w3 = max(block_size - length(vertex - position3), 0.0);
+	float w4 = max(block_size - length(vertex - position4), 0.0);
+	float w5 = max(block_size - length(vertex - position5), 0.0);
+	float w6 = max(block_size - length(vertex - position6), 0.0);
+	float w7 = max(block_size - length(vertex - position7), 0.0);
+	float w8 = max(block_size - length(vertex - position8), 0.0);
 	
-	float w1 = max(1.0 - length(vertex - vec3(position1)), 0.0);
-	float w2 = max(1.0 - length(vertex - vec3(position2)), 0.0);
-	float w3 = max(1.0 - length(vertex - vec3(position3)), 0.0);
-	float w4 = max(1.0 - length(vertex - vec3(position4)), 0.0);
-	float w5 = max(1.0 - length(vertex - vec3(position5)), 0.0);
-	float w6 = max(1.0 - length(vertex - vec3(position6)), 0.0);
-	float w7 = max(1.0 - length(vertex - vec3(position7)), 0.0);
-	float w8 = max(1.0 - length(vertex - vec3(position8)), 0.0);
-	
+	// normalize the weights
 	float weight_total = w1 + w2 + w3 + w4 + w5 + w6 + w7 + w8;
-	w1 = w1 / weight_total;
-	w2 = w2 / weight_total;
-	w3 = w3 / weight_total;
-	w4 = w4 / weight_total;
-	w5 = w5 / weight_total;
-	w6 = w6 / weight_total;
-	w7 = w7 / weight_total;
-	w8 = w8 / weight_total;
+	w1 /= weight_total;
+	w2 /= weight_total;
+	w3 /= weight_total;
+	w4 /= weight_total;
+	w5 /= weight_total;
+	w6 /= weight_total;
+	w7 /= weight_total;
+	w8 /= weight_total;
 	
-	int max_x = int(aabb_size.x);
-	int max_y = int(aabb_size.y);
-	
-	float v1 = get_pixel(position1);
-	float v2 = get_pixel(position2);
-	float v3 = get_pixel(position3);
-	float v4 = get_pixel(position4);
-	float v5 = get_pixel(position5);
-	float v6 = get_pixel(position6);
-	float v7 = get_pixel(position7);
-	float v8 = get_pixel(position8);
+	// get data
+	float v1 = get_collision_data(position1, box_pos, box_size, data_offset);
+	float v2 = get_collision_data(position2, box_pos, box_size, data_offset);
+	float v3 = get_collision_data(position3, box_pos, box_size, data_offset);
+	float v4 = get_collision_data(position4, box_pos, box_size, data_offset);
+	float v5 = get_collision_data(position5, box_pos, box_size, data_offset);
+	float v6 = get_collision_data(position6, box_pos, box_size, data_offset);
+	float v7 = get_collision_data(position7, box_pos, box_size, data_offset);
+	float v8 = get_collision_data(position8, box_pos, box_size, data_offset);
 	
 	float final_value = (v1 * w1) + (v2 * w2) + (v3 * w3) + (v4 * w4) + (v5 * w5) + (v6 * w6) + (v7 * w7) + (v8 * w8);
-	
 	return final_value;
 }
 
+void vertex() {
+	vec3 position = (WORLD_MATRIX * vec4(VERTEX, 1.0)).xyz;
+	int aabb_count = textureSize(aabb_data, 0).y;
+	int relevant_aabb = -1;
+	ivec3 value_offset = ivec3(32768,32768,32768); // added offset from gdscript
+	for (int i = 0; i < aabb_count; i++) {   // loop over each bounding box
+		ivec4 x = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(0,i), 0)); // grab position
+		ivec4 y = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(1,i), 0));
+		ivec4 z = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(2,i), 0));
+		aabb_pos = vec3(ivec3(x.r*256+x.g, y.r*256+y.g, z.r*256+z.g) - value_offset); // store position as vec3
+		x = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(3,i), 0)); // grab size
+		y = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(4,i), 0));
+		z = ivec4(0.5 + 255.0 * texelFetch(aabb_data, ivec2(5,i), 0));
+		aabb_size = vec3(ivec3(x.r*256+x.g, y.r*256+y.g, z.r*256+z.g) - value_offset); // store size as vec3
+		if ( // check if point is inside of the bounding box
+			(position.x >= aabb_pos.x && position.x <= aabb_pos.x + aabb_size.x) &&
+			(position.y >= aabb_pos.y && position.y <= aabb_pos.y + aabb_size.y) &&
+			(position.z >= aabb_pos.z && position.z <= aabb_pos.z + aabb_size.z)) 
+		{ 
+			relevant_aabb = i;
+			break; // relevant aabb was found, so break out of the for loop.
+		}
+	}
+	if (relevant_aabb == -1) {
+		aabb_pos =  vec3(0, -1024.0, 0);
+		aabb_size = vec3(0, 0, 0);
+	}
+
+	// obtain data offset
+	vec4 left =  (0.5 + 255.0 * texelFetch(aabb_data, ivec2(6,relevant_aabb), 0));
+	vec4 right = (0.5 + 255.0 * texelFetch(aabb_data, ivec2(7,relevant_aabb), 0));
+	data_offset_vec4 = vec4(left.r, left.g, right.r, right.g);
+}
+
 void fragment() {
-	vec3 wrld_vertex = (CAMERA_MATRIX * vec4(VERTEX, 1.0)).xyz;
-	float textureblend = calc_texture(wrld_vertex);
+	ivec4 data_offset_ivec4 = ivec4(data_offset_vec4);
+	int data_offset = data_offset_ivec4.a + data_offset_ivec4.b*256 + data_offset_ivec4.g*65536 + data_offset_ivec4.r*16777216;
 	
-	vec2 base_uv = UV;
-	vec4 albedo_grass = texture(grass_texture,base_uv);
-	vec4 albedo_dirt = texture(dirt_texture,base_uv);
+	float textureblend = 0.0; // 0.0 for grass, 1.0 for dirt
+	vec3 world_vertex = (CAMERA_MATRIX * vec4(VERTEX, 1.0)).xyz;
+	textureblend = calc_textureblend(world_vertex, round(aabb_pos), round(aabb_size), data_offset);
 	
+	vec4 albedo_grass = texture(grass_texture,UV);
+	vec4 albedo_dirt = texture(dirt_texture,UV);
 	ALBEDO = mix(albedo_grass.rgb, albedo_dirt.rgb, textureblend);
-	METALLIC = 0.0;
-	ROUGHNESS = 1.0;
-	SPECULAR = 0.5;
 }
 "
 
 [resource]
 shader = SubResource( 1 )
-shader_param/aabb_position = null
-shader_param/aabb_size = null
-shader_param/uv1_scale = Vector3( 1, 1, 1 )
-shader_param/uv1_offset = Vector3( 0, 0, 0 )
+shader_param/block_size = 0.5
 shader_param/grass_texture = ExtResource( 1 )
 shader_param/dirt_texture = ExtResource( 2 )

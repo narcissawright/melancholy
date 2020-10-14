@@ -4,6 +4,8 @@
 [ext_resource path="res://global/debug/DebugLinesMaterial.tres" type="Material" id=2]
 [ext_resource path="res://global/debug/DebugFillMaterial.tres" type="Material" id=3]
 
+
+
 [sub_resource type="ArrayMesh" id=1]
 surfaces/0 = {
 "aabb": AABB( -16, -2, -65, 128, 18, 110 ),

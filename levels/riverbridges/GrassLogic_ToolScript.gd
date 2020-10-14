@@ -1,100 +1,113 @@
+#tool
 extends Node
-onready var aabb_container = $AABBs
 
-# Materials
-var grass_material # grass floor surface that has shader params I need to set from here.
+const block_size:float = 0.5
 
 # AABB Data
-var aabb_array:Array # contains a list of bounding boxes that surround areas where grass exists.
-var aabb_offsets:Array # how far do you jump to reach the data (in path_collision_img) for the AABB
+export var aabb_array:Array # contains a list of bounding boxes that surround areas where grass exists.
+export var aabb_offsets:Array # how far do you jump to reach the data (in path_collision_img) for the AABB
 
 # Image Data
 var path_collision_img:Image
 var path_collision_tex:ImageTexture
 
-const block_size:float = 0.5
-var blocks_per_cubic_meter:float
 var debug_mode = false
 
 func _ready() -> void:
-	blocks_per_cubic_meter = pow((1.0 / block_size), 3)
+	var aabb_container = $AABBs
 	
-	# Initialize
-	aabb_container.visible = false
-	Events.connect("debug_view", self, "toggle_debug_view")
-	Events.connect("path_collision", self, "_on_path_collision")
-	
-	# Get grass material
 	var geometry = $"../Geometry"
+	var grass_material # grass floor surface that has shader params I need to set from here.
 	for i in range (geometry.mesh.get_surface_count()):
 		if (geometry.mesh.get("surface_" + str(i+1) + "/name")) == "Grass":
 			grass_material = geometry.mesh.surface_get_material(i)
 	
-	# Obtain data from AABBs
-	for child in aabb_container.get_children():
-		aabb_array.append(AABB(child.position, child.size))
+	#if Engine.editor_hint:
+	if (1 == 1):
+		# Obtain data from AABBs
+		for child in aabb_container.get_children():
+			aabb_array.append(AABB(child.position, child.size))
 		
-	# Sort AABBs by volume to do less containment checks on average
-	aabb_array.sort_custom(self, "sort_by_volume")
-	
-	# Calculate offsets
-	var cubic_meters:float = 0
-	var aabb_data_img = Image.new()
-	var data := PoolByteArray()
-	for i in range (aabb_array.size()):
-		# Each pass of this loop I store the data offset (how far I have to jump in the collision_data to reach next bounding box)
-		aabb_offsets.append(cubic_meters * blocks_per_cubic_meter)
+		# Sort AABBs by volume to do less containment checks on average
+		aabb_array.sort_custom(self, "sort_by_volume")
 		
-		# This is what I need to store in the aabb_data_img
-		var relevant_data:Array = []
-		relevant_data.append(aabb_array[i].position.x) #RG 1
-		relevant_data.append(aabb_array[i].position.y) #RG 2
-		relevant_data.append(aabb_array[i].position.z) #RG 3
-		relevant_data.append(aabb_array[i].size.x)     #RG 4
-		relevant_data.append(aabb_array[i].size.y)     #RG 5
-		relevant_data.append(aabb_array[i].size.z)     #RG 6
-		
-		# add the AABB position and size data to the img
-		for j in range (relevant_data.size()):
-			# Add 32768 so I don't have to store negative 16bit numbers (headache)
-			# This gets subtracted in shader later to get signed int.
-			var stored_value := int(relevant_data[j]) + 32768
-			data.append(stored_value / 256) # R 1-6
-			data.append(stored_value % 256) # G 1-6
+		# Calculate offsets
+		var cubic_meters:float = 0
+		var blocks_per_cubic_meter = pow((1.0 / block_size), 3)
+		var aabb_data_img = Image.new()
+		var data := PoolByteArray()
+		for i in range (aabb_array.size()):
+			# Each pass of this loop I store the data offset (how far I have to jump in the collision_data to reach next bounding box)
+			aabb_offsets.append(cubic_meters * blocks_per_cubic_meter)
 			
-		# Offset can be large, so I store it across 4 bytes.
-		var offset = int(cubic_meters * pow((1.0 / block_size), 3))
-		data.append((offset / 16777216) % 256) # R 7
-		data.append((offset / 65536) % 256)    # G 7
-		data.append((offset / 256) % 256)      # R 8
-		data.append( offset % 256)             # G 8
-		cubic_meters += aabb_array[i].get_area()
-	
-	aabb_data_img.create_from_data(8, aabb_array.size(), false, Image.FORMAT_RG8, data)
-	# Image.FORMAT_RG8 does not do an sRGB conversion, so the data that goes in can be 
-	# safely converted back into bytes in the shader (with a little math).
+			# This is what I need to store in the aabb_data_img
+			var relevant_data:Array = []
+			relevant_data.append(aabb_array[i].position.x) #RG 1
+			relevant_data.append(aabb_array[i].position.y) #RG 2
+			relevant_data.append(aabb_array[i].position.z) #RG 3
+			relevant_data.append(aabb_array[i].size.x)     #RG 4
+			relevant_data.append(aabb_array[i].size.y)     #RG 5
+			relevant_data.append(aabb_array[i].size.z)     #RG 6
+			
+			# add the AABB position and size data to the img
+			for j in range (relevant_data.size()):
+				# Add 32768 so I don't have to store negative 16bit numbers (headache)
+				# This gets subtracted in shader later to get signed int.
+				var stored_value := int(relevant_data[j]) + 32768
+				data.append(stored_value / 256) # R 1-6
+				data.append(stored_value % 256) # G 1-6
+				
+			# Offset can be large, so I store it across 4 bytes.
+			var offset = int(cubic_meters * pow((1.0 / block_size), 3))
+			data.append((offset / 16777216) % 256) # R 7
+			data.append((offset / 65536) % 256)    # G 7
+			data.append((offset / 256) % 256)      # R 8
+			data.append( offset % 256)             # G 8
+			cubic_meters += aabb_array[i].get_area()
+		
+		aabb_data_img.create_from_data(8, aabb_array.size(), false, Image.FORMAT_RG8, data)
+		# Image.FORMAT_RG8 does not do an sRGB conversion, so the data that goes in can be 
+		# safely converted back into bytes in the shader (with a little math).
 
-	# ImageTexture gets passed to shader.
-	var aabb_data_tex = ImageTexture.new()
-	aabb_data_tex.create_from_image(aabb_data_img, 0)
-	$AABB_TEXTURE2.get_surface_material(0).albedo_texture = aabb_data_tex
-	grass_material.set_shader_param("aabb_data", aabb_data_tex)
+		# ImageTexture gets passed to shader.
+		var aabb_data_tex = ImageTexture.new()
+		aabb_data_tex.create_from_image(aabb_data_img, 0)
+		grass_material.set_shader_param("aabb_data", aabb_data_tex)
+		
+		# Populate path collision data
+		var height := int(ceil(((cubic_meters * blocks_per_cubic_meter) / 8192.0) / 4.0))
+		
+		data = PoolByteArray()
+		for _i in range (8192 * height * 4):
+			data.append(randi() % 255)
+		
+		# Calculate image size, create image
+		path_collision_img = Image.new()
+		path_collision_img.create_from_data(8192, height, false, Image.FORMAT_RGBA8, data)
+		# FORMAT_RGBA8 does do srgb conversion but I can convert it back in the shader without much hassle.
+		
+#		var file = File.new()
+#		file.open("user://riverbridges.dat", File.WRITE)
+#		file.store_var(path_collision_img, true)
+#		file.close()
+		
+		# Set shader params
+		grass_material.set_shader_param('block_size', block_size)
 
-	# Calculate image size, create image
-	var height := int(ceil(((cubic_meters * blocks_per_cubic_meter) / 8192.0) / 4.0))
-	path_collision_img = Image.new()
-	path_collision_img.create(8192, height, false, Image.FORMAT_RGBA8)
-	# FORMAT_RGBA8 does do srgb conversion but I can convert it back in the shader without much hassle.
-	
-	# Create texture.
-	path_collision_tex = ImageTexture.new()
-	path_collision_tex.create_from_image(path_collision_img, 0)
-	
-	# Set shader params
-	var display_material = $AABB_TEXTURE.get_surface_material(0)
-	display_material.albedo_texture = path_collision_tex
-	grass_material.set_shader_param('collision_data', path_collision_tex)
-	grass_material.set_shader_param('block_size', block_size)
+	if (1 == 1):
+		# Initialize
+		aabb_container.visible = false
+		Events.connect("debug_view", self, "toggle_debug_view")
+		Events.connect("path_collision", self, "_on_path_collision")
+#
+#		var file = File.new()
+#		file.open("user://riverbridges.dat", File.READ)
+#		path_collision_img = file.get_var(true)
+#		file.close()
+		
+		path_collision_tex = ImageTexture.new()
+		path_collision_tex.create_from_image(path_collision_img, 0)
+		grass_material.set_shader_param('collision_data', path_collision_tex)
 
 static func sort_by_volume(a:AABB, b:AABB) -> bool:
 	if a.get_area() > b.get_area():
@@ -103,7 +116,6 @@ static func sort_by_volume(a:AABB, b:AABB) -> bool:
 
 func toggle_debug_view(state:bool) -> void:
 	debug_mode = state
-	aabb_container.visible = state
 
 func determine_relevant_aabb(point:Vector3) -> int:
 	for i in range (aabb_array.size()):
@@ -113,7 +125,7 @@ func determine_relevant_aabb(point:Vector3) -> int:
 
 func _on_path_collision(position:Vector3, velocity_length:float) -> void:
 	# Find the 8 nearest blocks to this position
-
+	
 	# Snap to nearest block
 	var rounded_pos:Vector3 = (position / block_size).round() * block_size # nearest 
 	
@@ -156,7 +168,7 @@ func _on_path_collision(position:Vector3, velocity_length:float) -> void:
 		
 		# Use distance and velocity to determine how much to change the grass/dirt value
 		var distance = (position - positions[i]).length()
-		var value:int = int((1.0 - distance) * velocity_length)
+		var value:int = int((1.0 - distance) * velocity_length * 100)
 		if value > 0:
 			var pixel:Vector2 = set_collision_img_data(index, value)
 			if not pixel_positions.has(pixel):
@@ -184,13 +196,13 @@ func get_data_index(position:Vector3, aabb_index:int) -> int:
 # This function updates path_collision_img.data.data (PoolByteArray),
 # and returns the pixel position.
 func set_collision_img_data(index:int, value:int) -> Vector2:
-	var img_data:PoolByteArray = path_collision_img.data.data
+	#var img_data:PoolByteArray = path_collision_img.data.data
 	var pixel_index:int = index / 4
 	var channel:int = index % 4
-	var pixel_data:int = img_data[pixel_index*4 + channel]
+	var pixel_data:int = path_collision_img.data.data[pixel_index*4 + channel]
 	pixel_data = int(min(pixel_data + value, 255))
-	img_data.set(pixel_index*4 + channel, pixel_data)
-	path_collision_img.data.data = img_data
+	path_collision_img.data.data.set(pixel_index*4 + channel, pixel_data)
+	#path_collision_img.data.data = img_data
 	var y:int = pixel_index / 8192
 	var x:int = pixel_index % 8192
 	return Vector2(x,y)

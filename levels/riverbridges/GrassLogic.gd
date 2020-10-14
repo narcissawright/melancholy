@@ -1,219 +1,203 @@
 extends Node
-onready var geometry = $'../Geometry'
-onready var aabbs = $AABBs
-var vertex_data_octree:Dictionary
-var grass_index:int = -1
-var grass_surface:Array
+onready var aabb_container = $AABBs
+
+# Materials
+var grass_material # grass floor surface that has shader params I need to set from here.
+
+# AABB Data
+var aabb_array:Array # contains a list of bounding boxes that surround areas where grass exists.
+var aabb_offsets:Array # how far do you jump to reach the data (in path_collision_img) for the AABB
+
+# Image Data
+var path_collision_img:Image
+var path_collision_tex:ImageTexture
+
+const block_size:float = 0.5
+var blocks_per_cubic_meter:float
+var debug_mode = false
 
 func _ready() -> void:
+	blocks_per_cubic_meter = pow((1.0 / block_size), 3)
+	
+	# Initialize
+	aabb_container.visible = false
 	Events.connect("debug_view", self, "toggle_debug_view")
-	aabbs.visible = false
-	# Disable this for now.
-	#Events.connect("path_collision", self, "_on_path_collision")
+	Events.connect("path_collision", self, "_on_path_collision")
 	
-	
+	# Get grass material
+	var geometry = $"../Geometry"
 	for i in range (geometry.mesh.get_surface_count()):
 		if (geometry.mesh.get("surface_" + str(i+1) + "/name")) == "Grass":
-			grass_index = i
-	grass_surface = geometry.mesh.surface_get_arrays(grass_index)
-#	print ("Vertices: ", grass_surface[ArrayMesh.ARRAY_VERTEX].size())
-#	print ("Colors: ", grass_surface[ArrayMesh.ARRAY_COLOR].size())
-#	print ("Indices: ", grass_surface[ArrayMesh.ARRAY_INDEX].size())
+			grass_material = geometry.mesh.surface_get_material(i)
 	
-	create_octree_root_cube() # Initialize Octree
+	# Obtain data from AABBs
+	for child in aabb_container.get_children():
+		aabb_array.append(AABB(child.position, child.size))
+		
+	# Sort AABBs by volume to do less containment checks on average
+	aabb_array.sort_custom(self, "sort_by_volume")
 	
-	# Populate Octree
-	for i in range (grass_surface[ArrayMesh.ARRAY_VERTEX].size()):
-		add_to_tree(vertex_data_octree, i, grass_surface[ArrayMesh.ARRAY_VERTEX][i])
+	# Calculate offsets
+	var cubic_meters:float = 0
+	var aabb_data_img = Image.new()
+	var data := PoolByteArray()
+	for i in range (aabb_array.size()):
+		# Each pass of this loop I store the data offset (how far I have to jump in the collision_data to reach next bounding box)
+		aabb_offsets.append(cubic_meters * blocks_per_cubic_meter)
+		
+		# This is what I need to store in the aabb_data_img
+		var relevant_data:Array = []
+		relevant_data.append(aabb_array[i].position.x) #RG 1
+		relevant_data.append(aabb_array[i].position.y) #RG 2
+		relevant_data.append(aabb_array[i].position.z) #RG 3
+		relevant_data.append(aabb_array[i].size.x)     #RG 4
+		relevant_data.append(aabb_array[i].size.y)     #RG 5
+		relevant_data.append(aabb_array[i].size.z)     #RG 6
+		
+		# add the AABB position and size data to the img
+		for j in range (relevant_data.size()):
+			# Add 32768 so I don't have to store negative 16bit numbers (headache)
+			# This gets subtracted in shader later to get signed int.
+			var stored_value := int(relevant_data[j]) + 32768
+			data.append(stored_value / 256) # R 1-6
+			data.append(stored_value % 256) # G 1-6
+			
+		# Offset can be large, so I store it across 4 bytes.
+		var offset = int(cubic_meters * pow((1.0 / block_size), 3))
+		data.append((offset / 16777216) % 256) # R 7
+		data.append((offset / 65536) % 256)    # G 7
+		data.append((offset / 256) % 256)      # R 8
+		data.append( offset % 256)             # G 8
+		cubic_meters += aabb_array[i].get_area()
 	
-	visualize_octree() # DEBUG
+	aabb_data_img.create_from_data(8, aabb_array.size(), false, Image.FORMAT_RG8, data)
+	# Image.FORMAT_RG8 does not do an sRGB conversion, so the data that goes in can be 
+	# safely converted back into bytes in the shader (with a little math).
+
+	# ImageTexture gets passed to shader.
+	var aabb_data_tex = ImageTexture.new()
+	aabb_data_tex.create_from_image(aabb_data_img, 0)
+	#$AABB_TEXTURE2.get_surface_material(0).albedo_texture = aabb_data_tex
+	grass_material.set_shader_param("aabb_data", aabb_data_tex)
+
+	# Calculate image size, create image
+	var height := int(ceil(((cubic_meters * blocks_per_cubic_meter) / 8192.0) / 4.0))
+	
+#	data = PoolByteArray()
+#	for _i in range (8192 * height * 4):
+#		data.append(randi() % 15)
+		
+	# Calculate image size, create image
+	path_collision_img = Image.new()
+	path_collision_img.create(8192, height, false, Image.FORMAT_RGBA8)
+	# FORMAT_RGBA8 does do srgb conversion but I can convert it back in the shader without much hassle.
+	
+	# Create texture.
+	path_collision_tex = ImageTexture.new()
+	path_collision_tex.create_from_image(path_collision_img, 0)
+	
+	# Set shader params
+	#var display_material = $AABB_TEXTURE.get_surface_material(0)
+	#display_material.albedo_texture = path_collision_tex
+	grass_material.set_shader_param('collision_data', path_collision_tex)
+	grass_material.set_shader_param('block_size', block_size)
+
+static func sort_by_volume(a:AABB, b:AABB) -> bool:
+	if a.get_area() > b.get_area():
+		return true
+	return false
 
 func toggle_debug_view(state:bool) -> void:
-	$OctreeViz.visible = state
-	aabbs.visible = state
+	debug_mode = state
+	aabb_container.visible = state
 
-# debug viz
-var debug_verts:PoolVector3Array
-var debug_colors:PoolColorArray
-func visualize_octree() -> void:
-	var octree_viz:Array = []
-	octree_viz.resize(Mesh.ARRAY_MAX)
+func determine_relevant_aabb(point:Vector3) -> int:
+	for i in range (aabb_array.size()):
+		if aabb_array[i].has_point(point):
+			return i
+	return -1
 
-	populate_arraymesh(vertex_data_octree)
+func _on_path_collision(position:Vector3, velocity_length:float) -> void:
+	# Find the 8 nearest blocks to this position
+
+	# Snap to nearest block
+	var rounded_pos:Vector3 = (position / block_size).round() * block_size # nearest 
 	
-	octree_viz[Mesh.ARRAY_VERTEX] = debug_verts
-	octree_viz[Mesh.ARRAY_COLOR] = debug_colors
-	var arr_mesh = ArrayMesh.new()
-	arr_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES, octree_viz)
-	$OctreeViz.mesh = arr_mesh
+	# use the difference between the position and the snapped position to find relevant adjacent blocks
+	var x_sign := int(sign(position.x - rounded_pos.x));
+	var y_sign := int(sign(position.y - rounded_pos.y));
+	var z_sign := int(sign(position.z - rounded_pos.z));
 
-# for debug viz
-func populate_arraymesh(octree:Dictionary) -> void:
-	debug_verts.append_array(get_aabb_vertices(octree.box))
-	for _i in range (24):
-		debug_colors.append(Color(0.6, 0.4, 1, 1))
-	for i in range (octree.objects.size()):
-		debug_verts.append(octree.objects[i].pos)
-		debug_verts.append(octree.objects[i].pos + (Vector3.UP * 0.1))
-		debug_colors.append(Color(0.6, 1, 0.3, 1))
-		debug_colors.append(Color(0.6, 1, 0.3, 1))
-	for i in range (octree.children.size()):
-		populate_arraymesh(octree.children[i])
-
-# for debug viz
-func get_aabb_vertices(aabb:AABB) -> PoolVector3Array:
-	var verts := PoolVector3Array() # 12 lines to make a cube. 24 vertices.
-	verts.append(aabb.position + (aabb.size * Vector3(0,0,0)))
-	verts.append(aabb.position + (aabb.size * Vector3(1,0,0)))
-	verts.append(aabb.position + (aabb.size * Vector3(1,0,0)))
-	verts.append(aabb.position + (aabb.size * Vector3(1,1,0)))
-	verts.append(aabb.position + (aabb.size * Vector3(1,0,0)))
-	verts.append(aabb.position + (aabb.size * Vector3(1,0,1)))
-	verts.append(aabb.position + (aabb.size * Vector3(0,0,0)))
-	verts.append(aabb.position + (aabb.size * Vector3(0,1,0)))
-	verts.append(aabb.position + (aabb.size * Vector3(0,1,0)))
-	verts.append(aabb.position + (aabb.size * Vector3(1,1,0)))
-	verts.append(aabb.position + (aabb.size * Vector3(0,1,0)))
-	verts.append(aabb.position + (aabb.size * Vector3(0,1,1)))
-	verts.append(aabb.position + (aabb.size * Vector3(0,0,0)))
-	verts.append(aabb.position + (aabb.size * Vector3(0,0,1)))
-	verts.append(aabb.position + (aabb.size * Vector3(0,0,1)))
-	verts.append(aabb.position + (aabb.size * Vector3(1,0,1)))
-	verts.append(aabb.position + (aabb.size * Vector3(0,0,1)))
-	verts.append(aabb.position + (aabb.size * Vector3(0,1,1)))
-	verts.append(aabb.position + (aabb.size * Vector3(0,1,1)))
-	verts.append(aabb.position + (aabb.size * Vector3(1,1,1)))
-	verts.append(aabb.position + (aabb.size * Vector3(1,1,0)))
-	verts.append(aabb.position + (aabb.size * Vector3(1,1,1)))
-	verts.append(aabb.position + (aabb.size * Vector3(1,0,1)))
-	verts.append(aabb.position + (aabb.size * Vector3(1,1,1)))
-	return verts
-
-func create_octree_root_cube(): # big box covers entire level. the root of the octree.
-	var aabb = geometry.get_aabb()
-	var long = aabb.get_longest_axis_size()
-	aabb = AABB(aabb.position, Vector3(long,long,long) ).grow(1) # grow is for padding
-	# I guess I wanna force a cube shape
+	# Try these positions (some might be duplicates due to sign being zero)
+	# Sign can be zero when the surface triangle aligns perfectly with block size.
+	var try_positions:Array = [
+		rounded_pos + Vector3(     0,      0, z_sign) * block_size,
+		rounded_pos + Vector3(     0, y_sign,      0) * block_size,
+		rounded_pos + Vector3(     0, y_sign, z_sign) * block_size,
+		rounded_pos + Vector3(x_sign,      0,      0) * block_size,
+		rounded_pos + Vector3(x_sign,      0, z_sign) * block_size,
+		rounded_pos + Vector3(x_sign, y_sign,      0) * block_size,
+		rounded_pos + Vector3(x_sign, y_sign, z_sign) * block_size
+	]
 	
-	vertex_data_octree = {
-		"box" : aabb,   # axis-aligned bounding box
-		"objects" : [], # list of dicts containing vertex data
-		"children" : [] # list of child Octrees
-	}
+	# Add relevant positions to array
+	var positions:Array = [rounded_pos]
+	for i in range (try_positions.size()):
+		if not positions.has(try_positions[i]):
+			positions.append(try_positions[i])
 	
-# returns the smallest node that contains the position
-func search_octree(pos, root):
-	if root.box.has_point(pos):
-		var node = root
-		while not node.children.empty():
-			for child in node.children:
-				if child.box.has_point(pos):
-					node = child
-					break
-		return node
-	else:
-		return null # not found
-
-# passes in
-# - the octree
-# - the index (where is it in the VERTEX and COLOR arrays, NOT the INDEX array)
-# - the position (Vector3)
-func add_to_tree(root, index, pos):
-	var node = root
-	while not node.children.empty():
-		for child in node.children:
-			if child.box.has_point(pos):
-				node = child
-				break
-	node.objects.push_back({"index": index, "pos": pos})
-	compartmentalize(node)
-
-# Octree splits into 8 smaller pieces
-func compartmentalize(octree):
-	if octree.objects.size() <= 64:
-		return # if there is enough space for the new index, we don't need to compartmentalize.
+	if debug_mode:
+		# Draws the relevant boxes for this write
+		$DebugView.draw_positions(positions, block_size) 
 	
-	var new_boxes = []
-	new_boxes.push_back(AABB(octree.box.position + (octree.box.size/2.0 * Vector3(0,0,0)), octree.box.size/2.0))
-	new_boxes.push_back(AABB(octree.box.position + (octree.box.size/2.0 * Vector3(0,0,1)), octree.box.size/2.0))
-	new_boxes.push_back(AABB(octree.box.position + (octree.box.size/2.0 * Vector3(0,1,0)), octree.box.size/2.0))
-	new_boxes.push_back(AABB(octree.box.position + (octree.box.size/2.0 * Vector3(0,1,1)), octree.box.size/2.0))
-	new_boxes.push_back(AABB(octree.box.position + (octree.box.size/2.0 * Vector3(1,0,0)), octree.box.size/2.0))
-	new_boxes.push_back(AABB(octree.box.position + (octree.box.size/2.0 * Vector3(1,0,1)), octree.box.size/2.0))
-	new_boxes.push_back(AABB(octree.box.position + (octree.box.size/2.0 * Vector3(1,1,0)), octree.box.size/2.0))
-	new_boxes.push_back(AABB(octree.box.position + (octree.box.size/2.0 * Vector3(1,1,1)), octree.box.size/2.0))
-	# Create 8 new children
-	for j in range (0, new_boxes.size()):
-		var new_octree = {
-			"box" : new_boxes[j],
-			"objects" : [],
-			"children" : []
-		}
-		# Loop over all vertices in the current octree before it was split, 
-		# and push them into the appropriate child octree.
-		for i in range (0, octree.objects.size()):
-			if new_octree.box.has_point(octree.objects[i].pos):
-				new_octree.objects.push_back(octree.objects[i])
-		# new_octree has finished populating at this point.
-		octree.children.push_back(new_octree)
-	# Once we have reached this point, all objects in the current scope should have been reassigned
-	octree.objects = []
-	for child in octree.children: # handles rare cases of a compartmentalized box still holding too many indices
-		compartmentalize(child)
-
-const GRASS_HURT_DIST = 1.0
-func _on_path_collision(pos:Vector3, impact:float):
-	var node = search_octree(pos, vertex_data_octree)
-	var axis_aligned_checks = PoolVector3Array() # we check 6 axis aligned points to find nearby grass containers.
-	axis_aligned_checks.push_back(Vector3(-GRASS_HURT_DIST, 0, 0))
-	axis_aligned_checks.push_back(Vector3( GRASS_HURT_DIST, 0, 0)) 
-	axis_aligned_checks.push_back(Vector3(0, -GRASS_HURT_DIST/2.5, 0)) 
-	axis_aligned_checks.push_back(Vector3(0,  GRASS_HURT_DIST/2.5, 0))
-	axis_aligned_checks.push_back(Vector3(0, 0, -GRASS_HURT_DIST))
-	axis_aligned_checks.push_back(Vector3(0, 0,  GRASS_HURT_DIST))
-	var grass = find_grass_vertices(pos, axis_aligned_checks, node) # finds adjacent grass
-	if grass.size() > 0:
-		write_dirt_path(pos, grass, impact)
+	# Gather the pixel positions in the collision_data_img that need to update in the texture.
+	var pixel_positions := []
+	for i in range (positions.size()):
+		var aabb_index = determine_relevant_aabb(positions[i])
+		if aabb_index == -1:
+			continue # No relevant AABB found, stop here.
 		
-func write_dirt_path(pos:Vector3, grass:Array, impact:float) -> void:
-	for i in range (0, grass.size()): # for each grass vertex
-		var dist = pos.distance_to(grass[i].pos) # find dist from collision point to grass vertex
-		if dist < GRASS_HURT_DIST: # if dist is within radius, write dirt
-			
-			var dmg = 1.0 - (dist / GRASS_HURT_DIST)
-			dmg = (dmg / 100.0) * impact
-			var value = clamp(grass_surface[ArrayMesh.ARRAY_COLOR][grass[i].index].g - dmg, 0.0, 1.0)
-			grass_surface[ArrayMesh.ARRAY_COLOR][grass[i].index].g = value
+		# Calculate index
+		var index:int = get_data_index(positions[i], aabb_index)
+		
+		# Use distance and velocity to determine how much to change the grass/dirt value
+		var distance = (position - positions[i]).length()
+		var value:int = int((1.0 - distance) * velocity_length)
+		if value > 0:
+			var pixel:Vector2 = set_collision_img_data(index, value)
+			if not pixel_positions.has(pixel):
+				# Some writes will be writing to different channels of the same pixel, as they store different block data.
+				# I make sure I don't have duplicate pixel_positions in this array, to be used for updating texture.
+				pixel_positions.append(pixel)
 	
-	# Update Surface. This is so obnoxious (removing and adding instead of modifying)
-	var dupe = geometry.mesh.duplicate()
-	var mat = geometry.mesh.surface_get_material(grass_index)
-	dupe.surface_remove(grass_index)
-	dupe.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, grass_surface)
-	grass_index = dupe.get_surface_count() - 1
-	dupe.surface_set_material(grass_index, mat)
-	geometry.mesh = dupe
+	# Update texture.
+	for i in range (pixel_positions.size()):
+		# I would like to support doing writes of 2 pixels at once if they are adjacent
+		# but I want to know if that would increase performance
+		VisualServer.texture_set_data_partial(path_collision_tex.get_rid(), path_collision_img, pixel_positions[i].x, pixel_positions[i].y, 1, 1, pixel_positions[i].x, pixel_positions[i].y, 0)
 
-func heal_random_grass() -> void:
-	pass
-
-func find_grass_vertices(pos, axis_aligned_checks, node):
-	var boxes = []
-	boxes.push_back(node.objects) # push the collision point box grass into the array
+# Finds the index in the PoolByteArray that is relevant for this 3D position.
+func get_data_index(position:Vector3, aabb_index:int) -> int:
+	var aabb:AABB = aabb_array[aabb_index]
+	var diff:Vector3 = position - aabb.position
+	var max_x := int(aabb.size.x / block_size)
+	var max_y := int(aabb.size.y / block_size)
+	diff /= block_size
+	var index := int(diff.x + (diff.y * max_x) + (diff.z * max_x * max_y))
+	index += aabb_offsets[aabb_index]
+	return index
+ 
+# This function updates path_collision_img.data.data (PoolByteArray),
+# and returns the pixel position.
+func set_collision_img_data(index:int, value:int) -> Vector2:
+	var img_data:PoolByteArray = path_collision_img.data.data
+	var pixel_index:int = index / 4
+	var channel:int = index % 4
+	var pixel_data:int = img_data[pixel_index*4 + channel]
+	pixel_data = int(min(pixel_data + value, 255))
+	img_data.set(pixel_index*4 + channel, pixel_data)
+	path_collision_img.data.data = img_data
+	var y:int = pixel_index / 8192
+	var x:int = pixel_index % 8192
+	return Vector2(x,y)
 	
-	for i in range (axis_aligned_checks.size()): # for each axis aligned check
-		if !node.box.has_point(pos + axis_aligned_checks[i]): # if the new point to check isn't in the collision point box
-			var box = search_octree(pos + axis_aligned_checks[i], vertex_data_octree) # find where it is
-			# if the box ends up out of bounds entirely, typeof(box) won't be > 0
-			if typeof(box) > 0:
-				if boxes.find(box.objects) == -1 and box.objects.size() > 0: # if it isn't already in the boxes array, and has size
-					boxes.push_back(box.objects) # add it
-	return flatten(boxes) # return all the grass indices in a single array
-	
-# 2D array -> 1D array
-static func flatten(arr):
-	var result = []
-	for a in arr:
-		for x in a:
-			result.append(x)
-	return result
