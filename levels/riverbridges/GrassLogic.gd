@@ -77,7 +77,7 @@ func _ready() -> void:
 	# ImageTexture gets passed to shader.
 	var aabb_data_tex = ImageTexture.new()
 	aabb_data_tex.create_from_image(aabb_data_img, 0)
-	#$AABB_TEXTURE2.get_surface_material(0).albedo_texture = aabb_data_tex
+	$AABB_TEXTURE2.get_surface_material(0).albedo_texture = aabb_data_tex
 	grass_material.set_shader_param("aabb_data", aabb_data_tex)
 
 	# Calculate image size, create image
@@ -85,7 +85,7 @@ func _ready() -> void:
 	
 #	data = PoolByteArray()
 #	for _i in range (8192 * height * 4):
-#		data.append(randi() % 15)
+#		data.append(randi() % 256)
 		
 	# Calculate image size, create image
 	path_collision_img = Image.new()
@@ -97,8 +97,7 @@ func _ready() -> void:
 	path_collision_tex.create_from_image(path_collision_img, 0)
 	
 	# Set shader params
-	#var display_material = $AABB_TEXTURE.get_surface_material(0)
-	#display_material.albedo_texture = path_collision_tex
+	$AABB_TEXTURE.get_surface_material(0).albedo_texture = path_collision_tex
 	grass_material.set_shader_param('collision_data', path_collision_tex)
 	grass_material.set_shader_param('block_size', block_size)
 
