@@ -41,19 +41,18 @@ float get_collision_data(vec3 position, vec3 box_pos, vec3 box_size, int data_of
 	int channel = index % 4;
 	
 	// and get value
-	float value = 0.0;
 	switch (channel) {
 		case 0:
-			value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).r;
+			float value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).r;
 			return srgb_to_linear(value);
 		case 1:
-			value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).g;
+			float value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).g;
 			return srgb_to_linear(value);
 		case 2:
-			value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).b;
+			float value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).b;
 			return srgb_to_linear(value);
 		case 3:
-			value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).a;
+			float value = texelFetch (collision_data, ivec2(pixel_index % 8192, pixel_index / 8192), 0).a;
 			return value; // alpha is already linear
 	}
 }

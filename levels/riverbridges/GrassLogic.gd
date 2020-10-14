@@ -80,14 +80,15 @@ func _ready() -> void:
 	$AABB_TEXTURE2.get_surface_material(0).albedo_texture = aabb_data_tex
 	grass_material.set_shader_param("aabb_data", aabb_data_tex)
 
-	# Calculate image size, create image
-	var height := int(ceil(((cubic_meters * blocks_per_cubic_meter) / 8192.0) / 4.0))
+	# Calculate image height
+	var height := int(ceil(cubic_meters * blocks_per_cubic_meter / 8192.0 / 4.0))
 	
+	# Populate image with noise
 #	data = PoolByteArray()
 #	for _i in range (8192 * height * 4):
 #		data.append(randi() % 256)
 		
-	# Calculate image size, create image
+	# Create image
 	path_collision_img = Image.new()
 	path_collision_img.create(8192, height, false, Image.FORMAT_RGBA8)
 	# FORMAT_RGBA8 does do srgb conversion but I can convert it back in the shader without much hassle.
@@ -190,13 +191,11 @@ func get_data_index(position:Vector3, aabb_index:int) -> int:
 # and returns the pixel position.
 func set_collision_img_data(index:int, value:int) -> Vector2:
 	var img_data:PoolByteArray = path_collision_img.data.data
-	var pixel_index:int = index / 4
-	var channel:int = index % 4
-	var pixel_data:int = img_data[pixel_index*4 + channel]
+	var pixel_data:int = img_data[index]
 	pixel_data = int(min(pixel_data + value, 255))
-	img_data.set(pixel_index*4 + channel, pixel_data)
+	img_data.set(index, pixel_data)
 	path_collision_img.data.data = img_data
-	var y:int = pixel_index / 8192
-	var x:int = pixel_index % 8192
+	var y:int = index / 4 / 8192
+	var x:int = index / 4 % 8192
 	return Vector2(x,y)
 	
