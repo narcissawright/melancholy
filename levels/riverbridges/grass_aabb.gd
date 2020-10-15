@@ -1,8 +1,8 @@
 tool
 extends MeshInstance
 
-var lines_mat = preload("res://global/debug/DebugLinesMaterial.tres")
-var fill_mat = preload("res://global/debug/DebugFillMaterial.tres")
+const lines_mat = preload("res://global/debug/DebugLinesMaterial.tres")
+const fill_mat = preload("res://global/debug/DebugFillMaterial.tres")
 
 export var position := Vector3.ZERO setget set_pos
 export var size := Vector3.ONE setget set_size

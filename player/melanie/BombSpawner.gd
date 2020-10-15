@@ -6,7 +6,7 @@ Broken animation tween, as I am redoing the animation tree.
 """
 
 onready var spawn_area = $SpawnArea
-onready var bomb = preload("res://actor/bomb/Bomb.tscn")
+const bomb = preload("res://actor/bomb/Bomb.tscn")
 
 var current_bomb:Node
 var holding = false

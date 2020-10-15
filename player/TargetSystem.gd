@@ -6,7 +6,7 @@ var priority_target:int = 0 # holds the priority target
 var secondary_target:int = 0 # holds the secondary target (for retargeting)
 
 # Misc
-var cursor_tex = load("res://ui/img/target.png")
+const cursor_tex = preload("res://ui/img/target.png")
 var paused # is the game paused
 const size := Vector2(15, 15) # cursor corner size, in pixels 
 const half_corner_size:int = 7 # rounded down
