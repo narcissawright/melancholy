@@ -162,6 +162,7 @@ func _on_path_collision(position:Vector3, velocity_length:float) -> void:
 		
 		# Use distance and velocity to determine how much to change the grass/dirt value
 		var distance = (position - positions[i]).length()
+		# I think 1.0 might be wrong here, might want block_size
 		var value:int = int((1.0 - distance) * velocity_length)
 		if value > 0:
 			var pixel:Vector2 = set_collision_img_data(index, value)
