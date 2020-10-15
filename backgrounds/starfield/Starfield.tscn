@@ -22,6 +22,7 @@ starfield_data = ExtResource( 4 )
 
 [node name="SunLight" type="DirectionalLight" parent="Starfield_Control"]
 shadow_enabled = true
+directional_shadow_normal_bias = 0.5
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Starfield_Control"]
 environment = ExtResource( 2 )

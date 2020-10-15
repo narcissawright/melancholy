@@ -1,14 +1,15 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://actor/item_pickup/jewel/Jewel_Interact.gd" type="Script" id=1]
 [ext_resource path="res://actor/item_pickup/jewel/jewel_shadermaterial.tres" type="Material" id=2]
+[ext_resource path="res://backgrounds/starfield/star_2_hd.png" type="Texture" id=3]
 
 [sub_resource type="Animation" id=1]
 resource_name = "jewel_rotate"
 length = 2.5
 loop = true
 tracks/0/type = "value"
-tracks/0/path = NodePath(".:rotation_degrees")
+tracks/0/path = NodePath("Large:rotation_degrees")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -39,15 +40,54 @@ surfaces/0 = {
 "vertex_count": 192
 }
 
-[node name="item_jewel_large" type="Spatial"]
+[sub_resource type="Gradient" id=9]
+offsets = PoolRealArray( 0, 0.234421, 0.676558, 1 )
+colors = PoolColorArray( 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 )
 
-[node name="SpotLight" type="SpotLight" parent="."]
-transform = Transform( 1, 0, 0, 0, -1.62921e-07, 1, 0, -1, -1.62921e-07, 0, 0.826845, 0 )
-light_energy = 0.7
-light_negative = true
-light_cull_mask = 4294967293
-spot_angle = 8.0
-spot_angle_attenuation = 100.0
+[sub_resource type="GradientTexture" id=10]
+gradient = SubResource( 9 )
+
+[sub_resource type="ParticlesMaterial" id=6]
+emission_shape = 1
+emission_sphere_radius = 0.1
+gravity = Vector3( 0, 0, 0 )
+scale = 0.8
+color_ramp = SubResource( 10 )
+
+[sub_resource type="Shader" id=11]
+code = "shader_type spatial;
+render_mode blend_mix,depth_draw_opaque,cull_back,diffuse_burley,specular_disabled,unshaded;
+uniform vec4 albedo : hint_color;
+uniform sampler2D texture_albedo : hint_albedo;
+
+void vertex() {
+	MODELVIEW_MATRIX = INV_CAMERA_MATRIX * mat4(CAMERA_MATRIX[0],CAMERA_MATRIX[1],CAMERA_MATRIX[2],WORLD_MATRIX[3]);
+	MODELVIEW_MATRIX = MODELVIEW_MATRIX * mat4(vec4(length(WORLD_MATRIX[0].xyz), 0.0, 0.0, 0.0),vec4(0.0, length(WORLD_MATRIX[1].xyz), 0.0, 0.0),vec4(0.0, 0.0, length(WORLD_MATRIX[2].xyz), 0.0),vec4(0.0, 0.0, 0.0, 1.0));
+	VERTEX += vec3(0,0,0.22);
+}
+
+
+
+
+void fragment() {
+	vec2 base_uv = UV;
+	vec4 albedo_tex = texture(texture_albedo,base_uv);
+	ALBEDO = albedo.rgb * albedo_tex.rgb;
+	ALPHA = albedo.a * albedo_tex.a * COLOR.a;
+}
+"
+
+[sub_resource type="ShaderMaterial" id=12]
+shader = SubResource( 11 )
+shader_param/albedo = Color( 0.368627, 1, 0.984314, 1 )
+shader_param/texture_albedo = ExtResource( 3 )
+
+[sub_resource type="QuadMesh" id=8]
+material = SubResource( 12 )
+size = Vector2( 0.05, 0.05 )
+
+[node name="item_jewel_large" type="Spatial"]
+transform = Transform( 1, 0, 1.74846e-07, 0, 1, 0, -1.74846e-07, 0, 1, 0, 0, 0 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "jewel_rotate"
@@ -65,8 +105,17 @@ transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0, 0
 shape = SubResource( 2 )
 
 [node name="Large" type="MeshInstance" parent="."]
-transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+transform = Transform( -0.103504, 0, -0.48917, 0, 0.5, 0, 0.48917, 0, -0.103504, 0, 0, 0 )
 layers = 2
-cast_shadow = 0
 mesh = SubResource( 3 )
 material/0 = ExtResource( 2 )
+
+[node name="Particles" type="Particles" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0 )
+layers = 2
+cast_shadow = 0
+amount = 4
+lifetime = 0.5
+visibility_aabb = AABB( -0.5, -0.5, -0.5, 1, 1, 1 )
+process_material = SubResource( 6 )
+draw_pass_1 = SubResource( 8 )

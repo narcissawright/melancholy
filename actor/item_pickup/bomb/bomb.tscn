@@ -25,14 +25,6 @@ radius = 0.4
 
 [node name="Bomb_Pickup" type="Spatial"]
 
-[node name="SpotLight" type="SpotLight" parent="."]
-transform = Transform( 1, 0, 0, 0, -1.62921e-07, 1, 0, -1, -1.62921e-07, 0, 0.826845, 0 )
-light_energy = 0.7
-light_negative = true
-light_cull_mask = 4294967293
-spot_angle = 8.0
-spot_angle_attenuation = 100.0
-
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "jewel_rotate"
 anims/jewel_rotate = SubResource( 1 )
