@@ -4,36 +4,42 @@ extends Control
 Would like to move the actual star texture drawing to a shader for GPU.
 """
 
-enum { SIZE_INDEX, POSITION_INDEX, COLOR_INDEX }
+export(Script) var savedata_script
+export(Resource) var starfield_data
+var starfield:Array = []
 
+const blackbody_radiation:GradientTexture = preload('res://backgrounds/starfield/blackbody_radiation.tres')
 const textures := [
 	preload("res://backgrounds/starfield/star_0_hd.png"),
 	preload("res://backgrounds/starfield/star_1_hd.png"),
 	preload("res://backgrounds/starfield/star_2_hd.png")
 ]
-const STARTOTAL:int = 2000
+
 var sun_vec := Vector3(-0.446634, 0.893269, 0.050884).normalized()
 onready var sunlight:DirectionalLight = $'SunLight'
 var axis_of_rotation := Vector3(1, 0.5 ,0).normalized()
 #onready var sun_tex = load("res://img/sun.png")
-const blackbody_radiation:GradientTexture = preload('res://backgrounds/starfield/blackbody_radiation.tres')
 
-var star_field:Array = []
 
 func _ready():
 	$WorldEnvironment.environment.background_mode = Environment.BG_CANVAS
 	# Changing this to canvas only at runtime helps the editor not look awful.
 
-	if star_field.empty():
+	starfield = starfield_data.starfield
+	if starfield.empty():
+		#print ("Creating star field.")
 		create_star_field()
+	else:
+		pass
+		#print ("Loaded star field.")
 
 func _process(_delta):
 	update() #calls _draw()
 
-
 func create_star_field():
+	var star_total = 2000
 	randomize()
-	for i in range (1,STARTOTAL):
+	for i in range (star_total):
 		var r:float
 		var g:float
 		var b:float
@@ -62,7 +68,11 @@ func create_star_field():
 		var color = radiation.linear_interpolate(Color(r,g,b), 0.5)
 		color.a = (randf()/2.0) + 0.5
 		var position = Vector3(gaussian(0,1), gaussian(0,1), gaussian(0,1)).normalized()
-		star_field.push_back([size, position, color])
+		starfield.push_back({"size": size, "pos": position, "color": color})
+	
+	var savedata = savedata_script.new()
+	savedata.starfield = starfield
+	ResourceSaver.save("res://backgrounds/starfield/data.tres", savedata)
 
 func gaussian(mean, deviation):
 	var x1 = null
@@ -82,15 +92,14 @@ func _draw():
 	var bounds = Rect2(-64, -64, 1920 + 128, 1080 + 128)
 	draw_rect(bounds, Color('181822'), true)
 	
-	for star in star_field:
-		var world_point = MainCam.global_transform.origin + star[POSITION_INDEX].rotated(axis_of_rotation, deg2rad(rot_amount) )
+	for star in starfield:
+		var world_point = MainCam.global_transform.origin + star.pos.rotated(axis_of_rotation, deg2rad(rot_amount) )
 		if MainCam.is_position_behind(world_point):
 			var pos = MainCam.unproject_position(world_point)
 			pos.x = round(pos.x)
 			pos.y = round(pos.y)
 			if bounds.has_point(pos):
-				var star_c = star[COLOR_INDEX]
-				draw_texture(textures[star[SIZE_INDEX]], pos, star_c)
+				draw_texture(textures[star.size], pos, star.color)
 	
 	var sun_rot = sun_vec.rotated(axis_of_rotation, rot_amount)
 	sunlight.look_at(sun_rot, Vector3.UP)
