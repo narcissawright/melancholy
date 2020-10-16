@@ -4,55 +4,73 @@ onready var aabb_container = $AABBs
 # Materials
 var grass_material # grass floor surface that has shader params I need to set from here.
 
-# AABB Data
-var aabb_array:Array # contains a list of bounding boxes that surround areas where grass exists.
-var aabb_offsets:Array # how far do you jump to reach the data (in path_collision_img) for the AABB
-
-# Image Data
-var path_collision_img:Image
-var path_collision_tex:ImageTexture
+# Data
+var grass_data:Resource
 
 const block_size:float = 0.5
-var blocks_per_cubic_meter:float
 var debug_mode = false
 
 func _ready() -> void:
-	blocks_per_cubic_meter = pow((1.0 / block_size), 3)
-	
-	# Initialize
-	aabb_container.visible = false
-	Events.connect("debug_view", self, "toggle_debug_view")
-	Events.connect("path_collision", self, "_on_path_collision")
-	
 	# Get grass material
+	
+	# I may want to "Request geometry" with a signal or something
+	# instead of having the path be hardcoded (considering that
+	# each level may be different and I may use the grass logic in 
+	# multiple levels...
 	var geometry = $"../Geometry"
 	for i in range (geometry.mesh.get_surface_count()):
 		if (geometry.mesh.get("surface_" + str(i+1) + "/name")) == "Grass":
 			grass_material = geometry.mesh.surface_get_material(i)
 	
+	aabb_container.visible = false # hide debug thing
+	
+	# create signal connections
+	Events.connect("debug_view", self, "toggle_debug_view")
+	Events.connect("path_collision", self, "_on_path_collision")
+	Events.connect("quit_game", self, "on_quit")
+	
+	# To recalculate textures after making changes, run create_data_images()
+	var f = File.new()
+	if f.file_exists("user://" + Level.path + "grass_data.tres"):
+		grass_data = load("user://" + Level.path + "grass_data.tres")
+	else:
+		create_data_images()
+	
+	# Set shader params
+	$AABB_TEXTURE.get_surface_material(0).albedo_texture = grass_data.path_collision_tex
+	$AABB_TEXTURE2.get_surface_material(0).albedo_texture = grass_data.aabb_tex
+	grass_material.set_shader_param('collision_data', grass_data.path_collision_tex)
+	grass_material.set_shader_param('block_size', block_size)
+	grass_material.set_shader_param("aabb_data", grass_data.aabb_tex)
+
+func create_data_images() -> void:
+	grass_data = load("res://levels/grass_data_empty.tres").duplicate()
+	
+	var blocks_per_cubic_meter = pow((1.0 / block_size), 3)
+	
 	# Obtain data from AABBs
 	for child in aabb_container.get_children():
-		aabb_array.append(AABB(child.position, child.size))
+		grass_data.aabb_array.append(AABB(child.position, child.size))
 		
 	# Sort AABBs by volume to do less containment checks on average
-	aabb_array.sort_custom(self, "sort_by_volume")
+	grass_data.aabb_array.sort_custom(self, "sort_by_volume")
 	
 	# Calculate offsets
 	var cubic_meters:float = 0
 	var aabb_data_img = Image.new()
 	var data := PoolByteArray()
-	for i in range (aabb_array.size()):
+	for i in range (grass_data.aabb_array.size()):
 		# Each pass of this loop I store the data offset (how far I have to jump in the collision_data to reach next bounding box)
-		aabb_offsets.append(cubic_meters * blocks_per_cubic_meter)
+		grass_data.aabb_offsets.append(cubic_meters * blocks_per_cubic_meter)
 		
 		# This is what I need to store in the aabb_data_img
 		var relevant_data:Array = []
-		relevant_data.append(aabb_array[i].position.x) #RG 1
-		relevant_data.append(aabb_array[i].position.y) #RG 2
-		relevant_data.append(aabb_array[i].position.z) #RG 3
-		relevant_data.append(aabb_array[i].size.x)     #RG 4
-		relevant_data.append(aabb_array[i].size.y)     #RG 5
-		relevant_data.append(aabb_array[i].size.z)     #RG 6
+		relevant_data.append(grass_data.aabb_array[i].position.x) #RG 1
+		relevant_data.append(grass_data.aabb_array[i].position.y) #RG 2
+		relevant_data.append(grass_data.aabb_array[i].position.z) #RG 3
+		relevant_data.append(grass_data.aabb_array[i].size.x)     #RG 4
+		relevant_data.append(grass_data.aabb_array[i].size.y)     #RG 5
+		relevant_data.append(grass_data.aabb_array[i].size.z)     #RG 6
 		
 		# add the AABB position and size data to the img
 		for j in range (relevant_data.size()):
@@ -68,17 +86,15 @@ func _ready() -> void:
 		data.append((offset / 65536) % 256)    # G 7
 		data.append((offset / 256) % 256)      # R 8
 		data.append( offset % 256)             # G 8
-		cubic_meters += aabb_array[i].get_area()
+		cubic_meters += grass_data.aabb_array[i].get_area()
 	
-	aabb_data_img.create_from_data(8, aabb_array.size(), false, Image.FORMAT_RG8, data)
+	aabb_data_img.create_from_data(8, grass_data.aabb_array.size(), false, Image.FORMAT_RG8, data)
 	# Image.FORMAT_RG8 does not do an sRGB conversion, so the data that goes in can be 
 	# safely converted back into bytes in the shader (with a little math).
 
 	# ImageTexture gets passed to shader.
-	var aabb_data_tex = ImageTexture.new()
-	aabb_data_tex.create_from_image(aabb_data_img, 0)
-	$AABB_TEXTURE2.get_surface_material(0).albedo_texture = aabb_data_tex
-	grass_material.set_shader_param("aabb_data", aabb_data_tex)
+	grass_data.aabb_tex = ImageTexture.new()
+	grass_data.aabb_tex.create_from_image(aabb_data_img, 0)
 
 	# Calculate image height
 	var height := int(ceil(cubic_meters * blocks_per_cubic_meter / 8192.0 / 4.0))
@@ -89,18 +105,15 @@ func _ready() -> void:
 #		data.append(randi() % 256)
 		
 	# Create image
-	path_collision_img = Image.new()
-	path_collision_img.create(8192, height, false, Image.FORMAT_RGBA8)
+	grass_data.path_collision_img = Image.new()
+	grass_data.path_collision_img.create(8192, height, false, Image.FORMAT_RGBA8)
 	# FORMAT_RGBA8 does do srgb conversion but I can convert it back in the shader without much hassle.
 	
 	# Create texture.
-	path_collision_tex = ImageTexture.new()
-	path_collision_tex.create_from_image(path_collision_img, 0)
-	
-	# Set shader params
-	$AABB_TEXTURE.get_surface_material(0).albedo_texture = path_collision_tex
-	grass_material.set_shader_param('collision_data', path_collision_tex)
-	grass_material.set_shader_param('block_size', block_size)
+	grass_data.path_collision_tex = ImageTexture.new()
+	grass_data.path_collision_tex.create_from_image(grass_data.path_collision_img, 0)
+
+	save_grass_data()
 
 static func sort_by_volume(a:AABB, b:AABB) -> bool:
 	if a.get_area() > b.get_area():
@@ -112,8 +125,8 @@ func toggle_debug_view(state:bool) -> void:
 	aabb_container.visible = state
 
 func determine_relevant_aabb(point:Vector3) -> int:
-	for i in range (aabb_array.size()):
-		if aabb_array[i].has_point(point):
+	for i in range (grass_data.aabb_array.size()):
+		if grass_data.aabb_array[i].has_point(point):
 			return i
 	return -1
 
@@ -175,28 +188,37 @@ func _on_path_collision(position:Vector3, velocity_length:float) -> void:
 	for i in range (pixel_positions.size()):
 		# I would like to support doing writes of 2 pixels at once if they are adjacent
 		# but I want to know if that would increase performance
-		VisualServer.texture_set_data_partial(path_collision_tex.get_rid(), path_collision_img, pixel_positions[i].x, pixel_positions[i].y, 1, 1, pixel_positions[i].x, pixel_positions[i].y, 0)
+		VisualServer.texture_set_data_partial(grass_data.path_collision_tex.get_rid(), grass_data.path_collision_img, pixel_positions[i].x, pixel_positions[i].y, 1, 1, pixel_positions[i].x, pixel_positions[i].y, 0)
 
 # Finds the index in the PoolByteArray that is relevant for this 3D position.
 func get_data_index(position:Vector3, aabb_index:int) -> int:
-	var aabb:AABB = aabb_array[aabb_index]
+	var aabb:AABB = grass_data.aabb_array[aabb_index]
 	var diff:Vector3 = position - aabb.position
 	var max_x := int(aabb.size.x / block_size)
 	var max_y := int(aabb.size.y / block_size)
 	diff /= block_size
 	var index := int(diff.x + (diff.y * max_x) + (diff.z * max_x * max_y))
-	index += aabb_offsets[aabb_index]
+	index += grass_data.aabb_offsets[aabb_index]
 	return index
  
 # This function updates path_collision_img.data.data (PoolByteArray),
 # and returns the pixel position.
 func set_collision_img_data(index:int, value:int) -> Vector2:
-	var img_data:PoolByteArray = path_collision_img.data.data
+	var img_data:PoolByteArray = grass_data.path_collision_img.data.data
 	var pixel_data:int = img_data[index]
 	pixel_data = int(min(pixel_data + value, 255))
 	img_data.set(index, pixel_data)
-	path_collision_img.data.data = img_data
+	grass_data.path_collision_img.data.data = img_data
 	var y:int = index / 4 / 8192
 	var x:int = index / 4 % 8192
 	return Vector2(x,y)
 	
+func on_quit() -> void:
+	save_grass_data()
+	
+func save_grass_data():
+	var dir = Directory.new()
+	assert (dir.open("user://") == OK)
+	if not dir.dir_exists(Level.path):
+		dir.make_dir_recursive(Level.path)
+	ResourceSaver.save("user://" + Level.path + "grass_data.tres", grass_data)

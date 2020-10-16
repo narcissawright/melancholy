@@ -120,6 +120,9 @@ albedo_texture = ExtResource( 13 )
 
 [node name="GrassLogic" type="Node" parent="."]
 script = ExtResource( 14 )
+__meta__ = {
+"_editor_description_": ""
+}
 
 [node name="DebugView" type="MeshInstance" parent="GrassLogic"]
 script = ExtResource( 16 )
