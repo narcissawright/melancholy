@@ -93,7 +93,7 @@ func _draw():
 	draw_rect(bounds, Color('181822'), true)
 	
 	for star in starfield:
-		var world_point = MainCam.global_transform.origin + star.pos.rotated(axis_of_rotation, deg2rad(rot_amount) )
+		var world_point = MainCam.global_transform.origin + star.pos.rotated(axis_of_rotation, rot_amount )
 		if MainCam.is_position_behind(world_point):
 			var pos = MainCam.unproject_position(world_point)
 			pos.x = round(pos.x)
