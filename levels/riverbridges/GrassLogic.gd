@@ -2,7 +2,7 @@ extends Node
 onready var aabb_container = $AABBs
 
 # Materials
-var grass_material # grass floor surface that has shader params I need to set from here.
+var grass_material:Material # grass floor surface that has shader params I need to set from here.
 
 # Data
 var grass_data:Resource
