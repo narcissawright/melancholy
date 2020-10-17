@@ -93,6 +93,7 @@ shader_param/color_dim = Color( 0.1, 0.1, 0.12, 1 )
 shader_param/use_custom_rim_color = false
 shader_param/custom_rim_color = Color( 0, 0.82, 0.73, 1 )
 shader_param/use_texture = true
+shader_param/autocalculate_shaded = false
 shader_param/damaged = false
 shader_param/locked = false
 shader_param/tex_lit = ExtResource( 3 )

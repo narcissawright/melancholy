@@ -20,6 +20,7 @@ uniform vec4 custom_rim_color : hint_color = vec4(0.0, 0.82, 0.73, 1.0);
 uniform bool use_texture = false;
 uniform sampler2D tex_lit : hint_albedo;
 uniform sampler2D tex_shaded : hint_albedo;
+uniform bool autocalculate_shaded = false;
 
 uniform bool damaged = false;
 const vec3 damaged_lit = vec3(1.0, 0.03, 0.03);
@@ -116,7 +117,11 @@ void light() {
 
 	if (use_texture) {
 		final_lit = texture(tex_lit, UV).rgb;
-		final_dim = texture(tex_shaded, UV).rgb;
+		if (autocalculate_shaded) {
+			final_dim = texture(tex_lit, UV).rgb * 0.4;
+		} else {
+			final_dim = texture(tex_shaded, UV).rgb;
+		}
 	} else if (use_vertex_color) {
 		final_lit = ALBEDO;
 		final_dim = ALBEDO * 0.5;

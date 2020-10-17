@@ -660,8 +660,14 @@ func head_rotation() -> void:
 
 onready var interactables = $Interactables
 
-func handle_interactable():
-	if grounded and not Player.is_locked():
+func can_interact() -> bool:
+	if not grounded:             return false
+	if jump_state != "has_jump": return false
+	if Player.is_locked():       return false
+	return true
+
+func handle_interactable() -> void:
+	if can_interact():
 		if Input.is_action_just_pressed("X"):
 			interactables.execute()
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://backgrounds/starfield/Starfield.tscn" type="PackedScene" id=1]
 [ext_resource path="res://levels/riverbridges/geometry.tscn" type="PackedScene" id=2]
@@ -16,6 +16,7 @@
 [ext_resource path="res://levels/riverbridges/GrassLogic.gd" type="Script" id=14]
 [ext_resource path="res://global/debug/DebugFillMaterial.tres" type="Material" id=15]
 [ext_resource path="res://levels/riverbridges/DebugView.gd" type="Script" id=16]
+[ext_resource path="res://actor/item_pickup/mysterious_mushroom/mysterious_mushroom.tscn" type="PackedScene" id=17]
 
 [sub_resource type="ArrayMesh" id=14]
 surfaces/0 = {
@@ -206,3 +207,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9.87084, 3.18995, -31.4418 )
 
 [node name="GenericTarget2" parent="Actors" instance=ExtResource( 12 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9.87084, 3.18995, -38.3211 )
+
+[node name="mysterious_mushroom" parent="Actors" instance=ExtResource( 17 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15.8568 )

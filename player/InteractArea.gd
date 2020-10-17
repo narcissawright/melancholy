@@ -38,6 +38,12 @@ func sort_by_distance(a, b):
 #			index_of_smallest = i
 #	return index_of_smallest
 
+"""
+Problem:
+	I don't want to fade in ContextHint if the player is unable to actually interact
+	But the moment the player CAN interact, it needs to fade in.
+"""
+
 func _on_InteractArea_area_entered(area: Area) -> void:
 	if list.size() == 0:
 		UI.get_node("ContextHint").fadein(area.type)
