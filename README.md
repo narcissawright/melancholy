@@ -44,10 +44,15 @@ Pretty Good:
 
 Okay:
 - Ledge Cling
+- Walk backwards. Walk sideways.
+- Shield take out 
+- Shield Bash  
+- Shield put away 
+- Jump
 
 Needs work:
-- Run (fix wrist/hand)
-- Idle (should be redone)
+- Run (fix arms / elbow position). Transition from walk->run has issues with hand placement.
+- Idle (should be redone entirely)
 
 To Do:
 - Bomb Throw
@@ -56,16 +61,12 @@ To Do:
 - Pick Up (Standing)
 - Crouch walk (all directions)
 - Crouch walk
-- Walk/Run (all directions)
-- Shield take out 
-- Shield walking (all directions)
+- 8-way run
+- Shield walking (8-way)
 - Shield Knockback
-- Shield Bash  
-- Shield put away 
 - Crouch Shield
 - Slide kick 
 - Dive kick 
-- Jump 
 - Fall 
 - Landing impact 
 - Landing damage 
@@ -95,21 +96,42 @@ Maybe:
 
 #### `Not Done and subject to change`
 
-- Only has 1/4th the Max HP that Melanie has. Uses a magic meter instead of jewels. `Might not use a meter actually...?`
-- Immediately at her top grounded speed (slightly slower than Melanie's top grounded speed) while holding joystick fully. Glides across the ground instead of sprinting.
+- Less Max HP.
+- Magic Meter instead of Jewels? 
+- No sprinting system, glides.
 - Primary Attack - Orb (charge attack, can charge while doing any action. Lose charge upon damage). Only 1 Orb may be present at a time. Orb is a seeking projectile when charged.
-- Secondary Attack - (not fleshed out, but definitely some very weak close range attack).
-- Spells instead of subweapons. `Maybe. I guess.` Jewels get converted into mana (magic meter, exclusive mechanic)
+- Secondary Attack - some very weak close range attack
+- Spells?
 1. Lightning - Attacks all enemies nearby. If no enemies nearby, attacks you instead.
 2. Beam - big laser projectile, aimable in any direction. Some kind of teleport mechanic to travel along the beam.
 3. Airwalker - stand in mid air as if it is solid ground. Each step costs mana. Can jump from the air.
 4. Tree - summon a tree from the earth. Massive damage and knockback. Can be cut down via lightning. May spawn health apples.
 5. Vitriol - I might replace Tree with this actually. Holy water item. Maybe damages you upon use.
 - Repeatedly jumping can gain more speed (homage to CV64; might use some magical sinewave-like movement for this idk). 
-- Has a unique mechanic that allows her to airjump when tapping Jump at ledgegrab height. (homage to CV64)
+- Has a unique mechanic that allows her to airjump when tapping Jump at ledgegrab height. (homage to CV64, but less demanding of an input.)
 - Maybe the same landing mechanics as Melanie but with the ability to curb your fall dmg with a landing "jump"
 - Crouch same as Melanie. Maybe use belly slide attack instead of slide kick? No divekick from air, rather fall straight down very rapidly?
 
+
+## Pickups
+
+#### `Functional`
+
+- Moon Card (change time of day to 6pm)
+- Sun Card (change time of day to 6am)
+- Jewel (small)
+- Jewel (large)
+- Bomb subweapon
+
+#### `WIP`
+
+- Mysterious Mushroom (Resets the grass/dirt paths)
+
+#### `To Do`
+
+- Health Apple
+- Power Up
+- Keys
 
 ## Camera & Targeting system:
 
@@ -138,6 +160,7 @@ Maybe:
 - Clock (Time of day)
 - Joystick Calibration screen
 - Camera customization screen
+- Speedrun timer (impossible to pause abuse)
 
 #### `Partially done`:
 - Powerup container (5 orbs, should look like they are energized.)
@@ -146,7 +169,6 @@ Maybe:
 - Items (lacking UI animation, item names.)
 
 #### `To do`
-- Speedrun timer
 - Serendipity
 
 #### `Maybe`
@@ -169,21 +191,20 @@ Maybe:
 ##### Serendipity system. Maybe?
 - Gimmick! (NES) had a score system that accounted for all drops. I want to use a system like this to avoid RNG. Essentially it is a predictable generator of numbers that are used for all "random" events. A good player could utilize this to their advantage. It must be visible or "readable" somehow while playing so you can re-sync yourself if you end up with the wrong value.
 
-##### Items
-- Healing items. Green apples, other stuff.
-
-##### Desire Paths 
-- Create dirt paths by walking on the same path repeatedly.
-- Current not saving this to hard drive but I will
-- Won't affect gameplay, I think. 
+##### Desire Paths `Grass/flowers not done, but the paths are functional.`
+- Create dirt paths by walking on the same grass patch repeatedly.
+- Persistent Data between sessions.
+- Currently just an aesthetic thing.
 - Should determine where flora should grow too. 
+
+#### Shop 
+- Shopkeeper named Esoterica, present in some levels.
+- idk if I will add gold/money or use jewels as currency.
 
 #### `Maybe?`
 - Swimming
 - Ladder climb
 - Stairs
-- Shop (shopkeeper named Esoterica?)
-- Keys
 - Status (Poisoned etc)
 - Double Jump
 - Wall Jump
@@ -201,6 +222,15 @@ Maybe:
 - Unlock Melancholy by completing Full Game w/ Melanie.
 - Swap between Melancholy/Melanie by walking through a door in open space maybe. Could do cool-portal like effect where one side shows one character and the other shows the other.
 - Separate time trials for each character, to be expanded upon later.
+
+## Time Attack
+
+- Individual levels
+- Full Game
+- Keep track of total time played on each level
+- Keep track of full list of PBs and when you set them
+- I want to spend time refining levels and removing things that cause degenerate gameplay.
+- Maybe even a hidden Library of pre-patch PBs and records.
 
 ## Stages:
 
