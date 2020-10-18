@@ -28,6 +28,7 @@ func _ready() -> void:
 	Events.connect("debug_view", self, "toggle_debug_view")
 	Events.connect("path_collision", self, "_on_path_collision")
 	Events.connect("quit_game", self, "on_quit")
+	Events.connect("grass_data_reset", self, "clear_grass_data")
 	
 	# To recalculate textures after making changes, run create_data_images()
 	var f = File.new()
@@ -222,3 +223,10 @@ func save_grass_data():
 	if not dir.dir_exists(Level.path):
 		dir.make_dir_recursive(Level.path)
 	ResourceSaver.save("user://" + Level.path + "grass_data.tres", grass_data)
+
+func clear_grass_data():
+	var size:int = grass_data.path_collision_img.data.data.size()
+	var data := PoolByteArray()
+	data.resize(size)
+	grass_data.path_collision_img.data.data = data
+	grass_data.path_collision_tex.create_from_image(grass_data.path_collision_img, 0)

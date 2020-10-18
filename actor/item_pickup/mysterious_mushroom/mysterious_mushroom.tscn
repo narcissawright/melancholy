@@ -38,8 +38,8 @@ shader_param/locked = false
 shader_param/tex_lit = ExtResource( 2 )
 
 [sub_resource type="CapsuleShape" id=3]
-radius = 0.3
-height = 0.1
+radius = 0.25
+height = 0.2
 
 [sub_resource type="SphereShape" id=4]
 radius = 0.4

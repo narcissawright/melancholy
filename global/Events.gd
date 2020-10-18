@@ -13,6 +13,8 @@ signal error_no_subweapon
 signal path_collision # position:Vector3, velocity_length:float
 signal debug_view # true/false
 
+signal grass_data_reset
+
 # These are called from menu
 signal unpause_game
 signal quit_game
