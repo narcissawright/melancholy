@@ -1,7 +1,5 @@
 extends Camera
 
-""" Something about entering and exiting first person seems buggy right now, fix soon """
-
 # Collision
 var query := PhysicsShapeQueryParameters.new()
 var shape := SphereShape.new()

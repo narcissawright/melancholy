@@ -125,9 +125,6 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="DebugView" type="MeshInstance" parent="GrassLogic"]
-script = ExtResource( 16 )
-
 [node name="AABBs" type="Spatial" parent="GrassLogic"]
 visible = false
 
@@ -148,20 +145,24 @@ mesh = SubResource( 16 )
 position = Vector3( -18, 4, -18 )
 size = Vector3( 140, 7, 65 )
 
-[node name="AABB_TEXTURE2" type="MeshInstance" parent="GrassLogic"]
-transform = Transform( -3.25841e-07, 0, -2, 0, 2, 0, 2, 0, -3.25841e-07, 10.1081, 1.98316, -3.94574 )
+[node name="DebugView" type="MeshInstance" parent="GrassLogic"]
+script = ExtResource( 16 )
+
+[node name="DebugTexture1" type="MeshInstance" parent="GrassLogic"]
+transform = Transform( -3.25841e-07, 0, -2, 0, 2, 0, 2, 0, -3.25841e-07, 9.95582, 1.98316, -3.94574 )
+visible = false
 mesh = SubResource( 11 )
 material/0 = SubResource( 12 )
 
-[node name="AABB_TEXTURE" type="MeshInstance" parent="GrassLogic"]
+[node name="DebugTexture2" type="MeshInstance" parent="GrassLogic"]
 transform = Transform( -3.25841e-06, 0, 10, 0, 2, 0, -20, 0, -1.62921e-06, -9.85509, 1.87682, -28.9415 )
+visible = false
 mesh = SubResource( 11 )
 material/0 = SubResource( 13 )
 
 [node name="Environment" parent="." instance=ExtResource( 1 )]
 
 [node name="Geometry" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.118155, -0.0313606, 0.0918007 )
 
 [node name="ledge_to_grab" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4989, 1.7265, -40.1577 )
@@ -209,4 +210,4 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9.87084, 3.18995, -31.4418 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9.87084, 3.18995, -38.3211 )
 
 [node name="mysterious_mushroom" parent="Actors" instance=ExtResource( 17 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15.8568 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 23.1531, 9.9783, -1.08506 )

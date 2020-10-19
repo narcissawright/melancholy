@@ -1,5 +1,9 @@
 extends Area
 
+"""
+Needs SFX and Graphical effect
+"""
+
 const type:String = "pickup"
 
 func interact() -> bool: # Returns true if successful
