@@ -11,23 +11,13 @@ const block_size:float = 0.5
 var debug_mode = false
 
 func _ready() -> void:
-	# Get grass material
-	
-	# I may want to "Request geometry" with a signal or something
-	# instead of having the path be hardcoded (considering that
-	# each level may be different and I may use the grass logic in 
-	# multiple levels...
-	var geometry = $"../Geometry"
-	for i in range (geometry.mesh.get_surface_count()):
-		if (geometry.mesh.get("surface_" + str(i+1) + "/name")) == "Grass":
-			grass_material = geometry.mesh.surface_get_material(i)
-	
 	aabb_container.visible = false # hide debug thing
 	
-	# create signal connections
-	Events.connect("debug_view", self, "toggle_debug_view")
-	Events.connect("path_collision", self, "_on_path_collision")
-	Events.connect("quit_game", self, "on_quit")
+	# Signals
+	Events.connect("grass_material",   self, "process_grass")
+	Events.connect("debug_view",       self, "toggle_debug_view")
+	Events.connect("path_collision",   self, "on_path_collision")
+	Events.connect("quit_game",        self, "on_quit")
 	Events.connect("grass_data_reset", self, "clear_grass_data")
 	
 	# To recalculate textures after making changes, run create_data_images()
@@ -36,6 +26,11 @@ func _ready() -> void:
 		grass_data = load("user://" + Level.path + "grass_data.tres")
 	else:
 		create_data_images()
+
+	
+func process_grass(grass_mat) -> void:
+	print ("Hello?")
+	grass_material = grass_mat
 	
 	# Set shader params
 	$DebugTexture1.get_surface_material(0).albedo_texture = grass_data.aabb_tex
@@ -131,7 +126,7 @@ func determine_relevant_aabb(point:Vector3) -> int:
 			return i
 	return -1
 
-func _on_path_collision(position:Vector3, velocity_length:float) -> void:
+func on_path_collision(position:Vector3, velocity_length:float) -> void:
 	# Find the 8 nearest blocks to this position
 
 	# Snap to nearest block

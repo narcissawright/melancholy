@@ -15,3 +15,4 @@ signal debug_view # true/false
 signal grass_data_reset
 signal unpause_game
 signal quit_game
+signal grass_material #Material

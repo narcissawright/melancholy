@@ -1,16 +1,12 @@
-extends Node
+tool
+extends EditorScenePostImport
 
-
-# Declare member variables here. Examples:
-# var a: int = 2
-# var b: String = "text"
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta: float) -> void:
-#	pass
+func post_import(scene):
+	for child in scene.get_children():
+		if child.name == "RiverBridges":
+			child.mesh.set("surface_2/name", "Grass")
+			child.mesh.surface_set_material(1, load("res://levels/riverbridges/grass_shader.tres"))
+			child.set_script(load("res://levels/riverbridges/signal_grass_material.gd"))
+			child.create_trimesh_collision()
+	
+	return scene
