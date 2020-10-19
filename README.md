@@ -245,7 +245,7 @@ TIP: MagicUV is a good plugin that can be used to make UVs for level geometry ap
 - First level in the game.
 - Secret Exit should involve going out of your way to find bomb subweapon, then heading back to beginning to bomb boost yourself up to higher ledge. Bombs should also allow you to blow open certain breakable walls and obtain powerups etc.
 - Bow subweapon obtainable early.
-- Cut bridge ropes (that are holding the bridge up in the air) to make it fall and bridge the chasm (with river fall beneath).
+- Cut bridge ropes (that are holding the bridge up in the air) to make it fall and bridge the chasm (with river far beneath).
 
 #### Other level ideas:
 - There needs to be a level with 3 "laps" that are each somewhat different. I need to think about this level's structure more. but it is gonna happen.
