@@ -107,10 +107,9 @@ flags_unshaded = true
 flags_do_not_receive_shadows = true
 
 [sub_resource type="CubeMesh" id=7]
-size = Vector3( 2, 4, 2 )
 
 [sub_resource type="ConcavePolygonShape" id=8]
-data = PoolVector3Array( -1, 2, 1, 1, 2, 1, -1, -2, 1, 1, 2, 1, 1, -2, 1, -1, -2, 1, 1, 2, -1, -1, 2, -1, 1, -2, -1, -1, 2, -1, -1, -2, -1, 1, -2, -1, 1, 2, 1, 1, 2, -1, 1, -2, 1, 1, 2, -1, 1, -2, -1, 1, -2, 1, -1, 2, -1, -1, 2, 1, -1, -2, -1, -1, 2, 1, -1, -2, 1, -1, -2, -1, 1, 2, 1, -1, 2, 1, 1, 2, -1, -1, 2, 1, -1, 2, -1, 1, 2, -1, -1, -2, 1, 1, -2, 1, -1, -2, -1, 1, -2, 1, 1, -2, -1, -1, -2, -1 )
+data = PoolVector3Array( -1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1, 1, -1, -1, 1, 1, 1, -1, -1, 1, -1, 1, -1, -1, -1, 1, -1, -1, -1, -1, 1, -1, -1, 1, 1, 1, 1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1, -1, 1, -1, 1, -1, 1, -1, -1, 1, 1, -1, -1, -1, -1, 1, 1, -1, -1, 1, -1, -1, -1, 1, 1, 1, -1, 1, 1, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1, 1, -1, -1, -1, 1, 1, -1, 1, -1, -1, -1, 1, -1, 1, 1, -1, -1, -1, -1, -1 )
 
 [sub_resource type="QuadMesh" id=9]
 
@@ -164,14 +163,14 @@ material/0 = SubResource( 6 )
 
 [node name="riverbridges_geometry" parent="." instance=ExtResource( 2 )]
 
-[node name="ledge_to_grab" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4989, 1.7265, -40.1577 )
+[node name="MeshInstance" type="MeshInstance" parent="riverbridges_geometry"]
+transform = Transform( 10, 0, 0, 0, 1, 0, 0, 0, 1, 87.4408, -0.988755, -17.8971 )
 mesh = SubResource( 7 )
 material/0 = null
 
-[node name="StaticBody" type="StaticBody" parent="ledge_to_grab"]
+[node name="StaticBody" type="StaticBody" parent="riverbridges_geometry/MeshInstance"]
 
-[node name="CollisionShape" type="CollisionShape" parent="ledge_to_grab/StaticBody"]
+[node name="CollisionShape" type="CollisionShape" parent="riverbridges_geometry/MeshInstance/StaticBody"]
 shape = SubResource( 8 )
 
 [node name="ledgegrab_test" parent="." instance=ExtResource( 3 )]
