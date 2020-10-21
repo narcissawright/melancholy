@@ -29,7 +29,6 @@ func _ready() -> void:
 
 	
 func process_grass(grass_mat) -> void:
-	print ("Hello?")
 	grass_material = grass_mat
 	
 	# Set shader params

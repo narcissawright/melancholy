@@ -11,7 +11,6 @@ export var size := Vector3.ONE setget set_size
 #	set_notify_transform(true)
 #
 #func _notification (what:int) -> void:
-#	#print("Hello?")
 #	if what == NOTIFICATION_TRANSFORM_CHANGED:
 #		#print( "Transform Changed")
 #		set_pos(translation)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=111 format=2]
+[gd_scene load_steps=113 format=2]
 
 [ext_resource path="res://ui/fonts/Roboto-Medium.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://ui/fonts/Roboto-Italic.ttf" type="DynamicFontData" id=2]
@@ -73,6 +73,31 @@
 [ext_resource path="res://ui/img/subweapon_bomb.png" type="Texture" id=71]
 [ext_resource path="res://ui/img/controller/inputdisplay/B_unlit.png" type="Texture" id=72]
 [ext_resource path="res://ui/img/joystick_configuration/stickpos.png" type="Texture" id=73]
+
+[sub_resource type="Shader" id=29]
+code = "shader_type canvas_item;
+render_mode unshaded;
+
+uniform vec4 fx_color : hint_color = vec4(0.4,0.3,0,0.5);
+
+void fragment() {
+	vec3 screen = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0).rgb;
+	float screen_brightness = clamp((screen.r + screen.g + screen.b) / 3.0, 0.0, 1.0);
+	float fx_brightness = clamp((fx_color.r + fx_color.g + fx_color.b) / 3.0, 0.0, 1.0);
+	if (screen_brightness > fx_brightness) {
+		float inv_range = 1.0 / (1.0 - fx_brightness);
+		float amt = inv_range * (screen_brightness - fx_brightness);
+		COLOR.rgb = mix(fx_color.rgb, vec3(1,1,1), amt);
+	} else {
+		float amt = (screen_brightness / fx_brightness);
+		COLOR.rgb = mix(vec3(0,0,0), fx_color.rgb, amt);
+	}
+	COLOR.a = fx_color.a;
+}"
+
+[sub_resource type="ShaderMaterial" id=30]
+shader = SubResource( 29 )
+shader_param/fx_color = Color( 0.4, 0.3, 0, 0.5 )
 
 [sub_resource type="DynamicFont" id=1]
 size = 48
@@ -316,7 +341,7 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
 }
 
-[sub_resource type="SpriteFrames" id=29]
+[sub_resource type="SpriteFrames" id=31]
 animations = [ {
 "frames": [ ExtResource( 54 ), ExtResource( 52 ) ],
 "loop": true,
@@ -324,15 +349,15 @@ animations = [ {
 "speed": 5.0
 } ]
 
-[sub_resource type="DynamicFont" id=30]
+[sub_resource type="DynamicFont" id=32]
 size = 24
 font_data = ExtResource( 1 )
 
-[sub_resource type="ShaderMaterial" id=31]
+[sub_resource type="ShaderMaterial" id=33]
 shader = ExtResource( 17 )
 shader_param/light_vec = Vector3( 0.680179, 0.654389, 0.33035 )
 
-[sub_resource type="Animation" id=32]
+[sub_resource type="Animation" id=34]
 loop = true
 step = 0.125
 tracks/0/type = "value"
@@ -348,14 +373,6 @@ tracks/0/keys = {
 "values": [ Vector2( 0.9, 0.9 ), Vector2( 0.905, 0.905 ), Vector2( 0.9, 0.9 ), Vector2( 0.92, 0.92 ), Vector2( 0.88, 0.88 ), Vector2( 0.9, 0.9 ), Vector2( 0.905, 0.905 ), Vector2( 0.9, 0.9 ), Vector2( 0.9, 0.9 ) ]
 }
 
-[sub_resource type="ShaderMaterial" id=33]
-shader = ExtResource( 18 )
-shader_param/selected = false
-
-[sub_resource type="ShaderMaterial" id=34]
-shader = ExtResource( 18 )
-shader_param/selected = false
-
 [sub_resource type="ShaderMaterial" id=35]
 shader = ExtResource( 18 )
 shader_param/selected = false
@@ -365,6 +382,14 @@ shader = ExtResource( 18 )
 shader_param/selected = false
 
 [sub_resource type="ShaderMaterial" id=37]
+shader = ExtResource( 18 )
+shader_param/selected = false
+
+[sub_resource type="ShaderMaterial" id=38]
+shader = ExtResource( 18 )
+shader_param/selected = false
+
+[sub_resource type="ShaderMaterial" id=39]
 shader = ExtResource( 18 )
 shader_param/selected = false
 
@@ -383,6 +408,15 @@ margin_left = 0.163181
 margin_top = 929.701
 margin_right = 15.1632
 margin_bottom = 1079.7
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ScreenColorFX" type="ColorRect" parent="."]
+visible = false
+material = SubResource( 30 )
+margin_right = 1920.0
+margin_bottom = 1080.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -1991,7 +2025,7 @@ script = ExtResource( 8 )
 [node name="SunMoon" type="AnimatedSprite" parent="InGame_UI/Clock"]
 position = Vector2( 210, -210 )
 scale = Vector2( 4, 4 )
-frames = SubResource( 29 )
+frames = SubResource( 31 )
 
 [node name="ClockSprite" type="Sprite" parent="InGame_UI/Clock"]
 texture = ExtResource( 41 )
@@ -2048,7 +2082,7 @@ margin_left = -2.0
 margin_top = 3.0
 margin_right = 44.0
 margin_bottom = 39.0
-custom_fonts/normal_font = SubResource( 30 )
+custom_fonts/normal_font = SubResource( 32 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -2137,7 +2171,7 @@ __meta__ = {
 }
 
 [node name="Heart" type="Sprite" parent="InGame_UI/HP/HeartScale"]
-material = SubResource( 31 )
+material = SubResource( 33 )
 scale = Vector2( 0.805, 0.805 )
 texture = ExtResource( 32 )
 normal_map = ExtResource( 32 )
@@ -2151,7 +2185,7 @@ position = Vector2( 39.8628, -43.7331 )
 [node name="HeartBeat" type="AnimationPlayer" parent="InGame_UI/HP/HeartScale/Heart"]
 autoplay = "heartbeat"
 playback_speed = 0.75
-anims/heartbeat = SubResource( 32 )
+anims/heartbeat = SubResource( 34 )
 
 [node name="RoundedEdges" type="Node2D" parent="InGame_UI"]
 visible = false
@@ -2189,29 +2223,29 @@ scale = Vector2( 0.28, 0.28 )
 script = ExtResource( 15 )
 
 [node name="Item4" type="Sprite" parent="InGame_UI/Inventory"]
-material = SubResource( 33 )
+material = SubResource( 35 )
 position = Vector2( 200, 0 )
 centered = false
 
 [node name="Item3" type="Sprite" parent="InGame_UI/Inventory"]
-material = SubResource( 34 )
+material = SubResource( 36 )
 position = Vector2( 450, 0 )
 texture = ExtResource( 20 )
 centered = false
 
 [node name="Item2" type="Sprite" parent="InGame_UI/Inventory"]
-material = SubResource( 35 )
+material = SubResource( 37 )
 position = Vector2( 700, 0 )
 centered = false
 
 [node name="Item1" type="Sprite" parent="InGame_UI/Inventory"]
-material = SubResource( 36 )
+material = SubResource( 38 )
 position = Vector2( 950, 0 )
 texture = ExtResource( 19 )
 centered = false
 
 [node name="Item0" type="Sprite" parent="InGame_UI/Inventory"]
-material = SubResource( 37 )
+material = SubResource( 39 )
 position = Vector2( 1200, 0 )
 texture = ExtResource( 19 )
 centered = false
