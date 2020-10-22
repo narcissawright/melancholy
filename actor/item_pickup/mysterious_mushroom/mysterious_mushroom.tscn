@@ -1,8 +1,9 @@
 [gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://shaders/actor.shader" type="Shader" id=1]
+[ext_resource path="res://actor/actor.shader" type="Shader" id=1]
 [ext_resource path="res://actor/item_pickup/mysterious_mushroom/mushroom_texture.png" type="Texture" id=2]
 [ext_resource path="res://actor/item_pickup/mysterious_mushroom/Interactable.gd" type="Script" id=3]
+
 
 [sub_resource type="ArrayMesh" id=1]
 resource_name = "Cube"

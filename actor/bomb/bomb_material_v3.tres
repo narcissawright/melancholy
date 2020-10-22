@@ -2,7 +2,8 @@
 
 [ext_resource path="res://actor/bomb/bomb_shaded.png" type="Texture" id=1]
 [ext_resource path="res://actor/bomb/bomb_lit.png" type="Texture" id=2]
-[ext_resource path="res://shaders/actor.shader" type="Shader" id=3]
+[ext_resource path="res://actor/actor.shader" type="Shader" id=3]
+
 
 [resource]
 shader = ExtResource( 3 )

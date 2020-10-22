@@ -16,8 +16,8 @@
 [ext_resource path="res://ui/CameraSettings.gd" type="Script" id=14]
 [ext_resource path="res://ui/Inventory.gd" type="Script" id=15]
 [ext_resource path="res://ui/Subweapon.gd" type="Script" id=16]
-[ext_resource path="res://shaders/heart.shader" type="Shader" id=17]
-[ext_resource path="res://shaders/inventory.shader" type="Shader" id=18]
+[ext_resource path="res://ui/heart.shader" type="Shader" id=17]
+[ext_resource path="res://ui/inventory.shader" type="Shader" id=18]
 [ext_resource path="res://ui/img/items/mooncard_ui.png" type="Texture" id=19]
 [ext_resource path="res://ui/img/items/suncard_ui.png" type="Texture" id=20]
 [ext_resource path="res://ui/img/controller/inputdisplay/select_lit.png" type="Texture" id=21]
@@ -74,7 +74,7 @@
 [ext_resource path="res://ui/img/controller/inputdisplay/B_unlit.png" type="Texture" id=72]
 [ext_resource path="res://ui/img/joystick_configuration/stickpos.png" type="Texture" id=73]
 
-[sub_resource type="Shader" id=29]
+[sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
 render_mode unshaded;
 
@@ -95,23 +95,23 @@ void fragment() {
 	COLOR.a = fx_color.a;
 }"
 
-[sub_resource type="ShaderMaterial" id=30]
-shader = SubResource( 29 )
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
 shader_param/fx_color = Color( 0.4, 0.3, 0, 0.5 )
 
-[sub_resource type="DynamicFont" id=1]
+[sub_resource type="DynamicFont" id=3]
 size = 48
 font_data = ExtResource( 1 )
 
-[sub_resource type="DynamicFont" id=2]
+[sub_resource type="DynamicFont" id=4]
 size = 31
 font_data = ExtResource( 1 )
 
-[sub_resource type="DynamicFont" id=3]
+[sub_resource type="DynamicFont" id=5]
 size = 31
 font_data = ExtResource( 1 )
 
-[sub_resource type="SpriteFrames" id=4]
+[sub_resource type="SpriteFrames" id=6]
 animations = [ {
 "frames": [ ExtResource( 39 ), ExtResource( 36 ) ],
 "loop": true,
@@ -119,7 +119,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=5]
+[sub_resource type="SpriteFrames" id=7]
 animations = [ {
 "frames": [ ExtResource( 60 ), ExtResource( 24 ) ],
 "loop": true,
@@ -127,7 +127,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=6]
+[sub_resource type="SpriteFrames" id=8]
 animations = [ {
 "frames": [ ExtResource( 57 ), ExtResource( 45 ) ],
 "loop": true,
@@ -135,7 +135,7 @@ animations = [ {
 "speed": 5.0
 } ]
 
-[sub_resource type="SpriteFrames" id=7]
+[sub_resource type="SpriteFrames" id=9]
 animations = [ {
 "frames": [ ExtResource( 51 ), ExtResource( 43 ) ],
 "loop": true,
@@ -143,7 +143,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=8]
+[sub_resource type="SpriteFrames" id=10]
 animations = [ {
 "frames": [ ExtResource( 50 ), ExtResource( 66 ) ],
 "loop": false,
@@ -151,7 +151,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=9]
+[sub_resource type="SpriteFrames" id=11]
 animations = [ {
 "frames": [ ExtResource( 72 ), ExtResource( 37 ) ],
 "loop": true,
@@ -159,7 +159,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=10]
+[sub_resource type="SpriteFrames" id=12]
 animations = [ {
 "frames": [ ExtResource( 42 ), ExtResource( 53 ) ],
 "loop": true,
@@ -167,7 +167,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=11]
+[sub_resource type="SpriteFrames" id=13]
 animations = [ {
 "frames": [ ExtResource( 59 ), ExtResource( 67 ) ],
 "loop": true,
@@ -175,7 +175,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=12]
+[sub_resource type="SpriteFrames" id=14]
 animations = [ {
 "frames": [ ExtResource( 38 ), ExtResource( 55 ) ],
 "loop": true,
@@ -183,7 +183,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=13]
+[sub_resource type="SpriteFrames" id=15]
 animations = [ {
 "frames": [ ExtResource( 64 ), ExtResource( 21 ) ],
 "loop": true,
@@ -191,7 +191,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=14]
+[sub_resource type="SpriteFrames" id=16]
 animations = [ {
 "frames": [ ExtResource( 61 ), ExtResource( 26 ) ],
 "loop": true,
@@ -199,7 +199,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=15]
+[sub_resource type="SpriteFrames" id=17]
 animations = [ {
 "frames": [ ExtResource( 68 ), ExtResource( 65 ) ],
 "loop": true,
@@ -207,7 +207,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=16]
+[sub_resource type="SpriteFrames" id=18]
 animations = [ {
 "frames": [ ExtResource( 63 ), ExtResource( 62 ) ],
 "loop": true,
@@ -215,7 +215,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=17]
+[sub_resource type="SpriteFrames" id=19]
 animations = [ {
 "frames": [ ExtResource( 46 ), ExtResource( 28 ) ],
 "loop": true,
@@ -223,7 +223,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=18]
+[sub_resource type="SpriteFrames" id=20]
 animations = [ {
 "frames": [ ExtResource( 27 ), ExtResource( 23 ) ],
 "loop": true,
@@ -231,7 +231,7 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="SpriteFrames" id=19]
+[sub_resource type="SpriteFrames" id=21]
 animations = [ {
 "frames": [ ExtResource( 40 ), ExtResource( 30 ) ],
 "loop": true,
@@ -239,19 +239,19 @@ animations = [ {
 "speed": 0.0
 } ]
 
-[sub_resource type="DynamicFont" id=20]
-size = 24
-font_data = ExtResource( 2 )
-
-[sub_resource type="DynamicFont" id=21]
-size = 48
-font_data = ExtResource( 1 )
-
 [sub_resource type="DynamicFont" id=22]
 size = 24
 font_data = ExtResource( 2 )
 
-[sub_resource type="Shader" id=23]
+[sub_resource type="DynamicFont" id=23]
+size = 48
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=24]
+size = 24
+font_data = ExtResource( 2 )
+
+[sub_resource type="Shader" id=25]
 code = "shader_type canvas_item;
 render_mode unshaded;
 
@@ -293,25 +293,25 @@ void fragment() {
 	}
 }"
 
-[sub_resource type="ShaderMaterial" id=24]
-shader = SubResource( 23 )
+[sub_resource type="ShaderMaterial" id=26]
+shader = SubResource( 25 )
 shader_param/stick_pos = Vector2( 0, 0 )
 shader_param/outer_threshold = 0.9
 shader_param/axis_deadzone = 0.1
 shader_param/ramp = 2.0
 
-[sub_resource type="DynamicFont" id=25]
+[sub_resource type="DynamicFont" id=27]
 size = 12
 font_data = ExtResource( 3 )
 
-[sub_resource type="ShaderMaterial" id=26]
-shader = SubResource( 23 )
+[sub_resource type="ShaderMaterial" id=28]
+shader = SubResource( 25 )
 shader_param/stick_pos = Vector2( 0, 0 )
 shader_param/outer_threshold = 0.9
 shader_param/axis_deadzone = 0.1
 shader_param/ramp = 2.0
 
-[sub_resource type="Animation" id=27]
+[sub_resource type="Animation" id=29]
 length = 0.1
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:modulate")
@@ -326,7 +326,7 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
 }
 
-[sub_resource type="Animation" id=28]
+[sub_resource type="Animation" id=30]
 length = 0.1
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:modulate")
@@ -414,7 +414,7 @@ __meta__ = {
 
 [node name="ScreenColorFX" type="ColorRect" parent="."]
 visible = false
-material = SubResource( 30 )
+material = SubResource( 2 )
 margin_right = 1920.0
 margin_bottom = 1080.0
 __meta__ = {
@@ -448,7 +448,7 @@ __meta__ = {
 margin_top = 375.0
 margin_right = 1920.0
 margin_bottom = 435.0
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 3 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -474,7 +474,7 @@ __meta__ = {
 margin_top = 460.0
 margin_right = 1920.0
 margin_bottom = 497.0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 4 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -485,7 +485,7 @@ align = 1
 margin_top = 501.0
 margin_right = 1920.0
 margin_bottom = 538.0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 4 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -496,7 +496,7 @@ align = 1
 margin_top = 542.0
 margin_right = 1920.0
 margin_bottom = 579.0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 4 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -507,7 +507,7 @@ align = 1
 margin_top = 583.0
 margin_right = 1920.0
 margin_bottom = 620.0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 4 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -526,7 +526,7 @@ __meta__ = {
 margin_top = 375.0
 margin_right = 1920.0
 margin_bottom = 435.0
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 3 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -553,7 +553,7 @@ __meta__ = {
 margin_top = 480.0
 margin_right = 1920.0
 margin_bottom = 517.0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 4 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -564,7 +564,7 @@ align = 1
 margin_top = 521.0
 margin_right = 1920.0
 margin_bottom = 558.0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 4 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -575,7 +575,7 @@ align = 1
 margin_top = 562.0
 margin_right = 1920.0
 margin_bottom = 599.0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 4 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -593,7 +593,7 @@ __meta__ = {
 margin_top = 375.0
 margin_right = 1920.0
 margin_bottom = 435.0
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 3 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -620,7 +620,7 @@ __meta__ = {
 margin_top = 439.0
 margin_right = 940.0
 margin_bottom = 476.0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 4 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -631,7 +631,7 @@ align = 2
 margin_left = 980.0
 margin_right = 1153.0
 margin_bottom = 37.0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 4 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -644,7 +644,7 @@ __meta__ = {
 margin_top = 480.0
 margin_right = 940.0
 margin_bottom = 517.0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 4 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -655,7 +655,7 @@ align = 2
 margin_left = 980.0
 margin_right = 1153.0
 margin_bottom = 37.0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 4 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -669,7 +669,7 @@ self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_top = 521.0
 margin_right = 940.0
 margin_bottom = 558.0
-custom_fonts/font = SubResource( 3 )
+custom_fonts/font = SubResource( 5 )
 text = "Distance"
 align = 2
 __meta__ = {
@@ -701,7 +701,7 @@ self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_left = 980.0
 margin_right = 1280.0
 margin_bottom = 37.0
-custom_fonts/font = SubResource( 3 )
+custom_fonts/font = SubResource( 5 )
 text = "3.000"
 align = 2
 __meta__ = {
@@ -713,7 +713,7 @@ self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_top = 562.0
 margin_right = 940.0
 margin_bottom = 599.0
-custom_fonts/font = SubResource( 3 )
+custom_fonts/font = SubResource( 5 )
 text = "Sensitivity"
 align = 2
 __meta__ = {
@@ -745,7 +745,7 @@ self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_left = 980.0
 margin_right = 1280.0
 margin_bottom = 37.0
-custom_fonts/font = SubResource( 3 )
+custom_fonts/font = SubResource( 5 )
 text = "2.400"
 align = 2
 __meta__ = {
@@ -756,7 +756,7 @@ __meta__ = {
 margin_top = 603.0
 margin_right = 940.0
 margin_bottom = 640.0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 4 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
@@ -778,28 +778,28 @@ __meta__ = {
 [node name="ControllerButtons" type="Node2D" parent="Paused/InputDisplay"]
 
 [node name="ZR" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
-frames = SubResource( 4 )
-centered = false
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="ZL" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
-frames = SubResource( 5 )
-centered = false
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="L" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 6 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="R" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="ZL" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 7 )
+centered = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="L" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+frames = SubResource( 8 )
+centered = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="R" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+frames = SubResource( 9 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
@@ -813,84 +813,84 @@ __meta__ = {
 }
 
 [node name="A" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
-frames = SubResource( 8 )
-centered = false
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="B" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
-frames = SubResource( 9 )
-centered = false
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="Y" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 10 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="X" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="B" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 11 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Start" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="Y" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 12 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Select" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="X" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 13 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="D_Up" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="Start" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 14 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="D_Down" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="Select" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 15 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="D_Left" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="D_Up" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 16 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="D_Right" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="D_Down" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 17 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Left_Stick" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="D_Left" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 18 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Right_Stick" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+[node name="D_Right" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
 frames = SubResource( 19 )
+centered = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Left_Stick" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+frames = SubResource( 20 )
+centered = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Right_Stick" type="AnimatedSprite" parent="Paused/InputDisplay/ControllerButtons"]
+frames = SubResource( 21 )
 centered = false
 __meta__ = {
 "_edit_lock_": true
@@ -910,7 +910,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -935,7 +935,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -960,7 +960,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -985,7 +985,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1010,7 +1010,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1035,7 +1035,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1060,7 +1060,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1085,7 +1085,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1111,7 +1111,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1137,7 +1137,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1162,7 +1162,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1187,7 +1187,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1211,7 +1211,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1236,7 +1236,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1261,7 +1261,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1286,7 +1286,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1311,7 +1311,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1336,7 +1336,7 @@ margin_left = -143.0
 margin_top = -20.0
 margin_right = 143.0
 margin_bottom = 20.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1365,7 +1365,7 @@ margin_left = 200.0
 margin_top = 75.0
 margin_right = 754.0
 margin_bottom = 132.0
-custom_fonts/font = SubResource( 21 )
+custom_fonts/font = SubResource( 23 )
 text = "Joystick Calibration"
 align = 1
 valign = 1
@@ -1380,7 +1380,7 @@ margin_left = 175.0
 margin_top = 257.0
 margin_right = 835.0
 margin_bottom = 294.0
-custom_fonts/font = SubResource( 3 )
+custom_fonts/font = SubResource( 5 )
 text = "Easing Curve"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -1410,7 +1410,7 @@ __meta__ = {
 self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_right = 600.0
 margin_bottom = 37.0
-custom_fonts/font = SubResource( 3 )
+custom_fonts/font = SubResource( 5 )
 text = "2.000"
 align = 2
 __meta__ = {
@@ -1430,7 +1430,7 @@ __meta__ = {
 self_modulate = Color( 1, 1, 0.4, 1 )
 margin_right = 660.0
 margin_bottom = 37.0
-custom_fonts/font = SubResource( 3 )
+custom_fonts/font = SubResource( 5 )
 text = "Outer Threshold"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -1460,7 +1460,7 @@ __meta__ = {
 self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_right = 600.0
 margin_bottom = 37.0
-custom_fonts/font = SubResource( 3 )
+custom_fonts/font = SubResource( 5 )
 text = "0.900"
 align = 2
 __meta__ = {
@@ -1472,7 +1472,7 @@ self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_top = 41.0
 margin_right = 660.0
 margin_bottom = 78.0
-custom_fonts/font = SubResource( 3 )
+custom_fonts/font = SubResource( 5 )
 text = "Axis Deadzone"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -1502,7 +1502,7 @@ __meta__ = {
 self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_right = 600.0
 margin_bottom = 37.0
-custom_fonts/font = SubResource( 3 )
+custom_fonts/font = SubResource( 5 )
 text = "0.150"
 align = 2
 __meta__ = {
@@ -1514,7 +1514,7 @@ self_modulate = Color( 0.662745, 0.721569, 0.705882, 1 )
 margin_top = 82.0
 margin_right = 660.0
 margin_bottom = 119.0
-custom_fonts/font = SubResource( 3 )
+custom_fonts/font = SubResource( 5 )
 text = "Reset to Default"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -1526,7 +1526,7 @@ position = Vector2( 175, 672 )
 [node name="OuterThreshold" type="Label" parent="Paused/JoystickCalibration/Descriptions"]
 margin_right = 610.0
 margin_bottom = 200.0
-custom_fonts/font = SubResource( 22 )
+custom_fonts/font = SubResource( 24 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 text = "The Outer Threshold determines how far the stick must be pushed for it to count as a maximum length input."
 autowrap = true
@@ -1538,7 +1538,7 @@ __meta__ = {
 visible = false
 margin_right = 610.0
 margin_bottom = 200.0
-custom_fonts/font = SubResource( 22 )
+custom_fonts/font = SubResource( 24 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 text = "The Axis Deadzone determines how far the stick must be pushed on an axis for it to start counting as input. Some controllers have an additional deadzone built in."
 autowrap = true
@@ -1550,7 +1550,7 @@ __meta__ = {
 visible = false
 margin_right = 610.0
 margin_bottom = 200.0
-custom_fonts/font = SubResource( 22 )
+custom_fonts/font = SubResource( 24 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 text = "Resets all settings to default."
 autowrap = true
@@ -1566,7 +1566,7 @@ margin_left = -127.0
 margin_top = -225.0
 margin_right = 427.0
 margin_bottom = -168.0
-custom_fonts/font = SubResource( 21 )
+custom_fonts/font = SubResource( 23 )
 text = "Raw"
 align = 1
 valign = 1
@@ -1579,7 +1579,7 @@ texture = ExtResource( 56 )
 
 [node name="Deadzone" type="Sprite" parent="Paused/JoystickCalibration/Raw_Input/Left"]
 show_behind_parent = true
-material = SubResource( 24 )
+material = SubResource( 26 )
 texture = ExtResource( 70 )
 
 [node name="YDead" type="ColorRect" parent="Paused/JoystickCalibration/Raw_Input/Left"]
@@ -1638,7 +1638,7 @@ margin_left = -128.0
 margin_top = 131.0
 margin_right = 128.0
 margin_bottom = 153.0
-custom_fonts/normal_font = SubResource( 25 )
+custom_fonts/normal_font = SubResource( 27 )
 bbcode_enabled = true
 bbcode_text = "[center][color=#ff8080]X +0.000[/color] | [color=#80ff80]Y +0.000[/color] | [color=#8080ff]Length 1.000[/color]"
 text = "X +0.000 | Y +0.000 | Length 1.000"
@@ -1652,7 +1652,7 @@ margin_left = -126.587
 margin_top = -168.077
 margin_right = 126.413
 margin_bottom = -131.077
-custom_fonts/font = SubResource( 22 )
+custom_fonts/font = SubResource( 24 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 text = "Left Stick"
 align = 1
@@ -1667,7 +1667,7 @@ texture = ExtResource( 56 )
 
 [node name="Deadzone" type="Sprite" parent="Paused/JoystickCalibration/Raw_Input/Right"]
 show_behind_parent = true
-material = SubResource( 26 )
+material = SubResource( 28 )
 texture = ExtResource( 70 )
 
 [node name="Length" type="Line2D" parent="Paused/JoystickCalibration/Raw_Input/Right"]
@@ -1702,7 +1702,7 @@ margin_left = -128.0
 margin_top = 131.0
 margin_right = 128.0
 margin_bottom = 153.0
-custom_fonts/normal_font = SubResource( 25 )
+custom_fonts/normal_font = SubResource( 27 )
 bbcode_enabled = true
 bbcode_text = "[center][color=#ff8080]X +0.000[/color] | [color=#80ff80]Y +0.000[/color] | [color=#8080ff]Length 1.000[/color]"
 text = "X +0.000 | Y +0.000 | Length 1.000"
@@ -1716,7 +1716,7 @@ margin_left = -127.0
 margin_top = -168.0
 margin_right = 126.0
 margin_bottom = -131.0
-custom_fonts/font = SubResource( 22 )
+custom_fonts/font = SubResource( 24 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 text = "Right Stick"
 align = 1
@@ -1733,7 +1733,7 @@ margin_left = -127.0
 margin_top = -225.0
 margin_right = 427.0
 margin_bottom = -168.0
-custom_fonts/font = SubResource( 21 )
+custom_fonts/font = SubResource( 23 )
 text = "Final"
 align = 1
 valign = 1
@@ -1749,7 +1749,7 @@ margin_left = 173.0
 margin_top = -168.0
 margin_right = 426.0
 margin_bottom = -131.0
-custom_fonts/font = SubResource( 22 )
+custom_fonts/font = SubResource( 24 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 text = "Right Stick"
 align = 1
@@ -1790,7 +1790,7 @@ margin_left = -128.0
 margin_top = 131.0
 margin_right = 128.0
 margin_bottom = 153.0
-custom_fonts/normal_font = SubResource( 25 )
+custom_fonts/normal_font = SubResource( 27 )
 bbcode_enabled = true
 bbcode_text = "[center][color=#ff8080]X +0.000[/color] | [color=#80ff80]Y +0.000[/color] | [color=#8080ff]Length 1.000[/color]"
 text = "X +0.000 | Y +0.000 | Length 1.000"
@@ -1805,7 +1805,7 @@ margin_left = -128.0
 margin_top = 149.0
 margin_right = 128.0
 margin_bottom = 171.0
-custom_fonts/normal_font = SubResource( 25 )
+custom_fonts/normal_font = SubResource( 27 )
 bbcode_enabled = true
 bbcode_text = "[center]No Input[/center]"
 text = "No Input"
@@ -1823,7 +1823,7 @@ margin_left = -426.587
 margin_top = -168.077
 margin_right = -173.587
 margin_bottom = -131.077
-custom_fonts/font = SubResource( 22 )
+custom_fonts/font = SubResource( 24 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 text = "Left Stick"
 align = 1
@@ -1864,7 +1864,7 @@ margin_left = -128.0
 margin_top = 131.0
 margin_right = 128.0
 margin_bottom = 153.0
-custom_fonts/normal_font = SubResource( 25 )
+custom_fonts/normal_font = SubResource( 27 )
 bbcode_enabled = true
 bbcode_text = "[center][color=#ff8080]X +0.000[/color] | [color=#80ff80]Y +0.000[/color] | [color=#8080ff]Length 1.000[/color]"
 text = "X +0.000 | Y +0.000 | Length 1.000"
@@ -1879,7 +1879,7 @@ margin_left = -128.0
 margin_top = 149.0
 margin_right = 128.0
 margin_bottom = 171.0
-custom_fonts/normal_font = SubResource( 25 )
+custom_fonts/normal_font = SubResource( 27 )
 bbcode_enabled = true
 bbcode_text = "[center]No Input[/center]"
 text = "No Input"
@@ -1909,8 +1909,8 @@ __meta__ = {
 }
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="ContextHint"]
-anims/FadeIn = SubResource( 27 )
-anims/FadeOut = SubResource( 28 )
+anims/FadeIn = SubResource( 29 )
+anims/FadeOut = SubResource( 30 )
 
 [node name="PickUp" type="Node2D" parent="ContextHint"]
 
@@ -1919,7 +1919,7 @@ margin_left = -80.823
 margin_top = -11.0001
 margin_right = 20.177
 margin_bottom = 17.9999
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1952,7 +1952,7 @@ margin_left = -83.0
 margin_top = -11.0
 margin_right = 18.0
 margin_bottom = 50.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -1984,7 +1984,7 @@ margin_left = -100.0
 margin_top = -11.0
 margin_right = 1.0
 margin_bottom = 18.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
@@ -2048,7 +2048,7 @@ margin_left = 125.0
 margin_top = 1021.0
 margin_right = 244.0
 margin_bottom = 1050.0
-custom_fonts/font = SubResource( 20 )
+custom_fonts/font = SubResource( 22 )
 custom_colors/font_color = Color( 0.662745, 0.721569, 0.705882, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.501961 )
 custom_constants/shadow_offset_x = 2
