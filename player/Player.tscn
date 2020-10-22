@@ -483,6 +483,7 @@ texture = SubResource( 31 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
 [connection signal="body_entered" from="BombSpawner/SpawnArea" to="BombSpawner" method="_on_SpawnArea_body_entered"]
 [connection signal="timeout" from="Timers/AirTransition" to="." method="_on_AirTransition_timeout"]
 [connection signal="timeout" from="Timers/ReTarget" to="." method="_on_ReTarget_timeout"]

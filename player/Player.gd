@@ -923,12 +923,6 @@ func respawn() -> void:
 ##  ##  ##  ##  ##    ##  ##  ##  ##  ##  ##
 #####   ##  ##  ##    ##  ##  ##   ####   #####
 
-""" 
-I might want to prevent accumulating speed from multiple explosions,
-as it stands now the timing window is really rough to get a high jump from 2.
-Just an awkward 'mechanic' right now.
-"""
-
 func hit_by_explosion(explosion_center:Vector3) -> void:
 	# Check if bomb hit your shield
 	var travel_vector = (self.head_position - explosion_center).normalized()
@@ -941,11 +935,16 @@ func hit_by_explosion(explosion_center:Vector3) -> void:
 			shield.slide()
 			return
 	# Bomb did not hit your shield; apply damage.
-	velocity += travel_vector * 7.0
+	if is_locked():
+		# Prevent double bomb jump (already locked)
+		velocity = travel_vector * 7.0
+	else:
+		# Single bomb jump is valid though.
+		velocity += travel_vector * 7.0
+		
 	apply_damage(30)
 	
 func hit(collision:Dictionary) -> String:
-		
 	if collision.shape > 0: # hit shield
 		return "bounce"
 	else:
