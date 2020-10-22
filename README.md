@@ -122,9 +122,6 @@ Maybe:
 - Jewel (small)
 - Jewel (large)
 - Bomb subweapon
-
-#### `WIP`
-
 - Mysterious Mushroom (Resets the grass/dirt paths)
 
 #### `To Do`
@@ -132,6 +129,19 @@ Maybe:
 - Health Apple
 - Power Up
 - Keys
+- Swift Potion (or something that speeds you up)
+
+
+## Misc Actor Ideas 
+
+Balloon  
+1. (pop them, and something happens ... ????)
+2. grab onto them! if 1, slowly sink, if 2, stationary in mid air, if 3, rise up.
+3. affected by wind!
+  
+Fan  
+- creates wind
+
 
 ## Camera & Targeting system:
 
@@ -222,6 +232,7 @@ Maybe:
 - Unlock Melancholy by completing Full Game w/ Melanie.
 - Swap between Melancholy/Melanie by walking through a door in open space maybe. Could do cool-portal like effect where one side shows one character and the other shows the other.
 - Separate time trials for each character, to be expanded upon later.
+- Need to consider if this should be a thing at all, or go back to a traditional menu.
 
 ## Time Attack
 
@@ -259,6 +270,13 @@ TIP: MagicUV is a good plugin that can be used to make UVs for level geometry ap
 - Melanie will have plum colored hair, Melancholy a blue color. The eye color should be different, too.
 - Melancholy's heartbeat should be slower (seen in the UI).
 - Melancholy should look more tired and pale.
+
+
+## Conflicting Ideas to resolve:
+- Variance and adaptation vs RNG hell  
+- Customization, uniqueness, identity vs Cold calculated mathematical optimization  
+- Self contained levels vs persistent data (desire paths, time of day carrying thru stages)
+- Execution vs Thoughtfulness
 
 
 ## Current Limitations
