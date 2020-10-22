@@ -14,11 +14,11 @@ func _ready() -> void:
 	aabb_container.visible = false # hide debug thing
 	
 	# Signals
-	Events.connect("grass_material",   self, "process_grass")
-	Events.connect("debug_view",       self, "toggle_debug_view")
-	Events.connect("path_collision",   self, "on_path_collision")
-	Events.connect("quit_game",        self, "on_quit")
-	Events.connect("grass_data_reset", self, "clear_grass_data")
+	Events.connect("grass_material",      self, "process_grass")
+	Events.connect("debug_view",          self, "toggle_debug_view")
+	Events.connect("path_collision",      self, "on_path_collision")
+	Events.connect("quit_game",           self, "on_quit")
+	Events.connect("mysterious_mushroom", self, "clear_grass_data")
 	
 	# To recalculate textures after making changes, run create_data_images()
 	var f = File.new()

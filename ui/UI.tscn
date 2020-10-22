@@ -1,4 +1,4 @@
-[gd_scene load_steps=113 format=2]
+[gd_scene load_steps=115 format=2]
 
 [ext_resource path="res://ui/fonts/Roboto-Medium.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://ui/fonts/Roboto-Italic.ttf" type="DynamicFontData" id=2]
@@ -73,6 +73,7 @@
 [ext_resource path="res://ui/img/subweapon_bomb.png" type="Texture" id=71]
 [ext_resource path="res://ui/img/controller/inputdisplay/B_unlit.png" type="Texture" id=72]
 [ext_resource path="res://ui/img/joystick_configuration/stickpos.png" type="Texture" id=73]
+[ext_resource path="res://ui/ScreenColorFX.gd" type="Script" id=74]
 
 [sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
@@ -97,7 +98,22 @@ void fragment() {
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = SubResource( 1 )
-shader_param/fx_color = Color( 0.4, 0.3, 0, 0.5 )
+shader_param/fx_color = Color( 0.168627, 0.713726, 0.253799, 1 )
+
+[sub_resource type="Animation" id=40]
+resource_name = "fade"
+length = 0.5
+step = 0.0166667
+tracks/0/type = "bezier"
+tracks/0/path = NodePath(".:modulate:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PoolRealArray( 0, -0.25, 0, 0, 0.5, 1, -0.25, 0, 0.25, 0, 0, 0, 0.5, 0.25, 0 ),
+"times": PoolRealArray( 0, 0.25, 0.5 )
+}
 
 [sub_resource type="DynamicFont" id=3]
 size = 48
@@ -413,13 +429,17 @@ __meta__ = {
 }
 
 [node name="ScreenColorFX" type="ColorRect" parent="."]
-visible = false
+modulate = Color( 1, 1, 1, 0 )
 material = SubResource( 2 )
 margin_right = 1920.0
 margin_bottom = 1080.0
+script = ExtResource( 74 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Anim" type="AnimationPlayer" parent="ScreenColorFX"]
+anims/fade = SubResource( 40 )
 
 [node name="Paused" type="Node2D" parent="."]
 pause_mode = 2

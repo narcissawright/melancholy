@@ -12,7 +12,7 @@ signal jewel_cost_too_high
 signal error_no_subweapon
 signal path_collision # position:Vector3, velocity_length:float
 signal debug_view # true/false
-signal grass_data_reset
+signal mysterious_mushroom
 signal unpause_game
 signal quit_game
 signal grass_material #Material
