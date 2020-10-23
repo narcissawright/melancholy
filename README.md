@@ -262,6 +262,7 @@ TIP: MagicUV is a good plugin that can be used to make UVs for level geometry ap
 - There needs to be a level with 3 "laps" that are each somewhat different. I need to think about this level's structure more. but it is gonna happen.
 - There needs to be a typical ice level with slippery sections.
 - Some subweapons could be stage-specific? Like a level with a grappling hook that you can swing from.
+- "Fake Walls" like stuff you'd see in a game from the late 90s are ACCEPTABLE as long as there's a special passthrough effect and not just a fake surface.
 
 ## Character Design:
 - Melanie should have shorter hair than Melancholy. Neither character will have bangs.

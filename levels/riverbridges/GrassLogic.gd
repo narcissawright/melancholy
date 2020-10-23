@@ -32,8 +32,8 @@ func process_grass(grass_mat) -> void:
 	grass_material = grass_mat
 	
 	# Set shader params
-	$DebugTexture1.get_surface_material(0).albedo_texture = grass_data.aabb_tex
-	$DebugTexture2.get_surface_material(0).albedo_texture = grass_data.path_collision_tex
+	$"../picture_frame/grass_aabb_data_tex".get_surface_material(0).albedo_texture = grass_data.aabb_tex
+	#$DebugTexture2.get_surface_material(0).albedo_texture = grass_data.path_collision_tex
 	grass_material.set_shader_param('collision_data', grass_data.path_collision_tex)
 	grass_material.set_shader_param('block_size', block_size)
 	grass_material.set_shader_param("aabb_data", grass_data.aabb_tex)

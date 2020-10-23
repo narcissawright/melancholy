@@ -2,7 +2,7 @@
 
 [ext_resource path="res://backgrounds/starfield/Starfield.tscn" type="PackedScene" id=1]
 [ext_resource path="res://levels/riverbridges/riverbridges_geometry.glb" type="PackedScene" id=2]
-[ext_resource path="res://levels/riverbridges/ledgegrab_test.tscn" type="PackedScene" id=3]
+[ext_resource path="res://levels/riverbridges/picture_frame.tscn" type="PackedScene" id=3]
 [ext_resource path="res://actor/item_pickup/jewel/jewel_large.tscn" type="PackedScene" id=4]
 [ext_resource path="res://actor/item_pickup/jewel/jewel_small.tscn" type="PackedScene" id=5]
 [ext_resource path="res://actor/item_pickup/bomb/bomb.tscn" type="PackedScene" id=6]
@@ -98,11 +98,11 @@ surfaces/1 = {
 
 [sub_resource type="QuadMesh" id=4]
 
-[sub_resource type="SpatialMaterial" id=5]
+[sub_resource type="SpatialMaterial" id=6]
 flags_unshaded = true
 flags_do_not_receive_shadows = true
 
-[sub_resource type="SpatialMaterial" id=6]
+[sub_resource type="SpatialMaterial" id=5]
 flags_unshaded = true
 flags_do_not_receive_shadows = true
 
@@ -147,17 +147,19 @@ size = Vector3( 140, 7, 65 )
 [node name="DebugView" type="MeshInstance" parent="GrassLogic"]
 script = ExtResource( 16 )
 
-[node name="DebugTexture1" type="MeshInstance" parent="GrassLogic"]
-transform = Transform( -3.25841e-07, 0, -2, 0, 2, 0, 2, 0, -3.25841e-07, 9.95582, 1.98316, -3.94574 )
-visible = false
-mesh = SubResource( 4 )
-material/0 = SubResource( 5 )
-
 [node name="DebugTexture2" type="MeshInstance" parent="GrassLogic"]
 transform = Transform( -3.25841e-06, 0, 10, 0, 2, 0, -20, 0, -1.62921e-06, -9.85509, 1.87682, -28.9415 )
 visible = false
 mesh = SubResource( 4 )
 material/0 = SubResource( 6 )
+
+[node name="picture_frame" parent="." instance=ExtResource( 3 )]
+transform = Transform( -0.5, 0, -1.94707e-07, 0, 0.5, 0, 1.94707e-07, 0, -0.5, 10, 2.116, -3.977 )
+
+[node name="grass_aabb_data_tex" type="MeshInstance" parent="picture_frame"]
+transform = Transform( 9.77524e-07, 0, 2, 0, 2, 0, -2, 0, 9.77524e-07, 0.0614262, 0, 0 )
+mesh = SubResource( 4 )
+material/0 = SubResource( 5 )
 
 [node name="Environment" parent="." instance=ExtResource( 1 )]
 
@@ -172,10 +174,6 @@ material/0 = null
 
 [node name="CollisionShape" type="CollisionShape" parent="DummyBridge/StaticBody"]
 shape = SubResource( 8 )
-
-[node name="ledgegrab_test" parent="." instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 40.8538, 9.84111, 8.99923 )
-visible = false
 
 [node name="I am financially ruined" type="MeshInstance" parent="."]
 transform = Transform( 0.998275, 0, 0.058714, 0, 1, 0, -0.058714, 0, 0.998275, 45.5336, 7.6246, 14.8736 )
