@@ -1,5 +1,4 @@
 extends Node
-onready var aabb_container = $AABBs
 
 # Materials
 var grass_material:Material # grass floor surface that has shader params I need to set from here.
@@ -11,11 +10,9 @@ const block_size:float = 0.5
 var debug_mode = false
 
 func _ready() -> void:
-	aabb_container.visible = false # hide debug thing
-	
 	# Signals
-	Events.connect("grass_material",      self, "process_grass")
-	Events.connect("debug_view",          self, "toggle_debug_view")
+	Events.connect("grass_material",      self, "set_shader_params")
+#	Events.connect("debug_view",          self, "toggle_debug_view")
 	Events.connect("path_collision",      self, "on_path_collision")
 	Events.connect("quit_game",           self, "on_quit")
 	Events.connect("mysterious_mushroom", self, "clear_grass_data")
@@ -28,12 +25,12 @@ func _ready() -> void:
 		create_data_images()
 
 	
-func process_grass(grass_mat) -> void:
+func set_shader_params(grass_mat) -> void:
 	grass_material = grass_mat
 	
-	# Set shader params
+	# TODO: don't use hardcoded nodepath for this
 	$"../picture_frame/grass_aabb_data_tex".get_surface_material(0).albedo_texture = grass_data.aabb_tex
-	#$DebugTexture2.get_surface_material(0).albedo_texture = grass_data.path_collision_tex
+	#$path_collision_data_tex.get_surface_material(0).albedo_texture = grass_data.path_collision_tex
 	grass_material.set_shader_param('collision_data', grass_data.path_collision_tex)
 	grass_material.set_shader_param('block_size', block_size)
 	grass_material.set_shader_param("aabb_data", grass_data.aabb_tex)
@@ -44,7 +41,7 @@ func create_data_images() -> void:
 	var blocks_per_cubic_meter = pow((1.0 / block_size), 3)
 	
 	# Obtain data from AABBs
-	for child in aabb_container.get_children():
+	for child in $AABBs.get_children():
 		grass_data.aabb_array.append(AABB(child.position, child.size))
 		
 	# Sort AABBs by volume to do less containment checks on average
@@ -115,9 +112,9 @@ static func sort_by_volume(a:AABB, b:AABB) -> bool:
 		return true
 	return false
 
-func toggle_debug_view(state:bool) -> void:
-	debug_mode = state
-	aabb_container.visible = state
+#func toggle_debug_view(state:bool) -> void:
+#	debug_mode = state
+#	$AABBs.visible = state
 
 func determine_relevant_aabb(point:Vector3) -> int:
 	for i in range (grass_data.aabb_array.size()):

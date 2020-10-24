@@ -147,7 +147,7 @@ size = Vector3( 140, 7, 65 )
 [node name="DebugView" type="MeshInstance" parent="GrassLogic"]
 script = ExtResource( 16 )
 
-[node name="DebugTexture2" type="MeshInstance" parent="GrassLogic"]
+[node name="path_collision_data_tex" type="MeshInstance" parent="GrassLogic"]
 transform = Transform( -3.25841e-06, 0, 10, 0, 2, 0, -20, 0, -1.62921e-06, -9.85509, 1.87682, -28.9415 )
 visible = false
 mesh = SubResource( 4 )
