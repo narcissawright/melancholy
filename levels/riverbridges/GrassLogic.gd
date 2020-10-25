@@ -11,11 +11,14 @@ var debug_mode = false
 
 func _ready() -> void:
 	# Signals
+
+	# NOTE: GrassLogic must be a HIGHER SIBLING to get the 
+	# grass_material signal to come in in the proper order!
 	Events.connect("grass_material",      self, "set_shader_params")
-#	Events.connect("debug_view",          self, "toggle_debug_view")
 	Events.connect("path_collision",      self, "on_path_collision")
 	Events.connect("quit_game",           self, "on_quit")
 	Events.connect("mysterious_mushroom", self, "clear_grass_data")
+#	Events.connect("debug_view",          self, "toggle_debug_view")
 	
 	# To recalculate textures after making changes, run create_data_images()
 	var f = File.new()

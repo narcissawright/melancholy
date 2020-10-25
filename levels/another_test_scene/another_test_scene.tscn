@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://levels/another_test_scene/geometry.tscn" type="PackedScene" id=1]
 [ext_resource path="res://backgrounds/starfield/Starfield.tscn" type="PackedScene" id=2]
@@ -7,6 +7,27 @@
 [ext_resource path="res://levels/Actors.tscn" type="PackedScene" id=5]
 [ext_resource path="res://actor/item_pickup/cards/mooncard.tscn" type="PackedScene" id=6]
 [ext_resource path="res://actor/item_pickup/cards/suncard.tscn" type="PackedScene" id=7]
+
+[sub_resource type="BoxShape" id=1]
+
+[sub_resource type="CubeMesh" id=2]
+
+[sub_resource type="Animation" id=3]
+resource_name = "New Anim"
+length = 15.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:translation:y")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 5, 10, 15 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ -1.0, -11.0, -11.0, -1.0 ]
+}
 
 [node name="another_test_scene" type="Spatial"]
 
@@ -33,3 +54,17 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 0 )
 
 [node name="item_suncard" parent="Actors" instance=ExtResource( 7 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10 )
+
+[node name="KinematicBody" type="KinematicBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 31, -1, 0 )
+
+[node name="CollisionShape" type="CollisionShape" parent="KinematicBody"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="KinematicBody"]
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="KinematicBody"]
+playback_process_mode = 0
+"anims/New Anim" = SubResource( 3 )
