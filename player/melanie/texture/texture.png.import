@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/shield_shade.png-cfa6b1c338c074fe4d7e997c57293153.stex"
+path="res://.import/texture.png-0acf4aa4c2c834370a1d7f5a8e841c66.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://player/melanie/shield_shade.png"
-dest_files=[ "res://.import/shield_shade.png-cfa6b1c338c074fe4d7e997c57293153.stex" ]
+source_file="res://player/melanie/texture/texture.png"
+dest_files=[ "res://.import/texture.png-0acf4aa4c2c834370a1d7f5a8e841c66.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=true
+flags/repeat=0
 flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false

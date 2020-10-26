@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/noiseTexture.png-2882e0600b7c1e7521df61eb849a9d8d.s3tc.stex"
-path.etc2="res://.import/noiseTexture.png-2882e0600b7c1e7521df61eb849a9d8d.etc2.stex"
+path.s3tc="res://.import/cardigan_texture.png-6574808291def23da4ab55a796229c9b.s3tc.stex"
+path.etc2="res://.import/cardigan_texture.png-6574808291def23da4ab55a796229c9b.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://player/melanie/noiseTexture.png"
-dest_files=[ "res://.import/noiseTexture.png-2882e0600b7c1e7521df61eb849a9d8d.s3tc.stex", "res://.import/noiseTexture.png-2882e0600b7c1e7521df61eb849a9d8d.etc2.stex" ]
+source_file="res://player/melanie/texture/cardigan_texture.png"
+dest_files=[ "res://.import/cardigan_texture.png-6574808291def23da4ab55a796229c9b.s3tc.stex", "res://.import/cardigan_texture.png-6574808291def23da4ab55a796229c9b.etc2.stex" ]
 
 [params]
 
