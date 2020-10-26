@@ -71,9 +71,9 @@ func _physics_process(_t:float) -> void:
 	jumping_and_falling()
 	
 	var collision:KinematicCollision = move_and_collide(velocity * frame_time) # Apply Physics
-	
-	set_grounded(raycast.is_colliding()) # Check if grounded
+	#set_grounded(raycast.is_colliding()) # Check if grounded
 	handle_collision(collision) # Redirect velocity, check landing impact, etc
+	check_grounded() #Check if grounded
 	if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO # If velocity is very small, make it 0
 	walk_animation()
 	handle_player_rotation() # Make player face the correct direction
@@ -295,6 +295,7 @@ var ledgegrabbing:bool = false
 Known issues:
 	- no detection of where ledges end, which means you can move onto walls.
 	- bad detection with sloped walls
+	- clipping glitch
 """
 
 func check_ledgegrab():
@@ -379,8 +380,7 @@ func snap_to_ledge(raycast_result:Dictionary, height:float) -> void:
 	# find new transform origin.
 	""" 
 	WARNING
-	clipping glitch on low slope ledge
-	needs to be fixed
+	clipping glitch needs to be fixed.. sometimes you end up through a wall..
 	"""
 
 	var goal_translation := Vector3()
@@ -488,7 +488,10 @@ func jumping_and_falling() -> void:
 		return
 	
 	# Apply Gravity
-	velocity.y += Level.GRAVITY * frame_time
+	if grounded:
+		velocity.y = 0
+	else:
+		velocity.y += Level.GRAVITY * frame_time
 	
 	# Check for jumping
 	if not Player.is_locked():
@@ -529,6 +532,7 @@ func jumping_and_falling() -> void:
 							if shield.active: jump_velocity *= 0.5
 							velocity += jump_velocity
 							jump_state = "falling"
+							set_grounded(false)
 
 func initiate_jump() -> void:
 	jump_state = "jump_squat"
@@ -551,6 +555,7 @@ func normal_jump(stand_vs_run:float, late:bool) -> void:
 	if shield.active: jump_velocity *= 0.5
 	velocity += jump_velocity
 	jump_state = "falling"
+	set_grounded(false)
 
  #####  #####    ####   ##  ##  ##  ##  #####   ######  #####
 ##      ##  ##  ##  ##  ##  ##  ### ##  ##  ##  ##      ##  ##
@@ -562,16 +567,45 @@ var grounded:bool = true
 onready var raycast = $RayCast # Determines if the player is grounded or not
 onready var air_transition_timer = $Timers/AirTransition # Used to give jumps leniency when falling off of a ledge
 
-# Grounded State:
+
+func check_grounded() -> void:
+	if grounded:
+		var query := PhysicsShapeQueryParameters.new() # Collision Query for ledgegrab height
+		query.collision_mask = Layers.solid
+		var space_state = get_world().direct_space_state
+		query.set_shape($SphereCast.shape)
+		query.transform = $SphereCast.global_transform
+	
+		var motion:Vector3 = -$SphereCast.transform.origin + (Vector3.DOWN * 0.1)
+	
+		var travel = space_state.cast_motion(query, motion)[1]
+		query.transform.origin += travel * motion
+		if travel == 1:
+			set_grounded(false)
+			return
+		else:
+			if space_state.get_rest_info(query).normal.y < 0.785398: #0.78etc is 45 degrees in radians.
+				set_grounded(false)
+				return
+
+			global_transform.origin += (travel * motion) + (Vector3.UP * 0.45)
+			set_grounded(true)
+			return
+
+	#set_grounded(raycast.is_colliding())
+
 func set_grounded(state:bool) -> void:
 	if grounded != state:
 		if state == true:
+			$BodyCollision.disabled = true
 			# Transition to ground:
 			air_transition_timer.stop()
 			jump_state = "has_jump"
 			anim_state_machine.travel("BaseMovement")
+			velocity.y = 0
 		else:
 			# Transition to air:
+			$BodyCollision.disabled = false
 			air_transition_timer.start()
 			anim_state_machine.travel("Falling")
 	grounded = state
@@ -710,14 +744,7 @@ func process_subweapon() -> void:
 ##     ##  ##  ##     ##     ##      ##  ##  ##  ##  ## ###
  ####   ####   #####  #####  ##  #####   ##   ####   ##  ##
 
-var gather_collision_data = false
-var collision_locations = {}
 onready var collision_data_timer = $Timers/CollisionData
-
-# Collision Data for grass/paths
-var geometry_aabb:AABB
-var path_collision_img:Image
-var path_collision_tex:ImageTexture
 
 func handle_collision(collision:KinematicCollision) -> void:
 	# If a collision has occured:
@@ -729,80 +756,12 @@ func handle_collision(collision:KinematicCollision) -> void:
 		if impact > 12.5:
 			apply_damage(impact * 1.5)
 		
-#		if v_length > 5.0:
-#			Events.emit_signal("path_collision", collision.position, v_length)
-#
 		if collision_data_timer.is_stopped() and v_length > 5.0:
 			collision_data_timer.start()
 			Events.emit_signal("path_collision", collision.position, v_length) # emit collision info to environment
-
-""" 
-The code below here is for making dirt paths by running on grass.
-This code was neat to make but I actually have been perhaps convinced
-that a cleaner solution is to set vertex color data for grass mesh
-instead of storing this 3d image for the entire level AABB
-which is wasteful.
-
-Having the code here in the player script is maybe weird too,
-it could live elsewhere.
-"""
-
-#func _gather_collision_data():
-#	# Gather location information
-#	if collision_data_timer.is_stopped():
-#		if velocity.length() > 5.0:
-#			collision_data_timer.start()
-#			var position = translation.round()
-#			var offset = translation - position
-#
-#			var x_dir = sign(offset.x)
-#			var y_dir = sign(offset.y)
-#			var z_dir = sign(offset.z)
-#
-#			var locations = [
-#				position, 
-#				position + Vector3(0,     0,     z_dir),
-#				position + Vector3(0,     y_dir, 0    ),
-#				position + Vector3(0,     y_dir, z_dir),
-#				position + Vector3(x_dir, 0,     0    ),
-#				position + Vector3(x_dir, 0,     z_dir),
-#				position + Vector3(x_dir, y_dir, 0    ),
-#				position + Vector3(x_dir, y_dir, z_dir)
-#			]
-#
-#			for i in range (locations.size()):
-#				var index:int = get_collision_img_index(locations[i], geometry_aabb)
-#				var distance = (translation - locations[i]).length()
-#				var value:int = int((1.0 - distance) * 0x0F)
-#				if value > 0:
-#					set_collision_img_data(index, value)
-#
-#func get_collision_img_index(position:Vector3, aabb:AABB) -> int:
-#	var diff:Vector3 = position - aabb.position
-#	return int(diff.x + (diff.y * aabb.size.x) + (diff.z * aabb.size.x * aabb.size.y))
-#
-#func set_collision_img_data(index:int, value:int) -> void:
-#	var img_data = path_collision_img.data.data
-#	var old_value = img_data[index]
-#	var new_value = min(old_value + value, 0xFF)
-#	img_data.set(index, new_value)
-#	path_collision_img.data.data = img_data
-#	# warning-ignore:integer_division
-#	var y = index / 1024
-#	var x = index % 1024
-#	VisualServer.texture_set_data_partial(path_collision_tex.get_rid(), path_collision_img, x, y, 1, 1, x, y, 0)
-
-#""" This should run once per level at the start """
-#func set_geometry_aabb(aabb:AABB) -> void:
-#	gather_collision_data = true
-#	geometry_aabb = aabb
-#	var height = ceil((aabb.size.x+1) * (aabb.size.y+1) * (aabb.size.z+1) / 1024.0)
-#	path_collision_img = Image.new()
-#	path_collision_img.create(1024, height, false, Image.FORMAT_L8)
-#	path_collision_tex = ImageTexture.new()
-#	path_collision_tex.create_from_image(path_collision_img, 0)
-#	$TextureRect.texture = path_collision_tex
-#	Level.get_node("level1/Geometry").get_surface_material(0).set_shader_param("collision_data", path_collision_tex)
+		
+		if not grounded and collision.normal.y > 0.785398: # 45 degrees in radians
+			set_grounded(true)
 
 #####    ####   ######   ####   ######  ##   ####   ##  ##
 ##  ##  ##  ##    ##    ##  ##    ##    ##  ##  ##  ### ##
@@ -927,7 +886,8 @@ func hit_by_explosion(explosion_center:Vector3) -> void:
 	# Check if bomb hit your shield
 	var travel_vector = (self.head_position - explosion_center).normalized()
 	var space_state = get_world().direct_space_state
-	var result = space_state.intersect_ray(explosion_center, self.head_position, [], Layers.actor)
+	var body_position = global_transform.origin + Vector3.UP
+	var result = space_state.intersect_ray(explosion_center, body_position, [], Layers.actor)
 	if result.size() > 0:
 		if result.shape > 0:
 			# hit shield
@@ -1022,9 +982,7 @@ func debug() -> void:
 	#Debug.text.write('Jumphold Framecount: ' + str(jumphold_framecount) + '/10')
 	Debug.text.newline()
 	Debug.text.write('Interactables: ' + str(interactables.list))
-	Debug.text.newline()
-	Debug.text.write("Collision Locations:")
-	Debug.text.write(str(collision_locations))
+
 	# Debug Draw
 #	Debug.draw.begin(Mesh.PRIMITIVE_LINES)
 #	Debug.draw.add_vertex(Game.player.head_position)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=2]
+[gd_scene load_steps=44 format=2]
 
 [ext_resource path="res://player/melanie/Shield.gd" type="Script" id=1]
 [ext_resource path="res://player/melanie/BombSpawner.gd" type="Script" id=2]
@@ -106,6 +106,13 @@ graph_offset = Vector2( -58, 83.1241 )
 [sub_resource type="CapsuleShape" id=25]
 radius = 0.2
 height = 1.37
+
+[sub_resource type="SphereShape" id=33]
+radius = 0.1
+
+[sub_resource type="CylinderShape" id=34]
+radius = 0.2
+height = 1.0
 
 [sub_resource type="BoxShape" id=26]
 extents = Vector3( 0.1, 0.2, 0.05 )
@@ -407,6 +414,16 @@ cast_to = Vector3( 0, -0.11, 0 )
 [node name="BodyCollision" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0.885, 0 )
 shape = SubResource( 25 )
+disabled = true
+
+[node name="SphereCast" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
+shape = SubResource( 33 )
+disabled = true
+
+[node name="BodyCollision2" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+shape = SubResource( 34 )
 
 [node name="ShieldCollision" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0 )

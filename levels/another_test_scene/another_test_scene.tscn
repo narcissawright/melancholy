@@ -55,16 +55,17 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 0 )
 [node name="item_suncard" parent="Actors" instance=ExtResource( 7 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10 )
 
-[node name="KinematicBody" type="KinematicBody" parent="."]
+[node name="Elevator" type="KinematicBody" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 31, -1, 0 )
 
-[node name="CollisionShape" type="CollisionShape" parent="KinematicBody"]
+[node name="CollisionShape" type="CollisionShape" parent="Elevator"]
 shape = SubResource( 1 )
 
-[node name="MeshInstance" type="MeshInstance" parent="KinematicBody"]
+[node name="MeshInstance" type="MeshInstance" parent="Elevator"]
 mesh = SubResource( 2 )
 material/0 = null
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="KinematicBody"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Elevator"]
+autoplay = "New Anim"
 playback_process_mode = 0
 "anims/New Anim" = SubResource( 3 )
