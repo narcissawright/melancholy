@@ -548,7 +548,8 @@ func initiate_jump() -> void:
 			floor_normal = floor_normal.linear_interpolate(Vector3.UP, 0.5)
 	else:
 		floor_normal = Vector3.UP
-	anim_state_machine.travel("Jump")
+	if not shield.active:
+		anim_state_machine.travel("Jump")
 
 func normal_jump(stand_vs_run:float, late:bool) -> void:
 	var jump_velocity:Vector3 = floor_normal * (9.0 + 2.0 * (1.0 - (stand_vs_run)))
@@ -561,6 +562,31 @@ func normal_jump(stand_vs_run:float, late:bool) -> void:
 	jump_state = "falling"
 	set_grounded(false)
 
+ ####   ####   ##     ##     ##   #####  ##   ####   ##  ##
+##     ##  ##  ##     ##     ##  ##      ##  ##  ##  ### ##
+##     ##  ##  ##     ##     ##   ####   ##  ##  ##  ######
+##     ##  ##  ##     ##     ##      ##  ##  ##  ##  ## ###
+ ####   ####   #####  #####  ##  #####   ##   ####   ##  ##
+
+onready var collision_data_timer = $Timers/CollisionData
+
+func handle_collision(collision:KinematicCollision) -> void:
+	# If a collision has occured:
+	if collision:
+		var impact:float = velocity.length()
+		velocity = velocity.slide(collision.normal)
+		var v_length = velocity.length()
+		impact -= v_length
+		if impact > 12.5:
+			apply_damage(impact * 1.5)
+		
+		if collision_data_timer.is_stopped() and v_length > 5.0:
+			collision_data_timer.start()
+			Events.emit_signal("path_collision", collision.position, v_length) # emit collision info to environment
+		
+		if not grounded and collision.normal.y > 0.785398: # 45 degrees in radians
+			set_grounded(true)
+
  #####  #####    ####   ##  ##  ##  ##  #####   ######  #####
 ##      ##  ##  ##  ##  ##  ##  ### ##  ##  ##  ##      ##  ##
 ## ###  #####   ##  ##  ##  ##  ######  ##  ##  #####   ##  ##
@@ -569,16 +595,17 @@ func normal_jump(stand_vs_run:float, late:bool) -> void:
 
 var grounded:bool = true
 onready var air_transition_timer = $Timers/AirTransition # Used to give jumps leniency when falling off of a ledge
+onready var spherecast = $SphereCast
 
 func check_if_still_grounded() -> void:
 	if grounded:
 		var query := PhysicsShapeQueryParameters.new() # Collision Query for ledgegrab height
 		query.collision_mask = Layers.solid
 		var space_state = get_world().direct_space_state
-		query.set_shape($SphereCast.shape)
-		query.transform = $SphereCast.global_transform
+		query.set_shape(spherecast.shape)
+		query.transform = spherecast.global_transform
 	
-		var motion:Vector3 = -$SphereCast.transform.origin + (Vector3.DOWN * 0.1)
+		var motion:Vector3 = -spherecast.transform.origin + (Vector3.DOWN * 0.1)
 	
 		var travel = space_state.cast_motion(query, motion)[1]
 		query.transform.origin += travel * motion
@@ -589,8 +616,8 @@ func check_if_still_grounded() -> void:
 			if space_state.get_rest_info(query).normal.y < 0.785398: #0.78etc is 45 degrees in radians.
 				set_grounded(false)
 				return
-			global_transform.origin += (travel * motion) + (Vector3.UP * 0.45)
-			set_grounded(true)
+			global_transform.origin += travel * motion
+			global_transform.origin += Vector3.UP * (spherecast.translation.y - spherecast.shape.radius * 0.5)
 
 func set_grounded(state:bool) -> void:
 	if grounded != state:
@@ -599,13 +626,15 @@ func set_grounded(state:bool) -> void:
 			# Transition to ground:
 			air_transition_timer.stop()
 			jump_state = "has_jump"
-			anim_state_machine.travel("BaseMovement")
+			if not shield.active:
+				anim_state_machine.travel("BaseMovement")
 			velocity.y = 0
 		else:
 			# Transition to air:
 			$BodyCollision.disabled = false
 			air_transition_timer.start()
-			anim_state_machine.travel("Falling")
+			if not shield.active:
+				anim_state_machine.travel("Falling")
 	grounded = state
 
 # Jump leniency when falling off ledges
@@ -735,31 +764,6 @@ func process_subweapon() -> void:
 			bombspawner.translation.z = -bomb_pos.translation.z
 			bombspawner.translation.x = -bomb_pos.translation.x
 			bombspawner.process_state()
- 
- ####   ####   ##     ##     ##   #####  ##   ####   ##  ##
-##     ##  ##  ##     ##     ##  ##      ##  ##  ##  ### ##
-##     ##  ##  ##     ##     ##   ####   ##  ##  ##  ######
-##     ##  ##  ##     ##     ##      ##  ##  ##  ##  ## ###
- ####   ####   #####  #####  ##  #####   ##   ####   ##  ##
-
-onready var collision_data_timer = $Timers/CollisionData
-
-func handle_collision(collision:KinematicCollision) -> void:
-	# If a collision has occured:
-	if collision:
-		var impact:float = velocity.length()
-		velocity = velocity.slide(collision.normal)
-		var v_length = velocity.length()
-		impact -= v_length
-		if impact > 12.5:
-			apply_damage(impact * 1.5)
-		
-		if collision_data_timer.is_stopped() and v_length > 5.0:
-			collision_data_timer.start()
-			Events.emit_signal("path_collision", collision.position, v_length) # emit collision info to environment
-		
-		if not grounded and collision.normal.y > 0.785398: # 45 degrees in radians
-			set_grounded(true)
 
 #####    ####   ######   ####   ######  ##   ####   ##  ##
 ##  ##  ##  ##    ##    ##  ##    ##    ##  ##  ##  ### ##
@@ -882,15 +886,19 @@ func respawn() -> void:
 
 func hit_by_explosion(explosion_center:Vector3) -> void:
 	# Check if bomb hit your shield
-	var travel_vector = (self.head_position - explosion_center).normalized()
-	var space_state = get_world().direct_space_state
 	var body_position = global_transform.origin + Vector3.UP
+	var travel_vector = (body_position - explosion_center).normalized()
+	var space_state = get_world().direct_space_state
 	var result = space_state.intersect_ray(explosion_center, body_position, [], Layers.actor)
+	
 	if result.size() > 0:
-		if result.shape > 0:
+		if result.shape == 2:
 			# hit shield
-			velocity += Player.forwards() * -14.0
-			shield.slide()
+			if not shield.sliding:
+				velocity += Player.forwards() * -20.0
+				shield.slide()
+				anim_state_machine.travel("ShieldMovement")
+				jump_state = 'has_jump'
 			return
 	# Bomb did not hit your shield; apply damage.
 	if is_locked():
@@ -899,6 +907,9 @@ func hit_by_explosion(explosion_center:Vector3) -> void:
 	else:
 		# Single bomb jump is valid though.
 		velocity += travel_vector * 7.0
+	
+	if velocity.y > 0:
+		set_grounded(false)
 		
 	apply_damage(30)
 	

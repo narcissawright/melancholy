@@ -61,7 +61,10 @@ func _physics_process(_t:float) -> void:
 
 func exit_shield_state() -> void:
 	if Player.anim_state_machine.get_current_node() == "ShieldMovement":
-		Player.anim_state_machine.travel("BaseMovement")
+		if Player.grounded:
+			Player.anim_state_machine.travel("BaseMovement")
+		else:
+			Player.anim_state_machine.travel("Falling")
 
 func slide() -> void:
 	active = true

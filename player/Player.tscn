@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=2]
+[gd_scene load_steps=44 format=2]
 
 [ext_resource path="res://player/melanie/Shield.gd" type="Script" id=1]
 [ext_resource path="res://player/melanie/BombSpawner.gd" type="Script" id=2]
@@ -107,17 +107,8 @@ graph_offset = Vector2( -58, 83.1241 )
 radius = 0.2
 height = 1.37
 
-[sub_resource type="CylinderShape" id=38]
-radius = 0.2
-height = 1.0
-
 [sub_resource type="CapsuleShape" id=39]
 radius = 0.2
-height = 0.5
-
-[sub_resource type="CapsuleShape" id=40]
-radius = 0.2
-height = 0.5
 
 [sub_resource type="BoxShape" id=41]
 extents = Vector3( 0.1, 0.2, 0.05 )
@@ -422,24 +413,9 @@ __meta__ = {
 "_editor_description_": "For use in air."
 }
 
-[node name="BodyCollision2" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
-shape = SubResource( 38 )
-disabled = true
-__meta__ = {
-"_editor_description_": "For use when grounded (allows stepping up)."
-}
-
-[node name="BodyCollision3" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 1.32, 0 )
+[node name="KneeToHead" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 1.07, 0 )
 shape = SubResource( 39 )
-__meta__ = {
-"_editor_description_": "For use in air."
-}
-
-[node name="BodyCollision4" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0.855858, 0 )
-shape = SubResource( 40 )
 __meta__ = {
 "_editor_description_": "For use in air."
 }
@@ -450,7 +426,7 @@ shape = SubResource( 41 )
 disabled = true
 
 [node name="SphereCast" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.470228, 0 )
 shape = SubResource( 42 )
 disabled = true
 __meta__ = {

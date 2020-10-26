@@ -17,7 +17,7 @@ surfaces/0 = {
 "vertex_count": 1136
 }
 
-[sub_resource type="Shader" id=4]
+[sub_resource type="Shader" id=2]
 code = "shader_type spatial;
 render_mode cull_front, unshaded;
 
@@ -91,14 +91,14 @@ void fragment() {
 	}
 }"
 
-[sub_resource type="ShaderMaterial" id=2]
-shader = SubResource( 4 )
+[sub_resource type="ShaderMaterial" id=3]
+shader = SubResource( 2 )
 shader_param/opacity = 1.0
 shader_param/outline_width = 1.75
 shader_param/main_tex = ExtResource( 1 )
 shader_param/cardigan = ExtResource( 4 )
 
-[sub_resource type="Shader" id=3]
+[sub_resource type="Shader" id=4]
 code = "shader_type spatial;
 render_mode ambient_light_disabled;
 
@@ -202,8 +202,8 @@ void light() {
 "
 
 [sub_resource type="ShaderMaterial" id=5]
-next_pass = SubResource( 2 )
-shader = SubResource( 3 )
+next_pass = SubResource( 3 )
+shader = SubResource( 4 )
 shader_param/opacity = 1.0
 shader_param/soft_shading = false
 shader_param/damaged = false
