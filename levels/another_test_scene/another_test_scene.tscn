@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://levels/another_test_scene/geometry.tscn" type="PackedScene" id=1]
 [ext_resource path="res://backgrounds/starfield/Starfield.tscn" type="PackedScene" id=2]
@@ -27,6 +27,23 @@ tracks/0/keys = {
 "transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 0,
 "values": [ -1.0, -11.0, -11.0, -1.0 ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "New Anim"
+length = 15.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:translation:x")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 5, 10, 15 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 26.0, 16.0, 16.0, 26.0 ]
 }
 
 [node name="another_test_scene" type="Spatial"]
@@ -69,3 +86,18 @@ material/0 = null
 autoplay = "New Anim"
 playback_process_mode = 0
 "anims/New Anim" = SubResource( 3 )
+
+[node name="Elevator2" type="KinematicBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 26.7812, -0.0902948, 25.75 )
+
+[node name="CollisionShape" type="CollisionShape" parent="Elevator2"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Elevator2"]
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Elevator2"]
+autoplay = "New Anim"
+playback_process_mode = 0
+"anims/New Anim" = SubResource( 4 )

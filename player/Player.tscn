@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=2]
+[gd_scene load_steps=46 format=2]
 
 [ext_resource path="res://player/melanie/Shield.gd" type="Script" id=1]
 [ext_resource path="res://player/melanie/BombSpawner.gd" type="Script" id=2]
@@ -107,15 +107,23 @@ graph_offset = Vector2( -58, 83.1241 )
 radius = 0.2
 height = 1.37
 
-[sub_resource type="SphereShape" id=33]
-radius = 0.1
-
 [sub_resource type="CylinderShape" id=34]
 radius = 0.2
 height = 1.0
 
+[sub_resource type="CapsuleShape" id=35]
+radius = 0.2
+height = 0.5
+
+[sub_resource type="CapsuleShape" id=36]
+radius = 0.2
+height = 0.5
+
 [sub_resource type="BoxShape" id=26]
 extents = Vector3( 0.1, 0.2, 0.05 )
+
+[sub_resource type="SphereShape" id=33]
+radius = 0.1
 
 [sub_resource type="Animation" id=27]
 length = 0.266667
@@ -406,29 +414,48 @@ parameters/ShieldMovement/playback = SubResource( 24 )
 [node name="MelanieModel" parent="." instance=ExtResource( 10 )]
 transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0 )
 
-[node name="RayCast" type="RayCast" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0 )
-enabled = true
-cast_to = Vector3( 0, -0.11, 0 )
-
 [node name="BodyCollision" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0.885, 0 )
 shape = SubResource( 25 )
+disabled = true
+__meta__ = {
+"_editor_description_": "For use in air."
+}
+
+[node name="BodyCollision2" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+shape = SubResource( 34 )
+disabled = true
+__meta__ = {
+"_editor_description_": "For use when grounded (allows stepping up)."
+}
+
+[node name="BodyCollision3" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 1.32, 0 )
+shape = SubResource( 35 )
+__meta__ = {
+"_editor_description_": "For use in air."
+}
+
+[node name="BodyCollision4" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0.855858, 0 )
+shape = SubResource( 36 )
+__meta__ = {
+"_editor_description_": "For use in air."
+}
+
+[node name="ShieldCollision" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0 )
+shape = SubResource( 26 )
 disabled = true
 
 [node name="SphereCast" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
 shape = SubResource( 33 )
 disabled = true
-
-[node name="BodyCollision2" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
-shape = SubResource( 34 )
-
-[node name="ShieldCollision" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0 )
-shape = SubResource( 26 )
-disabled = true
+__meta__ = {
+"_editor_description_": "I grab the shape and translation for physics queries; this collisionshape remains disabled though."
+}
 
 [node name="ShieldMesh" parent="." instance=ExtResource( 7 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0.85, 0.13 )

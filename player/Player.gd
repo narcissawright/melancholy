@@ -73,7 +73,7 @@ func _physics_process(_t:float) -> void:
 	var collision:KinematicCollision = move_and_collide(velocity * frame_time) # Apply Physics
 	#set_grounded(raycast.is_colliding()) # Check if grounded
 	handle_collision(collision) # Redirect velocity, check landing impact, etc
-	check_grounded() #Check if grounded
+	check_if_still_grounded() #Check if still grounded
 	if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO # If velocity is very small, make it 0
 	walk_animation()
 	handle_player_rotation() # Make player face the correct direction
@@ -538,8 +538,12 @@ func initiate_jump() -> void:
 	jump_state = "jump_squat"
 	jumpsquat_framecount = 0
 	shorthop = false
-	if raycast.is_colliding():
-		floor_normal = raycast.get_collision_normal()
+	
+	var space_state = get_world().direct_space_state
+	var result:Dictionary = space_state.intersect_ray(global_transform.origin + (Vector3.UP * 0.1), global_transform.origin + (Vector3.DOWN * 0.2), [], Layers.solid)
+	
+	if not result.empty():
+		floor_normal = result.normal
 		if floor_normal != Vector3.UP:
 			floor_normal = floor_normal.linear_interpolate(Vector3.UP, 0.5)
 	else:
@@ -564,11 +568,9 @@ func normal_jump(stand_vs_run:float, late:bool) -> void:
  ####   ##  ##   ####    ####   ##  ##  #####   ######  #####
 
 var grounded:bool = true
-onready var raycast = $RayCast # Determines if the player is grounded or not
 onready var air_transition_timer = $Timers/AirTransition # Used to give jumps leniency when falling off of a ledge
 
-
-func check_grounded() -> void:
+func check_if_still_grounded() -> void:
 	if grounded:
 		var query := PhysicsShapeQueryParameters.new() # Collision Query for ledgegrab height
 		query.collision_mask = Layers.solid
@@ -587,12 +589,8 @@ func check_grounded() -> void:
 			if space_state.get_rest_info(query).normal.y < 0.785398: #0.78etc is 45 degrees in radians.
 				set_grounded(false)
 				return
-
 			global_transform.origin += (travel * motion) + (Vector3.UP * 0.45)
 			set_grounded(true)
-			return
-
-	#set_grounded(raycast.is_colliding())
 
 func set_grounded(state:bool) -> void:
 	if grounded != state:
