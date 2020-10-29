@@ -67,8 +67,10 @@ func _physics_process(_t:float) -> void:
 	update_target_state() # ZL Targeting
 	
 	check_ledgegrab()
-	update_horizontal_velocity() # General movement
-	jumping_and_falling()
+	check_crouch()
+	if not ledgegrabbing:
+		update_horizontal_velocity() # General movement
+		jumping_and_falling()
 	
 	var collision:KinematicCollision = move_and_collide(velocity * frame_time) # Apply Physics
 	#set_grounded(raycast.is_colliding()) # Check if grounded
@@ -399,6 +401,33 @@ func snap_to_ledge(raycast_result:Dictionary, height:float) -> void:
 		
 	ledgegrab_tween.start()
 
+ ####  #####    ####   ##  ##   ####  ##  ##
+##     ##  ##  ##  ##  ##  ##  ##     ##  ##
+##     #####   ##  ##  ##  ##  ##     ######
+##     ##  ##  ##  ##  ##  ##  ##     ##  ##
+ ####  ##  ##   ####    ####    ####  ##  ##
+
+var crouching = false
+func check_crouch() -> void:
+	if not crouching:
+		if grounded and Input.is_action_pressed("crouch"):
+			enter_crouch()
+			return
+	
+	if Input.is_action_just_released("crouch"):
+		leave_crouch()
+	elif anim_state_machine.get_current_node() != "Crouch":
+		crouching = false
+		
+func enter_crouch() -> void:
+	crouching = true
+	anim_state_machine.travel("Crouch")
+	
+func leave_crouch() -> void:
+	crouching = false
+	anim_state_machine.travel("BaseMovement")
+
+
 ##  ##        ##  ##  #####  ##     ####    ####  ##  ######  ##  ##
 ##  ##        ##  ##  ##     ##    ##  ##  ##     ##    ##    ##  ##
 ######  ####  ##  ##  ####   ##    ##  ##  ##     ##    ##     ####
@@ -411,8 +440,6 @@ func horizontal_velocity() -> Vector3:
 	return Vector3(velocity.x, 0, velocity.z)
 
 func update_horizontal_velocity() -> void:
-	if ledgegrabbing:
-		return
 	if jump_state == "jump_squat":
 		return
 	
@@ -482,10 +509,8 @@ func check_buffer_jump() -> void:
 		buffer_jump_timer.start(0.1)
 
 func jumping_and_falling() -> void:
-	check_buffer_jump()
 	
-	if ledgegrabbing:
-		return
+	check_buffer_jump()
 	
 	# Apply Gravity
 	if grounded:

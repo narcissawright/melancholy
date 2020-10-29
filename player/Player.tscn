@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=2]
+[gd_scene load_steps=47 format=2]
 
 [ext_resource path="res://player/melanie/Shield.gd" type="Script" id=1]
 [ext_resource path="res://player/melanie/BombSpawner.gd" type="Script" id=2]
@@ -20,6 +20,9 @@ nodes/TimeScale/node = SubResource( 1 )
 nodes/TimeScale/position = Vector2( 440, 120 )
 nodes/output/position = Vector2( 640, 120 )
 node_connections = [ "output", 0, "TimeScale", "TimeScale", 0, "BlendSpace2D" ]
+
+[sub_resource type="AnimationNodeAnimation" id=44]
+animation = "Crouch"
 
 [sub_resource type="AnimationNodeAnimation" id=3]
 animation = "Falling"
@@ -81,9 +84,17 @@ auto_advance = true
 [sub_resource type="AnimationNodeStateMachineTransition" id=21]
 auto_advance = true
 
+[sub_resource type="AnimationNodeStateMachineTransition" id=45]
+xfade_time = 0.1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=46]
+xfade_time = 0.1
+
 [sub_resource type="AnimationNodeStateMachine" id=22]
 states/BaseMovement/node = SubResource( 2 )
 states/BaseMovement/position = Vector2( 297, 194 )
+states/Crouch/node = SubResource( 44 )
+states/Crouch/position = Vector2( 151, 70.1241 )
 states/Falling/node = SubResource( 3 )
 states/Falling/position = Vector2( 68, 267 )
 states/Jump/node = SubResource( 4 )
@@ -94,9 +105,9 @@ states/Land/node = SubResource( 6 )
 states/Land/position = Vector2( 245, 261.02 )
 states/ShieldMovement/node = SubResource( 13 )
 states/ShieldMovement/position = Vector2( 609, 194 )
-transitions = [ "BaseMovement", "ShieldMovement", SubResource( 14 ), "ShieldMovement", "BaseMovement", SubResource( 15 ), "Land", "BaseMovement", SubResource( 16 ), "BaseMovement", "Jumpsquat", SubResource( 17 ), "Jumpsquat", "Jump", SubResource( 18 ), "BaseMovement", "Falling", SubResource( 19 ), "Falling", "Land", SubResource( 20 ), "Jump", "Falling", SubResource( 21 ) ]
+transitions = [ "BaseMovement", "ShieldMovement", SubResource( 14 ), "ShieldMovement", "BaseMovement", SubResource( 15 ), "Land", "BaseMovement", SubResource( 16 ), "BaseMovement", "Jumpsquat", SubResource( 17 ), "Jumpsquat", "Jump", SubResource( 18 ), "BaseMovement", "Falling", SubResource( 19 ), "Falling", "Land", SubResource( 20 ), "Jump", "Falling", SubResource( 21 ), "BaseMovement", "Crouch", SubResource( 45 ), "Crouch", "BaseMovement", SubResource( 46 ) ]
 start_node = "BaseMovement"
-graph_offset = Vector2( -83, 67.1241 )
+graph_offset = Vector2( -103, -39.8759 )
 
 [sub_resource type="AnimationNodeStateMachinePlayback" id=36]
 
