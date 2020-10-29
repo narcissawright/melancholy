@@ -47,6 +47,7 @@ onready var anim_tree = $AnimationTree
 ##  ##  ######  ##  ##  #####     ##
 
 func _ready() -> void:
+	
 	anim_state_machine = anim_tree['parameters/playback']
 	initialize_checkpoint_state()
 	lockplayer_for_frames(20)

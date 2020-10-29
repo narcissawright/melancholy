@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=2]
+[gd_scene load_steps=31 format=2]
 
 [ext_resource path="res://backgrounds/starfield/Starfield.tscn" type="PackedScene" id=1]
 [ext_resource path="res://levels/riverbridges/riverbridges_geometry.glb" type="PackedScene" id=2]
@@ -17,8 +17,10 @@
 [ext_resource path="res://global/debug/DebugFillMaterial.tres" type="Material" id=15]
 [ext_resource path="res://levels/riverbridges/DebugView.gd" type="Script" id=16]
 [ext_resource path="res://actor/item_pickup/mysterious_mushroom/mysterious_mushroom.tscn" type="PackedScene" id=17]
+[ext_resource path="res://levels/riverbridges/grass.mesh" type="ArrayMesh" id=18]
+[ext_resource path="res://levels/riverbridges/MultiMeshInstance.gd" type="Script" id=19]
 
-[sub_resource type="ArrayMesh" id=11]
+[sub_resource type="ArrayMesh" id=1]
 surfaces/0 = {
 "aabb": AABB( -16, 8, -65, 95, 7, 45 ),
 "array_data": PoolByteArray( 0, 0, 128, 193, 0, 0, 0, 65, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 158, 66, 0, 0, 0, 65, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 158, 66, 0, 0, 0, 65, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 158, 66, 0, 0, 112, 65, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 158, 66, 0, 0, 0, 65, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 158, 66, 0, 0, 0, 65, 0, 0, 160, 193, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 0, 65, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 112, 65, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 112, 65, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 158, 66, 0, 0, 112, 65, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 112, 65, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 112, 65, 0, 0, 160, 193, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 0, 65, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 0, 65, 0, 0, 160, 193, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 0, 65, 0, 0, 160, 193, 153, 102, 255, 255, 0, 0, 158, 66, 0, 0, 0, 65, 0, 0, 160, 193, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 0, 65, 0, 0, 160, 193, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 112, 65, 0, 0, 160, 193, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 112, 65, 0, 0, 160, 193, 153, 102, 255, 255, 0, 0, 158, 66, 0, 0, 112, 65, 0, 0, 160, 193, 153, 102, 255, 255, 0, 0, 158, 66, 0, 0, 112, 65, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 158, 66, 0, 0, 112, 65, 0, 0, 160, 193, 153, 102, 255, 255, 0, 0, 158, 66, 0, 0, 0, 65, 0, 0, 160, 193, 153, 102, 255, 255, 0, 0, 158, 66, 0, 0, 112, 65, 0, 0, 160, 193, 153, 102, 255, 255 ),
@@ -44,7 +46,7 @@ surfaces/1 = {
 "vertex_count": 36
 }
 
-[sub_resource type="ArrayMesh" id=12]
+[sub_resource type="ArrayMesh" id=2]
 surfaces/0 = {
 "aabb": AABB( -16, -2, -65, 100, 5, 80 ),
 "array_data": PoolByteArray( 0, 0, 128, 193, 0, 0, 0, 192, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 168, 66, 0, 0, 0, 192, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 168, 66, 0, 0, 0, 192, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 168, 66, 0, 0, 64, 64, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 168, 66, 0, 0, 0, 192, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 168, 66, 0, 0, 0, 192, 0, 0, 112, 65, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 0, 192, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 64, 64, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 64, 64, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 168, 66, 0, 0, 64, 64, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 64, 64, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 64, 64, 0, 0, 112, 65, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 0, 192, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 0, 192, 0, 0, 112, 65, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 0, 192, 0, 0, 112, 65, 153, 102, 255, 255, 0, 0, 168, 66, 0, 0, 0, 192, 0, 0, 112, 65, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 0, 192, 0, 0, 112, 65, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 64, 64, 0, 0, 112, 65, 153, 102, 255, 255, 0, 0, 128, 193, 0, 0, 64, 64, 0, 0, 112, 65, 153, 102, 255, 255, 0, 0, 168, 66, 0, 0, 64, 64, 0, 0, 112, 65, 153, 102, 255, 255, 0, 0, 168, 66, 0, 0, 64, 64, 0, 0, 130, 194, 153, 102, 255, 255, 0, 0, 168, 66, 0, 0, 64, 64, 0, 0, 112, 65, 153, 102, 255, 255, 0, 0, 168, 66, 0, 0, 0, 192, 0, 0, 112, 65, 153, 102, 255, 255, 0, 0, 168, 66, 0, 0, 64, 64, 0, 0, 112, 65, 153, 102, 255, 255 ),
@@ -70,7 +72,7 @@ surfaces/1 = {
 "vertex_count": 36
 }
 
-[sub_resource type="ArrayMesh" id=13]
+[sub_resource type="ArrayMesh" id=3]
 surfaces/0 = {
 "aabb": AABB( -18, 4, -18, 140, 7, 65 ),
 "array_data": PoolByteArray( 0, 0, 144, 193, 0, 0, 128, 64, 0, 0, 144, 193, 153, 102, 255, 255, 0, 0, 244, 66, 0, 0, 128, 64, 0, 0, 144, 193, 153, 102, 255, 255, 0, 0, 244, 66, 0, 0, 128, 64, 0, 0, 144, 193, 153, 102, 255, 255, 0, 0, 244, 66, 0, 0, 48, 65, 0, 0, 144, 193, 153, 102, 255, 255, 0, 0, 244, 66, 0, 0, 128, 64, 0, 0, 144, 193, 153, 102, 255, 255, 0, 0, 244, 66, 0, 0, 128, 64, 0, 0, 60, 66, 153, 102, 255, 255, 0, 0, 144, 193, 0, 0, 128, 64, 0, 0, 144, 193, 153, 102, 255, 255, 0, 0, 144, 193, 0, 0, 48, 65, 0, 0, 144, 193, 153, 102, 255, 255, 0, 0, 144, 193, 0, 0, 48, 65, 0, 0, 144, 193, 153, 102, 255, 255, 0, 0, 244, 66, 0, 0, 48, 65, 0, 0, 144, 193, 153, 102, 255, 255, 0, 0, 144, 193, 0, 0, 48, 65, 0, 0, 144, 193, 153, 102, 255, 255, 0, 0, 144, 193, 0, 0, 48, 65, 0, 0, 60, 66, 153, 102, 255, 255, 0, 0, 144, 193, 0, 0, 128, 64, 0, 0, 144, 193, 153, 102, 255, 255, 0, 0, 144, 193, 0, 0, 128, 64, 0, 0, 60, 66, 153, 102, 255, 255, 0, 0, 144, 193, 0, 0, 128, 64, 0, 0, 60, 66, 153, 102, 255, 255, 0, 0, 244, 66, 0, 0, 128, 64, 0, 0, 60, 66, 153, 102, 255, 255, 0, 0, 144, 193, 0, 0, 128, 64, 0, 0, 60, 66, 153, 102, 255, 255, 0, 0, 144, 193, 0, 0, 48, 65, 0, 0, 60, 66, 153, 102, 255, 255, 0, 0, 144, 193, 0, 0, 48, 65, 0, 0, 60, 66, 153, 102, 255, 255, 0, 0, 244, 66, 0, 0, 48, 65, 0, 0, 60, 66, 153, 102, 255, 255, 0, 0, 244, 66, 0, 0, 48, 65, 0, 0, 144, 193, 153, 102, 255, 255, 0, 0, 244, 66, 0, 0, 48, 65, 0, 0, 60, 66, 153, 102, 255, 255, 0, 0, 244, 66, 0, 0, 128, 64, 0, 0, 60, 66, 153, 102, 255, 255, 0, 0, 244, 66, 0, 0, 48, 65, 0, 0, 60, 66, 153, 102, 255, 255 ),
@@ -98,22 +100,28 @@ surfaces/1 = {
 
 [sub_resource type="QuadMesh" id=4]
 
-[sub_resource type="SpatialMaterial" id=6]
-flags_unshaded = true
-flags_do_not_receive_shadows = true
-
 [sub_resource type="SpatialMaterial" id=5]
 flags_unshaded = true
 flags_do_not_receive_shadows = true
 
-[sub_resource type="CubeMesh" id=7]
+[sub_resource type="MultiMesh" id=6]
+transform_format = 1
+instance_count = 10
+mesh = ExtResource( 18 )
+transform_array = PoolVector3Array( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 
-[sub_resource type="ConcavePolygonShape" id=8]
+[sub_resource type="SpatialMaterial" id=7]
+flags_unshaded = true
+flags_do_not_receive_shadows = true
+
+[sub_resource type="CubeMesh" id=8]
+
+[sub_resource type="ConcavePolygonShape" id=9]
 data = PoolVector3Array( -1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1, 1, -1, -1, 1, 1, 1, -1, -1, 1, -1, 1, -1, -1, -1, 1, -1, -1, -1, -1, 1, -1, -1, 1, 1, 1, 1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1, -1, 1, -1, 1, -1, 1, -1, -1, 1, 1, -1, -1, -1, -1, 1, 1, -1, -1, 1, -1, -1, -1, 1, 1, 1, -1, 1, 1, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1, 1, -1, -1, -1, 1, 1, -1, 1, -1, -1, -1, 1, -1, 1, 1, -1, -1, -1, -1, -1 )
 
-[sub_resource type="QuadMesh" id=9]
+[sub_resource type="QuadMesh" id=10]
 
-[sub_resource type="SpatialMaterial" id=10]
+[sub_resource type="SpatialMaterial" id=11]
 albedo_texture = ExtResource( 13 )
 
 [node name="RiverBridges" type="Node"]
@@ -129,18 +137,18 @@ visible = false
 
 [node name="GrassBounds" parent="GrassLogic/AABBs" instance=ExtResource( 11 )]
 layers = 4
-mesh = SubResource( 11 )
+mesh = SubResource( 1 )
 position = Vector3( -16, 8, -65 )
 size = Vector3( 95, 7, 45 )
 
 [node name="GrassBounds2" parent="GrassLogic/AABBs" instance=ExtResource( 11 )]
 layers = 4
-mesh = SubResource( 12 )
+mesh = SubResource( 2 )
 size = Vector3( 100, 5, 80 )
 
 [node name="GrassBounds3" parent="GrassLogic/AABBs" instance=ExtResource( 11 )]
 layers = 4
-mesh = SubResource( 13 )
+mesh = SubResource( 3 )
 position = Vector3( -18, 4, -18 )
 size = Vector3( 140, 7, 65 )
 
@@ -151,11 +159,18 @@ script = ExtResource( 16 )
 transform = Transform( -3.25841e-06, 0, 10, 0, 2, 0, -20, 0, -1.62921e-06, -9.85509, 1.87682, -28.9415 )
 visible = false
 mesh = SubResource( 4 )
-material/0 = SubResource( 6 )
+material/0 = SubResource( 5 )
 
 [node name="Environment" parent="." instance=ExtResource( 1 )]
 
 [node name="riverbridges_geometry" parent="." instance=ExtResource( 2 )]
+
+[node name="Grass_test" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3 )
+
+[node name="MultiMeshInstance" type="MultiMeshInstance" parent="Grass_test"]
+multimesh = SubResource( 6 )
+script = ExtResource( 19 )
 
 [node name="picture_frame" parent="." instance=ExtResource( 3 )]
 transform = Transform( -0.5, 0, -1.94707e-07, 0, 0.5, 0, 1.94707e-07, 0, -0.5, 10, 2.116, -3.977 )
@@ -163,22 +178,22 @@ transform = Transform( -0.5, 0, -1.94707e-07, 0, 0.5, 0, 1.94707e-07, 0, -0.5, 1
 [node name="grass_aabb_data_tex" type="MeshInstance" parent="picture_frame"]
 transform = Transform( 9.77524e-07, 0, 2, 0, 2, 0, -2, 0, 9.77524e-07, 0.0614262, 0, 0 )
 mesh = SubResource( 4 )
-material/0 = SubResource( 5 )
+material/0 = SubResource( 7 )
 
 [node name="DummyBridge" type="MeshInstance" parent="."]
 transform = Transform( 10, 0, 0, 0, 1, 0, 0, 0, 1, 87.4408, -0.988755, -17.8971 )
-mesh = SubResource( 7 )
+mesh = SubResource( 8 )
 material/0 = null
 
 [node name="StaticBody" type="StaticBody" parent="DummyBridge"]
 
 [node name="CollisionShape" type="CollisionShape" parent="DummyBridge/StaticBody"]
-shape = SubResource( 8 )
+shape = SubResource( 9 )
 
 [node name="I am financially ruined" type="MeshInstance" parent="."]
 transform = Transform( 0.998275, 0, 0.058714, 0, 1, 0, -0.058714, 0, 0.998275, 45.5336, 7.6246, 14.8736 )
-mesh = SubResource( 9 )
-material/0 = SubResource( 10 )
+mesh = SubResource( 10 )
+material/0 = SubResource( 11 )
 
 [node name="Actors" type="Node" parent="."]
 script = ExtResource( 7 )
