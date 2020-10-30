@@ -74,10 +74,7 @@ func _physics_process(_t:float) -> void:
 		jumping_and_falling()
 	
 	var collision:KinematicCollision = move_and_collide(velocity * frame_time) # Apply Physics
-	#set_grounded(raycast.is_colliding()) # Check if grounded
 	handle_collision(collision) # Redirect velocity, check landing impact, etc
-	check_if_still_grounded() #Check if still grounded
-	if velocity.length_squared() < 0.0001: velocity = Vector3.ZERO # If velocity is very small, make it 0
 	walk_animation()
 	handle_player_rotation() # Make player face the correct direction
 	handle_interactable() # Pick up jewels, read text, etc.
@@ -595,23 +592,50 @@ func normal_jump(stand_vs_run:float, late:bool) -> void:
  ####   ####   #####  #####  ##  #####   ##   ####   ##  ##
 
 onready var collision_data_timer = $Timers/CollisionData
+onready var spherecast = $SphereCast
 
 func handle_collision(collision:KinematicCollision) -> void:
+	var v_length:float # velocity.length() set once to save compute
+	
 	# If a collision has occured:
 	if collision:
 		var impact:float = velocity.length()
 		velocity = velocity.slide(collision.normal)
-		var v_length = velocity.length()
+		v_length = velocity.length()
 		impact -= v_length
 		if impact > 12.5:
-			apply_damage(impact * 1.5)
-		
-		if collision_data_timer.is_stopped() and v_length > 5.0:
-			collision_data_timer.start()
-			Events.emit_signal("path_collision", collision.position, v_length) # emit collision info to environment
-		
+			apply_damage(impact * 2.0)
 		if not grounded and collision.normal.y > 0.785398: # 45 degrees in radians
 			set_grounded(true)
+	else:
+		v_length = velocity.length()
+	
+	# Check if still grounded via Spherecast:
+	if grounded:
+		var query := PhysicsShapeQueryParameters.new()
+		query.collision_mask = Layers.solid
+		var space_state = get_world().direct_space_state
+		query.set_shape(spherecast.shape)
+		query.transform = spherecast.global_transform
+		var motion:Vector3 = -spherecast.transform.origin + (Vector3.DOWN * 0.1)
+		var travel = space_state.cast_motion(query, motion)[1]
+		query.transform.origin += travel * motion
+		if travel == 1:
+			set_grounded(false)
+		else:
+			var rest_info:Dictionary = space_state.get_rest_info(query)
+			if rest_info.normal.y < 0.785398: #0.78etc is 45 degrees in radians.
+				set_grounded(false)
+			else:
+				global_transform.origin.y = rest_info.point.y
+		
+		# Emit collision info to environment, for path generation etc.
+		if grounded and collision_data_timer.is_stopped() and v_length > 5.0:
+			collision_data_timer.start()
+			Events.emit_signal("path_collision", global_transform.origin, v_length)
+		
+		if v_length < 0.001: # come to a complete stop if velocity is very small.
+			velocity = Vector3.ZERO
 
  #####  #####    ####   ##  ##  ##  ##  #####   ######  #####
 ##      ##  ##  ##  ##  ##  ##  ### ##  ##  ##  ##      ##  ##
@@ -621,29 +645,28 @@ func handle_collision(collision:KinematicCollision) -> void:
 
 var grounded:bool = true
 onready var air_transition_timer = $Timers/AirTransition # Used to give jumps leniency when falling off of a ledge
-onready var spherecast = $SphereCast
 
-func check_if_still_grounded() -> void:
-	if grounded:
-		var query := PhysicsShapeQueryParameters.new() # Collision Query for ledgegrab height
-		query.collision_mask = Layers.solid
-		var space_state = get_world().direct_space_state
-		query.set_shape(spherecast.shape)
-		query.transform = spherecast.global_transform
-	
-		var motion:Vector3 = -spherecast.transform.origin + (Vector3.DOWN * 0.1)
-	
-		var travel = space_state.cast_motion(query, motion)[1]
-		query.transform.origin += travel * motion
-		if travel == 1:
-			set_grounded(false)
-			return
-		else:
-			if space_state.get_rest_info(query).normal.y < 0.785398: #0.78etc is 45 degrees in radians.
-				set_grounded(false)
-				return
-			global_transform.origin += travel * motion
-			global_transform.origin += Vector3.UP * (spherecast.translation.y - spherecast.shape.radius * 0.5)
+#func check_if_still_grounded() -> void:
+#	if grounded:
+#		var query := PhysicsShapeQueryParameters.new() # Collision Query for ledgegrab height
+#		query.collision_mask = Layers.solid
+#		var space_state = get_world().direct_space_state
+#		query.set_shape(spherecast.shape)
+#		query.transform = spherecast.global_transform
+#
+#		var motion:Vector3 = -spherecast.transform.origin + (Vector3.DOWN * 0.1)
+#
+#		var travel = space_state.cast_motion(query, motion)[1]
+#		query.transform.origin += travel * motion
+#		if travel == 1:
+#			set_grounded(false)
+#			return
+#		else:
+#			var rest_info:Dictionary = space_state.get_rest_info(query)
+#			if rest_info.normal.y < 0.785398: #0.78etc is 45 degrees in radians.
+#				set_grounded(false)
+#				return
+#			global_transform.origin.y = rest_info.point.y
 
 func set_grounded(state:bool) -> void:
 	if grounded != state:

@@ -14,7 +14,7 @@ func _ready() -> void:
 
 	# NOTE: GrassLogic must be a HIGHER SIBLING to get the 
 	# grass_material signal to come in in the proper order!
-	Events.connect("grass_material",      self, "set_shader_params")
+	Events.connect("grass_surface",       self, "obtained_grass_surface")
 	Events.connect("path_collision",      self, "on_path_collision")
 	Events.connect("quit_game",           self, "on_quit")
 	Events.connect("mysterious_mushroom", self, "clear_grass_data")
@@ -27,16 +27,19 @@ func _ready() -> void:
 	else:
 		create_data_images()
 
+func obtained_grass_surface(level_mesh, surface_index) -> void:
+	grass_material = level_mesh.surface_get_material(surface_index)
 	
-func set_shader_params(grass_mat) -> void:
-	grass_material = grass_mat
-	
+	# Set Shader Params
 	# TODO: don't use hardcoded nodepath for this
 	$"../picture_frame/grass_aabb_data_tex".get_surface_material(0).albedo_texture = grass_data.aabb_tex
 	#$path_collision_data_tex.get_surface_material(0).albedo_texture = grass_data.path_collision_tex
 	grass_material.set_shader_param('collision_data', grass_data.path_collision_tex)
 	grass_material.set_shader_param('block_size', block_size)
 	grass_material.set_shader_param("aabb_data", grass_data.aabb_tex)
+
+	# Create Flora
+	create_flora(level_mesh, surface_index)
 
 func create_data_images() -> void:
 	grass_data = load("res://levels/grass_data_empty.tres").duplicate()
@@ -127,7 +130,7 @@ func determine_relevant_aabb(point:Vector3) -> int:
 
 func on_path_collision(position:Vector3, velocity_length:float) -> void:
 	# Find the 8 nearest blocks to this position
-
+	
 	# Snap to nearest block
 	var rounded_pos:Vector3 = (position / block_size).round() * block_size # nearest 
 	
@@ -224,3 +227,167 @@ func clear_grass_data():
 	data.resize(size)
 	grass_data.path_collision_img.data.data = data
 	grass_data.path_collision_tex.create_from_image(grass_data.path_collision_img, 0)
+
+
+static func get_normal(v1:Vector3, v2:Vector3, v3:Vector3) -> Vector3:
+	return (v1-v2).cross(v1-v3).normalized()
+
+static func tri_area(v1:Vector3, v2:Vector3, v3:Vector3) -> float:
+	return (v2 - v1).cross(v3 - v1).length() / 2.0
+
+# Find random point on Triangle
+static func sample_tri(p1:Vector3, p2:Vector3, p3:Vector3) -> Vector3:
+	var a = randf()
+	var b = randf()
+	var v1 = p2 - p1
+	var v2 = p3 - p1
+	while a + b > 1:
+		a = randf()
+		b = randf()
+	return p1 + a*v1 + b*v2
+
+const grass_multimesh = preload('GrassMultiMesh.tscn')
+const GRASS_COLORS = [
+	Color(0.02, 0.25, 0.08),
+	Color(0.03, 0.23, 0.05),
+	Color(0.02, 0.22, 0.12)
+#	Color(0.09, 0.48, 0.22), 
+#	Color(0.17, 0.42, 0.4), 
+#	Color(0.25, 0.39, 0.15), 
+#	Color(0.09, 0.28, 0.14)
+	]
+const GRASS_THICKNESS = 20
+
+func create_flora(level_mesh, surface_index) -> void:
+	
+	# One MultiMesh per AABB
+	for i in range (grass_data.aabb_array.size()):
+		var mm_instance = grass_multimesh.instance()
+		mm_instance.name = 'multimesh_' + str(i)
+		mm_instance.multimesh.color_format = MultiMesh.COLOR_8BIT
+		$MultiMeshes.add_child(mm_instance)
+	
+	# Get geometry data for the grass surface:
+	var vertices = level_mesh.surface_get_arrays(surface_index)[ArrayMesh.ARRAY_VERTEX]
+	var indices  = level_mesh.surface_get_arrays(surface_index)[ArrayMesh.ARRAY_INDEX]
+
+	# Need to calc the total instance count based on surface area of all triangles
+	# But I should discount triangles that are not in a grass bounding box
+	# And I should use a separate multimesh for each bounding box
+	
+	# Presumably I only need to check if one of the three verts are inside of the bounding box
+	# as the other two should be, by design (by me placing the bounding boxes to envelop entire
+	# vertex islands...
+	
+	# I guess I need to store transform and color
+	# for every blade of grass
+	# but separate them into different groups based on AABB
+	# probably three arrays of dicts
+	
+#	var multimesh_data = [
+#		[
+#			{
+#				xform: Transform(),
+#				color: Color()
+#			},
+#		],
+#		[ etc
+
+	var multimesh_data:Array = []
+	for _i in range (grass_data.aabb_array.size()):
+		multimesh_data.append([])
+	
+	for i in range (0, indices.size(), 3): # for each triangle
+		var relevant_aabb = determine_relevant_aabb(vertices[indices[i]])
+		if relevant_aabb > -1: # first vertex of surface triangle exists in bounding box
+			var area:float = tri_area(vertices[indices[i]], vertices[indices[i+1]], vertices[indices[i+2]])
+			for _j in range(floor(area * GRASS_THICKNESS)): 
+				var color = GRASS_COLORS[randi() % GRASS_COLORS.size()]
+				var pos = sample_tri(vertices[indices[i]], vertices[indices[i+1]], vertices[indices[i+2]])
+				var basis = Basis()
+				var scale = 1.0 + randf()
+				basis = basis.scaled(Vector3(scale, scale, scale))
+				var rotation = randf() * TAU
+				basis = basis.rotated(Vector3.UP, rotation)
+				multimesh_data[relevant_aabb].append({"xform": Transform(basis, pos), "color": color})
+
+	var total_instance_count = 0
+	for i in range (multimesh_data.size()):
+		var multimesh = $MultiMeshes.get_child(i).multimesh
+		multimesh.instance_count = multimesh_data[i].size()
+		total_instance_count += multimesh.instance_count
+		for j in range (multimesh.instance_count):
+			multimesh.set_instance_transform(j, multimesh_data[i][j].xform)
+			multimesh.set_instance_color(j, multimesh_data[i][j].color)
+
+	print ("Total Grass Blades: ", total_instance_count)
+#
+#
+#
+#
+#		var normal = common.get_normal(verts[indices[i]], verts[indices[i+1]], verts[indices[i+2]])
+#		normal = -normal
+##		if normal.y == 0:
+##			continue # vertical grass, do not spawn.
+##		grass_generation_percent = float(i) / (float(trios.size())) * 100
+#		var area = common.tri_area(verts[indices[i]], verts[indices[i+1]], verts[indices[i+2]]) # find area of triangle
+#
+#		# Grass Dots:
+#		for j in range(floor(area*DOTS_THICKNESS)): 
+#			var color = GRASS_COLORS[randi() % GRASS_COLORS.size()]
+#			g_colors.push_back(color)
+#			var dot_pos = common.sample_tri(verts[trios[i]], verts[trios[i+1]], verts[trios[i+2]])
+#			dot_pos += Vector3(0, GRASS_RAISE, 0)
+#			var index = g_vertices.size()
+#			g_vertices.push_back(dot_pos)
+#			g_normals.push_back(normal)
+#			g_indices.push_back(index)
+#			grass_list.push_back({ "pos": dot_pos, "health": 100, "color": color, "type": "dot", "arraymeshindex": index })
+#			add_to_tree(FloraOctree, grass_list.size()-1)
+#
+#		# Tall Grass:
+#		for j in range(floor(area*TALL_THICKNESS)):
+#			var color = TALL_GRASS_COLORS[randi() % TALL_GRASS_COLORS.size()]
+#			var v1 = common.sample_tri(verts[trios[i]], verts[trios[i+1]], verts[trios[i+2]])
+#			var grass_height = TALL_GRASS_MIN_HEIGHT + (randf() * TALL_GRASS_GROWTH)
+#			var v2 = v1 + Vector3(randf() * TALL_GRASS_BEND, grass_height, randf() * TALL_GRASS_BEND)
+#
+#			var index = tg_vertices.size()
+#
+#			tg_vertices.push_back(v1)
+#			tg_normals.push_back(normal)
+#			tg_colors.push_back(color)
+#			tg_indices.push_back(index)
+#
+#			tg_vertices.push_back(v2)
+#			tg_normals.push_back(normal)
+#			tg_colors.push_back(color)
+#			tg_indices.push_back(index+1)
+#
+#			grass_list.push_back({ "pos": v1, "health": 100, "color": color, "type": "tall", "arraymeshindex": index})
+#			add_to_tree(FloraOctree, grass_list.size()-1)
+#
+	# Spawn Flowers:
+#	flower_container.name = "Flowers"
+#	var flower_count = FLOWER_DENSITY * (grass_list.size() / 1000)
+#	for i in range (flower_count):
+#		var flower = narcissa_flower.instance()
+#		transform_flower(flower)
+#		flower.name = "N_Flower" + str(i+1)
+#		flower_container.add_child(flower) # each flower is a separate meshinstance
+#		flower.connect("plucked", self, "flower_plucked")
+#
+#	grass_mesh_arrays.resize(ArrayMesh.ARRAY_MAX) # ArrayMesh must be this size
+#	grass_mesh_arrays[ArrayMesh.ARRAY_VERTEX] = g_vertices
+#	grass_mesh_arrays[ArrayMesh.ARRAY_NORMAL] = g_normals
+#	grass_mesh_arrays[ArrayMesh.ARRAY_COLOR] = g_colors
+#	grass_mesh_arrays[ArrayMesh.ARRAY_INDEX] = g_indices
+#
+#	tg_mesh_arrays.resize(ArrayMesh.ARRAY_MAX)
+#	tg_mesh_arrays[ArrayMesh.ARRAY_VERTEX] = tg_vertices
+#	tg_mesh_arrays[ArrayMesh.ARRAY_NORMAL] = tg_normals
+#	tg_mesh_arrays[ArrayMesh.ARRAY_COLOR] = tg_colors
+#	tg_mesh_arrays[ArrayMesh.ARRAY_INDEX] = tg_indices
+#
+#	print("Total Grass: " + str(grass_list.size()) + " - Total Flowers: " + str(round(flower_count)))
+#	flora_thread.call_deferred("wait_to_finish")

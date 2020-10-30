@@ -15,4 +15,4 @@ signal debug_view # true/false
 signal mysterious_mushroom
 signal unpause_game
 signal quit_game
-signal grass_material #Material
+signal grass_surface # Mesh, surface index (int)

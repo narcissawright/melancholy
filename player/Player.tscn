@@ -109,24 +109,24 @@ transitions = [ "BaseMovement", "ShieldMovement", SubResource( 14 ), "ShieldMove
 start_node = "BaseMovement"
 graph_offset = Vector2( -103, -39.8759 )
 
-[sub_resource type="AnimationNodeStateMachinePlayback" id=36]
+[sub_resource type="AnimationNodeStateMachinePlayback" id=47]
 
-[sub_resource type="AnimationNodeStateMachinePlayback" id=37]
+[sub_resource type="AnimationNodeStateMachinePlayback" id=48]
 
 [sub_resource type="CapsuleShape" id=25]
 radius = 0.2
 height = 1.37
 
-[sub_resource type="CapsuleShape" id=39]
+[sub_resource type="CapsuleShape" id=49]
 radius = 0.2
 
-[sub_resource type="BoxShape" id=41]
+[sub_resource type="BoxShape" id=50]
 extents = Vector3( 0.1, 0.2, 0.05 )
 
-[sub_resource type="SphereShape" id=42]
+[sub_resource type="SphereShape" id=51]
 radius = 0.1
 
-[sub_resource type="Animation" id=43]
+[sub_resource type="Animation" id=52]
 length = 0.266667
 step = 0.0166667
 tracks/0/type = "value"
@@ -407,10 +407,10 @@ spot_angle_attenuation = 100.0
 tree_root = SubResource( 22 )
 anim_player = NodePath("../MelanieModel/AnimationPlayer")
 active = true
-parameters/playback = SubResource( 36 )
+parameters/playback = SubResource( 47 )
 parameters/BaseMovement/BlendSpace2D/blend_position = Vector2( 0, 0 )
 parameters/BaseMovement/TimeScale/scale = 1.0
-parameters/ShieldMovement/playback = SubResource( 37 )
+parameters/ShieldMovement/playback = SubResource( 48 )
 
 [node name="MelanieModel" parent="." instance=ExtResource( 10 )]
 transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0 )
@@ -425,19 +425,19 @@ __meta__ = {
 
 [node name="KneeToHead" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 1.07, 0 )
-shape = SubResource( 39 )
+shape = SubResource( 49 )
 __meta__ = {
 "_editor_description_": "For use in air."
 }
 
 [node name="ShieldCollision" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0 )
-shape = SubResource( 41 )
+shape = SubResource( 50 )
 disabled = true
 
 [node name="SphereCast" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.470228, 0 )
-shape = SubResource( 42 )
+shape = SubResource( 51 )
 disabled = true
 __meta__ = {
 "_editor_description_": "I grab the shape and translation for physics queries; this collisionshape remains disabled though."
@@ -449,7 +449,7 @@ layers = 2
 
 [node name="ShieldAnim" type="AnimationPlayer" parent="."]
 process_priority = 1
-anims/put_away = SubResource( 43 )
+anims/put_away = SubResource( 52 )
 anims/shield_bash = SubResource( 32 )
 anims/take_out = SubResource( 33 )
 script = ExtResource( 1 )
