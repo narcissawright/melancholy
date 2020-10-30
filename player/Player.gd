@@ -632,7 +632,7 @@ func handle_collision(collision:KinematicCollision) -> void:
 		# Emit collision info to environment, for path generation etc.
 		if grounded and collision_data_timer.is_stopped() and v_length > 5.0:
 			collision_data_timer.start()
-			Events.emit_signal("path_collision", global_transform.origin, v_length)
+			#Events.emit_signal("path_collision", global_transform.origin, v_length)
 		
 		if v_length < 0.001: # come to a complete stop if velocity is very small.
 			velocity = Vector3.ZERO
@@ -1004,6 +1004,7 @@ func angle_to_flattened(a:Vector3, b:Vector3) -> float:
 func debug() -> void:
 	# Debug Text
 	Debug.text.write('Frame: ' + str(framecount))
+	Debug.text.write('FPS: ' + str(Engine.get_frames_per_second()))
 	Debug.text.newline()
 	
 	Debug.text.write('Current Animation: ' + anim_state_machine.get_current_node())

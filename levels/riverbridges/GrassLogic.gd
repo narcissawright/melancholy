@@ -256,7 +256,7 @@ const GRASS_COLORS = [
 #	Color(0.25, 0.39, 0.15), 
 #	Color(0.09, 0.28, 0.14)
 	]
-const GRASS_THICKNESS = 20
+const GRASS_THICKNESS = 10
 
 func create_flora(level_mesh, surface_index) -> void:
 	
