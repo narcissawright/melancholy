@@ -16,3 +16,4 @@ signal mysterious_mushroom
 signal unpause_game
 signal quit_game
 signal grass_surface # Mesh, surface index (int)
+signal player_location # every frame passes vec3 global_transform.origin

@@ -80,6 +80,9 @@ func _physics_process(_t:float) -> void:
 	handle_interactable() # Pick up jewels, read text, etc.
 	process_subweapon() # performed AFTER move_and_collide to correctly place projectiles.
 	respawn_check() # Check if player fell below the map
+	
+	Events.emit_signal("player_location", global_transform.origin)
+	
 	debug() # Write debug info onscreen
 
 ##     ####    ####  ##  ##  ######  #####

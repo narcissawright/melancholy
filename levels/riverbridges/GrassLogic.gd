@@ -18,6 +18,7 @@ func _ready() -> void:
 	Events.connect("path_collision",      self, "on_path_collision")
 	Events.connect("quit_game",           self, "on_quit")
 	Events.connect("mysterious_mushroom", self, "clear_grass_data")
+	Events.connect("player_location",     self, "pass_player_location_to_shader")
 #	Events.connect("debug_view",          self, "toggle_debug_view")
 	
 	# To recalculate textures after making changes, run create_data_images()
@@ -256,7 +257,7 @@ const GRASS_COLORS = [
 #	Color(0.25, 0.39, 0.15), 
 #	Color(0.09, 0.28, 0.14)
 	]
-const GRASS_THICKNESS = 10
+const GRASS_THICKNESS = 30
 
 func create_flora(level_mesh, surface_index) -> void:
 	
@@ -321,73 +322,7 @@ func create_flora(level_mesh, surface_index) -> void:
 			multimesh.set_instance_color(j, multimesh_data[i][j].color)
 
 	print ("Total Grass Blades: ", total_instance_count)
-#
-#
-#
-#
-#		var normal = common.get_normal(verts[indices[i]], verts[indices[i+1]], verts[indices[i+2]])
-#		normal = -normal
-##		if normal.y == 0:
-##			continue # vertical grass, do not spawn.
-##		grass_generation_percent = float(i) / (float(trios.size())) * 100
-#		var area = common.tri_area(verts[indices[i]], verts[indices[i+1]], verts[indices[i+2]]) # find area of triangle
-#
-#		# Grass Dots:
-#		for j in range(floor(area*DOTS_THICKNESS)): 
-#			var color = GRASS_COLORS[randi() % GRASS_COLORS.size()]
-#			g_colors.push_back(color)
-#			var dot_pos = common.sample_tri(verts[trios[i]], verts[trios[i+1]], verts[trios[i+2]])
-#			dot_pos += Vector3(0, GRASS_RAISE, 0)
-#			var index = g_vertices.size()
-#			g_vertices.push_back(dot_pos)
-#			g_normals.push_back(normal)
-#			g_indices.push_back(index)
-#			grass_list.push_back({ "pos": dot_pos, "health": 100, "color": color, "type": "dot", "arraymeshindex": index })
-#			add_to_tree(FloraOctree, grass_list.size()-1)
-#
-#		# Tall Grass:
-#		for j in range(floor(area*TALL_THICKNESS)):
-#			var color = TALL_GRASS_COLORS[randi() % TALL_GRASS_COLORS.size()]
-#			var v1 = common.sample_tri(verts[trios[i]], verts[trios[i+1]], verts[trios[i+2]])
-#			var grass_height = TALL_GRASS_MIN_HEIGHT + (randf() * TALL_GRASS_GROWTH)
-#			var v2 = v1 + Vector3(randf() * TALL_GRASS_BEND, grass_height, randf() * TALL_GRASS_BEND)
-#
-#			var index = tg_vertices.size()
-#
-#			tg_vertices.push_back(v1)
-#			tg_normals.push_back(normal)
-#			tg_colors.push_back(color)
-#			tg_indices.push_back(index)
-#
-#			tg_vertices.push_back(v2)
-#			tg_normals.push_back(normal)
-#			tg_colors.push_back(color)
-#			tg_indices.push_back(index+1)
-#
-#			grass_list.push_back({ "pos": v1, "health": 100, "color": color, "type": "tall", "arraymeshindex": index})
-#			add_to_tree(FloraOctree, grass_list.size()-1)
-#
-	# Spawn Flowers:
-#	flower_container.name = "Flowers"
-#	var flower_count = FLOWER_DENSITY * (grass_list.size() / 1000)
-#	for i in range (flower_count):
-#		var flower = narcissa_flower.instance()
-#		transform_flower(flower)
-#		flower.name = "N_Flower" + str(i+1)
-#		flower_container.add_child(flower) # each flower is a separate meshinstance
-#		flower.connect("plucked", self, "flower_plucked")
-#
-#	grass_mesh_arrays.resize(ArrayMesh.ARRAY_MAX) # ArrayMesh must be this size
-#	grass_mesh_arrays[ArrayMesh.ARRAY_VERTEX] = g_vertices
-#	grass_mesh_arrays[ArrayMesh.ARRAY_NORMAL] = g_normals
-#	grass_mesh_arrays[ArrayMesh.ARRAY_COLOR] = g_colors
-#	grass_mesh_arrays[ArrayMesh.ARRAY_INDEX] = g_indices
-#
-#	tg_mesh_arrays.resize(ArrayMesh.ARRAY_MAX)
-#	tg_mesh_arrays[ArrayMesh.ARRAY_VERTEX] = tg_vertices
-#	tg_mesh_arrays[ArrayMesh.ARRAY_NORMAL] = tg_normals
-#	tg_mesh_arrays[ArrayMesh.ARRAY_COLOR] = tg_colors
-#	tg_mesh_arrays[ArrayMesh.ARRAY_INDEX] = tg_indices
-#
-#	print("Total Grass: " + str(grass_list.size()) + " - Total Flowers: " + str(round(flower_count)))
-#	flora_thread.call_deferred("wait_to_finish")
+	
+const grassblade = preload("GrassBlade.material")
+func pass_player_location_to_shader(location:Vector3) -> void:
+	grassblade.set_shader_param("player_position", location)
