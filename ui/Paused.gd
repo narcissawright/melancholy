@@ -69,6 +69,8 @@ func stop(state) -> void:
 		"main_menu":
 			main_menu.stop()
 			main_menu.current_menu_index = 0
+		"free_camera":
+			main_menu.current_menu_index = 0
 		"customize_menu":
 			customize_menu.stop()
 			customize_menu.current_menu_index = 0

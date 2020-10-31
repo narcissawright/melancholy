@@ -81,7 +81,7 @@ func _physics_process(_t:float) -> void:
 	process_subweapon() # performed AFTER move_and_collide to correctly place projectiles.
 	respawn_check() # Check if player fell below the map
 	
-	Events.emit_signal("player_location", global_transform.origin)
+#	Events.emit_signal("player_location", global_transform.origin)
 	
 	debug() # Write debug info onscreen
 
@@ -635,7 +635,7 @@ func handle_collision(collision:KinematicCollision) -> void:
 		# Emit collision info to environment, for path generation etc.
 		if grounded and collision_data_timer.is_stopped() and v_length > 5.0:
 			collision_data_timer.start()
-			#Events.emit_signal("path_collision", global_transform.origin, v_length)
+			Events.emit_signal("path_collision", global_transform.origin, v_length)
 		
 		if v_length < 0.001: # come to a complete stop if velocity is very small.
 			velocity = Vector3.ZERO

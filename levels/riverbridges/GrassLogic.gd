@@ -130,8 +130,6 @@ func determine_relevant_aabb(point:Vector3) -> int:
 	return -1
 
 func on_path_collision(position:Vector3, velocity_length:float) -> void:
-	# Find the 8 nearest blocks to this position
-	
 	# Snap to nearest block
 	var rounded_pos:Vector3 = (position / block_size).round() * block_size # nearest 
 	
@@ -139,7 +137,7 @@ func on_path_collision(position:Vector3, velocity_length:float) -> void:
 	var x_sign := int(sign(position.x - rounded_pos.x));
 	var y_sign := int(sign(position.y - rounded_pos.y));
 	var z_sign := int(sign(position.z - rounded_pos.z));
-
+	
 	# Try these positions (some might be duplicates due to sign being zero)
 	# Sign can be zero when the surface triangle aligns perfectly with block size.
 	var try_positions:Array = [
@@ -293,6 +291,8 @@ func create_flora(level_mesh, surface_index) -> void:
 #			},
 #		],
 #		[ etc
+	
+	""" TODO: Spawn flowers and other things. """
 
 	var multimesh_data:Array = []
 	for _i in range (grass_data.aabb_array.size()):

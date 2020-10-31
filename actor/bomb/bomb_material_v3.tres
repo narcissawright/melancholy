@@ -4,12 +4,12 @@
 [ext_resource path="res://actor/bomb/bomb_lit.png" type="Texture" id=2]
 [ext_resource path="res://actor/actor.shader" type="Shader" id=3]
 
-
 [resource]
 shader = ExtResource( 3 )
 shader_param/opacity = 1.0
 shader_param/opacity_depth_calc = true
 shader_param/celshaded = true
+shader_param/soft_shading = false
 shader_param/enable_rim = true
 shader_param/not_shaded = false
 shader_param/use_vertex_color = false

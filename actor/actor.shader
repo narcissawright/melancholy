@@ -4,6 +4,7 @@ render_mode ambient_light_disabled;
 uniform float opacity = 1.0;
 uniform bool opacity_depth_calc = true;
 uniform bool celshaded = true;
+uniform bool soft_shading = false;
 uniform bool enable_rim = false;
 uniform bool not_shaded = false;
 uniform bool use_vertex_color = false;
@@ -69,41 +70,6 @@ void fragment() {
 	} else {
 		if (opacity < limit) { discard; }
 	}
-	
-	//
-	//
-	//
-	//
-	//
-	
-	/*
-	
-	vec3 final_lit;
-	vec3 final_shaded;
-	
-	float NdotL = dot(light_vec, NORMAL);
-
-	if (use_texture) {
-		final_lit = texture(tex_lit, UV).rgb;
-		final_shaded = texture(tex_shaded, UV).rgb;
-	}
-	
-	float threshold = 0.5;
-	// 1.0 - COLOR.r; // stupid
-	//threshold = 0.78;
-	
-	if (NdotL > threshold) {
-		ALBEDO = final_lit;
-	} else {
-		ALBEDO = final_shaded;
-	}
-
-	if (enable_rim) {
-		float NdotV = dot(VIEW, NORMAL);
-		float rim = smoothstep(0.0, 1.0, NdotV);
-	}
-	
-	*/
 }
 
 
@@ -161,15 +127,18 @@ void light() {
 	
 	
 	if (not_shaded) { lit = 1.0; }
-	
 	if (celshaded) {
-		float E = fwidth(lit) / 2.0;
-		if (lit > threshold - E && lit < threshold + E) {
-			lit = smoothstep(threshold - E, threshold + E, lit);
-			//lit = clamp(threshold * (lit - threshold + E) / E, 0.0, 1.0);
+		if (soft_shading) {
+			lit = smoothstep(0.425, 0.575, lit);
 		} else {
-			lit = step(threshold, lit);
-	    }
+			float E = fwidth(lit) / 2.0;
+			if (lit > threshold - E && lit < threshold + E) {
+				lit = smoothstep(threshold - E, threshold + E, lit);
+				//lit = clamp(threshold * (lit - threshold + E) / E, 0.0, 1.0);
+			} else {
+				lit = step(threshold, lit);
+		    }
+		}
 	 }
 	
 	 DIFFUSE_LIGHT = max(DIFFUSE_LIGHT, mix(final_dim, final_dim + final_diff, lit));
