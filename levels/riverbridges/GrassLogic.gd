@@ -255,7 +255,8 @@ const GRASS_COLORS = [
 #	Color(0.25, 0.39, 0.15), 
 #	Color(0.09, 0.28, 0.14)
 	]
-const GRASS_THICKNESS = 30
+const GRASS_THICKNESS:int = 30
+const AREA_PER_FLOWER:float = 20.0;
 
 func create_flora(level_mesh, surface_index) -> void:
 	
@@ -269,32 +270,9 @@ func create_flora(level_mesh, surface_index) -> void:
 	# Get geometry data for the grass surface:
 	var vertices = level_mesh.surface_get_arrays(surface_index)[ArrayMesh.ARRAY_VERTEX]
 	var indices  = level_mesh.surface_get_arrays(surface_index)[ArrayMesh.ARRAY_INDEX]
-
-	# Need to calc the total instance count based on surface area of all triangles
-	# But I should discount triangles that are not in a grass bounding box
-	# And I should use a separate multimesh for each bounding box
 	
-	# Presumably I only need to check if one of the three verts are inside of the bounding box
-	# as the other two should be, by design (by me placing the bounding boxes to envelop entire
-	# vertex islands...
+	""" TODO: account for surface normal when spawning stuff """
 	
-	# I guess I need to store transform and color
-	# for every blade of grass
-	# but separate them into different groups based on AABB
-	# probably three arrays of dicts
-	
-#	var multimesh_data = [
-#		[
-#			{
-#				xform: Transform(),
-#				color: Color()
-#			},
-#		],
-#		[ etc
-	
-	""" TODO: Spawn flowers and other things. """
-
-	var AREA_PER_FLOWER:float = 20.0;
 	var flower_amt:int = 0
 	var total_area:float = 0.0
 	
@@ -302,58 +280,70 @@ func create_flora(level_mesh, surface_index) -> void:
 	for _i in range (grass_data.aabb_array.size()):
 		multimesh_data.append([])
 	
-	for i in range (0, indices.size(), 3): # for each triangle
+	# For each surface triangle
+	for i in range (0, indices.size(), 3):
+		
+		# Confirm that the first vertex of the triangle exists in a grass bounding box
 		var relevant_aabb = determine_relevant_aabb(vertices[indices[i]])
-		if relevant_aabb > -1: # first vertex of surface triangle exists in bounding box
-			var area:float = tri_area(vertices[indices[i]], vertices[indices[i+1]], vertices[indices[i+2]])
-#			var triangle_midpoint:Vector3 = (vertices[indices[i]] + vertices[indices[i+1]] + vertices[indices[i+2]]) / 3.0
-
-			total_area += area
-			var flowers_to_spawn:int = floor(total_area / AREA_PER_FLOWER) - flower_amt
+		if relevant_aabb > -1:
 			
+			# Find the area of this triangle
+			var area:float = tri_area(vertices[indices[i]], vertices[indices[i+1]], vertices[indices[i+2]])
+			total_area += area
+			
+			# Calculate how many flowers to spawn here
+			var flowers_to_spawn := int((total_area / AREA_PER_FLOWER) - flower_amt)
 			var flower_locations = []
 			
-			for f in range (flowers_to_spawn):
-				
-				flower_amt += 1 # incrementing this even if no flower spawns...
+			# For each flower to spawn
+			for _flower in range (flowers_to_spawn):
 				
 				# Prevent flower from spawning on triangle edge.
-				# There are other forms of triangle centers, but this lazy approach works for me.
+				# There are other forms of triangle centers, but this lazy approach works for me, for now.
 				var center = (vertices[indices[i]] + vertices[indices[i+1]] + vertices[indices[i+2]]) / 3.0;
 				var a = vertices[indices[i]]   + (vertices[indices[i]].direction_to(center)   * 0.2)
 				var b = vertices[indices[i+1]] + (vertices[indices[i+1]].direction_to(center) * 0.2)
 				var c = vertices[indices[i+2]] + (vertices[indices[i+2]].direction_to(center) * 0.2)
 				var pos:Vector3 = sample_tri(a,b,c)
 				
+				# Don't spawn if flower is overlapping another flower.
 				var create:bool = true
 				for index in range (flower_locations.size()):
-					if pos.distance_to(flower_locations[index]) < 0.2:
+					if pos.distance_to(flower_locations[index]) < 0.25:
 						create = false
-						
+				
+				# Create Flower
 				if create:
 					var flower = preload("Flower1.tscn").instance()
 					$Flowers.add_child(flower)
 					flower.global_transform.origin = pos
 					flower_locations.append(pos)
 					flower.rotation.y = randf() * TAU
-				
+					flower_amt += 1
+			
+			# For each blade of grass to be created on this triangle
 			for _grass in range(floor(area * GRASS_THICKNESS)): 
-				var color = GRASS_COLORS[randi() % GRASS_COLORS.size()]
+				
+				# Sample triangle to find blade position
 				var pos = sample_tri(vertices[indices[i]], vertices[indices[i+1]], vertices[indices[i+2]])
 				
+				# If this blade of grass overlaps a flower, skip it.
 				var create:bool = true
 				for f in range (flower_locations.size()):
 					if pos.distance_to(flower_locations[f]) < 0.2:
 						create = false
 				
+				# Create grass blade.
 				if create:
 					var basis = Basis()
 					var scale = 1.0 + randf()
 					basis = basis.scaled(Vector3(scale, scale, scale))
 					var rotation = randf() * TAU
 					basis = basis.rotated(Vector3.UP, rotation)
+					var color = GRASS_COLORS[randi() % GRASS_COLORS.size()]
 					multimesh_data[relevant_aabb].append({"xform": Transform(basis, pos), "color": color})
 
+	# Populate the actual MultiMeshes for grass blades.
 	var total_instance_count = 0
 	for i in range (multimesh_data.size()):
 		var multimesh = $MultiMeshes.get_child(i).multimesh
