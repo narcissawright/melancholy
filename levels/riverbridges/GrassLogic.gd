@@ -229,7 +229,7 @@ func clear_grass_data():
 
 
 static func get_normal(v1:Vector3, v2:Vector3, v3:Vector3) -> Vector3:
-	return (v1-v2).cross(v1-v3).normalized()
+	return -(v1-v2).cross(v1-v3).normalized()
 
 static func tri_area(v1:Vector3, v2:Vector3, v3:Vector3) -> float:
 	return (v2 - v1).cross(v3 - v1).length() / 2.0
@@ -317,8 +317,13 @@ func create_flora(level_mesh, surface_index) -> void:
 					var flower = preload("Flower1.tscn").instance()
 					$Flowers.add_child(flower)
 					flower.global_transform.origin = pos
+					var normal = get_normal(a,b,c)
 					flower_locations.append(pos)
 					flower.rotation.y = randf() * TAU
+					# Align with surface normal (thanks KidsCanCode)
+					flower.global_transform.basis.y = normal
+					flower.global_transform.basis.x = -flower.global_transform.basis.z.cross(normal)
+					flower.global_transform.basis = flower.global_transform.basis.orthonormalized()
 					flower_amt += 1
 			
 			# For each blade of grass to be created on this triangle
