@@ -13,7 +13,7 @@ func _ready() -> void:
 	# Signals
 
 	# NOTE: GrassLogic must be a HIGHER SIBLING to get the 
-	# grass_material signal to come in in the proper order!
+	# grass_surface signal to come in in the proper order!
 	Events.connect("grass_surface",       self, "obtained_grass_surface")
 	Events.connect("path_collision",      self, "on_path_collision")
 	Events.connect("quit_game",           self, "on_quit")
@@ -294,6 +294,10 @@ func create_flora(level_mesh, surface_index) -> void:
 	
 	""" TODO: Spawn flowers and other things. """
 
+	var AREA_PER_FLOWER:float = 20.0;
+	var flower_amt:int = 0
+	var total_area:float = 0.0
+	
 	var multimesh_data:Array = []
 	for _i in range (grass_data.aabb_array.size()):
 		multimesh_data.append([])
@@ -302,15 +306,53 @@ func create_flora(level_mesh, surface_index) -> void:
 		var relevant_aabb = determine_relevant_aabb(vertices[indices[i]])
 		if relevant_aabb > -1: # first vertex of surface triangle exists in bounding box
 			var area:float = tri_area(vertices[indices[i]], vertices[indices[i+1]], vertices[indices[i+2]])
-			for _j in range(floor(area * GRASS_THICKNESS)): 
+#			var triangle_midpoint:Vector3 = (vertices[indices[i]] + vertices[indices[i+1]] + vertices[indices[i+2]]) / 3.0
+
+			total_area += area
+			var flowers_to_spawn:int = floor(total_area / AREA_PER_FLOWER) - flower_amt
+			
+			var flower_locations = []
+			
+			for f in range (flowers_to_spawn):
+				
+				flower_amt += 1 # incrementing this even if no flower spawns...
+				
+				# Prevent flower from spawning on triangle edge.
+				# There are other forms of triangle centers, but this lazy approach works for me.
+				var center = (vertices[indices[i]] + vertices[indices[i+1]] + vertices[indices[i+2]]) / 3.0;
+				var a = vertices[indices[i]]   + (vertices[indices[i]].direction_to(center)   * 0.2)
+				var b = vertices[indices[i+1]] + (vertices[indices[i+1]].direction_to(center) * 0.2)
+				var c = vertices[indices[i+2]] + (vertices[indices[i+2]].direction_to(center) * 0.2)
+				var pos:Vector3 = sample_tri(a,b,c)
+				
+				var create:bool = true
+				for index in range (flower_locations.size()):
+					if pos.distance_to(flower_locations[index]) < 0.2:
+						create = false
+						
+				if create:
+					var flower = preload("Flower1.tscn").instance()
+					$Flowers.add_child(flower)
+					flower.global_transform.origin = pos
+					flower_locations.append(pos)
+					flower.rotation.y = randf() * TAU
+				
+			for _grass in range(floor(area * GRASS_THICKNESS)): 
 				var color = GRASS_COLORS[randi() % GRASS_COLORS.size()]
 				var pos = sample_tri(vertices[indices[i]], vertices[indices[i+1]], vertices[indices[i+2]])
-				var basis = Basis()
-				var scale = 1.0 + randf()
-				basis = basis.scaled(Vector3(scale, scale, scale))
-				var rotation = randf() * TAU
-				basis = basis.rotated(Vector3.UP, rotation)
-				multimesh_data[relevant_aabb].append({"xform": Transform(basis, pos), "color": color})
+				
+				var create:bool = true
+				for f in range (flower_locations.size()):
+					if pos.distance_to(flower_locations[f]) < 0.2:
+						create = false
+				
+				if create:
+					var basis = Basis()
+					var scale = 1.0 + randf()
+					basis = basis.scaled(Vector3(scale, scale, scale))
+					var rotation = randf() * TAU
+					basis = basis.rotated(Vector3.UP, rotation)
+					multimesh_data[relevant_aabb].append({"xform": Transform(basis, pos), "color": color})
 
 	var total_instance_count = 0
 	for i in range (multimesh_data.size()):
@@ -321,6 +363,7 @@ func create_flora(level_mesh, surface_index) -> void:
 			multimesh.set_instance_transform(j, multimesh_data[i][j].xform)
 			multimesh.set_instance_color(j, multimesh_data[i][j].color)
 
+	print ("Flower Amount: ", flower_amt)
 	print ("Total Grass Blades: ", total_instance_count)
 	
 const grassblade = preload("GrassBlade.material")
