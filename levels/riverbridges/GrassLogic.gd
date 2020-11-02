@@ -285,18 +285,13 @@ static func sample_tri(p1:Vector3, p2:Vector3, p3:Vector3) -> Vector3:
 		b = randf()
 	return p1 + a*v1 + b*v2
 
+onready var grass_multi_container = $GrassMultiMeshes
+onready var multi_flower = $MultiFlower
 const grass_multimesh = preload('GrassMultiMesh.tscn')
-const flower1 = preload('Flower1.tscn')
-const narcissa_flower = preload('Narcissa_Flower.tscn')
-const GRASS_COLORS = [
-	Color(0.02, 0.25, 0.08),
-	Color(0.03, 0.23, 0.05),
-	Color(0.02, 0.22, 0.12)
-#	Color(0.09, 0.48, 0.22), 
-#	Color(0.17, 0.42, 0.4), 
-#	Color(0.25, 0.39, 0.15), 
-#	Color(0.09, 0.28, 0.14)
-	]
+const flowercolor = preload('FlowerColor.tscn')
+
+export var GRASS_COLORS = PoolColorArray()
+export var FLOWER_COLORS = PoolColorArray()
 const GRASS_THICKNESS:int = 20
 const AREA_PER_FLOWER:float = 20.0;
 
@@ -307,7 +302,7 @@ func create_flora(level_mesh, surface_index) -> void:
 		var mm_instance = grass_multimesh.instance()
 		mm_instance.name = 'multimesh_' + str(i)
 		mm_instance.multimesh.color_format = MultiMesh.COLOR_8BIT
-		$MultiMeshes.add_child(mm_instance)
+		grass_multi_container.add_child(mm_instance)
 	
 	# Get geometry data for the grass surface:
 	var vertices = level_mesh.surface_get_arrays(surface_index)[ArrayMesh.ARRAY_VERTEX]
@@ -316,9 +311,11 @@ func create_flora(level_mesh, surface_index) -> void:
 	var flower_amt:int = 0
 	var total_area:float = 0.0
 	
-	var multimesh_data:Array = []
+	var multi_grass_data:Array = []
 	for _i in range (grass_data.aabb_array.size()):
-		multimesh_data.append([])
+		multi_grass_data.append([])
+		
+	var multi_flower_data:Array = []
 	
 	# For each surface triangle
 	for i in range (0, indices.size(), 3):
@@ -358,21 +355,26 @@ func create_flora(level_mesh, surface_index) -> void:
 				
 				# Create Flower
 				if create:
-					var flower:MeshInstance
-					if randf() < 0.01:
-						flower = narcissa_flower.instance()
-					else:
-						flower = flower1.instance()
-					$Flowers.add_child(flower)
-					flower.global_transform.origin = pos
+					var xform := Transform()
 					var normal = get_normal(a,b,c)
-					flower_locations.append(pos)
-					flower.rotation.y = randf() * TAU
-					# Align with surface normal (thanks KidsCanCode)
-					flower.global_transform.basis.y = normal
-					flower.global_transform.basis.x = -flower.global_transform.basis.z.cross(normal)
-					flower.global_transform.basis = flower.global_transform.basis.orthonormalized()
+					xform = xform.rotated(Vector3.UP, randf() * TAU)
+					xform.basis.y = normal
+					xform.basis.x = -xform.basis.z.cross(normal)
+					xform.basis = xform.basis.orthonormalized()
+					xform.origin = pos
+					
+					var color_index = 0
+					while (randi() % 2 == 1) and color_index < 7:
+						color_index += 1
+						
+					var color = FLOWER_COLORS[color_index]
+					color.r = clamp(color.r + (randf() * 0.2) - 0.1, 0.05, 1.0)
+					color.g = clamp(color.g + (randf() * 0.2) - 0.1, 0.05, 1.0)
+					color.b = clamp(color.b + (randf() * 0.2) - 0.1, 0.05, 1.0)
+					multi_flower_data.append({"xform": xform, "color": color})
+					
 					flower_amt += 1
+					flower_locations.append(pos)
 			
 			# For each blade of grass to be created on this triangle
 			for _grass in range(floor(area * GRASS_THICKNESS)): 
@@ -397,17 +399,23 @@ func create_flora(level_mesh, surface_index) -> void:
 					var rotation = randf() * TAU
 					basis = basis.rotated(Vector3.UP, rotation)
 					var color = GRASS_COLORS[randi() % GRASS_COLORS.size()]
-					multimesh_data[relevant_aabb].append({"xform": Transform(basis, pos), "color": color})
+					multi_grass_data[relevant_aabb].append({"xform": Transform(basis, pos), "color": color})
 
 	# Populate the actual MultiMeshes for grass blades.
 	var total_instance_count = 0
-	for i in range (multimesh_data.size()):
-		var multimesh = $MultiMeshes.get_child(i).multimesh
-		multimesh.instance_count = multimesh_data[i].size()
+	for i in range (multi_grass_data.size()):
+		var multimesh = grass_multi_container.get_child(i).multimesh
+		multimesh.instance_count = multi_grass_data[i].size()
 		total_instance_count += multimesh.instance_count
 		for j in range (multimesh.instance_count):
-			multimesh.set_instance_transform(j, multimesh_data[i][j].xform)
-			multimesh.set_instance_color(j, multimesh_data[i][j].color)
+			multimesh.set_instance_transform(j, multi_grass_data[i][j].xform)
+			multimesh.set_instance_color    (j, multi_grass_data[i][j].color)
+
+	var mm = multi_flower.multimesh
+	mm.instance_count = multi_flower_data.size()
+	for i in range (mm.instance_count):
+		mm.set_instance_transform  (i, multi_flower_data[i].xform)
+		mm.set_instance_custom_data(i, multi_flower_data[i].color)
 
 	print ("OoB Amount: ", out_of_bounds)
 	print ("Flower Amount: ", flower_amt)

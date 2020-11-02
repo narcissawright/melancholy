@@ -1,27 +1,78 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://actor/actor.shader" type="Shader" id=1]
+[sub_resource type="Shader" id=1]
+code = "shader_type spatial;
+render_mode ambient_light_disabled, cull_disabled;
 
-[sub_resource type="ShaderMaterial" id=3]
-shader = ExtResource( 1 )
-shader_param/opacity = 1.0
-shader_param/opacity_depth_calc = true
-shader_param/celshaded = true
-shader_param/soft_shading = true
-shader_param/enable_rim = false
-shader_param/not_shaded = false
-shader_param/use_vertex_color = true
-shader_param/vertex_color_as_occlusion = false
-shader_param/color_lit = Color( 0.5, 0.5, 0.6, 1 )
-shader_param/color_dim = Color( 0.1, 0.1, 0.12, 1 )
-shader_param/use_custom_rim_color = false
-shader_param/custom_rim_color = Color( 0, 0.82, 0.73, 1 )
-shader_param/use_texture = false
-shader_param/autocalculate_shaded = false
-shader_param/damaged = false
-shader_param/locked = false
+varying vec4 instance_color;
 
-[sub_resource type="ArrayMesh" id=4]
+void vertex() {
+	instance_color = INSTANCE_CUSTOM;
+}
+
+void fragment() {
+	ALBEDO = COLOR.rgb;
+	if (COLOR.r == 0.0) {
+		ALBEDO = instance_color.rgb;
+	}
+	// Opacity Dithering...
+	int x = int(FRAGCOORD.x / 2.0) % 4;
+	int y = int(FRAGCOORD.y / 2.0) % 4;
+	int index = x + y * 4;
+	float limit = 0.0;
+	
+	// Dither pattern
+	switch (index) {
+		case 0:  limit = 0.0625; break;
+		case 1:  limit = 0.5625; break;
+		case 2:  limit = 0.1875; break;
+		case 3:  limit = 0.6875; break;
+		case 4:  limit = 0.8125; break;
+		case 5:  limit = 0.3125; break;
+		case 6:  limit = 0.9375; break;
+		case 7:  limit = 0.4375; break;
+		case 8:  limit = 0.25;   break;
+		case 9:  limit = 0.75;   break;
+		case 10: limit = 0.125;  break;
+		case 11: limit = 0.625;  break;
+		case 12: limit = 1.0;    break;
+		case 13: limit = 0.5;    break;
+		case 14: limit = 0.875;  break;
+		case 15: limit = 0.375;  break;
+	}
+
+	// Depth Test
+	float depth = FRAGCOORD.z;
+	vec3 ndc = vec3(SCREEN_UV, depth) * 2.0 - 1.0;
+	vec4 view = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
+	view.xyz /= view.w;
+	float linear_depth = -view.z * 2.0; // this *2 is experiment
+	if (linear_depth < limit) { discard; }
+}
+
+void light() {
+	// Cel Shading
+	float NdotL = dot(LIGHT, NORMAL);
+	float lit = NdotL; //clamp(NdotL, 0.0, 1.0); //smoothstep(0.0, 1.0, NdotL);
+	
+	vec3 final_lit = ALBEDO;
+	vec3 final_dim = ALBEDO * 0.5;
+	
+	vec3 final_diff = final_lit - final_dim;
+	vec3 light_energy = min(vec3(1,1,1), ATTENUATION * LIGHT_COLOR);
+	final_diff *= light_energy;
+
+	float threshold = 0.5;
+	
+	lit = smoothstep(0.425, 0.575, lit);
+	DIFFUSE_LIGHT = max(DIFFUSE_LIGHT, mix(final_dim, final_dim + final_diff, lit));
+}
+"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+
+[sub_resource type="ArrayMesh" id=3]
 resource_name = "Flower1"
 surfaces/0 = {
 "aabb": AABB( -0.10701, 1.3987e-05, -0.10701, 0.214021, 0.0131393, 0.214021 ),
@@ -30,12 +81,16 @@ surfaces/0 = {
 "blend_shape_data": [  ],
 "format": 97567,
 "index_count": 588,
-"material": SubResource( 3 ),
+"material": SubResource( 2 ),
 "primitive": 4,
 "skeleton_aabb": [  ],
 "vertex_count": 161
 }
 
 [node name="Flower1" type="MeshInstance"]
-mesh = SubResource( 4 )
+mesh = SubResource( 3 )
 material/0 = null
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.840453, 0.541884, 0, -0.541884, 0.840453, 0, 2.27651, 0 )
+editor_only = true

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://levels/riverbridges/FlowerColor.tres" type="ArrayMesh" id=1]
+
+[sub_resource type="MultiMesh" id=1]
+transform_format = 1
+custom_data_format = 1
+mesh = ExtResource( 1 )
+
+[node name="MultiFlower" type="MultiMeshInstance"]
+multimesh = SubResource( 1 )

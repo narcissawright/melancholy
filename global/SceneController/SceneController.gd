@@ -3,6 +3,7 @@ extends Node
 var frame_time:float = 1.0 / 60.0
 
 func _init() -> void:
+	randomize()
 	OS.window_size = Vector2(1280, 720)
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 
