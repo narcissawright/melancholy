@@ -262,7 +262,7 @@ func get_dirt_amount(position:Vector3) -> float:
 	if values.size() == 0:
 		return 1.0
 	
-	var value_total:float
+	var value_total:float = 0.0
 	for i in range (values.size()):
 		value_total += values[i]
 	
@@ -286,6 +286,8 @@ static func sample_tri(p1:Vector3, p2:Vector3, p3:Vector3) -> Vector3:
 	return p1 + a*v1 + b*v2
 
 const grass_multimesh = preload('GrassMultiMesh.tscn')
+const flower1 = preload('Flower1.tscn')
+const narcissa_flower = preload('Narcissa_Flower.tscn')
 const GRASS_COLORS = [
 	Color(0.02, 0.25, 0.08),
 	Color(0.03, 0.23, 0.05),
@@ -356,7 +358,11 @@ func create_flora(level_mesh, surface_index) -> void:
 				
 				# Create Flower
 				if create:
-					var flower = preload("Flower1.tscn").instance()
+					var flower:MeshInstance
+					if randf() < 0.01:
+						flower = narcissa_flower.instance()
+					else:
+						flower = flower1.instance()
 					$Flowers.add_child(flower)
 					flower.global_transform.origin = pos
 					var normal = get_normal(a,b,c)
