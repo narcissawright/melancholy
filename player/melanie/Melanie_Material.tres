@@ -3,7 +3,7 @@
 [ext_resource path="res://player/melanie/texture/cardigan_texture.png" type="Texture" id=1]
 [ext_resource path="res://player/melanie/texture/texture.png" type="Texture" id=2]
 
-[sub_resource type="Shader" id=4]
+[sub_resource type="Shader" id=1]
 code = "shader_type spatial;
 render_mode cull_front, unshaded;
 
@@ -77,8 +77,8 @@ void fragment() {
 	}
 }"
 
-[sub_resource type="ShaderMaterial" id=5]
-shader = SubResource( 4 )
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
 shader_param/opacity = 1.0
 shader_param/outline_width = 1.75
 shader_param/main_tex = ExtResource( 2 )
@@ -188,7 +188,7 @@ void light() {
 "
 
 [resource]
-next_pass = SubResource( 5 )
+next_pass = SubResource( 2 )
 shader = SubResource( 3 )
 shader_param/opacity = 1.0
 shader_param/soft_shading = true

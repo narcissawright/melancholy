@@ -197,7 +197,7 @@ func get_data_index(position:Vector3, aabb_index:int) -> int:
 	var index := int(diff.x + (diff.y * max_x) + (diff.z * max_x * max_y))
 	index += grass_data.aabb_offsets[aabb_index]
 	return index
- 
+
 # This function updates path_collision_img.data.data (PoolByteArray),
 # and returns the pixel position.
 func set_collision_img_data(index:int, value:int) -> Vector2:
@@ -227,6 +227,46 @@ func clear_grass_data():
 	grass_data.path_collision_img.data.data = data
 	grass_data.path_collision_tex.create_from_image(grass_data.path_collision_img, 0)
 
+var out_of_bounds = 0
+func get_dirt_amount(position:Vector3) -> float:
+	# Snap to nearest block
+	var rounded_pos:Vector3 = (position / block_size).round() * block_size # nearest 
+	
+	# use the difference between the position and the snapped position to find relevant adjacent blocks
+	var x_sign := int(sign(position.x - rounded_pos.x));
+	var y_sign := int(sign(position.y - rounded_pos.y));
+	var z_sign := int(sign(position.z - rounded_pos.z));
+	
+	var positions:Array = [
+		rounded_pos + Vector3(     0,      0, z_sign) * block_size,
+		rounded_pos + Vector3(     0, y_sign,      0) * block_size,
+		rounded_pos + Vector3(     0, y_sign, z_sign) * block_size,
+		rounded_pos + Vector3(x_sign,      0,      0) * block_size,
+		rounded_pos + Vector3(x_sign,      0, z_sign) * block_size,
+		rounded_pos + Vector3(x_sign, y_sign,      0) * block_size,
+		rounded_pos + Vector3(x_sign, y_sign, z_sign) * block_size
+	]
+	
+	var values:Array = []
+	
+	for i in range (positions.size()):
+		var index = get_data_index(positions[i], determine_relevant_aabb(positions[i]))
+		
+		if index >= grass_data.path_collision_img.data.data.size():
+			out_of_bounds += 1
+		
+		if index < grass_data.path_collision_img.data.data.size():
+			var new_value = float(grass_data.path_collision_img.data.data[index]) / 256.0
+			values.append(new_value)
+	
+	if values.size() == 0:
+		return 1.0
+	
+	var value_total:float
+	for i in range (values.size()):
+		value_total += values[i]
+	
+	return value_total / values.size()
 
 static func get_normal(v1:Vector3, v2:Vector3, v3:Vector3) -> Vector3:
 	return -(v1-v2).cross(v1-v3).normalized()
@@ -255,7 +295,7 @@ const GRASS_COLORS = [
 #	Color(0.25, 0.39, 0.15), 
 #	Color(0.09, 0.28, 0.14)
 	]
-const GRASS_THICKNESS:int = 30
+const GRASS_THICKNESS:int = 20
 const AREA_PER_FLOWER:float = 20.0;
 
 func create_flora(level_mesh, surface_index) -> void:
@@ -270,8 +310,6 @@ func create_flora(level_mesh, surface_index) -> void:
 	# Get geometry data for the grass surface:
 	var vertices = level_mesh.surface_get_arrays(surface_index)[ArrayMesh.ARRAY_VERTEX]
 	var indices  = level_mesh.surface_get_arrays(surface_index)[ArrayMesh.ARRAY_INDEX]
-	
-	""" TODO: account for surface normal when spawning stuff """
 	
 	var flower_amt:int = 0
 	var total_area:float = 0.0
@@ -306,11 +344,15 @@ func create_flora(level_mesh, surface_index) -> void:
 				var c = vertices[indices[i+2]] + (vertices[indices[i+2]].direction_to(center) * 0.2)
 				var pos:Vector3 = sample_tri(a,b,c)
 				
-				# Don't spawn if flower is overlapping another flower.
 				var create:bool = true
-				for index in range (flower_locations.size()):
-					if pos.distance_to(flower_locations[index]) < 0.25:
-						create = false
+				
+				if get_dirt_amount(pos) > 0.1:
+					create = false
+				else:
+					# Don't spawn if flower is overlapping another flower.
+					for index in range (flower_locations.size()):
+						if pos.distance_to(flower_locations[index]) < 0.25:
+							create = false
 				
 				# Create Flower
 				if create:
@@ -332,11 +374,14 @@ func create_flora(level_mesh, surface_index) -> void:
 				# Sample triangle to find blade position
 				var pos = sample_tri(vertices[indices[i]], vertices[indices[i+1]], vertices[indices[i+2]])
 				
-				# If this blade of grass overlaps a flower, skip it.
 				var create:bool = true
-				for f in range (flower_locations.size()):
-					if pos.distance_to(flower_locations[f]) < 0.2:
-						create = false
+				if get_dirt_amount(pos) > 0.2 + (randf() * 0.2):
+					create = false
+				else:
+					# If this blade of grass overlaps a flower, skip it.
+					for f in range (flower_locations.size()):
+						if pos.distance_to(flower_locations[f]) < 0.2:
+							create = false
 				
 				# Create grass blade.
 				if create:
@@ -358,6 +403,7 @@ func create_flora(level_mesh, surface_index) -> void:
 			multimesh.set_instance_transform(j, multimesh_data[i][j].xform)
 			multimesh.set_instance_color(j, multimesh_data[i][j].color)
 
+	print ("OoB Amount: ", out_of_bounds)
 	print ("Flower Amount: ", flower_amt)
 	print ("Total Grass Blades: ", total_instance_count)
 	

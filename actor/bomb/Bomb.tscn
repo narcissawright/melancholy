@@ -79,6 +79,18 @@ tracks/5/keys = {
 "update": 0,
 "values": [ 10.0 ]
 }
+tracks/6/type = "value"
+tracks/6/path = NodePath("OmniLight:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
 
 [sub_resource type="Animation" id=2]
 resource_name = "explode"
@@ -215,6 +227,18 @@ tracks/10/keys = {
 "transitions": PoolRealArray( 1 ),
 "update": 0,
 "values": [ 10.0 ]
+}
+tracks/11/type = "value"
+tracks/11/path = NodePath("OmniLight:visible")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
 }
 
 [sub_resource type="Animation" id=3]
@@ -405,7 +429,6 @@ collision_mask = 2
 shape = SubResource( 4 )
 
 [node name="Explosion" type="MeshInstance" parent="."]
-visible = false
 layers = 2
 cast_shadow = 0
 mesh = SubResource( 5 )
@@ -427,6 +450,7 @@ shape = SubResource( 8 )
 
 [node name="BombModel" parent="." instance=ExtResource( 2 )]
 transform = Transform( 0.649519, -0.375, 0, 0.375, 0.649519, 0, 0, 0, 0.75, 0, 0, 0 )
+visible = false
 
 [node name="OmniLight" type="OmniLight" parent="."]
 light_energy = 0.0
