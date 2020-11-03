@@ -63,6 +63,10 @@ func _ready() -> void:
 	current_pos = default_pos
 	update_position() # Move into position
 
+func _input(event):
+	if event is InputEventMouseMotion:
+		rotate_cam(event.relative / 35.0)
+
 func _on_player_damaged() -> void:
 	if mode == "first_person":
 		exit_first_person()
@@ -109,6 +113,7 @@ func _on_pause_state_change(paused:bool) -> void:
 		mode = saved_cam_state.mode
 		
 func _physics_process(_t:float) -> void:
+	
 	#debug()
 		
 	match mode:

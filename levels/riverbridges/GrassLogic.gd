@@ -288,7 +288,6 @@ static func sample_tri(p1:Vector3, p2:Vector3, p3:Vector3) -> Vector3:
 onready var grass_multi_container = $GrassMultiMeshes
 onready var multi_flower = $MultiFlower
 const grass_multimesh = preload('GrassMultiMesh.tscn')
-const flowercolor = preload('FlowerColor.tscn')
 
 export var GRASS_COLORS = PoolColorArray()
 export var FLOWER_COLORS = PoolColorArray()

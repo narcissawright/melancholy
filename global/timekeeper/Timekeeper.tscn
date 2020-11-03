@@ -10,4 +10,5 @@ script = ExtResource( 1 )
 pause_mode = 1
 
 [node name="PlaytimeTween" type="Tween" parent="."]
+
 [connection signal="tween_completed" from="TimeOfDayTween" to="." method="_on_Tween_completed"]
