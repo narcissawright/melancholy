@@ -65,6 +65,7 @@ func _ready() -> void:
 
 func _input(event):
 	if event is InputEventMouseMotion:
+		mode = "free"
 		rotate_cam(event.relative / 35.0)
 
 func _on_player_damaged() -> void:
