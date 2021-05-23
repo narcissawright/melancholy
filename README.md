@@ -1,3 +1,6 @@
+!!! This project is dead now I guess. Freaking RIP !!!
+Old description as follows:
+
 - 3D game project (Godot Engine). Melancholy is not the game's final title.
 - Kind of like Castlevania N64 (structured levels) with some Zelda-ish mechanics (Z-Targeting) sprinkled in?
 
